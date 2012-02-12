@@ -16,7 +16,7 @@
     this.options = $.extend({ }, defaultOptions, options || {});
     this.init();
   };
-  Dropzone.prototype.version = '0.1.1';
+  Dropzone.prototype.version = '0.1.2';
 
 
 
@@ -34,6 +34,7 @@
 
   var noOp = function() { };
   var defaultOptions = {
+    url: '',
     parallelUploads: 2,
     maxFilesize: 4, // in MB
     paramName: 'file', // The name of the file param that gets transferred.
@@ -42,6 +43,11 @@
     maxThumbnailFilesize: 2, // in MB. When the filename exeeds this limit, the thumbnail will not be generated.
     thumbnailWidth: 120,
     thumbnailHeight: 120,
+
+    /**
+     * Called when the browser does not support drag and drop
+     */
+    fallback: noOp,
 
     // Those are self explanatory and simply concern the DragnDrop.
     drop: noOp,
@@ -131,7 +137,7 @@
 
   Dropzone.prototype.init = function() {
     if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
-      alert('This browser does not support file uploads.');
+      this.options.fallback.call(this);
       return;
     }
     this.files = []; // All files
@@ -139,6 +145,13 @@
     this.files.processing = []; // The files currently processed
     this.URL = window.URL || window.webkitURL;
     this.setupEventListeners();
+  };
+
+  /**
+   * Returns a form that can be used as fallback if the browser does not support DragnDrop
+   */
+  Dropzone.prototype.getFallbackForm = function() {
+    return $('<form action="' + this.options.url + '" enctype="multipart/form-data" method="post"><input type="file" name="newFiles" multiple="multiple" /><button type="submit">Upload!</button></form>');
   };
 
   Dropzone.prototype.setupEventListeners = function() {
@@ -177,7 +190,7 @@
 
   Dropzone.prototype.accept = function(file) {
     // Add file size check here.
-    return this.options.accept(file);
+    return this.options.accept.call(this, file);
   };
 
 
@@ -291,7 +304,7 @@
 
     formData.append(this.options.paramName, file);
 
-    xhr.open("POST", "/admin/files", true);
+    xhr.open("POST", this.options.url, true);
 
 
     xhr.onload = function(e) {
@@ -317,7 +330,7 @@
    */
   Dropzone.prototype.finished = function(file) {
     this.files.processing = without(this.files.processing, file);
-    this.options.finished(file);
+    this.options.finished.call(this, file);
     this.processQueue();
   },
 
@@ -327,7 +340,7 @@
    */
   Dropzone.prototype.errorProcessing = function(file, message) {
     this.files.processing = without(this.files.processing, file);
-    this.options.error(file, message);
+    this.options.error.call(this, file, message);
     this.processQueue();
   }
 
