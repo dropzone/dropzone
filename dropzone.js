@@ -287,7 +287,7 @@
     this.options.processingFile.call(this, file);
 
     if (file.size > this.options.maxFilesize * 1024 * 1024) {
-      this.errorProcessing(file, 'File is too big (' + file.size / 1024 * 1024 + 'MB). Max filesize: ' + this.options.maxFilesize);
+      this.errorProcessing(file, 'File is too big (' + (Math.round(file.size / 1024 / 10.24) / 100) + 'MB). Max filesize: ' + this.options.maxFilesize + 'MB');
     }
     else {
       this.uploadFile(file);
