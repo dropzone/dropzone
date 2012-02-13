@@ -240,10 +240,8 @@
       if (srcRatio > trgRatio) {
         trgWidth = canvas.width;
         trgHeight = trgWidth / srcRatio;
-        console.log('Width: %d, height: %d', trgWidth, trgHeight);
       }
       else {
-        console.log('hi2');
         trgHeight = canvas.height;
         trgWidth = trgHeight * srcRatio;
       }
@@ -306,17 +304,27 @@
 
     xhr.open("POST", this.options.url, true);
 
-
-    xhr.onload = function(e) {
-      self.options.uploadProgress(file, 100);
-      self.finished(file, e);
-    };
-    xhr.onerror = function() {
-      self.errorProcessing(file);
-    };
-    xhr.onprogress = function(e) {
-      self.options.uploadProgress(file, Math.max(0, Math.min(100, (e.loaded / e.total) * 100)));
-    };
+    $(xhr)
+      .on('load', function(e) {
+        self.options.uploadProgress(file, 100);
+        self.finished(file, e);
+      })
+      .on('error', function() {
+        self.errorProcessing(file);
+      });
+    if (xhr.upload) {
+      $(xhr.upload).on('progress', function(e) {
+        var oe = e.originalEvent;
+        self.options.uploadProgress(file, Math.max(0, Math.min(100, (oe.loaded / oe.total) * 100)));
+      });
+    }
+    else {
+      $(xhr)
+        .on('progress', function(e) {
+          var oe = e.originalEvent;
+          self.options.uploadProgress(file, Math.max(0, Math.min(100, (oe.loaded / oe.total) * 100)));
+        });
+    }
 
     xhr.setRequestHeader("Cache-Control", "no-cache");
     xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
