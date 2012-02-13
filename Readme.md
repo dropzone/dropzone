@@ -20,4 +20,4 @@ I realize that there [are](http://valums.com/ajax-upload/) [already](http://tuto
 - I want to use the latest API of browsers. I don't care if it falls back to the normal upload form if the browser is too old.
 
 
-Version 0.1.3-dev
+Version 0.1.3

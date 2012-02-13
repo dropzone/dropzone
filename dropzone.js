@@ -16,7 +16,7 @@
     this.options = $.extend({ }, defaultOptions, options || {});
     this.init();
   };
-  Dropzone.prototype.version = '0.1.3-dev';
+  Dropzone.prototype.version = '0.1.3';
 
 
 
