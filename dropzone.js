@@ -326,6 +326,7 @@
         });
     }
 
+    xhr.setRequestHeader("Accept", "application/json");
     xhr.setRequestHeader("Cache-Control", "no-cache");
     xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
     xhr.setRequestHeader("X-File-Name", file.name);
