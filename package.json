@@ -1,0 +1,39 @@
+{
+  "name": "dropzone",
+  "version": "0.1.4-dev",
+  "description": "Handles drag and drop of files for you.",
+  "keywords": [ "dragndrop", "ender" ],
+  "maintainers": [
+    {
+      "name": "Matias Meno",
+      "email": "m@tias.me",
+      "web": "http://www.matiasmeno.com"
+    } 
+  ],
+  "contributors": [
+    {
+      "name": "Matias Meno",
+      "email": "m@tias.me",
+      "web": "http://www.matiasmeno.com"
+    } 
+  ],
+  "bugs": {
+    "mail": "m@tias.me"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/MIT" 
+    } 
+  ],
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/enyo/dropzone.git" 
+    } 
+  ],
+  "dependencies": {
+     "jquery": "3.x"
+  },
+  "ender": "noop"
+}
