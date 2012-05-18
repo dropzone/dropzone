@@ -34,7 +34,6 @@
     } 
   ],
   "dependencies": {
-     "jquery": "3.x"
   },
   "ender": "noop"
 }
