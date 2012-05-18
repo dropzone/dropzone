@@ -1,6 +1,6 @@
 {
   "name": "dropzone",
-  "version": "0.1.4",
+  "version": "0.1.5-dev",
   "description": "Handles drag and drop of files for you.",
   "keywords": [ "dragndrop", "ender" ],
   "main": "./dropzone.js",
