@@ -1,4 +1,4 @@
-# Dropzone.js Version 0.1.5
+# Dropzone.js Version 0.1.6-dev
 
 Dropzone.js is a light weight JavaScript library based on jQuery that turns an HTML div into a dropzone. This means that a user can drag and drop a file onto it, and the file gets uploaded to the server.
 
