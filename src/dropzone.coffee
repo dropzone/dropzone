@@ -20,7 +20,7 @@ noOp = ->
 
 class Dropzone
 
-  version: "0.2.0"
+  version: "0.2.1"
 
   ###
   This is a list of all available events you can register on a dropzone object.
@@ -81,7 +81,7 @@ class Dropzone
     dragend: (e) ->
     dragenter: (e) -> @element.addClass "drag-hover"
     dragover: (e) -> @element.addClass "drag-hover"
-    dragleave: (e) -> @element.addClass "drag-hover"
+    dragleave: (e) -> @element.removeClass "drag-hover"
     
     # Called when a file is added to the queue
     # Receives `file`
