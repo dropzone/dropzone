@@ -20,7 +20,7 @@ noOp = ->
 
 class Dropzone
 
-  version: "0.2.4"
+  version: "0.2.5"
 
   ###
   This is a list of all available events you can register on a dropzone object.
@@ -76,9 +76,11 @@ class Dropzone
     fallback: -> @element.find(".message").html "Your browser does not support drag'n'drop file uploads."
     
     # Those are self explanatory and simply concern the DragnDrop.
-    drop: (e) -> @element.find(".message").hide()
+    drop: (e) ->
+      @element.removeClass "drag-hover"
+      @element.find(".message").hide()
     dragstart: (e) ->
-    dragend: (e) ->
+    dragend: (e) -> @element.removeClass "drag-hover"
     dragenter: (e) -> @element.addClass "drag-hover"
     dragover: (e) -> @element.addClass "drag-hover"
     dragleave: (e) -> @element.removeClass "drag-hover"
@@ -98,7 +100,7 @@ class Dropzone
         .removeClass("file-preview")
         .addClass("image-preview")
 
-      file.previewTemplate.find(".details").html $("""<img alt="" src="#{dataUrl}"/>""")
+      file.previewTemplate.find(".details").html $("""<img alt="#{file.name}" src="#{dataUrl}"/>""")
 
     
     # Called whenever an error occures
@@ -207,7 +209,6 @@ class Dropzone
       bean.fire @, "drop", e
     
     @element.on "dragend", (e) =>
-      bean.fire @, "dragleave", e
       bean.fire @, "dragend", e
 
 
@@ -255,11 +256,6 @@ class Dropzone
       srcRatio = img.width / img.height
       trgRatio = canvas.width / canvas.height
       
-      # if (img.width < canvas.width && img.height < canvas.height) {
-      #   // Source image is smaller
-      #   trgWidth = img.width;
-      #   trgHeight = img.height;
-      # }
       if srcRatio > trgRatio
         trgWidth = canvas.width
         trgHeight = trgWidth / srcRatio

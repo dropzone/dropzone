@@ -2590,7 +2590,7 @@
     Dropzone = (function() {
       var defaultOptions;
   
-      Dropzone.prototype.version = "0.2.4-dev";
+      Dropzone.prototype.version = "0.2.5-dev";
   
       /*
         This is a list of all available events you can register on a dropzone object.
@@ -2626,10 +2626,13 @@
           return this.element.find(".message").html("Your browser does not support drag'n'drop file uploads.");
         },
         drop: function(e) {
+          this.element.removeClass("drag-hover");
           return this.element.find(".message").hide();
         },
         dragstart: function(e) {},
-        dragend: function(e) {},
+        dragend: function(e) {
+          return this.element.removeClass("drag-hover");
+        },
         dragenter: function(e) {
           return this.element.addClass("drag-hover");
         },
@@ -2646,7 +2649,7 @@
         },
         thumbnail: function(file, dataUrl) {
           file.previewTemplate.removeClass("file-preview").addClass("image-preview");
-          return file.previewTemplate.find(".details").html($("<img alt=\"\" src=\"" + dataUrl + "\"/>"));
+          return file.previewTemplate.find(".details").html($("<img alt=\"" + file.name + "\" src=\"" + dataUrl + "\"/>"));
         },
         error: function(file, message) {
           file.previewTemplate.addClass("process-error");
@@ -2746,7 +2749,6 @@
           return bean.fire(_this, "drop", e);
         });
         return this.element.on("dragend", function(e) {
-          bean.fire(_this, "dragleave", e);
           return bean.fire(_this, "dragend", e);
         });
       };
