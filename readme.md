@@ -28,7 +28,7 @@ Want more control? You can instantiate dropzone manually like this:
 
 > Note that dropzones don't have to be forms. But if you choose another element you have to pass the `url` parameter in the options.
 
-For configuration options please look at the [source line 52](blob/master/src/dropzone.coffee#L52).
+For configuration options please look at the [source line 52](https://github.com/enyo/dropzonejs/blob/master/src/dropzone.coffee#L52).
 
 
 
@@ -39,7 +39,7 @@ I use [bean](https://github.com/fat/bean) to manage events. If you want to regis
     var myDropzone = $("div#my-zone").dropzone({ ...configuration... });
     bean.add(myDropzone, "error", function(file, message) { alert(message); });
 
-For a list of all events, please look at the [source line 25](blob/master/src/dropzone.coffee#L25).
+For a list of all events, please look at the [source line 25](https://github.com/enyo/dropzonejs/blob/master/src/dropzone.coffee#L25).
 
 
 ## Browser support
