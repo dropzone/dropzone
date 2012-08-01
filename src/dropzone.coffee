@@ -320,7 +320,7 @@ class Dropzone
       else
         bean.fire @, "uploadprogress", [ file, 100 ]
         response = xhr.responseText
-        if xhr.getResponseHeader("content-type") == "application/json" then response = JSON.parse response
+        if ~xhr.getResponseHeader("content-type").indexOf "application/json" then response = JSON.parse response
         @finished file, response, e
 
     xhr.onerror = =>

@@ -2590,7 +2590,7 @@
     Dropzone = (function() {
       var defaultOptions;
   
-      Dropzone.prototype.version = "0.2.2-dev";
+      Dropzone.prototype.version = "0.2.3-dev";
   
       /*
         This is a list of all available events you can register on a dropzone object.
@@ -2868,7 +2868,7 @@
           } else {
             bean.fire(_this, "uploadprogress", [file, 100]);
             response = xhr.responseText;
-            if (xhr.getResponseHeader("content-type") === "application/json") {
+            if (~xhr.getResponseHeader("content-type").indexOf("application/json")) {
               response = JSON.parse(response);
             }
             return _this.finished(file, response, e);
