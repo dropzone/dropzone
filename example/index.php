@@ -142,6 +142,15 @@
 
   <script src="./ender.js" type="text/javascript"></script>
 
+  <script type="text/javascript">
+    $.domReady(function() {
+      var bean = require("bean"),
+          dropzone = $('.dropzone').data("dropzone");
+
+      bean.add(dropzone, "finished", function(file, response) { console.log(response); });
+    });
+  </script>
+
 </head>
 <body>
 
