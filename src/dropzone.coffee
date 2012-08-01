@@ -81,7 +81,7 @@ class Dropzone
     dragend: (e) ->
     dragenter: (e) -> @element.addClass "drag-hover"
     dragover: (e) -> @element.addClass "drag-hover"
-    dragleave: (e) -> @element.addClass "drag-hover"
+    dragleave: (e) -> @element.removeClass "drag-hover"
     
     # Called when a file is added to the queue
     # Receives `file`
