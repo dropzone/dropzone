@@ -1,16 +1,24 @@
 # Dropzone.js Version 0.1.6-dev
 
-Dropzone.js is a light weight JavaScript library based on jQuery that turns an HTML div into a dropzone. This means that a user can drag and drop a file onto it, and the file gets uploaded to the server.
+Dropzone.js is a light weight JavaScript library for [ender](http://ender.no.de) that turns an HTML element into a dropzone.
+This means that a user can drag and drop a file onto it, and the file gets uploaded to the server via AJAX.
 
-> You have to include jQuery manually if you want to use dropzone.  
-> I'm currently refactoring that.
+
 
 ## Main features
 
-- Image thumbnail previews. Simply register the callback `thumbnail(file, data)` and display the image wherever you like.
-- Multiple files
+- Image thumbnail previews. Simply register the callback `thumbnail(file, data)` and display the image wherever you like
+- Multiple files and synchronous uploads
 - Progress updates
-- Big files are no problem
+- Support for large files
+
+## Browser support
+
+- Chrome 7+
+- Firefox 4+
+- IE 10+
+- Opera 12+
+- Safari 5+
 
 ## Why another library?
 

@@ -9,6 +9,8 @@ $.ender
 , true # Should be added to the internal chain
 
 
+$.domReady -> $(".dropzone").dropzone()
+
 
 bean = require "bean"
 
@@ -139,6 +141,10 @@ class Dropzone
   constructor: (element, options) ->
     @element = $ element
 
+    throw new Error "Dropzone already attached." if @element.data("dropzone")
+
+    @element.data "dropzone", @
+
     extend = (target, objects...) ->
       for object in objects
         target[key] = val for key, val of object
@@ -158,6 +164,7 @@ class Dropzone
     unless window.File and window.FileReader and window.FileList and window.Blob and window.FormData
       @options.fallback.call this
       return
+
     @files = [] # All files
     @files.queue = [] # The files that still have to be processed
     @files.processing = [] # The files currently processed
