@@ -1,0 +1,17 @@
+{
+  "name": "qwery-pseudos",
+  "description": "Pseudo-selector extensions for Qwery",
+  "version": "1.0.0",
+  "homepage": "https://github.com/ded/qwery",
+  "authors": ["Dustin Diaz, @ded", "Jacob Thornton, @fat"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ded/qwery.git"
+  },
+  "dependencies": {
+    "qwery": "*"
+  },
+  "main": "./qwery-pseudos.js",
+  "keywords": ["ender", "query", "css", "pseudos", "pseudo", "selector engine"],
+  "ender": "noop"
+}

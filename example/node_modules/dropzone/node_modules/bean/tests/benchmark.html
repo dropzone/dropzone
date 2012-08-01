@@ -1,0 +1,672 @@
+<!DOCTYPE HTML>
+<html lang="en-us">
+  <head>
+    <title>Bean Benchmarks</title>
+    <style type="text/css">
+      body { font-family: 'helvetica neue', helvetica, arial; }
+      table { border-collapse: collapse; }
+      td,th { border: solid 1px #ddd; padding: 0.25em 1em; }
+      tbody th { text-align: right; }
+      td span { font-size: 8pt; color: #555; }
+      applet { position: absolute; left: -9999em; }
+    </style>
+  </head>
+  <body>
+    <h1>Running Benchmark Suite</h1>
+    <table cellpadding="0" cellspacing="0" >
+      <thead>
+        <th></th>
+        <th>../bean.js</th>
+        <th>../src/bean.js</th>
+        <th>NWEvents</th>
+        <th>jQuery</th>
+      </thead>
+      <tbody id="results">
+      </tbody>
+    </table>
+
+    <script src="benchmark.js"></script>
+    <script src="../support/syn/synthetic.js"></script>
+    <script src="../support/syn/mouse.js"></script>
+    <script src="../support/syn/browsers.js"></script>
+    <script src="../support/syn/key.js"></script>
+    <script src="../bean.js"></script>
+    <script src="../src/bean.js"></script>
+    <script type="text/javascript">
+      var newbean = bean.noConflict()
+    </script>
+    <script src="../support/nwevents/src/nwevents.js"></script>
+    <script src="../support/nwevents/src/modules/nwevents-pubsub.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.js"></script>
+    <script>
+
+      var libs = [ 'bean', 'newbean', 'nw', 'jquery' ]
+        , suite = new Benchmark.Suite
+        , i, j, elements, element, listeners, obj, fn = function() {}
+
+      function add(name, setup, exec, teardown) {
+        for (i = 0; i < libs.length; i++) {
+          exec[libs[i]] && suite.add(name, exec[libs[i]], {
+              'libid': libs[i]
+            , 'setup': typeof setup === 'function' ? setup : setup[libs[i]]
+            , 'teardown': typeof teardown === 'function' ? teardown : teardown[libs[i]]
+          })
+        }
+      }
+
+      var setupElement = function() { element = document.createElement('div') }
+        , teardownElement = {
+              'bean':    function() { bean.remove(element); }
+            , 'newbean': function() { newbean.remove(element); }
+            , 'nw':      function() {
+                           listeners = NW.Event.getRegistered(NW.Event.Listeners, element, 'click', '*')
+                           for (j = 0; j < listeners.length; j++) NW.Event.unlisten(element, 'click', listeners[j])
+                         }
+            , 'jquery':  function() { jQuery(element).off('click') }
+          }
+        , setupUniqueElements = function() {
+                           i = this.count
+                           elements = []
+                           while (i--) elements.push(document.createElement('div'))
+                           i = 0
+                         }
+        , teardownUniqueElements = {
+              'bean':    function() { while (i--) bean.remove(elements[i]) }
+            , 'newbean': function() { while (i--) newbean.remove(elements[i]) }
+            , 'nw':      function() {
+                           while (i--) {
+                             listeners = NW.Event.getRegistered(NW.Event.Listeners, elements[i], 'click', '*')
+                             for (j = 0; j < listeners.length; j++) NW.Event.unlisten(elements[i], 'click', listeners[j])
+                           }
+                         }
+            , 'jquery':  function() { while (i--) jQuery(elements[i]).off('click') }
+          }
+
+      add( 'add( element, event, fn )', setupElement
+        , {
+              'bean':    function() { bean.add(element, 'click', function() {}) }
+            , 'newbean': function() { newbean.add(element, 'click', function() {}) }
+            , 'nw':      function() { NW.Event.listen(element, 'click', function() {}) }
+            , 'jquery':  function() { jQuery(element).on('click', function() {}) }
+          }
+        , teardownElement)
+
+      add( 'add( unique element, event, fn )', setupUniqueElements
+        , {
+              'bean':    function() { bean.add(elements[i++], 'click', function() {}) }
+            , 'newbean': function() { newbean.add(elements[i++], 'click', function() {}) }
+            , 'nw':      function() { NW.Event.listen(elements[i++], 'click', function() {}) }
+            , 'jquery':  function() { jQuery(elements[i++]).on('click', function() {}) }
+          }
+        , teardownUniqueElements)
+
+      var teardownElementCustom = {
+              'bean': teardownElement.bean, 'newbean': teardownElement.newbean, 'jquery': teardownElement.jquery
+            , 'nw':   function () {
+                        listeners = NW.Event.getRegistered(NW.Event.Listeners, element, 'fat', '*')
+                        for (j = 0; j < listeners.length; j++) NW.Event.unlisten(element, 'fat', listeners[j])
+                     }
+          }
+        , teardownUniqueElementsCustom = {
+              'bean': teardownUniqueElements.bean
+            , 'newbean': teardownUniqueElements.newbean
+            , 'nw':      function() {
+                           while (i--) {
+                             listeners = NW.Event.getRegistered(NW.Event.Listeners, elements[i], 'fat', '*')
+                             for (j = 0; j < listeners.length; j++) NW.Event.unlisten(elements[i], 'fat', listeners[j])
+                           }
+                         }
+            , 'jquery': teardownUniqueElements.jquery
+          }
+
+      add( 'add( element, custom, fn )', setupElement
+        , {
+              'bean':    function () { bean.add(element, 'fat', function () {}) }
+            , 'newbean': function () { newbean.add(element, 'fat', function () {}) }
+            , 'nw':      function () { NW.Event.listen(element, 'fat', function () {}) }
+            , 'jquery':  function () { jQuery(element).on('fat', function () {}) }
+          }
+        , teardownElementCustom)
+
+      add( 'add( unique element, custom, fn )', setupUniqueElements
+        , {
+              'bean':    function () { bean.add(elements[i++], 'fat', function () {}) }
+            , 'newbean': function () { newbean.add(elements[i++], 'fat', function () {}) }
+            , 'nw':      function () { NW.Event.listen(elements[i++], 'fat', function () {}) }
+            , 'jquery':  function () { jQuery(elements[i++]).on('fat', function () {}) }
+          }
+        , teardownUniqueElementsCustom)
+
+      add( 'add( element, event.namespace, fn )', setupElement
+        , {
+              'bean':    function () { bean.add(element, 'click.fat', function () {}) }
+            , 'newbean': function () { newbean.add(element, 'click.fat', function () {}) }
+            , 'jquery':  function () { jQuery(element).on('click.fat', function () {}) }
+          }
+        , teardownElement)
+
+      add( 'add( unique element, event.namespace, fn )', setupUniqueElements
+        , {
+              'bean':    function () { bean.add(elements[i++], 'click.fat', function () {}) }
+            , 'newbean': function () { newbean.add(elements[i++], 'click.fat', function () {}) }
+            , 'jquery':  function () { jQuery(elements[i++]).on('click.fat', function () {}) }
+          }
+        , teardownUniqueElements)
+
+      var teardownElementDelegate = {
+                'bean': teardownElement.bean, 'newbean': teardownElement.newbean, 'jquery': teardownElement.jquery
+              , 'nw':   function () {
+                          listeners = NW.Event.getRegistered(NW.Event.Listeners, element, 'click', '*')
+                          for (j = 0; j < listeners.length; j++) NW.Event.undelegate('a.close', 'click', listeners[j], element)
+                        }
+          }
+        , teardownUniqueElementsDelegate = {
+              'bean': teardownUniqueElements.bean
+            , 'newbean': teardownUniqueElements.newbean
+            , 'nw':      function() {
+                           while (i--) {
+                             listeners = NW.Event.getRegistered(NW.Event.Listeners, elements[i], 'click', '*')
+                             for (j = 0; j < listeners.length; j++) NW.Event.undelegate(elements[i], 'click', listeners[j])
+                           }
+                         }
+            , 'jquery': teardownUniqueElements.jquery
+          }
+
+      add( 'add( element, selector, event, fn )', setupElement
+        , {
+              'bean':    function () { bean.add(element, 'a.close', 'click', function () {}) }
+            , 'newbean': function () { newbean.add(element, 'a.close', 'click', function () {}) }
+            , 'nw':      function () { NW.Event.delegate('a.close', 'click', function () {}, element) }
+            , 'jquery':  function () { jQuery(element).on('click', 'a.close', function () {}) }
+          }
+        , teardownElementDelegate)
+
+      add( 'add( unique element, selector, event, fn )', setupUniqueElements
+        , {
+              'bean':    function () { bean.add(elements[i++], 'a.close', 'click', function () {}) }
+            , 'newbean': function () { newbean.add(elements[i++], 'a.close', 'click', function () {}) }
+            , 'nw':      function () { NW.Event.delegate('a.close', 'click', function () {}, elements[i++]) }
+            , 'jquery':  function () { jQuery(elements[i++]).on('click', 'a.close', function () {}) }
+          }
+        , teardownUniqueElementsDelegate)
+
+      add( 'add( {} )', setupElement
+        , {
+              'bean':    function () { bean.add(element, {
+                             'click': function () {}
+                           , 'mouseover': function () {}
+                           , 'mouseout': function () {}
+                         })}
+            , 'newbean': function () { newbean.add(element, {
+                             'click': function () {}
+                           , 'mouseover': function () {}
+                           , 'mouseout': function () {}
+                         })}
+          }
+        , teardownElementDelegate)
+
+/*******************************************************
+
+   This, unfortunately, is garbage. Because benchmark.js runs 'execute' in a loop of
+   1 _or more_ iterations, we can't reliably test remove() because all our listeners
+   will be removed in the first iteration with the remaining iterations only testing
+   how fast we can remove no listeners.
+   The code below attempts to add enough listeners to remove per iteration but the
+   performance changes too much over each iteration because when we use a registry
+   it just gets quicker each time we remove stuff from it.
+   So unless you have some brilliant idea on how to benchmark remove(), leave it
+   commented out. @rvagg
+
+      var setupElementRemove = {
+              'bean':    function () {
+                           i = this.count
+                           elements = []
+                           while (i--) {
+                             elements.push(element = document.createElement('div'))
+                             for (j = 10; j--;) bean.add(element, 'click', function () {})
+                             bean.add(element, 'click', fn)
+                           }
+                           i = 0
+                         }
+            , 'newbean': function () {
+                           i = this.count
+                           elements = []
+                           while (i--) {
+                             elements.push(element = document.createElement('div'))
+                             for (j = 10; j--;) newbean.add(element, 'click', function () {})
+                             newbean.add(element, 'click', fn)
+                           }
+                           i = 0
+                         }
+            , 'nw': function () {
+                           i = this.count
+                           elements = []
+                           while (i--) {
+                             elements.push(element = document.createElement('div'))
+                             for (j = 10; j--;) NW.Event.listen(element, 'click', function () {})
+                             NW.Event.listen(element, 'click', fn)
+                           }
+                           i = 0
+                         }
+            , 'jquery': function () {
+                           i = this.count
+                           elements = []
+                           while (i--) {
+                             elements.push(element = document.createElement('div'))
+                             for (j = 10; j--;) jQuery(element).on('click', function () {})
+                             jQuery(element).on('click', fn)
+                           }
+                           i = 0
+                         }
+          }
+        , setupElementRemoveCustom = {
+              'bean':    function () {
+                           i = this.count
+                           elements = []
+                           while (i--) {
+                             elements.push(element = document.createElement('div'))
+                             for (j = 10; j--;) bean.add(element, 'fat', function () {})
+                             bean.add(element, 'fat', fn)
+                           }
+                           i = 0
+                         }
+            , 'newbean': function () {
+                           i = this.count
+                           elements = []
+                           while (i--) {
+                             elements.push(element = document.createElement('div'))
+                             for (j = 10; j--;) newbean.add(element, 'fat', function () {})
+                             newbean.add(element, 'fat', fn)
+                           }
+                           i = 0
+                         }
+            , 'nw': function () {
+                           i = this.count
+                           elements = []
+                           while (i--) {
+                             elements.push(element = document.createElement('div'))
+                             for (j = 10; j--;) NW.Event.listen(element, 'fat', function () {})
+                             NW.Event.listen(element, 'fat', fn)
+                           }
+                           i = 0
+                         }
+            , 'jquery': function () {
+                           i = this.count
+                           elements = []
+                           while (i--) {
+                             elements.push(element = document.createElement('div'))
+                             for (j = 10; j--;) jQuery(element).on('fat', function () {})
+                             jQuery(element).on('fat', fn)
+                           }
+                           i = 0
+                         }
+          }
+        , setupElementRemoveNamespace = {
+              'bean':    function () {
+                           i = this.count
+                           elements = []
+                           while (i--) {
+                             elements.push(element = document.createElement('div'))
+                             for (j = 10; j--;) bean.add(element, 'click.fat', function () {})
+                             bean.add(element, 'click.fat', fn)
+                           }
+                           i = 0
+                         }
+            , 'newbean': function () {
+                           i = this.count
+                           elements = []
+                           while (i--) {
+                             elements.push(element = document.createElement('div'))
+                             for (j = 10; j--;) newbean.add(element, 'click.fat', function () {})
+                             newbean.add(element, 'click.fat', fn)
+                           }
+                           i = 0
+                         }
+            , 'jquery': function () {
+                           i = this.count
+                           elements = []
+                           while (i--) {
+                             elements.push(element = document.createElement('div'))
+                             for (j = 10; j--;) jQuery(element).on('click.fat', function () {})
+                             jQuery(element).on('click.fat', fn)
+                           }
+                           i = 0
+                         }
+          }
+        , teardownElementRemove = function () { }  
+
+      add( 'remove()', setupElementRemove
+        , {
+              'bean':    function () { bean.remove(elements[i++]) }
+            , 'newbean': function () { newbean.remove(elements[i++]) }
+            // can't really do this in either NW or jQuery can you?
+          }
+        , teardownElementRemove)
+
+      add( 'remove( event )', setupElementRemove
+        , {
+              'bean':    function () { bean.remove(elements[i++], 'click') }
+            , 'newbean': function () { newbean.remove(elements[i++], 'click') }
+            , 'nw':      function () {
+                           listeners = NW.Event.getRegistered(NW.Event.Listeners, element[i], 'click', '*')
+                           for (j = 0; j < listeners.length; j++) NW.Event.unlisten(elements[i], 'click', listeners[j])
+                           i++
+                         }
+            , 'jquery':  function () { jQuery(elements[i++]).off('click') }
+          }
+        , teardownElementRemove)
+
+      add( 'remove( custom )', setupElementRemoveCustom
+        , {
+              'bean':    function () { bean.remove(elements[i++], 'fat') }
+            , 'newbean': function () { newbean.remove(elements[i++], 'fat') }
+            , 'nw':      function () {
+                           listeners = NW.Event.getRegistered(NW.Event.Listeners, elements[i], 'fat', '*')
+                           for (j = 0; j < listeners.length; j++) NW.Event.unlisten(elements[i], 'fat', listeners[j])
+                           i++
+                         }
+            , 'jquery':  function () { jQuery(elements[i++]).off('fat') }
+          }
+        , teardownElementRemove)
+
+      add( 'remove( namespace )', setupElementRemoveNamespace
+        , {
+              'bean':    function () { bean.remove(elements[i++], '.fat') }
+            , 'newbean': function () { newbean.remove(elements[i++], '.fat') }
+            , 'jquery':  function () { jQuery(elements[i++]).off('.fat') }
+          }
+        , teardownElementRemove)
+
+      add( 'remove( event, fn )'
+        // setup
+        , setupElementRemove
+        // execute
+        , {
+              'bean':    function () { bean.remove(elements[i++], 'click', fn) }
+            , 'newbean': function () { newbean.remove(elements[i++], 'click', fn) }
+            , 'nw':      function () { NW.Event.unlisten(element[i++], 'click', fn) }
+            , 'jquery':  function () { jQuery(elements[i++]).off('click') }
+          }
+        // teardown
+        , {
+              'bean':    function () { i = this.count; while (i--) bean.remove(elements[i]) }
+            , 'newbean': function () { i = this.count; while (i--) newbean.remove(elements[i]) }
+            , 'nw':      function () {
+                           i = this.count
+                           while(i--) {
+                             listeners = NW.Event.getRegistered(NW.Event.Listeners, elements[i], 'click', '*')
+                             for (j = 0; j < listeners.length; j++) NW.Event.unlisten(elements[i], 'click', listeners[j])
+                           }
+                         }
+            , 'jquery':  function () { i = this.count; while (i--) jQuery(elements[i]).off('click') }
+          }
+      )
+
+******************************************************************************/
+
+      add( 'fire( event )'
+        // setup
+        , {
+              'bean':    function () {
+                           i = 100
+                           element = document.createElement('div')
+                           while (i--) bean.add(element, 'click', function () {})
+                         }
+            , 'newbean': function () {
+                           i = 100
+                           element = document.createElement('div')
+                           while (i--) newbean.add(element, 'click', function () {})
+                         }
+            , 'nw': function () {
+                           i = 100
+                           element = document.createElement('div')
+                           while (i--) NW.Event.listen(element, 'click', function () {})
+                         }
+            , 'jquery': function () {
+                           i = 100
+                           element = document.createElement('div')
+                           while (i--) jQuery(element).on('click', function () {})
+                         }
+          }
+        // execute
+        , {
+              'bean':    function () { bean.fire(element, 'click') }
+            , 'newbean': function () { newbean.fire(element, 'click') }
+            , 'nw':      function () { NW.Event.dispatch(element, 'click') }
+            , 'jquery':  function () { jQuery(element).trigger('click') }
+          }
+        // teardown
+        , {
+              'bean':    function () { bean.remove(element) }
+            , 'newbean': function () { newbean.remove(element) }
+            , 'nw':      function () {
+                           listeners = NW.Event.getRegistered(NW.Event.Listeners, element, 'click', '*')
+                           for (j = 0; j < listeners.length; j++) NW.Event.unlisten(element, 'click', listeners[j])
+                         }
+            , 'jquery':  function () { jQuery(element).off('click') }
+          }
+      )
+
+      add( 'fire( custom )'
+        // setup
+        , {
+              'bean':    function () {
+                           i = 100
+                           element = document.createElement('div')
+                           while (i--) bean.add(element, 'foo', function () {})
+                         }
+            , 'newbean': function () {
+                           i = 100
+                           element = document.createElement('div')
+                           while (i--) newbean.add(element, 'foo', function () {})
+                         }
+            , 'nw': function () {
+                           i = 100
+                           element = document.createElement('div')
+                           while (i--) NW.Event.listen(element, 'foo', function () {})
+                         }
+            , 'jquery': function () {
+                           i = 100
+                           element = document.createElement('div')
+                           while (i--) jQuery(element).on('foo', function () {})
+                         }
+          }
+        // execute
+        , {
+              'bean':    function () { bean.fire(element, 'fat') }
+            , 'newbean': function () { newbean.fire(element, 'fat') }
+            , 'nw':      function () { NW.Event.dispatch(element, 'fat') }
+            , 'jquery':  function () { jQuery(element).trigger('fat') }
+          }
+        // teardown
+        , {
+              'bean':    function () { bean.remove(element) }
+            , 'newbean': function () { newbean.remove(element) }
+            , 'nw':      function () {
+                           listeners = NW.Event.getRegistered(NW.Event.Listeners, element, 'fat', '*')
+                           for (j = 0; j < listeners.length; j++) NW.Event.unlisten(element, 'fat', listeners[j])
+                         }
+            , 'jquery':  function () { jQuery(element).off('fat') }
+          }
+      )
+
+      add( 'fire( namespace )'
+        // setup
+        , {
+            // bean can't do this, it needs a a 'type' as well as a namespace
+            //  'bean':    function () {
+            //               i = 20
+            //               element = document.createElement('div')
+            //               while (i--) bean.add(element, 'whatup.fat', function () {})
+            //             }
+              'newbean': function () {
+                           i = 20
+                           element = document.createElement('div')
+                           while (i--) newbean.add(element, 'whatup.fat', function () {})
+                         }
+            // not sure jQuery can do the generic namespace fire
+            //, 'jquery': function () {
+            //               i = 20
+            //               element = document.createElement('div')
+            //               while (i--) jQuery(element).on('whatup.fat', function () {})
+            //             }
+          }
+        // execute
+        , {
+            //  'bean':    function () { bean.fire(element, '.fat') }
+              'newbean': function () { newbean.fire(element, '.fat') }
+            // not sure jQuery can do this: , 'jquery':  function () { jQuery(element).trigger('.fat') }
+          }
+        // teardown
+        , {
+            //  'bean':    function () { bean.remove(element) }
+              'newbean': function () { newbean.remove(element) }
+            //, 'jquery':  function () { jQuery(element).off('.fat') }
+          }
+      )
+
+      add( 'element add / click / remove'
+        // setup
+        , function () {
+            element = document.createElement('div')
+            fn = function () {}
+          }
+        // execute
+        , {
+              'bean':    function () {
+                           bean.add(element, 'click', fn)
+                           Syn.click(element)
+                           bean.remove(element, 'click', fn)
+                         }
+            , 'newbean': function () {
+                           newbean.add(element, 'click', fn)
+                           Syn.click(element)
+                           newbean.remove(element, 'click', fn)
+                         }
+            , 'nw':      function () {
+                           NW.Event.listen(element, 'click', fn)
+                           Syn.click(element)
+                           NW.Event.unlisten(element, 'click', fn)
+                         }
+            , 'jquery':  function () {
+                           jQuery(element).on('click', fn)
+                           Syn.click(element)
+                           jQuery(element).off('click', fn)
+                         }
+          }
+        // teardown
+        // teardown
+        , function() { }
+      )
+
+      add( 'element add / fire / remove'
+        // setup
+        , function () {
+            element = document.createElement('div')
+            fn = function () {}
+          }
+        // execute
+        , {
+              'bean':    function () {
+                           bean.add(element, 'foo', fn)
+                           bean.fire(element, 'foo')
+                           bean.remove(element, 'foo', fn)
+                         }
+            , 'newbean': function () {
+                           newbean.add(element, 'foo', fn)
+                           newbean.fire(element, 'foo')
+                           newbean.remove(element, 'foo', fn)
+                         }
+            , 'nw':      function () {
+                           NW.Event.listen(element, 'foo', fn)
+                           NW.Event.dispatch(element, 'foo')
+                           NW.Event.unlisten(element, 'foo', fn)
+                         }
+            , 'jquery':  function () {
+                           jQuery(element).on('foo', fn)
+                           jQuery(element).trigger('foo')
+                           jQuery(element).off('foo', fn)
+                         }
+          }
+        // teardown
+        , function() { }
+      )
+
+      add( 'object add / fire / remove'
+        // setup
+        , function () {
+            element = document.createElement('div')
+            obj = {}
+          }
+        // execute
+        , {
+              'bean':    function () {
+                           bean.add(obj, 'foo', fn)
+                           bean.fire(obj, 'foo')
+                           bean.remove(obj, 'foo', fn)
+                         }
+            , 'newbean': function () {
+                           newbean.add(obj, 'foo', fn)
+                           newbean.fire(obj, 'foo')
+                           newbean.remove(obj, 'foo', fn)
+                         }
+            , 'nw':      function () {
+                           NW.Event.subscribe(obj, 'foo', fn)
+                           NW.Event.publish(obj, 'foo')
+                           NW.Event.unsubscribe(obj, 'foo', fn)
+                         }
+            , 'jquery':  function () {
+                           jQuery(obj).on('foo', fn)
+                           jQuery(obj).trigger('foo')
+                           jQuery(obj).off('foo', fn)
+                         }
+          }
+        // teardown
+        , function() { }
+      )
+
+      suite.on( 'cycle', cycle)
+        .on( 'complete'
+            , function(e, benchmark) {
+                var item = document.createElement('h3')
+                item.innerHTML = 'benchmarking complete!'
+                document.body.appendChild(item)
+              }
+            )
+
+      function cycle(e, benchmark) {
+        if (benchmark.error) throw benchmark.error
+        var id = 'result_' + benchmark.name.replace(/\W/g, '_')
+          , tbody = document.getElementById('results')
+          , row = document.getElementById(id) || (function () {
+              var i, td, libid
+                , r = document.createElement('tr')
+              r.id = id
+              tbody.appendChild(r)
+              td = document.createElement('th')
+              td.innerHTML = benchmark.name
+              r.appendChild(td)
+              for (i = 0; i < libs.length; i++) {
+                td = document.createElement('td')
+                td.id = id + '_' + libs[i]
+                r.appendChild(td)
+              }
+              return r
+            })()
+          , cell = document.getElementById(id + '_' + benchmark.libid)
+        if (!cell) throw 'Configuration error, did not find libary id [' + benchmark.libid + '] in the table head'
+        cell.innerHTML = Benchmark.formatNumber(benchmark.hz.toFixed(0)) + ' ops/sec <span>\xb1' +
+          benchmark.stats.rme.toFixed(2) + '% (' + benchmark.stats.size + ' samp)</span>'
+      }
+
+      if (!/[?&]nojava=true(?:&|$)/.test(location.search)) {
+        document.write('<applet code="nano" archive="nano.jar"></applet>')
+      }
+
+      window.onload = function() {
+        suite.run({ 'async': true })
+      }
+
+    </script>
+  </body>
+</html>

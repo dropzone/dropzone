@@ -3,7 +3,9 @@
   "version": "0.1.6-dev",
   "description": "Handles drag and drop of files for you.",
   "keywords": [ "dragndrop", "ender" ],
-  "main": "./lib/dropzone.js",
+  "main": [
+    "./lib/dropzone.js"
+  ],
   "maintainers": [
     {
       "name": "Matias Meno",
@@ -34,6 +36,10 @@
     } 
   ],
   "dependencies": {
+    "qwery": "3.x",
+    "domready": "0.x",
+    "bean": "0.x",
+    "bonzo": "1.x"
   },
   "ender": "noop"
 }

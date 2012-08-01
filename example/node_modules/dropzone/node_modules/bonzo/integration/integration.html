@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html lang="en-us">
+  <head>
+    <title>Bonzo/Ender Integration Tests</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="../node_modules/sink-test/src/sink.css" type="text/css">
+    <style>
+      #fixtures {
+        position: absolute;
+        top: -9999em;
+        width: 1000px; /*for ie<=7*/
+      }
+    </style>
+
+    <script src="../node_modules/sink-test/src/sink.js"></script>
+
+    <!-- ender -b qwery scriptjs domready -->
+    <script src="ender.js"></script>
+    <script src="../src/bonzo.js"></script>
+    <script src="../src/ender.js"></script>
+  </head>
+  <body>
+    <div id="fixtures">
+
+      <div id="color-test">
+        <ul>
+          <li id="first"><span>one</span></li>
+          <li id="second">two</li>
+        </ul>
+        <ul>
+          <li id="last">three</li>
+        </ul>
+      </div>
+
+      <ul id="append-test-1">
+        <li></li>
+        <li></li>
+      </ul>
+
+      <div id="input-test">
+        <input type="text" value="" id="input-fixture"/>
+      </div>
+
+      <div id="class-test">
+        <div class="robustr">
+          <div class="robustr">
+            <div id="get-me"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="transfer-test">
+        <div class="hello">hello</div>
+        <div class="hello">world</div>
+
+        <div id="hello-world"></div>
+      </div>
+    </div>
+
+    <h1>Bonzo Integration Tests</h1>
+    <ol id="tests"></ol>
+
+    <script src="integration.js"></script>
+  </body>
+</html>
