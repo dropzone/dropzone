@@ -20,7 +20,7 @@ noOp = ->
 
 class Dropzone
 
-  version: "0.2.0"
+  version: "0.2.1-dev"
 
   ###
   This is a list of all available events you can register on a dropzone object.
