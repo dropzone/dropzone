@@ -20,7 +20,7 @@ noOp = ->
 
 class Dropzone
 
-  version: "0.2.1"
+  version: "0.2.2"
 
   ###
   This is a list of all available events you can register on a dropzone object.
@@ -319,8 +319,9 @@ class Dropzone
         @errorProcessing file, "Server responded with #{xhr.status} code."
       else
         bean.fire @, "uploadprogress", [ file, 100 ]
-
-        @finished file, e
+        response = xhr.responseText
+        if xhr.getResponseHeader("content-type") == "application/json" then response = JSON.parse response
+        @finished file, response, e
 
     xhr.onerror = =>
       @errorProcessing file, xhr.responseText
@@ -339,9 +340,9 @@ class Dropzone
 
   # Called internally when processing is finished.
   # Individual callbacks have to be called in the appropriate sections.
-  finished: (file) ->
+  finished: (file, responseText, e) ->
     @files.processing = without(@files.processing, file)
-    bean.fire @, "finished", file
+    bean.fire @, "finished", [ file, responseText, e ]
     @processQueue()
 
 

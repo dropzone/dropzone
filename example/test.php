@@ -1,4 +1,5 @@
 <?php
 
-print_r($_POST);
-print_r($_FILES);
+header("Content-type: application/json");
+
+?>{"id":1234}
