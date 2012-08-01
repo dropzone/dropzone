@@ -142,8 +142,8 @@ class Dropzone
     @element = $ element
 
     throw new Error "Dropzone already attached." if @element.data("dropzone")
-
     @element.data "dropzone", @
+
 
     extend = (target, objects...) ->
       for object in objects
@@ -171,6 +171,8 @@ class Dropzone
     @URL = window.URL ? window.webkitURL
     @setupEventListeners()
 
+    if @element.find(".message").length == 0
+      @element.append $ """<div class="message">Drop files here to upload</div>"""
 
   # Returns a form that can be used as fallback if the browser does not support DragnDrop
   getFallbackForm: ->

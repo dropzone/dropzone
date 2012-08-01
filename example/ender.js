@@ -2704,7 +2704,10 @@
         this.files.queue = [];
         this.files.processing = [];
         this.URL = (_ref = window.URL) != null ? _ref : window.webkitURL;
-        return this.setupEventListeners();
+        this.setupEventListeners();
+        if (this.element.find(".message").length === 0) {
+          return this.element.append($("<div class=\"message\">Drop files here to upload</div>"));
+        }
       };
   
       Dropzone.prototype.getFallbackForm = function() {

@@ -12,6 +12,36 @@ This means that a user can drag and drop a file onto it, and the file gets uploa
 - Progress updates
 - Support for large files
 
+## Usage
+
+Implicit creation:
+
+    <form action="/target" class="dropzone"></form>
+
+That's it. Really!
+
+Dropzone will automatically attach to it, and handle file drops.
+
+Want more control? You can instantiate dropzone manually like this:
+
+    $("div#my-zone").dropzone({ ...configuration... });
+
+> Note that dropzones don't have to be forms. But if you choose another element you have to pass the `url` parameter in the options.
+
+For configuration options please look at the [source line 52](blob/master/src/dropzone.coffee#L52).
+
+
+
+### Register for events
+
+I use [bean](https://github.com/fat/bean) to manage events. If you want to register to some event you can do so on the `dropzone` object itself:
+
+    var myDropzone = $("div#my-zone").dropzone({ ...configuration... });
+    bean.add(myDropzone, "error", function(file, message) { alert(message); });
+
+For a list of all events, please look at the [source line 25](blob/master/src/dropzone.coffee#L25).
+
+
 ## Browser support
 
 - Chrome 7+

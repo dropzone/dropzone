@@ -148,9 +148,7 @@
 
   <h1>New file</h1>
   <div class="content">
-    <form action="./test.php" class="dropzone">
-      <div class="message">Drop files here to upload</div>
-    </form>
+    <form action="./test.php" class="dropzone"></form>
   </div>
 
 </body>
