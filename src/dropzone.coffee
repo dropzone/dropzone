@@ -20,7 +20,7 @@ noOp = ->
 
 class Dropzone
 
-  version: "0.2.3"
+  version: "0.2.4"
 
   ###
   This is a list of all available events you can register on a dropzone object.
@@ -314,9 +314,12 @@ class Dropzone
 
     xhr.open "POST", @options.url, true
 
+    handleError = =>
+      @errorProcessing file, xhr.responseText || "Server responded with #{xhr.status} code."
+
     xhr.onload = (e) =>
       if xhr.status isnt 200
-        @errorProcessing file, "Server responded with #{xhr.status} code."
+        handleError()
       else
         bean.fire @, "uploadprogress", [ file, 100 ]
         response = xhr.responseText
@@ -324,7 +327,7 @@ class Dropzone
         @finished file, response, e
 
     xhr.onerror = =>
-      @errorProcessing file, xhr.responseText
+      handleError()
 
     # Some browsers do not have the .upload property
     progressObj = xhr.upload ? xhr

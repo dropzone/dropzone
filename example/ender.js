@@ -2590,7 +2590,7 @@
     Dropzone = (function() {
       var defaultOptions;
   
-      Dropzone.prototype.version = "0.2.3-dev";
+      Dropzone.prototype.version = "0.2.4-dev";
   
       /*
         This is a list of all available events you can register on a dropzone object.
@@ -2854,17 +2854,20 @@
       };
   
       Dropzone.prototype.uploadFile = function(file) {
-        var formData, progressObj, xhr, _ref,
+        var formData, handleError, progressObj, xhr, _ref,
           _this = this;
         xhr = new XMLHttpRequest();
         formData = new FormData();
         formData.append(this.options.paramName, file);
         formData.append("test", "HI");
         xhr.open("POST", this.options.url, true);
+        handleError = function() {
+          return _this.errorProcessing(file, xhr.responseText || ("Server responded with " + xhr.status + " code."));
+        };
         xhr.onload = function(e) {
           var response;
           if (xhr.status !== 200) {
-            return _this.errorProcessing(file, "Server responded with " + xhr.status + " code.");
+            return handleError();
           } else {
             bean.fire(_this, "uploadprogress", [file, 100]);
             response = xhr.responseText;
@@ -2875,7 +2878,7 @@
           }
         };
         xhr.onerror = function() {
-          return _this.errorProcessing(file, xhr.responseText);
+          return handleError();
         };
         progressObj = (_ref = xhr.upload) != null ? _ref : xhr;
         progressObj.onprogress = function(e) {
