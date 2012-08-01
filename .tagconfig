@@ -1,13 +1,25 @@
 {
   "files": [
     {
-      "name": "dropzone.js",
+      "name": "src/dropzone.coffee",
       "regexs": [
-        "Dropzone\\.prototype\\.version = '###'"
+        "version: \"###\""
       ]
     },
     {
-      "name": "Readme.md",
+      "name": "lib/dropzone.js",
+      "regexs": [
+        "version = \"###\""
+      ]
+    },
+    {
+      "name": "package.json",
+      "regexs": [
+        "\"version\": \"###\""
+      ]
+    },
+    {
+      "name": "readme.md",
       "regexs": [
         "Version ###"
       ]
