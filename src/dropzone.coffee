@@ -312,7 +312,7 @@ class Dropzone
 
     if @elementTagName = "FORM"
       # Take care of other input elements
-      for inputElement in $ "input, textarea, select, button"
+      for inputElement in @element.find "input, textarea, select, button"
         input = $ inputElement
         inputName = input.attr("name")
 

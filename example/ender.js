@@ -1,7 +1,7 @@
 /*!
   * =============================================================
   * Ender: open module JavaScript framework (https://ender.no.de)
-  * Build: ender build ..
+  * Build: ender build bean bonzo domready qwery dropzone ..
   * =============================================================
   */
 
@@ -2868,7 +2868,7 @@
         formData = new FormData();
         formData.append(this.options.paramName, file);
         if (this.elementTagName = "FORM") {
-          _ref = $("input, textarea, select, button");
+          _ref = this.element.find("input, textarea, select, button");
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             inputElement = _ref[_i];
             input = $(inputElement);

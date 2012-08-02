@@ -147,7 +147,7 @@
       var bean = require("bean"),
           dropzone = $('.dropzone').data("dropzone");
 
-      bean.add(dropzone, "finished", function(file, response) { console.log(response); });
+      bean.add(dropzone, "finished", function(file, response) { $("#response").append($("<div>Response: "+response+"</div>")); });
     });
   </script>
 
@@ -158,13 +158,15 @@
   <h1>New file</h1>
   <div class="content">
     <form action="./test.php" class="dropzone">
-      <input type="text" name="hi" />
+      <input type="text" name="hi" value="Test input" />
       <input type="checkbox" name="checky" value="checkval" />
       <select name="sel">
         <option value=""></option>
-        <option value="val1">VAL1</option>
+        <option value="val1" selected="selected">VAL1</option>
+        <option value="val1">VAL2</option>
       </select>
     </form>
   </div>
+  <div id="response"></div>
 
 </body>
