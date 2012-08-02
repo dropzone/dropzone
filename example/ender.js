@@ -786,7 +786,7 @@
       , html = doc.documentElement
       , parentNode = 'parentNode'
       , query = null // used for setting a selector engine host
-      , specialAttributes = /^(checked|value|selected)$/i
+      , specialAttributes = /^(checked|value|selected|disabled)$/i
       , specialTags = /^(select|fieldset|table|tbody|tfoot|td|tr|colgroup)$/i // tags that we have trouble inserting *into*
       , table = ['<table>', '</table>', 1]
       , td = ['<table><tbody><tr>', '</tr></tbody></table>', 3]
@@ -802,7 +802,7 @@
           , option: option, optgroup: option
           , script: noscope, style: noscope, link: noscope, param: noscope, base: noscope
         }
-      , stateAttributes = /^(checked|selected)$/
+      , stateAttributes = /^(checked|selected|disabled)$/
       , ie = /msie/i.test(navigator.userAgent)
       , hasClass, addClass, removeClass
       , uidMap = {}
@@ -1391,8 +1391,9 @@
          * @return {Bonzo}
          */
       , show: function (opt_type) {
+          opt_type = typeof opt_type == 'string' ? opt_type : ''
           return this.each(function (el) {
-            el.style.display = opt_type || ''
+            el.style.display = opt_type
           })
         }
   
@@ -1413,11 +1414,12 @@
          * @return {Bonzo}
          */
       , toggle: function (opt_callback, opt_type) {
-          this.each(function (el) {
-            el.style.display = (el.offsetWidth || el.offsetHeight) ? 'none' : opt_type || ''
+          opt_type = typeof opt_type == 'string' ? opt_type : '';
+          typeof opt_callback != 'function' && (opt_callback = null)
+          return this.each(function (el) {
+            el.style.display = (el.offsetWidth || el.offsetHeight) ? 'none' : opt_type;
+            opt_callback && opt_callback.call(el)
           })
-          if (opt_callback) opt_callback()
-          return this
         }
   
   
@@ -2590,7 +2592,7 @@
     Dropzone = (function() {
       var defaultOptions;
   
-      Dropzone.prototype.version = "0.2.5-dev";
+      Dropzone.prototype.version = "0.2.6-dev";
   
       /*
         This is a list of all available events you can register on a dropzone object.
@@ -2674,10 +2676,14 @@
       function Dropzone(element, options) {
         var extend;
         this.element = $(element);
+        if (this.element.length !== 1) {
+          throw new Error("You can only instantiate dropzone on a single element.");
+        }
         if (this.element.data("dropzone")) {
           throw new Error("Dropzone already attached.");
         }
         this.element.data("dropzone", this);
+        this.elementTagName = this.element.get(0).tagName;
         extend = function() {
           var key, object, objects, target, val, _i, _len;
           target = arguments[0], objects = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
@@ -2856,12 +2862,22 @@
       };
   
       Dropzone.prototype.uploadFile = function(file) {
-        var formData, handleError, progressObj, xhr, _ref,
+        var formData, handleError, input, inputElement, inputName, progressObj, xhr, _i, _len, _ref, _ref1,
           _this = this;
         xhr = new XMLHttpRequest();
         formData = new FormData();
         formData.append(this.options.paramName, file);
-        formData.append("test", "HI");
+        if (this.elementTagName = "FORM") {
+          _ref = $("input, textarea, select, button");
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            inputElement = _ref[_i];
+            input = $(inputElement);
+            inputName = input.attr("name");
+            if (!input.attr("type") || input.attr("type").toLowerCase() !== "checkbox" || inputElement.checked) {
+              formData.append(input.attr("name"), input.val());
+            }
+          }
+        }
         xhr.open("POST", this.options.url, true);
         handleError = function() {
           return _this.errorProcessing(file, xhr.responseText || ("Server responded with " + xhr.status + " code."));
@@ -2882,7 +2898,7 @@
         xhr.onerror = function() {
           return handleError();
         };
-        progressObj = (_ref = xhr.upload) != null ? _ref : xhr;
+        progressObj = (_ref1 = xhr.upload) != null ? _ref1 : xhr;
         progressObj.onprogress = function(e) {
           return bean.fire(_this, "uploadprogress", [file, Math.max(0, Math.min(100, (e.loaded / e.total) * 100))]);
         };

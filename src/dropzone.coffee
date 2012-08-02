@@ -143,9 +143,12 @@ class Dropzone
   constructor: (element, options) ->
     @element = $ element
 
+    throw new Error "You can only instantiate dropzone on a single element." if @element.length != 1
+
     throw new Error "Dropzone already attached." if @element.data("dropzone")
     @element.data "dropzone", @
 
+    @elementTagName = @element.get(0).tagName
 
     extend = (target, objects...) ->
       for object in objects
@@ -306,7 +309,15 @@ class Dropzone
 
     formData = new FormData()
     formData.append @options.paramName, file
-    formData.append "test", "HI"
+
+    if @elementTagName = "FORM"
+      # Take care of other input elements
+      for inputElement in $ "input, textarea, select, button"
+        input = $ inputElement
+        inputName = input.attr("name")
+
+        if !input.attr("type") or input.attr("type").toLowerCase() != "checkbox" or inputElement.checked
+          formData.append input.attr("name"), input.val()
 
     xhr.open "POST", @options.url, true
 

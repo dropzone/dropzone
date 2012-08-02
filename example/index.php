@@ -157,7 +157,14 @@
 
   <h1>New file</h1>
   <div class="content">
-    <form action="./test.php" class="dropzone"></form>
+    <form action="./test.php" class="dropzone">
+      <input type="text" name="hi" />
+      <input type="checkbox" name="checky" value="checkval" />
+      <select name="sel">
+        <option value=""></option>
+        <option value="val1">VAL1</option>
+      </select>
+    </form>
   </div>
 
 </body>
