@@ -1,0 +1,61 @@
+@import "nib"
+
+
+@font-face
+  font-family 'League Gothic'
+  font-style normal
+  font-weight 500
+  src local('League Gothic'), url("../fonts/league-gothic.ttf") format('ttf')
+
+
+*
+  box-sizing border-box
+
+
+body
+  font-family 'Source Sans Pro', arial, sans-serif
+  background url("../images/background.png") repeat 0 0
+  font-size 14px
+  font-weight 300
+  color black
+
+a
+  color black
+  text-decoration underline
+
+h1
+h2
+h3
+  font-family "League Gothic"
+  font-weight 500
+  color black
+
+
+h1
+  font-size 60px
+h2
+  font-size 48px
+
+
+
+code
+  color #005590
+
+
+
+#container
+  width 600px
+  margin 30px auto
+  p
+    text-align justify
+
+  #dropzone-container
+    margin 60px 0
+    box-shadow 0 0 50px rgba(0, 0, 0, 0.2)
+    padding 4px
+    border-radius 5px
+    #dropzone
+      min-height 360px
+      border 1px solid rgba(0, 0, 0, 0.03)
+      border-radius 4px
+      background rgba(0, 0, 0, 0.03)

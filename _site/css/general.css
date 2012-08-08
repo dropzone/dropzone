@@ -1,0 +1,60 @@
+@font-face {
+  font-family: 'League Gothic';
+  font-style: normal;
+  font-weight: 500;
+  src: local('League Gothic'), url("../fonts/league-gothic.ttf") format('ttf');
+}
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Source Sans Pro', arial, sans-serif;
+  background: url("../images/background.png") repeat 0 0;
+  font-size: 14px;
+  font-weight: 300;
+  color: #000;
+}
+a {
+  color: #000;
+  text-decoration: underline;
+}
+h1,
+h2,
+h3 {
+  font-family: "League Gothic";
+  font-weight: 500;
+  color: #000;
+}
+h1 {
+  font-size: 60px;
+}
+h2 {
+  font-size: 48px;
+}
+code {
+  color: #005590;
+}
+#container {
+  width: 600px;
+  margin: 30px auto;
+}
+#container p {
+  text-align: justify;
+}
+#container #dropzone-container {
+  margin: 60px 0;
+  -webkit-box-shadow: 0 0 50px rgba(0,0,0,0.2);
+  box-shadow: 0 0 50px rgba(0,0,0,0.2);
+  padding: 4px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+#container #dropzone-container #dropzone {
+  min-height: 360px;
+  border: 1px solid rgba(0,0,0,0.03);
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  background: rgba(0,0,0,0.03);
+}
