@@ -73,7 +73,9 @@ class Dropzone
 
 
     # Called when the browser does not support drag and drop
-    fallback: -> @element.find(".message").html "Your browser does not support drag'n'drop file uploads."
+    fallback: ->
+      @element.addClass "browser-not-supported"
+      @element.find(".message span").html "Your browser does not support drag'n'drop file uploads."
     
     # Those are self explanatory and simply concern the DragnDrop.
     drop: (e) ->
@@ -106,7 +108,7 @@ class Dropzone
     # Called whenever an error occures
     # Receives `file` and `message`
     error: (file, message) ->
-      file.previewTemplate.addClass "process-error"
+      file.previewTemplate.addClass "error"
       file.previewTemplate.find(".error-message span").html message
     
     
@@ -124,7 +126,7 @@ class Dropzone
     # When the complete upload is finished
     # Receives `file`
     finished: (file) ->
-      file.previewTemplate.addClass "finished"
+      file.previewTemplate.addClass "success"
 
 
     # This template will be chosen when a new file is dropped.
@@ -132,8 +134,8 @@ class Dropzone
                      <div class="preview file-preview">
                        <div class="details"></div>
                        <div class="progress"><span class="load"></span><span class="upload"></span></div>
-                       <div class="finished-success"><span>✔</span></div>
-                       <div class="finished-error"><span>✘</span></div>
+                       <div class="success-mark"><span>✔</span></div>
+                       <div class="error-mark"><span>✘</span></div>
                        <div class="error-message"><span></span></div>
                      </div>
                      """
@@ -177,7 +179,7 @@ class Dropzone
     @setupEventListeners()
 
     if @element.find(".message").length == 0
-      @element.append $ """<div class="message">Drop files here to upload</div>"""
+      @element.append $ """<div class="message"><span>Drop files here to upload</span></div>"""
 
   # Returns a form that can be used as fallback if the browser does not support DragnDrop
   getFallbackForm: ->

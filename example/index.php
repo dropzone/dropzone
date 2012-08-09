@@ -29,7 +29,7 @@
       background: rgba(255,255,170,0.8);
     }
     .dropzone .preview.processing,
-    .dropzone .preview.finished {
+    .dropzone .preview.success {
       opacity: 1;
     }
     .dropzone .preview .details {
@@ -103,8 +103,8 @@
       background-image: -o-linear-gradient(top, #589a13,#78ba33 50%,#88ca43 50%,#88ca43);
       background-image: linear-gradient(top, #589a13,#78ba33 50%,#88ca43 50%,#88ca43);
     }
-    .dropzone .preview .finished-success,
-    .dropzone .preview .finished-error {
+    .dropzone .preview .success-mark,
+    .dropzone .preview .error-mark {
       display: none;
       font-size: 40px;
       line-height: 50px;
@@ -118,16 +118,16 @@
       left: 50%;
       margin-left: -25px;
     }
-    .dropzone .preview .finished-success {
+    .dropzone .preview .success-mark {
       background: rgba(120,186,51,0.8);
     }
-    .dropzone .preview .finished-error {
+    .dropzone .preview .error-mark {
       background: rgba(252,32,13,0.8);
     }
-    .dropzone .preview.finished .finished-success {
+    .dropzone .preview.success .success-mark {
       display: block;
     }
-    .dropzone .preview.process-error .finished-error {
+    .dropzone .preview.error .error-mark {
       display: block;
     }
     .dropzone .preview .error-message {
