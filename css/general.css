@@ -157,6 +157,11 @@ code {
   border-radius: 3px;
 }
 #dropzone > .dropzone .preview .progress .upload {
+  -webkit-transition: width 0.3s ease-in-out;
+  -moz-transition: width 0.3s ease-in-out;
+  -o-transition: width 0.3s ease-in-out;
+  -ms-transition: width 0.3s ease-in-out;
+  transition: width 0.3s ease-in-out;
   -webkit-border-radius: 3px;
   border-radius: 3px;
   position: absolute;
