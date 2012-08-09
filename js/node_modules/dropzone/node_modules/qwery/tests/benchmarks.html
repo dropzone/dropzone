@@ -1,0 +1,220 @@
+<!DOCTYPE HTML>
+<html lang="en-us">
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>Qwery Benchmarks</title>
+    <style type="text/css">
+      body {
+        width: 700px;
+        margin: 0 auto;
+        font: 300 16px 'helvetica neue', helvetica, arial;
+        text-shadow: 0 2px 2px #CCC;
+      }
+      ul,li {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      li {
+        font-size: 16px;
+      }
+      h1, h2 {
+        margin: 0;
+        font-weight: normal;
+        font-size: 30px;
+      }
+      h2 {
+        font-size: 20px;
+      }
+      .result {
+        background-color: lightGreen;
+        margin-top: 15px;
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 0 5px #ccc;
+      }
+      .result div {
+        padding: 7px;
+        border-radius: 5px;
+        background-color: #BDFCC9;
+      }
+      .win {
+        color: rgb(0, 125, 0);
+        font-weight: bold;
+      }
+    </style>
+    <script src="../vendor/nw.js"></script>
+    <script src="../vendor/sizzle.js"></script>
+    <script src="../src/qwery.js"></script>
+    <script type="text/javascript">
+      var qwerynew = qwery
+    </script>
+    <script src="../qwery.js"></script>
+    <script type="text/javascript">
+      var qweryold = qwery
+    </script>
+  </head>
+  <body>
+    <h1>Selector Benchmarks</h1>
+    <div id="results"></div>
+    <div foo="bar"></div>
+    <div class="a"></div>
+    <div id="boosh">
+      <div class="a b">
+        <div class="d e" test="fg" id="booshTest">
+          <div class="a b"></div>
+        </div>
+        <em test="f g"></em>
+        <span class="h i a"></span>
+      </div>
+    </div>
+    <div id="attr-test1" -data-attr></div>
+    <div id="attr-test2" -data-attr></div>
+    <div id="attr-test3" class="found you" -data-attr title="whatup duders">
+      <span></span>
+      <em></em>
+    </div>
+    <script type="text/javascript">
+       var tests = [
+
+              { name: 'Mixed bag', tests: [
+                  'div .a'
+                , 'div'
+                , 'div#attr-test3.found.you[title="whatup duders"]'
+                , '#boosh'
+                , '.a'
+                , 'div.a'
+                , '#boosh .a'
+              ]}
+
+            , { name: 'Simple tags and classes', tests: [
+                  'div .a'
+                , 'div'
+                , '.a'
+                , 'div.a'
+              ]}
+
+            , { name: 'Simple IDs', tests: [
+                  '#boosh'
+                , '#boosh .a'
+                , 'div#boosh'
+                , 'div#boosh .h'
+              ]}
+
+            , { name: 'Attributes', tests: [
+                  'div#attr-test3.found.you[title="whatup duders"]'
+                , '[test]'
+                , 'div[class="d e"]'
+                , 'div[title="whatup duders"] span'
+              ]}
+
+            , { name: 'Groups', tests: [
+                  'div .a, div, #boosh, .a, div.a, #boosh a'
+                , '[test], div[class="d e"], div[title="whatup duders"] span'
+                , '#boosh .h, .a>.e>.b,#booshTest>.b'
+              ]}
+
+            , { name: 'Relationships', tests: [
+                  '.b > .e .a'
+                , 'div > .a > .e ~ span'
+              ]}
+
+          ]
+
+
+       var libs = [
+              { fn: Sizzle, id: 'Sizzle' }
+            , { fn: NW.Dom.select, id: 'NW' }
+            , { fn: qwerynew, id: 'Qwery (new)' }
+            , { fn: qweryold, id: 'Qwery (old)' }
+          ]
+
+      var libidx = 0, testidx = 0, iterations
+
+      function calibrate() {
+        var start = +new Date
+        for (var i = 0; i < libs.length; i++) {
+          var lstart = +new Date
+          for (var j = 0; j < 50; j++) {
+            for (var k = 0; k < tests[testidx].tests.length; k++) {
+              libs[i].fn(tests[testidx].tests[k]);
+            }
+          }
+          libs[i].times[testidx] = +new Date - lstart
+        }
+        iterations = Math.round(1 / (+new Date - start) * 50000)
+        iterations = Math.min(10000, Math.max(10, iterations))
+      }
+
+      function setup() {
+        var r = document.createElement('div'), html
+        r.setAttribute('id', 'result_' + testidx)
+        r.className = 'result'
+        html = '<div><h2>Benchmark: <i>' + tests[testidx].name + '</i> (' + iterations + ' iterations)</h2><ul>'
+        for (var i = 0; i < libs.length; i++) {
+          html += '<li>' + libs[i].id + ': <span id="result_' + testidx + '_' + i + '"></span></li>'
+        }
+        html += '</ul></div>'
+        r.innerHTML = html
+        document.getElementById('results').appendChild(r)
+      }
+
+      function upd(t, l, txt) {
+        document.getElementById('result_' + t + '_' + l).innerHTML = txt
+      }
+
+      function win(t, l) {
+        var el = document.getElementById('result_' + t + '_' + l).parentNode
+        el.className = 'win'
+        el.innerHTML = '&raquo; ' + el.innerHTML + ' &laquo;'
+      }
+
+      function markWinner() {
+        var j, winner = -1
+        for (j = 0; j < libs.length; j++) {
+          if (winner === -1 || libs[j].times[testidx] < libs[winner].times[testidx])
+            winner = j
+        }
+        win(testidx, winner)
+      }
+
+      function runner() {
+        var i = 0, j, start = +new Date
+
+        if (!testidx && !libidx) {
+          for (j = 0; j < libs.length; j++) libs[j].times = []
+        }
+        if (libidx === 0) {
+          calibrate()
+          setup()
+        }
+
+        while (i++ < iterations) {
+          for (j = 0; j < tests[testidx].tests.length; j++) {
+            var r = libs[libidx].fn(tests[testidx].tests[j])
+            if (!r || r.length == 0) {
+              alert('something went wrong with ' + libs[libidx].id + ' on test ' + tests[testidx].tests[j])
+              i = iterations
+              break
+            }
+          }
+        }
+
+        libs[libidx].times[testidx] += +new Date - start
+        upd(testidx, libidx, libs[libidx].times[testidx] + ' ms')
+
+        if (!libs[++libidx]) {
+          markWinner()
+          libidx = 0
+          testidx++
+        }
+
+        if (tests[testidx])
+          setTimeout(runner, 0)
+      }
+
+      runner()
+
+    </script>
+  </body>
+</html>

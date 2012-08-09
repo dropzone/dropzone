@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html lang="en-us">
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>Bean tests</title>
+    <link rel="stylesheet" href="../support/sink/src/sink.css" type="text/css">
+    <script src="../support/sink/src/sink.js"></script>
+    <script src="../support/syn/synthetic.js"></script>
+    <script src="../support/syn/mouse.js"></script>
+    <script src="../support/syn/browsers.js"></script>
+    <script src="../support/syn/key.js"></script>
+    <script src="../support/qwery/qwery.js"></script>
+    <script type="text/javascript">
+      // test for noConflict()
+      function bean() {
+        return 'success'
+      }
+    </script>
+    <script src="../src/bean.js"></script>
+    <style>
+     #fixtures {
+       position:absolute;
+       top: -999em;
+     }
+    </style>
+  </head>
+  <body>
+    <h1>Bean Tests</h1>
+     <ol id="tests"></ol>
+     <script src="tests.js"></script>
+     <div id="fixtures">
+       <input id="input" type="text" />
+       <input id="input2" type="text" />
+       <div id="foo">
+         <div id="bar" class="bar">
+           <div id="bang" class="bang"></div>
+         </div>
+         <div id="baz" class="baz"></div>
+       </div>
+       <div id="stopper">
+         <input type="text" id="txt" value="">
+       </div>
+     </div>
+  </body>
+</html>

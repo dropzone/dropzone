@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html lang="en-us">
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>ender integration</title>
+    <script src="ender.js"></script>
+    <script type="text/javascript" id="scr">
+      $.domReady(function () {
+        $('#test').delegate('#clickme', 'click', function (e) {
+          alert('delegated')
+        })
+      })
+    </script>
+    <script type="text/javascript">
+      $.domReady(function () { $('code').text($('#scr')[0].innerHTML) })
+    </script>
+  </head>
+  <body>
+    <p>this is an integration test page for the Ender bridge</p>
+    <fieldset id="test" style="padding:20px;margin:20px;border:solid 1px red;">
+      <legend>#test</legend>
+      <p>clicking me shouldn't do anything</p>
+      <p id="clickme" style="background:#ff5;">#clickme, delegated event</p>
+      <p>clicking me shouldn't do anything</p>
+    </fieldset>
+    <pre><code></code></pre>
+  </body>
+</html>

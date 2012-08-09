@@ -1,0 +1,36 @@
+{
+  "JAVASCRIPT": {
+    "DIST_DIR": "./"
+    , "qwery": [
+        "./src/copyright.js"
+      , "./src/qwery.js"
+    ]
+    , "mobile/qwery-mobile": [
+        "./src/copyright.js"
+      , "./mobile/src/mobile.js"
+    ]
+    , "pseudos/qwery-pseudos": [
+        "./src/copyright.js"
+      , "./pseudos/src/pseudos.js"
+    ]
+  }
+  , "JSHINT_OPTS": {
+      "boss": true
+    , "forin": false
+    , "curly": false
+    , "debug": false
+    , "devel": false
+    , "evil": false
+    , "regexp": false
+    , "undef": false
+    , "sub": true
+    , "white": false
+    , "indent": 2
+    , "whitespace": true
+    , "asi": true
+    , "laxbreak": true
+    , "eqeqeq": false
+    , "eqnull": true
+    , "laxcomma": true
+  }
+}

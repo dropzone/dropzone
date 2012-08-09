@@ -2,7 +2,7 @@
   font-family: 'League Gothic';
   font-style: normal;
   font-weight: 500;
-  src: local('League Gothic'), url("../fonts/league-gothic.ttf") format('ttf');
+  src: local('League Gothic'), url("../fonts/league-gothic.woff") format('woff');
 }
 * {
   -webkit-box-sizing: border-box;
@@ -43,7 +43,7 @@ code {
 #container p {
   text-align: justify;
 }
-#container #dropzone-container {
+#dropzone {
   margin: 60px 0;
   -webkit-box-shadow: 0 0 50px rgba(0,0,0,0.2);
   box-shadow: 0 0 50px rgba(0,0,0,0.2);
@@ -51,10 +51,81 @@ code {
   -webkit-border-radius: 5px;
   border-radius: 5px;
 }
-#container #dropzone-container #dropzone {
+#dropzone > .dropzone {
+  position: relative;
   min-height: 360px;
   border: 1px solid rgba(0,0,0,0.03);
   -webkit-border-radius: 4px;
   border-radius: 4px;
   background: rgba(0,0,0,0.03);
+}
+#dropzone > .dropzone.drag-hover {
+  border-color: rgba(0,0,0,0.15);
+  background: rgba(0,0,0,0.04);
+}
+#dropzone > .dropzone.drag-hover .message {
+  opacity: 0.15;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=15);
+  filter: alpha(opacity=15);
+}
+#dropzone > .dropzone .message {
+  opacity: 1;
+  -ms-filter: none;
+  filter: none;
+  -webkit-transition: opacity 0.3s ease-in-out;
+  -moz-transition: opacity 0.3s ease-in-out;
+  -o-transition: opacity 0.3s ease-in-out;
+  -ms-transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
+  background: url("../images/drop-files.png") no-repeat 0 0;
+  position: absolute;
+  width: 168px;
+  height: 157px;
+  margin-left: -84px;
+  margin-top: -78.5px;
+  top: 50%;
+  left: 50%;
+}
+#dropzone > .dropzone .message span {
+  display: none;
+}
+#dropzone > .dropzone .preview {
+  width: 100px;
+  height: 136px;
+  display: inline-block;
+  margin: 35px;
+  position: relative;
+  background: rgba(0,0,0,0.1);
+}
+#dropzone > .dropzone .preview .details {
+  width: 100px;
+  height: 100px;
+}
+#dropzone > .dropzone .preview.file-preview .details {
+  background: url("../images/file.png") no-repeat 8px 0;
+}
+#dropzone > .dropzone .preview.success .success-mark {
+  display: block;
+}
+#dropzone > .dropzone .preview.error .error-mark {
+  display: block;
+}
+#dropzone > .dropzone .preview .error-mark,
+#dropzone > .dropzone .preview .success-mark {
+  display: none;
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  top: -10px;
+  left: -2px;
+}
+#dropzone > .dropzone .preview .error-mark span,
+#dropzone > .dropzone .preview .success-mark span {
+  display: none;
+}
+#dropzone > .dropzone .preview .error-mark {
+  background: url("../images/error.png") no-repeat 0 0;
+}
+#dropzone > .dropzone .preview .success-mark {
+  background: url("../images/success.png") no-repeat 0 0;
 }

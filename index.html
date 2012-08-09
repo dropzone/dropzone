@@ -1,9 +1,14 @@
 <!doctype html>
 <html>
 <head>
+  <title>Dropzone.js</title>
   <link rel="stylesheet" href="css/general.css" />
   <meta charset="utf-8" />
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic' rel='stylesheet' type='text/css'>
+  <script type="text/javascript" src="js/ender.min.js"></script>
+  <script type="text/javascript">
+    
+  </script>
 </head>
 <body>
   <div id="container">
@@ -13,7 +18,25 @@
       dropzone.js is an open source library that provides drag’n’drop file uploads by simply including a java-script file. It views previews of images and you can register to different events to control how and which files are uploaded.
     </p>
 
-    <div id="dropzone-container"><div id="dropzone"></div></div>
+    <div id="dropzone"><div class="dropzone">
+
+       <div class="preview file-preview success">
+         <div class="details"></div>
+         <div class="progress"><span class="load"></span><span class="upload"></span></div>
+         <div class="success-mark"><span>✔</span></div>
+         <div class="error-mark"><span>✘</span></div>
+         <div class="error-message"><span></span></div>
+       </div>
+
+       <div class="preview file-preview error">
+         <div class="details"></div>
+         <div class="progress"><span class="load"></span><span class="upload"></span></div>
+         <div class="success-mark"><span>✔</span></div>
+         <div class="error-mark"><span>✘</span></div>
+         <div class="error-message"><span></span></div>
+       </div>
+
+    </div></div>
 
     <h2>installation</h2>
 
