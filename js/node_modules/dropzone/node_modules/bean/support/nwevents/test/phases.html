@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" debug="true">
+<head>
+<title>NWEvents Event Manager - Capturing/Bubbling Phases TEST</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<style type="text/css">
+body { font: normal 1em sans-serif; }
+textarea { font: bold 13px monospace; color: black; }
+#header { font: bold 13px monospace; color: black; }
+</style>
+
+<script type="text/javascript" src="../src/nwevents.js"></script>
+
+<!-- This is the test setup, registering the listeners -->
+<script type="text/javascript">
+
+// window load, unload and events
+var load=new Array('load', 'unload');
+
+// opera fires the onload event on the document not the window
+NW.Event.appendListener(window.opera ? document : window, load[0], boot, false);
+NW.Event.appendListener(window, load[1], stop, false);
+
+function boot(e) { NW.Event.removeListener(this, e.type, boot, false); log.call(this, e); testBoot(); }
+function stop(e) { NW.Event.removeListener(this, e.type, stop, false); log.call(this, e); testStop(); }
+
+var target = null,
+	targets = {
+		focus_on_input: { type: 'focus', element: 'form_field' },
+		change_on_input: { type: 'change', element: 'form_field' },
+		focus_on_select: { type: 'focus', element: 'form_choice' },
+		change_on_select: { type: 'change', element: 'form_choice' },
+		reset_on_form: { type: 'reset', element: 'form_tester' },
+		submit_on_form: { type: 'submit', element: 'form_tester' }
+	};
+
+function setupTest(targetID, eventName) {
+	var target = document.getElementById(targetID);
+	while (target) {
+		NW.Event.appendListener(target, eventName, testFunc, true);
+		NW.Event.appendListener(target, eventName, testFunc, false);
+		target = target.parentNode;
+	}
+}
+
+function unsetTest(targetID, eventName) {
+	var target = document.getElementById(targetID);
+	while (target) {
+		NW.Event.removeListener(target, eventName, testFunc, true);
+		NW.Event.removeListener(target, eventName, testFunc, false);
+		target = target.parentNode;
+	}
+}
+
+var testBoot = function(e) { for(var i in targets) { setupTest(targets[i].element, targets[i].type); } };
+var testStop = function(e) { for(var i in targets) { unsetTest(targets[i].element, targets[i].type); } };
+var testFunc = function(e) {
+	log.call(this, e);
+};
+
+// to pad/format a string
+function pad(s) {
+	return (s + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0').substring(0, 12);
+}
+
+// format log events in console
+function log(e) {
+	if (e.target.nodeName == 'FORM' || e.target.form) {
+		var msg = pad(this && this.nodeName || '#document') +
+			pad(e.type) + pad(e.eventPhase) +
+			pad(e.target && e.target.nodeName || '#document')+
+			pad(e.currentTarget && e.currentTarget.nodeName || '#document'),
+		innerHTML = document.getElementById('console').innerHTML;
+		document.getElementById('console').innerHTML = msg + "\n" + innerHTML;
+	}
+}
+</script>
+
+</head>
+<body>
+
+<h1>Capturing and Bubbling phases cross-browser</h1>
+<form id="form_tester" action="./phases.html" method="post">
+<input id="form_field" value="test" />
+<select id="form_choice">
+<option value="first">first</option>
+<option value="second" selected="selected">second</option>
+<option value="third">third</option>
+</select>
+<input id="form_submit" type="submit" />
+<input id="form_reset" type="reset" />
+</form>
+
+<p>Logging is bottom-up, top log line is the last executed event handler</p>
+
+<pre id="header" />
+[this]      [type]      [phase]     [target]    [currentTarget]
+</pre>
+
+<textarea id="console" cols="64" rows="20" readOnly /></textarea><br />
+<button onclick="document.getElementById('console').innerHTML='';">Clear Log</button>
+
+<p>Event listeners are registered on each of the form elements ancestor's, both in the capturing and bubbling phases.</p>
+<p>This is the reason you will see a lot of events logged, sometimes it seems there are duplicates, but there are not.</p>
+<p>In the example form events on controls will traverse the tree in this way (the number represent the eventPhase):</p>
+
+<ul>
+<li>#document 1</li>
+<li>HTML 1</li>
+<li>BODY 1</li>
+<li>FORM 1</li>
+<li>INPUT 2</li>
+<li>INPUT 2</li>
+<li>FORM 3</li>
+<li>BODY 3</li>
+<li>HTML 3</li>
+<li>#document 3</li>
+</ul>
+
+</body>
+</html>

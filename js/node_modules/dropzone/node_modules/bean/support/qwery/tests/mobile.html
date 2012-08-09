@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html lang="en-us">
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>Qwery tests</title>
+    <link rel="stylesheet" href="../build/sink/src/sink.css" type="text/css">
+    <script src="../build/sink/src/sink.js"></script>
+    <script type="text/javascript">
+      // test for noConflict()
+      var qwery = function () {
+        return 'success';
+      };
+    </script>
+    <script src="../mobile/qwery-mobile.js"></script>
+    <script type="text/javascript">
+      var Q = qwery.noConflict();
+    </script>
+  </head>
+  <body>
+    <h1>Qwery Tests</h1>
+      <div foo="bar"></div>
+      <div class="a"></div>
+      <div class="class-with-dashes"></div>
+      <div id="boosh">
+        <div class="a b">
+          <div class="d e" test="fg" id="booshTest"></div>
+          <em nopass="copyrighters" rel="copyright booshrs" test="f g"></em>
+          <span class="h i a"></span>
+        </div>
+      </div>
+      <div id="attr-test1" -data-attr></div>
+      <div id="attr-test2" -data-attr></div>
+      <div id="attr-test3" class="found you" -data-attr title="whatup duders"></div>
+      <div id="attributes">
+        <div test="one" unique-test="baz" id="attr-test-1"></div>
+        <div test="two-foo" id="attr-test-2"></div>
+        <div test=" three " id="attr-test-3"></div>
+      </div>
+      <div>
+        <div class="tokens" title="one" id="token-one"></div>
+        <div class="tokens" title="one two" id="token-two"></div>
+        <div class="tokens" title="one two three #%" id="token-three">
+          <a href="foo"  id="token-four">
+            <div id="token-five"></div>
+          </a>
+        </div>
+      </div>
+      <div id="order-matters">
+        <p class="order-matters"></p>
+        <a class="order-matters">
+          <em class="order-matters"></em><b class="order-matters"></b>
+        </a>
+      </div>
+
+     <ol id="tests"></ol>
+     <script src="tests.js"></script>
+  </body>
+</html>

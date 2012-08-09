@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html lang="en-us">
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>qwery integration with ender</title>
+    <script src="ender.js"></script>
+    <script src="../src/qwery.js"></script>
+    <script src="../src/ender.js"></script>
+    <script type="text/javascript">
+      $.domReady(function () {
+        var test = $('#test')
+          , elements = test.find('li.check').css('color', 'red').append(' ✓').next().css('color', 'blue')
+        $('  <p>eyo</p>  <p>wuzup</p>  ').css({opacity: 0.4}).appendTo(document.body)
+      })
+    </script>
+  </head>
+  <body>
+    <div id="test">
+      <ul>
+        <li class="check">uno</li>
+        <li><span><b>dos</b></span></li>
+        <li class="check">tres</li>
+      </ul>
+    </div>
+  </body>
+</html>

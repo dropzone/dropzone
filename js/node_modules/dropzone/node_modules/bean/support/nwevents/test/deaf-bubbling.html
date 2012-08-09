@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>NWEvents Event Manager - Delegates TEST</title>
+<meta name="author" content="Diego Perini" />
+<meta name="copyright" content="Copyright (C) 2009, Diego Perini" />
+
+<style type="text/css">
+body { font: normal 1em sans-serif; }
+
+#outer-std { width: 200px; height: 100px; background: green; }
+#outer-std:hover { width: 200px; height: 100px; background: yellow; }
+#inner-std {
+  left: 240px;
+  width: 200px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  background: orange;
+  position: absolute;
+}
+
+#outer-ext { width: 200px; height: 100px; background: green; }
+#outer-ext:hover { width: 200px; height: 100px; background: red; }
+#inner-ext {
+  left: 240px;
+  width: 200px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  background: orange;
+  position: absolute;
+}
+
+</style>
+
+<!-- provides the event management and delegation api -->
+<script src="../src/nwevents.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- provides the match() method for CSS3 selector delegation -->
+<script src="lib/nwmatcher.js" type="text/javascript" charset="utf-8"></script>
+
+<!--
+	setup delegation for mouseout/mouseover events
+-->
+<script type="text/javascript">
+
+function test_out() { this.style.backgroundColor = 'green'; }
+function test_over() { this.style.backgroundColor = 'yellow'; }
+
+// disable these two lines to see the 'red'
+// color set by CSS when mouseover happens
+NW.Event.appendDelegate('#outer-ext', 'mouseout', test_out);
+NW.Event.appendDelegate('#outer-ext', 'mouseover', test_over);
+
+</script>
+
+</head>
+<body>
+
+<h1>NWEvents Delegates - bubbling from non listening (deaf) elements</h1>
+
+<p>Elements delegated for a specific event type will receive bubbling events also from elements not having a delegate attached themselves.</p>
+
+<p>IE and other browser-like software not fully supporting CSS specifications will not work, however NWEvents emulated events work.</p>
+
+<h2>Standard browser behavior (using CSS)</h2>
+
+<div id="outer-std"><p>Container</p><div id="inner-std">Content: mouseover here</div></div>
+
+<h2>Emulated browser behavior (using events)</h2>
+
+<div id="outer-ext"><p>Container</p><div id="inner-ext">Content: mouseover here</div></div>
+
+</body>
+</html>

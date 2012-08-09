@@ -1,0 +1,16 @@
+body {
+	font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+}
+
+#testzone {
+    font-size: 15px;
+    border: 10px solid white;
+    margin: 0 0 20px 0;
+}
+#child {
+    padding: 10px;
+}
+#target {
+    padding: 10px;
+}

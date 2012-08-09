@@ -58,6 +58,7 @@ code {
   -webkit-border-radius: 4px;
   border-radius: 4px;
   background: rgba(0,0,0,0.03);
+  padding: 12px;
 }
 #dropzone > .dropzone.drag-hover {
   border-color: rgba(0,0,0,0.15);
@@ -67,6 +68,11 @@ code {
   opacity: 0.15;
   -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=15);
   filter: alpha(opacity=15);
+}
+#dropzone > .dropzone.started .message {
+  opacity: 0;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+  filter: alpha(opacity=0);
 }
 #dropzone > .dropzone .message {
   opacity: 1;
@@ -93,11 +99,18 @@ code {
   width: 100px;
   height: 136px;
   display: inline-block;
-  margin: 35px;
+  margin: 18px;
   position: relative;
-  background: rgba(0,0,0,0.1);
 }
 #dropzone > .dropzone .preview .details {
+  width: 100px;
+  height: 100px;
+  position: relative;
+}
+#dropzone > .dropzone .preview .details img {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100px;
   height: 100px;
 }
@@ -107,8 +120,14 @@ code {
 #dropzone > .dropzone .preview.success .success-mark {
   display: block;
 }
+#dropzone > .dropzone .preview.success .progress .upload {
+  background: #6fb61d;
+}
 #dropzone > .dropzone .preview.error .error-mark {
   display: block;
+}
+#dropzone > .dropzone .preview.error .progress .upload {
+  background: #bc311f;
 }
 #dropzone > .dropzone .preview .error-mark,
 #dropzone > .dropzone .preview .success-mark {
@@ -128,4 +147,38 @@ code {
 }
 #dropzone > .dropzone .preview .success-mark {
   background: url("../images/success.png") no-repeat 0 0;
+}
+#dropzone > .dropzone .preview .progress {
+  position: relative;
+  margin: 8px 0 4px 0;
+  height: 10px;
+  background: rgba(0,0,0,0.08);
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+}
+#dropzone > .dropzone .preview .progress .upload {
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30%;
+  height: 100%;
+  background: url("../images/uploading.png") repeat-x 0 0;
+}
+#dropzone > .dropzone .preview .filename {
+  font-size: 12px;
+  height: 12px;
+  position: relative;
+}
+#dropzone > .dropzone .preview .filename span {
+  width: 100px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

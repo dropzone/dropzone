@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+            "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+	<head>
+		<title>Demo Page</title>
+		<link type="text/css" href="../../mxui/smoothness/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+		<link type="text/css" href="../../mxui/resizable/resizable.css" rel="stylesheet" />
+        <style type='text/css'>
+            body {font-family: verdana}
+            .error {border: solid 1px red;}
+            .error_text { color: red; font-size: 10px;}
+            td {padding: 3px;}
+			
+			#first {
+				border: solid 1px;
+				height: 200px;width: 200px;
+			}
+			.ui-widget {
+				font-size: 1em;
+			}
+			.ui-tabs .ui-tabs-nav li a {
+				padding: 0.1em 0.2em
+			}
+			.ui-tabs .ui-tabs-panel {
+				padding: 0.5em
+			}
+			#uitabs a:focus {
+				outline: dashed;
+			}
+			#submitform {
+				border-left: dotted 1px gray;
+				padding: 10px;
+				margin-left: 10px;
+			}
+        </style>
+	</head>
+	<body>
+		<div class='tabarea'>
+		    <ul id="uitabs">
+		        <li><a href="javascript://"><span>Instructions</span></a></li>
+		        <li><a href="javascript://"><span>Drag Drop</span></a></li>
+		        <li><a href="javascript://"><span>Typing</span></a></li>
+				<li><a href="javascript://"><span>Form</span></a></li>
+		    </ul>
+			
+		    <div>
+		        <p>Welcome to the Syn demo!</p>
+				<p>Click, drag, and type in this page.
+				   Your actions will be recorded as a syn-script.  
+				   You can playback this script by pressing "Replay" below.
+				</p>
+				<p>Try clicking and tabbing between tab-buttons.</p>
+				<div>
+                    <ul id='uitabs2'>
+    		            <li><a href="javascript://">Alpha</a></li>
+                        <li><a href="javascript://">Beta</a></li>
+                        <li><a href="javascript://">Gamma</a></li>
+    		        </ul>
+                    <div>Content Alpha</div>
+                    <div>Content Beta</div>
+                    <div>Content Gamma</div>
+                </div>
+		    </div>
+		    <div>
+		    	<p>Drag the gray dot.</p>
+		       <div class='wrap' id='first'>Here is some swell content</div>
+		    </div>
+		    <div>
+		    	<p>Test the numeric field.  It only accepts numbers.
+				</p>
+                <p><input type='text' id='numeric' /></p>
+				<p>You can copy and paste if you select text with the keyboard like:
+				 [shift][left][shift-up][ctrl]c[ctrl-up][right][ctrl]v[ctrl-up].  It's 
+				 possible to make mouse text selection work, but not with this recording demo.</p>
+		    </div>
+			<div>
+				&lt;form>
+				<form action='' id='submitform'>
+					
+					<p id='indicator'>I turn green when this form is submitted.
+					</p> 
+					<p id='changeIndicator'>I turn green when an element is changed.</p>
+					<div>
+						<label>Type enter to submit the form: </label>
+						<input type='text' id='clearme'/>
+					</div>
+					<div>
+						<label>Click to submit: </label>
+						<input type='submit'/>
+					</div>
+					<div>
+						<label>Click to toggle: </label>
+						<input type='checkbox' />
+					</div>
+					<div>
+						<label>Click to toggle: </label>
+						<input type='radio' name='radio' value='1'/>
+						<input type='radio' name='radio' value='2'/>
+						<input type='radio' name='radio' value='3'/>
+					</div>
+					<div>
+						<label>Click to change: </label>
+						<select>
+							<option>1</option><option>2</option><option>3</option>
+						</select>
+					</div>
+					
+					
+				</form>
+				&lt;/form>
+				
+			</div>
+		</div>	
+		
+		
+		
+		
+		<script type='text/javascript' src='../../steal/steal.js'></script>
+		<script type='text/javascript'>
+			steal.plugins('mxui/tabs','mxui/resizable','mxui/key_validator').start();
+		</script>
+		
+		<script type='text/javascript'>
+			$("#first").mxui_resizable();
+			$("#uitabs, #uitabs2").mxui_ui_tabs();
+			
+			
+			$(window).bind('load', function(){
+				$("select")[0].selectedIndex = 0;
+
+				$("#numeric").mxui_key_validator({test: /^[-+]?[0-9]*\.?[0-9]*$/}).val("")
+			})
+			$("#submitform").submit(function(ev){
+				ev.preventDefault();
+				$("#indicator").css("backgroundColor","#00ff00")
+				setTimeout(function(){
+					$("#indicator").css("backgroundColor","")
+				},300)
+
+			}).change(function(ev){
+				$("#changeIndicator").css("backgroundColor","#00ff00")
+				setTimeout(function(){
+					$("#changeIndicator").css("backgroundColor","")
+				},300)
+			})
+			//this is to handle all click events in the form
+			
+		</script>
+	</body>
+</html>

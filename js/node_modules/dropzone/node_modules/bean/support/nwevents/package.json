@@ -1,0 +1,37 @@
+{
+  "name": "nwevents",
+  "version": "1.2.4beta",
+  "description": "Javascript Event Manager",
+  "homepage": "http://javascript.nwbox.com/NWEvents/",
+  "main": "./src/nwevents",
+  "keywords": [
+    "DOM",
+    "events",
+    "delegation"
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://javascript.nwbox.com/NWEvents/MIT-LICENSE"
+    }
+  ],
+  "author": {
+    "name": "Diego Perini",
+    "email": "diego.perini@gmail.com",
+    "web": "http://www.iport.it/"
+  },
+  "maintainers": [
+    {
+      "name": "Diego Perini",
+      "email": "diego.perini@gmail.com",
+      "web": "http://www.iport.it/"
+    }
+  ],
+  "bugs": {
+    "url": "http://github.com/dperini/nwevents/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dperini/nwevents.git"
+  }
+}

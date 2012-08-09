@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+            "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+    <head>
+        <title>Synthetic Demo</title>
+        <style type='text/css'>
+            body {font-family: verdana; padding: 0px; margin: 0px;}
+			
+			#app {
+				
+				border-left: none;
+				border-right: none;
+				border-top: none;
+				border-bottom: solid 2px black;
+				overflow: hidden;
+				top: 0px;
+
+				
+				width: 100%;
+			}
+
+
+			iframe {
+				height: 100%;
+				border: none;
+				width: 100%;
+				padding: 0px;
+				margin: 0px;
+			}
+			#code {
+				
+				padding: 0px;
+				margin: 0 0 0 210px;
+				border: none;
+				overflow: auto;
+				height: 100%;
+			}
+			
+			a {
+				outline: none
+			}
+			#bottom {
+				/*position: fixed;*/
+				width: 100%;
+				bottom: 0px;
+				height: 196px;
+				border-top: solid 2px #E7ECEE;
+				border-bottom: solid 2px #E7ECEE;
+			}
+			#run {
+				float: left;
+				padding-top: 80px;
+				height: 118px;
+				width: 196px;
+				display: block;
+				text-align: center;
+				vertical-align: center;
+				font-size: 1.4em;
+				font-weight: bolder;
+				border-right: solid 2px #E7ECEE;
+				border-left: solid 2px #E7ECEE;
+				text-decoration: none;
+			}
+			#run:hover {
+				text-decoration: underline;
+			}
+        </style>
+    </head>
+    <body>
+    	<div id='app'></div>
+		<div id='bottom'>
+			<a href="javascript://" id='run'>Replay ></a>
+			<pre id='code'>Click the tabs above to create replay code.</pre>
+			
+		</div>
+<script type='text/javascript' src='../../steal/steal.js'></script>
+<script type='text/javascript'>
+	steal.plugins('funcunit/syn','mxui/filler').start();
+</script>
+<script type='text/javascript' src='demo/record.js'></script>
+<script type='text/javascript' id="demo-source">
+	
+</script>
+    </body>
+</html>

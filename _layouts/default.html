@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+  <title>{{ page.title }}</title>
+  <link rel="stylesheet" href="css/general.css" />
+  <meta charset="utf-8" />
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic' rel='stylesheet' type='text/css'>
+  <script type="text/javascript" src="js/ender.js"></script>
+  <script type="text/javascript">
+    $.domReady(function() {
+      var bean = require("bean"),
+          dropzone = $("#dropzone > .dropzone").data("dropzone");
+
+      bean.add(dropzone, "addedfile", function(file) { console.log("hi")});
+    });
+  </script>
+</head>
+<body>
+  <div id="container">
+
+    {{ content }}
+
+  </div>
+</body>
+</html>

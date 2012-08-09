@@ -1,0 +1,67 @@
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta http-equiv="edit-Type" edit="text/html; charset=utf-8">
+
+
+	
+	
+	<link rel="stylesheet" type="text/css" href="http://fiddle.jshell.net/css/normalize.css"/>
+	<link rel="stylesheet" type="text/css" href="http://fiddle.jshell.net/css/result-light.css"/>
+	
+	
+	<script type='text/javascript' src='../../../steal/steal.js'></script>
+	<script type='text/javascript'>
+		steal.plugins('funcunit/synthetic').start();
+	</script>
+		
+	
+	<style type='text/css'>
+		body {
+			background-color: transparent;
+			padding: 10px;
+		}
+		
+	</style>
+	<script type='text/javascript'>
+	//<![CDATA[ 
+window.onload = function() {
+	var el = document.getElementById('element');
+	el.style.background = '#f99';
+	
+	
+	var addListener = function(el, type, event){
+	    if (el.addEventListener) el.addEventListener(type, event, false);
+	    else el.attachEvent('on' + type, event);
+	};
+	
+	
+	addListener(el, 'click', function(){
+	    alert('weird')
+		el.innerHTML += ' fn';
+	});
+	
+	el.onclick = function(){
+	    el.innerHTML += ' attr';
+	};
+	
+	setTimeout(function(){
+	    Syn.click({}, el, function(){
+	        el.style.background = '#99f';
+	    });
+	}, 1000);
+
+
+};
+	//]]> 
+	</script>
+</head>
+<body>
+	<div id="element">hello</div>
+
+
+</body>
+</html>

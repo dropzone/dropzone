@@ -11,6 +11,9 @@
       font-size: 2em;
       text-align: left;
     }
+    .dropzone.started .message {
+      display: none;
+    }
     .dropzone .message {
       text-align: center;
     }

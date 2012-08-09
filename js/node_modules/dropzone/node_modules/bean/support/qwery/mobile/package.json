@@ -1,0 +1,14 @@
+{
+  "name": "qwery-mobile",
+  "description": "Mobile query selector engine",
+  "version": "1.0.2",
+  "homepage": "https://github.com/ded/qwery",
+  "authors": ["Dustin Diaz, @ded", "Jacob Thornton, @fat"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ded/qwery.git"
+  },
+  "main": "./qwery-mobile.js",
+  "keywords": ["ender", "query", "css", "mobile", "selector engine"],
+  "ender": "ender.js"
+}
