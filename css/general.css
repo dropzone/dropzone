@@ -1,4 +1,3 @@
-@import "dropzone.css";
 .hll {
   background-color: #ffc;
 }
@@ -258,4 +257,201 @@ blockquote {
 }
 #container p {
   text-align: justify;
+}
+#dropzone {
+  margin: 60px 0;
+  -webkit-box-shadow: 0 0 50px rgba(0,0,0,0.2);
+  box-shadow: 0 0 50px rgba(0,0,0,0.2);
+  padding: 4px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+#dropzone > .dropzone {
+  position: relative;
+  min-height: 360px;
+  border: 1px solid rgba(0,0,0,0.03);
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  background: rgba(0,0,0,0.03);
+  padding: 12px;
+}
+#dropzone > .dropzone.drag-hover {
+  border-color: rgba(0,0,0,0.15);
+  background: rgba(0,0,0,0.04);
+}
+#dropzone > .dropzone.drag-hover .message {
+  opacity: 0.15;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=15);
+  filter: alpha(opacity=15);
+}
+#dropzone > .dropzone.started .message {
+  opacity: 0;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+  filter: alpha(opacity=0);
+}
+#dropzone > .dropzone .message {
+  opacity: 1;
+  -ms-filter: none;
+  filter: none;
+  -webkit-transition: opacity 0.3s ease-in-out;
+  -moz-transition: opacity 0.3s ease-in-out;
+  -o-transition: opacity 0.3s ease-in-out;
+  -ms-transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
+  background: url("../images/drop-files.png") no-repeat 0 0;
+  position: absolute;
+  width: 168px;
+  height: 157px;
+  margin-left: -84px;
+  margin-top: -78.5px;
+  top: 50%;
+  left: 50%;
+}
+#dropzone > .dropzone .message span {
+  display: none;
+}
+#dropzone > .dropzone .preview {
+  width: 100px;
+  height: 136px;
+  display: inline-block;
+  margin: 18px;
+  position: relative;
+}
+#dropzone > .dropzone .preview .details {
+  width: 100px;
+  height: 100px;
+  position: relative;
+}
+#dropzone > .dropzone .preview .details img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100px;
+  height: 100px;
+}
+#dropzone > .dropzone .preview.file-preview .details {
+  background: url("../images/file.png") no-repeat 8px 0;
+}
+#dropzone > .dropzone .preview.success .success-mark {
+  display: block;
+}
+#dropzone > .dropzone .preview.success .progress .upload {
+  background: #6fb61d;
+}
+#dropzone > .dropzone .preview.error .error-mark {
+  display: block;
+}
+#dropzone > .dropzone .preview.error .progress .upload {
+  background: #bc311f;
+}
+#dropzone > .dropzone .preview .error-mark,
+#dropzone > .dropzone .preview .success-mark {
+  display: none;
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  top: -10px;
+  left: -5px;
+}
+#dropzone > .dropzone .preview .error-mark span,
+#dropzone > .dropzone .preview .success-mark span {
+  display: none;
+}
+#dropzone > .dropzone .preview .error-mark {
+  background: url("../images/error.png") no-repeat 0 0;
+}
+#dropzone > .dropzone .preview .success-mark {
+  background: url("../images/success.png") no-repeat 0 0;
+}
+#dropzone > .dropzone .preview .progress {
+  position: relative;
+  margin: 8px 0 4px 0;
+  height: 10px;
+  background: rgba(0,0,0,0.08);
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+}
+#dropzone > .dropzone .preview .progress .upload {
+  -webkit-animation: loading 0.5s linear infinite;
+  -moz-animation: loading 0.5s linear infinite;
+  -o-animation: loading 0.5s linear infinite;
+  -ms-animation: loading 0.5s linear infinite;
+  animation: loading 0.5s linear infinite;
+  -webkit-transition: width 0.3s ease-in-out;
+  -moz-transition: width 0.3s ease-in-out;
+  -o-transition: width 0.3s ease-in-out;
+  -ms-transition: width 0.3s ease-in-out;
+  transition: width 0.3s ease-in-out;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  background: url("../images/uploading.png") repeat-x 0 0;
+}
+#dropzone > .dropzone .preview .filename {
+  font-size: 12px;
+  height: 12px;
+  position: relative;
+}
+#dropzone > .dropzone .preview .filename span {
+  width: 100px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#dropzone > .dropzone .preview .error-message {
+  display: none;
+}
+@-moz-keyframes loading {
+  0% {
+    background-position: 14px 0;
+  }
+
+  100% {
+    background-position: 0 0;
+  }
+}
+@-webkit-keyframes loading {
+  0% {
+    background-position: 14px 0;
+  }
+
+  100% {
+    background-position: 0 0;
+  }
+}
+@-o-keyframes loading {
+  0% {
+    background-position: 14px 0;
+  }
+
+  100% {
+    background-position: 0 0;
+  }
+}
+@-ms-keyframes loading {
+  0% {
+    background-position: 14px 0;
+  }
+
+  100% {
+    background-position: 0 0;
+  }
+}
+@keyframes loading {
+  0% {
+    background-position: 14px 0;
+  }
+
+  100% {
+    background-position: 0 0;
+  }
 }
