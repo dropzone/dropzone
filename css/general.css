@@ -43,6 +43,15 @@ code {
 #container p {
   text-align: justify;
 }
+@-webkit-keyframes loading {
+  0% {
+    background-position: 14px 0;
+  }
+
+  100% {
+    background-position: 0 0;
+  }
+}
 #dropzone {
   margin: 60px 0;
   -webkit-box-shadow: 0 0 50px rgba(0,0,0,0.2);
@@ -157,6 +166,11 @@ code {
   border-radius: 3px;
 }
 #dropzone > .dropzone .preview .progress .upload {
+  -webkit-animation: loading 0.5s linear infinite;
+  -moz-animation: loading 0.5s linear infinite;
+  -o-animation: loading 0.5s linear infinite;
+  -ms-animation: loading 0.5s linear infinite;
+  animation: loading 0.5s linear infinite;
   -webkit-transition: width 0.3s ease-in-out;
   -moz-transition: width 0.3s ease-in-out;
   -o-transition: width 0.3s ease-in-out;

@@ -50,6 +50,14 @@ code
     text-align justify
 
 
+@-webkit-keyframes loading {
+  from {
+    background-position: 14px 0
+  }
+  to {
+    background-position: 0 0
+  }
+}
 
 #dropzone
   margin 60px 0
@@ -145,6 +153,7 @@ code
         background rgba(0,0,0,0.08)
         border-radius 3px
         .upload
+          animation: loading 0.5s linear infinite
           transition width 0.3s ease-in-out
           border-radius 3px
           position absolute
