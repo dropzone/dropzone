@@ -43,15 +43,6 @@ code {
 #container p {
   text-align: justify;
 }
-@-webkit-keyframes loading {
-  0% {
-    background-position: 14px 0;
-  }
-
-  100% {
-    background-position: 0 0;
-  }
-}
 #dropzone {
   margin: 60px 0;
   -webkit-box-shadow: 0 0 50px rgba(0,0,0,0.2);
@@ -203,4 +194,49 @@ code {
 }
 #dropzone > .dropzone .preview .error-message {
   display: none;
+}
+@-moz-keyframes loading {
+  0% {
+    background-position: 14px 0;
+  }
+
+  100% {
+    background-position: 0 0;
+  }
+}
+@-webkit-keyframes loading {
+  0% {
+    background-position: 14px 0;
+  }
+
+  100% {
+    background-position: 0 0;
+  }
+}
+@-o-keyframes loading {
+  0% {
+    background-position: 14px 0;
+  }
+
+  100% {
+    background-position: 0 0;
+  }
+}
+@-ms-keyframes loading {
+  0% {
+    background-position: 14px 0;
+  }
+
+  100% {
+    background-position: 0 0;
+  }
+}
+@keyframes loading {
+  0% {
+    background-position: 14px 0;
+  }
+
+  100% {
+    background-position: 0 0;
+  }
 }
