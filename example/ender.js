@@ -1,7 +1,7 @@
 /*!
   * =============================================================
   * Ender: open module JavaScript framework (https://ender.no.de)
-  * Build: ender build bean bonzo domready qwery dropzone ..
+  * Build: ender build ..
   * =============================================================
   */
 
@@ -2629,7 +2629,7 @@
         },
         drop: function(e) {
           this.element.removeClass("drag-hover");
-          return this.element.find(".message").hide();
+          return this.element.addClass("started");
         },
         dragstart: function(e) {},
         dragend: function(e) {
@@ -2654,7 +2654,7 @@
           return file.previewTemplate.find(".details").html($("<img alt=\"" + file.name + "\" src=\"" + dataUrl + "\"/>"));
         },
         error: function(file, message) {
-          file.previewTemplate.addClass("process-error");
+          file.previewTemplate.addClass("error");
           return file.previewTemplate.find(".error-message span").html(message);
         },
         processingfile: function(file) {
@@ -2666,9 +2666,9 @@
           });
         },
         finished: function(file) {
-          return file.previewTemplate.addClass("finished");
+          return file.previewTemplate.addClass("success");
         },
-        previewTemplate: "<div class=\"preview file-preview\">\n  <div class=\"details\"></div>\n  <div class=\"progress\"><span class=\"load\"></span><span class=\"upload\"></span></div>\n  <div class=\"finished-success\"><span>✔</span></div>\n  <div class=\"finished-error\"><span>✘</span></div>\n  <div class=\"error-message\"><span></span></div>\n</div>"
+        previewTemplate: "<div class=\"preview file-preview\">\n  <div class=\"details\"></div>\n  <div class=\"progress\"><span class=\"load\"></span><span class=\"upload\"></span></div>\n  <div class=\"success-mark\"><span>✔</span></div>\n  <div class=\"error-mark\"><span>✘</span></div>\n  <div class=\"error-message\"><span></span></div>\n</div>"
       };
   
       defaultOptions.previewTemplate = defaultOptions.previewTemplate.replace(/\n*/g, "");
