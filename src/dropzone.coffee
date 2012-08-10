@@ -265,7 +265,7 @@ class Dropzone
       if img.height < canvas.height or img.width < canvas.width
         # This image is smaller than the canvas
         trgHeight = srcHeight
-        trgWidth = srcHeight
+        trgWidth = srcWidth
       else
         # Image is bigger and needs rescaling
         if srcRatio > trgRatio
