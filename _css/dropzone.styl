@@ -1,0 +1,132 @@
+
+@keyframes loading {
+  from {
+    background-position: 14px 0
+  }
+  to {
+    background-position: 0 0
+  }
+}
+
+#dropzone
+  margin 60px 0
+  box-shadow 0 0 50px rgba(0, 0, 0, 0.2)
+  padding 4px
+  border-radius 5px
+  > .dropzone
+    position relative
+    min-height 360px
+    border 1px solid rgba(0, 0, 0, 0.03)
+    border-radius 4px
+    background rgba(0, 0, 0, 0.03)
+    padding 12px
+
+    &.drag-hover
+      border-color rgba(0, 0, 0, 0.15)
+      background rgba(0, 0, 0, 0.04)
+      .message
+        opacity 0.15
+
+    &.started
+      .message
+        opacity 0
+    .message
+      opacity 1
+      transition opacity 0.3s ease-in-out
+      background url("../images/drop-files.png") no-repeat 0 0
+      position absolute
+      width 168px
+      height 157px
+      margin-left -(@width / 2)
+      margin-top -(@height / 2)
+      top 50%
+      left 50%
+      span
+        display none
+
+
+    .preview
+      width 100px
+      height 136px
+      display inline-block
+      margin 18px
+      position relative
+
+      //background rgba(0, 0, 0, 0.1)
+
+      .details
+        width 100px
+        height 100px
+        position relative
+        img
+          position absolute
+          top 0
+          left 0
+          width 100px
+          height 100px
+
+      &.file-preview
+        .details
+          background url("../images/file.png") no-repeat 8px 0
+
+      &.success
+        .success-mark
+          display block
+        .progress .upload
+          background #6fb61d
+      &.error
+        .error-mark
+          display block
+        .progress .upload
+          background #bc311f
+
+      .error-mark
+      .success-mark
+        display none
+        position absolute
+        width 42px
+        height 42px
+        top -10px
+        left -5px
+        span
+          display none
+      .error-mark
+        background url("../images/error.png") no-repeat 0 0
+      .success-mark
+        background url("../images/success.png") no-repeat 0 0
+
+      .progress
+        position relative
+        margin 8px 0 4px 0
+        height 10px
+        background rgba(0,0,0,0.08)
+        border-radius 3px
+        .upload
+          animation: loading 0.5s linear infinite
+          transition width 0.3s ease-in-out
+          border-radius 3px
+          position absolute
+          top 0
+          left 0
+          width 0%
+          height 100%
+          background url("../images/uploading.png") repeat-x 0 0
+      .filename
+        font-size 12px
+        height 12px
+        position relative
+        span
+          width 100px
+          position absolute
+          top 0
+          left 0
+          display block
+          width 100%
+          overflow ellipsis
+
+      .error-message
+        display none
+
+
+
+
