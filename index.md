@@ -114,8 +114,8 @@ Want your dropzone to look like the dropzone on this page? Just take [my stylesh
 license
 -------
 
-Dropzone is licensed under MIT.  
-
+> Dropzone is licensed under MIT.
+> 
 > Copyright (c) 2012 Matias Meno
 > 
 > Permission is hereby granted, free of charge, to any person obtaining a copy
