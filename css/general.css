@@ -329,8 +329,26 @@ blockquote {
   width: 100px;
   height: 100px;
 }
+#dropzone > .dropzone .preview .details .size {
+  font-size: 31px;
+  color: #666;
+  font-family: "League Gothic";
+  font-weight: 500;
+  position: absolute;
+  bottom: 3px;
+  left: 15px;
+  z-index: 100;
+}
 #dropzone > .dropzone .preview.file-preview .details {
   background: url("../images/file.png") no-repeat 8px 0;
+}
+#dropzone > .dropzone .preview.image-preview .details .size {
+  display: none;
+  color: #000;
+  text-shadow: 0 0 8px rgba(255,255,255,0.6);
+}
+#dropzone > .dropzone .preview.image-preview .details:hover .size {
+  display: block;
 }
 #dropzone > .dropzone .preview.success .success-mark {
   display: block;

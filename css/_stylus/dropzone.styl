@@ -66,9 +66,28 @@
           width 100px
           height 100px
 
+        .size
+          font-size 31px
+          color #666
+          font-family "League Gothic"
+          font-weight 500
+          position absolute
+          bottom 3px
+          left 15px
+          z-index 100
+
       &.file-preview
         .details
           background url("../images/file.png") no-repeat 8px 0
+      &.image-preview
+        .details
+          .size
+            display none
+            color black
+            text-shadow 0 0 8px rgba(255, 255, 255, 0.6)
+          &:hover
+            .size
+              display block
 
       &.success
         .success-mark

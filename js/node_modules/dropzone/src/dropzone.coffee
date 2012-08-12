@@ -91,6 +91,7 @@ class Dropzone
       file.previewTemplate = $ @options.previewTemplate
       @element.append file.previewTemplate
       file.previewTemplate.find(".filename span").text file.name
+      file.previewTemplate.find(".details").append $("""<div class="size">#{@filesize file.size}</div>""")
 
 
     # Called when a thumbnail has been generated
@@ -99,8 +100,7 @@ class Dropzone
       file.previewTemplate
         .removeClass("file-preview")
         .addClass("image-preview")
-
-      file.previewTemplate.find(".details").html $("""<img alt="#{file.name}" src="#{dataUrl}"/>""")
+      file.previewTemplate.find(".details").append $("""<img alt="#{file.name}" src="#{dataUrl}"/>""")
 
     
     # Called whenever an error occures
@@ -215,6 +215,25 @@ class Dropzone
     @element.on "dragend", (e) =>
       bean.fire @, "dragend", e
 
+
+  # Returns a nicely formatted filesize
+  filesize: (size) ->
+    if size >= 100000000000
+      size = size / 100000000000
+      string = "tb"
+    else if size >= 100000000
+      size = size / 100000000
+      string = "gb"
+    else if size >= 100000
+      size = size / 100000
+      string = "mb"
+    else if size >= 100
+      size = size / 100 
+      string = "kb"
+    else
+      size = size * 10
+      string = "by"
+    "#{Math.round(size)/10} #{string}"
 
   drop: (e) ->
     return unless e.dataTransfer

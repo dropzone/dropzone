@@ -2647,11 +2647,12 @@
         addedfile: function(file) {
           file.previewTemplate = $(this.options.previewTemplate);
           this.element.append(file.previewTemplate);
-          return file.previewTemplate.find(".filename span").text(file.name);
+          file.previewTemplate.find(".filename span").text(file.name);
+          return file.previewTemplate.find(".details").append($("<div class=\"size\">" + (this.filesize(file.size)) + "</div>"));
         },
         thumbnail: function(file, dataUrl) {
           file.previewTemplate.removeClass("file-preview").addClass("image-preview");
-          return file.previewTemplate.find(".details").html($("<img alt=\"" + file.name + "\" src=\"" + dataUrl + "\"/>"));
+          return file.previewTemplate.find(".details").append($("<img alt=\"" + file.name + "\" src=\"" + dataUrl + "\"/>"));
         },
         error: function(file, message) {
           file.previewTemplate.addClass("error");
@@ -2757,6 +2758,27 @@
         return this.element.on("dragend", function(e) {
           return bean.fire(_this, "dragend", e);
         });
+      };
+  
+      Dropzone.prototype.filesize = function(size) {
+        var string;
+        if (size >= 100000000000) {
+          size = size / 100000000000;
+          string = "tb";
+        } else if (size >= 100000000) {
+          size = size / 100000000;
+          string = "gb";
+        } else if (size >= 100000) {
+          size = size / 100000;
+          string = "mb";
+        } else if (size >= 100) {
+          size = size / 100;
+          string = "kb";
+        } else {
+          size = size * 10;
+          string = "by";
+        }
+        return "" + (Math.round(size) / 10) + " " + string;
       };
   
       Dropzone.prototype.drop = function(e) {
