@@ -380,10 +380,10 @@ blockquote {
   display: none;
 }
 #dropzone > .dropzone .preview .error-mark {
-  background: url("../images/error.png") no-repeat 0 0;
+  background: url("../images/marks.png") no-repeat 0 0;
 }
 #dropzone > .dropzone .preview .success-mark {
-  background: url("../images/success.png") no-repeat 0 0;
+  background: url("../images/marks.png") no-repeat -42px 0;
 }
 #dropzone > .dropzone .preview .progress {
   position: relative;
