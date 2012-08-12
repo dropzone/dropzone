@@ -1,8 +1,9 @@
 {
   "name": "dropzone",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Handles drag and drop of files for you.",
   "keywords": [ "dragndrop", "ender" ],
+  "homepage": "http://www.dropzonejs.com",
   "main": [
     "./lib/dropzone.js"
   ],
