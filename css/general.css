@@ -455,3 +455,6 @@ blockquote {
     background-position: 0 0;
   }
 }
+#dropzone {
+  margin: 30px 0;
+}

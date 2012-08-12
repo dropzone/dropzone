@@ -8,6 +8,8 @@ dropzone.js
 
 dropzone.js is an open source library that provides drag'n'drop file uploads by simply including a java-script file. It views previews of images and you can register to different events to control how and which files are uploaded.
 
+Try it out:
+
 <div id="dropzone"><form action="http://www.torrentplease.com/dropzone.php" class="dropzone">
 </form></div>
 
