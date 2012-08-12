@@ -92,18 +92,19 @@
 
       &.success
         .success-mark
-          display block
+          opacity 1
         .progress .upload
           background #6fb61d
       &.error
         .error-mark
-          display block
+          opacity 1
         .progress .upload
           background #bc311f
 
       .error-mark
       .success-mark
-        display none
+        opacity 0
+        transition opacity 0.4s ease-in-out
         position absolute
         width 42px
         height 42px

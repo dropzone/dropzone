@@ -355,20 +355,31 @@ blockquote {
   filter: alpha(opacity=40);
 }
 #dropzone > .dropzone .preview.success .success-mark {
-  display: block;
+  opacity: 1;
+  -ms-filter: none;
+  filter: none;
 }
 #dropzone > .dropzone .preview.success .progress .upload {
   background: #6fb61d;
 }
 #dropzone > .dropzone .preview.error .error-mark {
-  display: block;
+  opacity: 1;
+  -ms-filter: none;
+  filter: none;
 }
 #dropzone > .dropzone .preview.error .progress .upload {
   background: #bc311f;
 }
 #dropzone > .dropzone .preview .error-mark,
 #dropzone > .dropzone .preview .success-mark {
-  display: none;
+  opacity: 0;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+  filter: alpha(opacity=0);
+  -webkit-transition: opacity 0.4s ease-in-out;
+  -moz-transition: opacity 0.4s ease-in-out;
+  -o-transition: opacity 0.4s ease-in-out;
+  -ms-transition: opacity 0.4s ease-in-out;
+  transition: opacity 0.4s ease-in-out;
   position: absolute;
   width: 42px;
   height: 42px;

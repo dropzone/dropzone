@@ -71,30 +71,55 @@
 }
 #dropzone > .dropzone .preview .details .size {
   font-size: 31px;
+  color: #666;
   font-family: "League Gothic";
   font-weight: 500;
   position: absolute;
   bottom: 3px;
   left: 15px;
+  z-index: 100;
 }
 #dropzone > .dropzone .preview.file-preview .details {
   background: url("../images/file.png") no-repeat 8px 0;
 }
-#dropzone > .dropzone .preview.success .success-mark {
+#dropzone > .dropzone .preview.image-preview .details .size {
+  display: none;
+  color: #000;
+}
+#dropzone > .dropzone .preview.image-preview .details:hover .size {
   display: block;
+}
+#dropzone > .dropzone .preview.image-preview .details:hover img {
+  opacity: 0.4;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40);
+  filter: alpha(opacity=40);
+}
+#dropzone > .dropzone .preview.success .success-mark {
+  opacity: 1;
+  -ms-filter: none;
+  filter: none;
 }
 #dropzone > .dropzone .preview.success .progress .upload {
   background: #6fb61d;
 }
 #dropzone > .dropzone .preview.error .error-mark {
-  display: block;
+  opacity: 1;
+  -ms-filter: none;
+  filter: none;
 }
 #dropzone > .dropzone .preview.error .progress .upload {
   background: #bc311f;
 }
 #dropzone > .dropzone .preview .error-mark,
 #dropzone > .dropzone .preview .success-mark {
-  display: none;
+  opacity: 0;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+  filter: alpha(opacity=0);
+  -webkit-transition: opacity 0.5s ease-in-out;
+  -moz-transition: opacity 0.5s ease-in-out;
+  -o-transition: opacity 0.5s ease-in-out;
+  -ms-transition: opacity 0.5s ease-in-out;
+  transition: opacity 0.5s ease-in-out;
   position: absolute;
   width: 42px;
   height: 42px;
@@ -106,10 +131,10 @@
   display: none;
 }
 #dropzone > .dropzone .preview .error-mark {
-  background: url("../images/error.png") no-repeat 0 0;
+  background: url("../images/marks.png") no-repeat 0 0;
 }
 #dropzone > .dropzone .preview .success-mark {
-  background: url("../images/success.png") no-repeat 0 0;
+  background: url("../images/marks.png") no-repeat -42px 0;
 }
 #dropzone > .dropzone .preview .progress {
   position: relative;
