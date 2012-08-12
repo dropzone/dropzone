@@ -12,6 +12,9 @@ dropzone.js is an open source library that provides drag'n'drop file uploads by 
 </form></div>
 
 
+(This is just a demo dropzone. Uploaded files are **not** stored.)
+
+
 installation
 ------------
 
