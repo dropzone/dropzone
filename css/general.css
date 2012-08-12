@@ -345,10 +345,14 @@ blockquote {
 #dropzone > .dropzone .preview.image-preview .details .size {
   display: none;
   color: #000;
-  text-shadow: 0 0 8px rgba(255,255,255,0.6);
 }
 #dropzone > .dropzone .preview.image-preview .details:hover .size {
   display: block;
+}
+#dropzone > .dropzone .preview.image-preview .details:hover img {
+  opacity: 0.4;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40);
+  filter: alpha(opacity=40);
 }
 #dropzone > .dropzone .preview.success .success-mark {
   display: block;
