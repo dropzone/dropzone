@@ -273,7 +273,7 @@ blockquote {
   -webkit-border-radius: 4px;
   border-radius: 4px;
   background: rgba(0,0,0,0.03);
-  padding: 12px;
+  padding: 23px;
 }
 #dropzone > .dropzone.drag-hover {
   border-color: rgba(0,0,0,0.15);
@@ -310,6 +310,20 @@ blockquote {
 #dropzone > .dropzone .message span {
   display: none;
 }
+#dropzone > .dropzone.browser-not-supported {
+  padding: 30px;
+}
+#dropzone > .dropzone.browser-not-supported .message {
+  position: relative;
+  background: url("../images/browser-not-supported.png") no-repeat 0 0;
+  width: 204px;
+  height: 108px;
+  top: 0;
+  left: 0;
+  margin-left: 0;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
 #dropzone > .dropzone .preview {
   width: 100px;
   height: 136px;
@@ -335,8 +349,8 @@ blockquote {
   font-family: "League Gothic";
   font-weight: 500;
   position: absolute;
-  bottom: 3px;
-  left: 15px;
+  bottom: 1px;
+  left: 17px;
   z-index: 100;
 }
 #dropzone > .dropzone .preview.file-preview .details {
@@ -401,8 +415,8 @@ blockquote {
   margin: 8px 0 4px 0;
   height: 10px;
   background: rgba(0,0,0,0.08);
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
 }
 #dropzone > .dropzone .preview .progress .upload {
   -webkit-animation: loading 0.5s linear infinite;
@@ -415,8 +429,8 @@ blockquote {
   -o-transition: width 0.3s ease-in-out;
   -ms-transition: width 0.3s ease-in-out;
   transition: width 0.3s ease-in-out;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
   position: absolute;
   top: 0;
   left: 0;

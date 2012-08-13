@@ -20,7 +20,7 @@
     border 1px solid rgba(0, 0, 0, 0.03)
     border-radius 4px
     background rgba(0, 0, 0, 0.03)
-    padding 12px
+    padding 23px
 
     &.drag-hover
       border-color rgba(0, 0, 0, 0.15)
@@ -44,6 +44,19 @@
       left 50%
       span
         display none
+    &.browser-not-supported
+      padding 30px
+      .message
+        position relative
+        background url("../images/browser-not-supported.png") no-repeat 0 0
+        width 204px
+        height 108px
+        top 0
+        left 0
+        margin-left 0
+        margin-top 0
+        margin-bottom 20px
+        
 
 
     .preview
@@ -72,8 +85,8 @@
           font-family "League Gothic"
           font-weight 500
           position absolute
-          bottom 3px
-          left 15px
+          bottom 1px
+          left 17px
           z-index 100
 
       &.file-preview
@@ -122,11 +135,11 @@
         margin 8px 0 4px 0
         height 10px
         background rgba(0,0,0,0.08)
-        border-radius 3px
+        border-radius 2px
         .upload
           animation: loading 0.5s linear infinite
           transition width 0.3s ease-in-out
-          border-radius 3px
+          border-radius 2px
           position absolute
           top 0
           left 0
