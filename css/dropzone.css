@@ -1,35 +1,27 @@
-#dropzone {
-  margin: 60px 0;
-  -webkit-box-shadow: 0 0 50px rgba(0,0,0,0.2);
-  box-shadow: 0 0 50px rgba(0,0,0,0.2);
-  padding: 4px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-}
-#dropzone > .dropzone {
+.dropzone {
   position: relative;
   min-height: 360px;
   border: 1px solid rgba(0,0,0,0.03);
   -webkit-border-radius: 4px;
   border-radius: 4px;
   background: rgba(0,0,0,0.03);
-  padding: 12px;
+  padding: 23px;
 }
-#dropzone > .dropzone.drag-hover {
+.dropzone.drag-hover {
   border-color: rgba(0,0,0,0.15);
   background: rgba(0,0,0,0.04);
 }
-#dropzone > .dropzone.drag-hover .message {
+.dropzone.drag-hover .message {
   opacity: 0.15;
   -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=15);
   filter: alpha(opacity=15);
 }
-#dropzone > .dropzone.started .message {
+.dropzone.started .message {
   opacity: 0;
   -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
   filter: alpha(opacity=0);
 }
-#dropzone > .dropzone .message {
+.dropzone .message {
   opacity: 1;
   -ms-filter: none;
   filter: none;
@@ -38,7 +30,7 @@
   -o-transition: opacity 0.3s ease-in-out;
   -ms-transition: opacity 0.3s ease-in-out;
   transition: opacity 0.3s ease-in-out;
-  background: url("../images/drop-files.png") no-repeat 0 0;
+  background: url("../images/spritemap.png") no-repeat 0 -108px;
   position: absolute;
   width: 168px;
   height: 157px;
@@ -47,71 +39,85 @@
   top: 50%;
   left: 50%;
 }
-#dropzone > .dropzone .message span {
+.dropzone .message span {
   display: none;
 }
-#dropzone > .dropzone .preview {
+.dropzone.browser-not-supported {
+  padding: 30px;
+}
+.dropzone.browser-not-supported .message {
+  position: relative;
+  background: url("../images/spritemap.png") no-repeat 0 0;
+  width: 204px;
+  height: 108px;
+  top: 0;
+  left: 0;
+  margin-left: 0;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+.dropzone .preview {
   width: 100px;
   height: 136px;
   display: inline-block;
   margin: 18px;
   position: relative;
 }
-#dropzone > .dropzone .preview .details {
+.dropzone .preview .details {
   width: 100px;
   height: 100px;
   position: relative;
 }
-#dropzone > .dropzone .preview .details img {
+.dropzone .preview .details img {
   position: absolute;
   top: 0;
   left: 0;
   width: 100px;
   height: 100px;
 }
-#dropzone > .dropzone .preview .details .size {
+.dropzone .preview .details .size {
   font-size: 31px;
   color: #666;
   font-family: "League Gothic";
   font-weight: 500;
   position: absolute;
-  bottom: 3px;
-  left: 15px;
+  bottom: 1px;
+  left: 17px;
   z-index: 100;
 }
-#dropzone > .dropzone .preview.file-preview .details {
-  background: url("../images/file.png") no-repeat 8px 0;
+.dropzone .preview.file-preview .details {
+  background: url("../images/spritemap.png") no-repeat 8px -265px;
 }
-#dropzone > .dropzone .preview.image-preview .details .size {
+.dropzone .preview.image-preview .details .size {
   display: none;
   color: #000;
 }
-#dropzone > .dropzone .preview.image-preview .details:hover .size {
+.dropzone .preview.image-preview .details:hover .size {
   display: block;
 }
-#dropzone > .dropzone .preview.image-preview .details:hover img {
+.dropzone .preview.image-preview .details:hover img {
   opacity: 0.4;
   -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40);
   filter: alpha(opacity=40);
 }
-#dropzone > .dropzone .preview.success .success-mark {
+.dropzone .preview.success .success-mark {
   opacity: 1;
   -ms-filter: none;
   filter: none;
 }
-#dropzone > .dropzone .preview.success .progress .upload {
+.dropzone .preview.success .progress .upload {
   background: #6fb61d;
 }
-#dropzone > .dropzone .preview.error .error-mark {
+.dropzone .preview.error .error-mark {
   opacity: 1;
   -ms-filter: none;
   filter: none;
 }
-#dropzone > .dropzone .preview.error .progress .upload {
+.dropzone .preview.error .progress .upload {
   background: #bc311f;
 }
-#dropzone > .dropzone .preview .error-mark,
-#dropzone > .dropzone .preview .success-mark {
+.dropzone .preview .error-mark,
+.dropzone .preview .success-mark {
   opacity: 0;
   -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
   filter: alpha(opacity=0);
@@ -126,50 +132,50 @@
   top: -10px;
   left: -5px;
 }
-#dropzone > .dropzone .preview .error-mark span,
-#dropzone > .dropzone .preview .success-mark span {
+.dropzone .preview .error-mark span,
+.dropzone .preview .success-mark span {
   display: none;
 }
-#dropzone > .dropzone .preview .error-mark {
-  background: url("../images/marks.png") no-repeat 0 0;
+.dropzone .preview .error-mark {
+  background: url("../images/spritemap.png") no-repeat 0 -365px;
 }
-#dropzone > .dropzone .preview .success-mark {
-  background: url("../images/marks.png") no-repeat -42px 0;
+.dropzone .preview .success-mark {
+  background: url("../images/spritemap.png") no-repeat -42px -365px;
 }
-#dropzone > .dropzone .preview .progress {
+.dropzone .preview .progress {
   position: relative;
   margin: 8px 0 4px 0;
   height: 10px;
   background: rgba(0,0,0,0.08);
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
 }
-#dropzone > .dropzone .preview .progress .upload {
-  -webkit-animation: loading 0.5s linear infinite;
-  -moz-animation: loading 0.5s linear infinite;
-  -o-animation: loading 0.5s linear infinite;
-  -ms-animation: loading 0.5s linear infinite;
-  animation: loading 0.5s linear infinite;
+.dropzone .preview .progress .upload {
+  -webkit-animation: loading 0.4s linear infinite;
+  -moz-animation: loading 0.4s linear infinite;
+  -o-animation: loading 0.4s linear infinite;
+  -ms-animation: loading 0.4s linear infinite;
+  animation: loading 0.4s linear infinite;
   -webkit-transition: width 0.3s ease-in-out;
   -moz-transition: width 0.3s ease-in-out;
   -o-transition: width 0.3s ease-in-out;
   -ms-transition: width 0.3s ease-in-out;
   transition: width 0.3s ease-in-out;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
   position: absolute;
   top: 0;
   left: 0;
   width: 0%;
   height: 100%;
-  background: url("../images/uploading.png") repeat-x 0 0;
+  background: url("../images/spritemap.png") repeat-x 0px -407px;
 }
-#dropzone > .dropzone .preview .filename {
+.dropzone .preview .filename {
   font-size: 12px;
   height: 12px;
   position: relative;
 }
-#dropzone > .dropzone .preview .filename span {
+.dropzone .preview .filename span {
   width: 100px;
   position: absolute;
   top: 0;
@@ -180,51 +186,51 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-#dropzone > .dropzone .preview .error-message {
+.dropzone .preview .error-message {
   display: none;
 }
 @-moz-keyframes loading {
   0% {
-    background-position: 14px 0;
+    background-position: 0 -407px;
   }
 
   100% {
-    background-position: 0 0;
+    background-position: -14px -407px;
   }
 }
 @-webkit-keyframes loading {
   0% {
-    background-position: 14px 0;
+    background-position: 0 -407px;
   }
 
   100% {
-    background-position: 0 0;
+    background-position: -14px -407px;
   }
 }
 @-o-keyframes loading {
   0% {
-    background-position: 14px 0;
+    background-position: 0 -407px;
   }
 
   100% {
-    background-position: 0 0;
+    background-position: -14px -407px;
   }
 }
 @-ms-keyframes loading {
   0% {
-    background-position: 14px 0;
+    background-position: 0 -407px;
   }
 
   100% {
-    background-position: 0 0;
+    background-position: -14px -407px;
   }
 }
 @keyframes loading {
   0% {
-    background-position: 14px 0;
+    background-position: 0 -407px;
   }
 
   100% {
-    background-position: 0 0;
+    background-position: -14px -407px;
   }
 }
