@@ -44,7 +44,7 @@ The instantiated dropzone object is stored in the HTML element itself. You can a
 $("form.dropzone").data("dropzone")
 {% endhighlight %}
 
-To manually create a dropzone on an element you can use the `enderElement.dropzone()` helper like this:
+Dropzones don't have to be forms. To manually create a dropzone on an element you can use the `enderElement.dropzone()` helper like this:
 
 {% highlight javascript %}
 $("div#my-dropzone").dropzone({ url: "/file-upload", maxFilesize: 8 });
@@ -134,6 +134,25 @@ browser support
 - Safari 5+
 
 For all the other browsers, dropzone provides an oldschool file input fallback.
+
+
+why?
+----
+
+I realize that there
+[are](http://valums.com/ajax-upload/)
+[already](http://tutorialzine.com/2011/09/html5-file-upload-jquery-php/)
+[other](http://code.google.com/p/html5uploader/)
+[libraries](http://blueimp.github.com/jQuery-File-Upload/)
+out there but the reasons I decided to write my own are the following:
+
+- I didn't want it to be too big, and to cumbersome to dive into.
+- I want to design my own elements. I only want to register callbacks so I can update my elements accordingly.
+- Big files should get uploaded without a problem.
+- I wanted a callback for image previews, that don't kill the browser if too many too big images are viewed.
+- I want to use the latest API of browsers. I don't care if it falls back to the normal upload form if the browser is too old.
+- I think [ender](http://ender.no.de) is the way to go.
+
 
 license
 -------

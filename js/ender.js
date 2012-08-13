@@ -2,7 +2,7 @@
   * =============================================================
   * Ender: open module JavaScript framework (https://ender.no.de)
   * Build: ender build ../../dropzonejs/
-  * Packages: ender-js@0.4.4 qwery@3.3.11 domready@0.2.11 bean@0.4.11-1 bonzo@1.2.1 dropzone@1.0.0-dev
+  * Packages: ender-js@0.4.4 qwery@3.3.11 domready@0.2.11 bean@0.4.11-1 bonzo@1.2.1 dropzone@1.0.1-dev
   * =============================================================
   */
 
@@ -2585,7 +2585,7 @@
     Dropzone = (function() {
       var defaultOptions;
 
-      Dropzone.prototype.version = "1.0.0-dev";
+      Dropzone.prototype.version = "1.0.1-dev";
 
       /*
         This is a list of all available events you can register on a dropzone object.
@@ -2696,6 +2696,9 @@
         this.options = extend({}, defaultOptions, options != null ? options : {});
         if (this.options.url == null) {
           this.options.url = this.element.attr("action");
+        }
+        if (!this.options.url) {
+          throw new Error("No URL provided.");
         }
         this.init();
       }
