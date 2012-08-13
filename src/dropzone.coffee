@@ -76,6 +76,8 @@ class Dropzone
     fallback: ->
       @element.addClass "browser-not-supported"
       @element.find(".message span").html "Your browser does not support drag'n'drop file uploads."
+      @element.append """<p>Sadly your dusty browser does not support nice drag'n'drop file uploads.<br />Please use the fallback form below to upload your files like in the olden days.</p>"""
+      @element.append @getFallbackForm()
     
     # Those are self explanatory and simply concern the DragnDrop.
     drop: (e) ->
@@ -169,6 +171,12 @@ class Dropzone
 
 
   init: ->
+    if @elementTagName == "form" and @element.attr("enctype") != "multipart/form-data"
+      @element.attr "enctype", "multipart/form-data"
+
+    if @element.find(".message").length == 0
+      @element.append $ """<div class="message"><span>Drop files here to upload</span></div>"""
+
     unless window.File and window.FileReader and window.FileList and window.Blob and window.FormData
       @options.fallback.call this
       return
@@ -179,12 +187,14 @@ class Dropzone
     @URL = window.URL ? window.webkitURL
     @setupEventListeners()
 
-    if @element.find(".message").length == 0
-      @element.append $ """<div class="message"><span>Drop files here to upload</span></div>"""
-
   # Returns a form that can be used as fallback if the browser does not support DragnDrop
+  #
+  # If the dropzone is already a form, only the input field and button are returned. Otherwise a complete form element is provided.
   getFallbackForm: ->
-    $ """<form action="#{@options.url}" enctype="multipart/form-data" method="post"><input type="file" name="newFiles" multiple="multiple" /><button type="submit">Upload!</button></form>"""
+    fields = $ """<div class="fallback-elements"><input type="file" name="newFiles" multiple="multiple" /><button type="submit">Upload!</button></div>"""
+    if @elementTagName isnt "FORM"
+      fields = $("""<form action="#{@options.url}" enctype="multipart/form-data" method="post"></form>""").append fields
+    fields
 
   setupEventListeners: ->
 
