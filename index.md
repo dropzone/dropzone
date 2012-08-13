@@ -44,7 +44,7 @@ The instantiated dropzone object is stored in the HTML element itself. You can a
 $("form.dropzone").data("dropzone")
 {% endhighlight %}
 
-To manually create a dropzone on an element you can use the `.dropzone` helper like this:
+To manually create a dropzone on an element you can use the `enderElement.dropzone()` helper like this:
 
 {% highlight javascript %}
 $("div#my-dropzone").dropzone({ url: "/file-upload", maxFilesize: 8 });
@@ -53,16 +53,19 @@ $("div#my-dropzone").dropzone({ url: "/file-upload", maxFilesize: 8 });
 The valid options are:
 
 - `url`
-- `parallelUploads`
+- `parallelUploads` How many file uploads to process in parallel
 - `maxFilesize` in MB
-- `paramName` The name of the file param that gets transferred.
+- `paramName` The name of the file param that gets transferred
 - `createImageThumbnails`
-- `maxThumbnailFilesize` in MB. When the filename exeeds this limit, the thumbnail will not be generated.
+- `maxThumbnailFilesize` in MB. When the filename exeeds this limit, the thumbnail will not be generated
 - `thumbnailWidth`
 - `thumbnailHeight`
+- `accept` is a function that gets a [file](https://developer.mozilla.org/en-US/docs/DOM/File) as parameter. If it returns `true` the file will be processed. Otherwise it will not be handled.
+- `previewTemplate` is a string that contains the template used for each dropped image. Change it to fulfill your needs but make sure to properly provide all elements.
 
-
-
+> You can also overwrite all default event actions in the options. So if you provide the option `drop` you can overwrite the default `drop` event handler.
+> *You should be familiary with the code if you do that because you can easily break the upload like this.*
+> If you just want to do additional stuff, like adding a few classes here and there, **listen to the events instead**!
 
 ### listen to events
 
@@ -81,24 +84,29 @@ bean.add(myDropzone, "addedfile", function(file) { /* handle the file */ });
 Available events are:
 
 - `fallback` When the browser is not supported
+
+All of these receive the event as first parameter:
+
 - `drop` The user dropped something onto the dropzone
 - `dragstart`
 - `dragend`
 - `dragenter`
 - `dragover`
 - `dragleave`
+
+All of these receive the [file](https://developer.mozilla.org/en-US/docs/DOM/File) as the first parameter:
+
 - `addedfile`
-- `thumbnail` When the thumbnail has been generated
-- `error` An error occured
+- `thumbnail` When the thumbnail has been generated. Receives the [**dataUrl**](http://en.wikipedia.org/wiki/Data_URI_scheme) as second parameter.
+- `error` An error occured. Receives the **errorMessage** as second parameter.
 - `processingfile` When a file gets processed (since there is a queue not all files are currently processed)
-- `uploadprogress`
+- `uploadprogress` Gets called periodically whenever the file upload progress changes. Gets the **progress** parameter as second parameter which is a percentage (0-100). When an upload finishes dropzone *ensures* that uploadprogress will be called with a percentage of 100 *at least* once.
 - `finished`
 
 
 ### layout
 
-The HTML that is generated for each file by dropzone looks like this:
-
+The HTML that is generated for each file by dropzone looks like this (although you can change it with the `previewTemplate` option):
 
 {% highlight html %}
 <div class="preview file-preview">
@@ -111,10 +119,21 @@ The HTML that is generated for each file by dropzone looks like this:
 </div>
 {% endhighlight %}
 
-The `.preview` div gets the `processing` class when the file gets processed, `success` when the file got uploaded and `error` in case the file couldn't be uploaded. In that case, `.error-message` will contain the text returned by the server.
+`div.preview` gets the `processing` class when the file gets processed, `success` when the file got uploaded and `error` in case the file couldn't be uploaded. In the latter case, `div.error-message` will contain the text returned by the server.
 
 Want your dropzone to look like the dropzone on this page? Just take [my stylesheet](/css/dropzone.css) and make sure you also provide the used images.
 
+
+browser support
+---------------
+
+- Chrome 7+
+- Firefox 4+
+- IE 10+
+- Opera 12+
+- Safari 5+
+
+For all the other browsers, dropzone provides an oldschool file input fallback.
 
 license
 -------
