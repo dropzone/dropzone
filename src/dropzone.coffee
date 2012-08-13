@@ -164,6 +164,8 @@ class Dropzone
     
     @options.url = @element.attr "action" unless @options.url?
 
+    throw new Error "No URL provided." unless @options.url
+
     @init()
 
 
