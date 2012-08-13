@@ -20,7 +20,7 @@ noOp = ->
 
 class Dropzone
 
-  version: "0.2.5"
+  version: "1.0.0"
 
   ###
   This is a list of all available events you can register on a dropzone object.
@@ -56,8 +56,8 @@ class Dropzone
     paramName: "file" # The name of the file param that gets transferred.
     createImageThumbnails: true
     maxThumbnailFilesize: 2 # in MB. When the filename exeeds this limit, the thumbnail will not be generated.
-    thumbnailWidth: 120
-    thumbnailHeight: 120
+    thumbnailWidth: 100
+    thumbnailHeight: 100
     
     # If false the file does not get processed.
     accept: (file) -> true
@@ -73,12 +73,16 @@ class Dropzone
 
 
     # Called when the browser does not support drag and drop
-    fallback: -> @element.find(".message").html "Your browser does not support drag'n'drop file uploads."
+    fallback: ->
+      @element.addClass "browser-not-supported"
+      @element.find(".message span").html "Your browser does not support drag'n'drop file uploads."
+      @element.append """<p>Sadly your dusty browser does not support nice drag'n'drop file uploads.<br />Please use the fallback form below to upload your files like in the olden days.</p>"""
+      @element.append @getFallbackForm()
     
     # Those are self explanatory and simply concern the DragnDrop.
     drop: (e) ->
       @element.removeClass "drag-hover"
-      @element.find(".message").hide()
+      @element.addClass "started"
     dragstart: (e) ->
     dragend: (e) -> @element.removeClass "drag-hover"
     dragenter: (e) -> @element.addClass "drag-hover"
@@ -90,7 +94,8 @@ class Dropzone
     addedfile: (file) ->
       file.previewTemplate = $ @options.previewTemplate
       @element.append file.previewTemplate
-      file.previewTemplate.find(".details").html $("<span>#{file.name}</span>")
+      file.previewTemplate.find(".filename span").text file.name
+      file.previewTemplate.find(".details").append $("""<div class="size">#{@filesize file.size}</div>""")
 
 
     # Called when a thumbnail has been generated
@@ -99,15 +104,14 @@ class Dropzone
       file.previewTemplate
         .removeClass("file-preview")
         .addClass("image-preview")
-
-      file.previewTemplate.find(".details").html $("""<img alt="#{file.name}" src="#{dataUrl}"/>""")
+      file.previewTemplate.find(".details").append $("""<img alt="#{file.name}" src="#{dataUrl}"/>""")
 
     
     # Called whenever an error occures
     # Receives `file` and `message`
     error: (file, message) ->
-      file.previewTemplate.addClass "process-error"
-      file.previewTemplate.find(".error-message span").html message
+      file.previewTemplate.addClass "error"
+      file.previewTemplate.find(".error-message span").text message
     
     
     # Called when a file gets processed
@@ -124,7 +128,7 @@ class Dropzone
     # When the complete upload is finished
     # Receives `file`
     finished: (file) ->
-      file.previewTemplate.addClass "finished"
+      file.previewTemplate.addClass "success"
 
 
     # This template will be chosen when a new file is dropped.
@@ -132,9 +136,10 @@ class Dropzone
                      <div class="preview file-preview">
                        <div class="details"></div>
                        <div class="progress"><span class="load"></span><span class="upload"></span></div>
-                       <div class="finished-success"><span>✔</span></div>
-                       <div class="finished-error"><span>✘</span></div>
+                       <div class="success-mark"><span>✔</span></div>
+                       <div class="error-mark"><span>✘</span></div>
                        <div class="error-message"><span></span></div>
+                       <div class="filename"><span></span></div>
                      </div>
                      """
 
@@ -143,9 +148,12 @@ class Dropzone
   constructor: (element, options) ->
     @element = $ element
 
+    throw new Error "You can only instantiate dropzone on a single element." if @element.length != 1
+
     throw new Error "Dropzone already attached." if @element.data("dropzone")
     @element.data "dropzone", @
 
+    @elementTagName = @element.get(0).tagName
 
     extend = (target, objects...) ->
       for object in objects
@@ -163,6 +171,12 @@ class Dropzone
 
 
   init: ->
+    if @elementTagName == "form" and @element.attr("enctype") != "multipart/form-data"
+      @element.attr "enctype", "multipart/form-data"
+
+    if @element.find(".message").length == 0
+      @element.append $ """<div class="message"><span>Drop files here to upload</span></div>"""
+
     unless window.File and window.FileReader and window.FileList and window.Blob and window.FormData
       @options.fallback.call this
       return
@@ -173,12 +187,14 @@ class Dropzone
     @URL = window.URL ? window.webkitURL
     @setupEventListeners()
 
-    if @element.find(".message").length == 0
-      @element.append $ """<div class="message">Drop files here to upload</div>"""
-
   # Returns a form that can be used as fallback if the browser does not support DragnDrop
+  #
+  # If the dropzone is already a form, only the input field and button are returned. Otherwise a complete form element is provided.
   getFallbackForm: ->
-    $ """<form action="#{@options.url}" enctype="multipart/form-data" method="post"><input type="file" name="newFiles" multiple="multiple" /><button type="submit">Upload!</button></form>"""
+    fields = $ """<div class="fallback-elements"><input type="file" name="newFiles" multiple="multiple" /><button type="submit">Upload!</button></div>"""
+    if @elementTagName isnt "FORM"
+      fields = $("""<form action="#{@options.url}" enctype="multipart/form-data" method="post"></form>""").append fields
+    fields
 
   setupEventListeners: ->
 
@@ -211,6 +227,25 @@ class Dropzone
     @element.on "dragend", (e) =>
       bean.fire @, "dragend", e
 
+
+  # Returns a nicely formatted filesize
+  filesize: (size) ->
+    if size >= 100000000000
+      size = size / 100000000000
+      string = "tb"
+    else if size >= 100000000
+      size = size / 100000000
+      string = "gb"
+    else if size >= 100000
+      size = size / 100000
+      string = "mb"
+    else if size >= 100
+      size = size / 100 
+      string = "kb"
+    else
+      size = size * 10
+      string = "by"
+    "#{Math.round(size)/10} #{string}"
 
   drop: (e) ->
     return unless e.dataTransfer
@@ -245,26 +280,38 @@ class Dropzone
     img.onload = =>
       canvas = document.createElement("canvas")
       ctx = canvas.getContext("2d")
-      trgX = 0
-      trgY = 0
-      trgWidth = 0
-      trgHeight = 0
-      srcRatio = undefined
-      trgRatio = undefined
+      srcX = 0
+      srcY = 0
+      srcWidth = img.width
+      srcHeight = img.height
       canvas.width = @options.thumbnailWidth
       canvas.height = @options.thumbnailHeight
+      trgX = 0
+      trgY = 0
+      trgWidth = canvas.width
+      trgHeight = canvas.height
       srcRatio = img.width / img.height
       trgRatio = canvas.width / canvas.height
       
-      if srcRatio > trgRatio
-        trgWidth = canvas.width
-        trgHeight = trgWidth / srcRatio
+      if img.height < canvas.height or img.width < canvas.width
+        # This image is smaller than the canvas
+        trgHeight = srcHeight
+        trgWidth = srcWidth
       else
-        trgHeight = canvas.height
-        trgWidth = trgHeight * srcRatio
-      trgX = (canvas.width - trgWidth) / 2
+        # Image is bigger and needs rescaling
+        if srcRatio > trgRatio
+          srcHeight = img.height
+          srcWidth = srcHeight * trgRatio
+        else
+          srcWidth = img.width
+          srcHeight = srcWidth / trgRatio
+
+
+      srcX = (img.width - srcWidth) / 2
+      srcY = (img.height - srcHeight) / 2
       trgY = (canvas.height - trgHeight) / 2
-      ctx.drawImage img, trgX, trgY, trgWidth, trgHeight
+      trgX = (canvas.width - trgWidth) / 2
+      ctx.drawImage img, srcX, srcY, srcWidth, srcHeight, trgX, trgY, trgWidth, trgHeight
       thumbnail = canvas.toDataURL("image/png")
 
       bean.fire @, "thumbnail", [ file, thumbnail ]
@@ -306,7 +353,15 @@ class Dropzone
 
     formData = new FormData()
     formData.append @options.paramName, file
-    formData.append "test", "HI"
+
+    if @elementTagName = "FORM"
+      # Take care of other input elements
+      for inputElement in @element.find "input, textarea, select, button"
+        input = $ inputElement
+        inputName = input.attr("name")
+
+        if !input.attr("type") or input.attr("type").toLowerCase() != "checkbox" or inputElement.checked
+          formData.append input.attr("name"), input.val()
 
     xhr.open "POST", @options.url, true
 
