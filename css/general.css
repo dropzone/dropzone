@@ -266,6 +266,12 @@ blockquote {
   -webkit-border-radius: 5px;
   border-radius: 5px;
 }
+.dropzone,
+.dropzone * {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
 .dropzone {
   position: relative;
   min-height: 360px;
@@ -344,12 +350,10 @@ blockquote {
   height: 100px;
 }
 .dropzone .preview .details .size {
-  font-size: 31px;
   color: #666;
-  font-family: "League Gothic";
-  font-weight: 500;
+  font: 500 31px/31px "League Gothic", sans-serif;
   position: absolute;
-  bottom: 1px;
+  bottom: 2px;
   left: 17px;
   z-index: 100;
 }
@@ -455,7 +459,28 @@ blockquote {
   text-overflow: ellipsis;
 }
 .dropzone .preview .error-message {
-  display: none;
+  opacity: 0;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+  filter: alpha(opacity=0);
+  -webkit-transition: opacity 0.3s ease-in-out;
+  -moz-transition: opacity 0.3s ease-in-out;
+  -o-transition: opacity 0.3s ease-in-out;
+  -ms-transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
+  position: absolute;
+  top: -5px;
+  left: -20px;
+  background: rgba(245,245,245,0.8);
+  padding: 8px 10px;
+  color: #800;
+  min-width: 140px;
+  max-width: 500px;
+  z-index: 500;
+}
+.dropzone .preview:hover.error .error-message {
+  opacity: 1;
+  -ms-filter: none;
+  filter: none;
 }
 @-moz-keyframes loading {
   0% {

@@ -10,6 +10,10 @@
 }
 
 .dropzone
+.dropzone *
+  box-sizing border-box
+
+.dropzone
   position relative
   min-height 360px
   border 1px solid rgba(0, 0, 0, 0.03)
@@ -75,12 +79,10 @@
         height 100px
 
       .size
-        font-size 31px
         color #666
-        font-family "League Gothic"
-        font-weight 500
+        font 500 31px/31px "League Gothic", sans-serif
         position absolute
-        bottom 1px
+        bottom 2px
         left 17px
         z-index 100
 
@@ -155,8 +157,20 @@
         overflow ellipsis
 
     .error-message
-      display none
-
+      opacity 0
+      transition opacity 0.3s ease-in-out
+      position absolute
+      top -5px
+      left -20px
+      background rgba(245, 245, 245, 0.8)
+      padding 8px 10px
+      color #800
+      min-width 140px
+      max-width 500px
+      z-index 500
+    &:hover.error
+      .error-message
+        opacity 1
 
 
 
