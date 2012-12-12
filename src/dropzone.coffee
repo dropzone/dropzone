@@ -1,24 +1,21 @@
 
-$ = ender
+
+# Dependencies
+o = require "jquery"
+emitter = require "emitter"
 
 
-$.ender
-  dropzone: (options) ->
-    for element in @
-      new Dropzone element, options
-, true # Should be added to the internal chain
+# Augment jQuery
+o.fn.dropzone = (options) ->
+  this.each -> new Dropzone this, options
 
 
-$.domReady -> $(".dropzone").dropzone()
+o -> o(".dropzone").dropzone()
 
 
-bean = require "bean"
 
 
-noOp = ->
-
-
-class Dropzone
+class Dropzone extends Emitter
 
   version: "1.0.1-dev"
 
@@ -27,8 +24,7 @@ class Dropzone
 
   You can register an event handler like this:
 
-      var bean = require("bean");
-      bean.add(dropzone, "dragEnter", function() { });
+      dropzone.on("dragEnter", function() { });
 
   ###
   events: [
@@ -92,10 +88,10 @@ class Dropzone
     # Called when a file is added to the queue
     # Receives `file`
     addedfile: (file) ->
-      file.previewTemplate = $ @options.previewTemplate
+      file.previewTemplate = o @options.previewTemplate
       @element.append file.previewTemplate
       file.previewTemplate.find(".filename span").text file.name
-      file.previewTemplate.find(".details").append $("""<div class="size">#{@filesize file.size}</div>""")
+      file.previewTemplate.find(".details").append o """<div class="size">#{@filesize file.size}</div>"""
 
 
     # Called when a thumbnail has been generated
@@ -104,7 +100,7 @@ class Dropzone
       file.previewTemplate
         .removeClass("file-preview")
         .addClass("image-preview")
-      file.previewTemplate.find(".details").append $("""<img alt="#{file.name}" src="#{dataUrl}"/>""")
+      file.previewTemplate.find(".details").append o """<img alt="#{file.name}" src="#{dataUrl}"/>"""
 
     
     # Called whenever an error occures
@@ -146,7 +142,7 @@ class Dropzone
   defaultOptions.previewTemplate = defaultOptions.previewTemplate.replace /\n*/g, ""
 
   constructor: (element, options) ->
-    @element = $ element
+    @element = o element
 
     throw new Error "You can only instantiate dropzone on a single element." if @element.length != 1
 
@@ -177,7 +173,7 @@ class Dropzone
       @element.attr "enctype", "multipart/form-data"
 
     if @element.find(".message").length == 0
-      @element.append $ """<div class="message"><span>Drop files here to upload</span></div>"""
+      @element.append o """<div class="message"><span>Drop files here to upload</span></div>"""
 
     unless window.File and window.FileReader and window.FileList and window.Blob and window.FormData
       @options.fallback.call this
@@ -193,41 +189,41 @@ class Dropzone
   #
   # If the dropzone is already a form, only the input field and button are returned. Otherwise a complete form element is provided.
   getFallbackForm: ->
-    fields = $ """<div class="fallback-elements"><input type="file" name="newFiles" multiple="multiple" /><button type="submit">Upload!</button></div>"""
+    fields = o """<div class="fallback-elements"><input type="file" name="newFiles" multiple="multiple" /><button type="submit">Upload!</button></div>"""
     if @elementTagName isnt "FORM"
-      fields = $("""<form action="#{@options.url}" enctype="multipart/form-data" method="post"></form>""").append fields
+      fields = o("""<form action="#{@options.url}" enctype="multipart/form-data" method="post"></form>""").append fields
     fields
 
   setupEventListeners: ->
 
     # First setup all event listeners on the dropzone object itself.
-    bean.add @, eventName, @options[eventName] for eventName in @events
+    @on eventName, @options[eventName] for eventName in @events
 
     noPropagation = (e) ->
       e.stopPropagation()
       e.preventDefault()
 
     @element.on "dragstart", (e) =>
-      bean.fire @, "dragstart", e
+      @emit "dragstart", e
 
     @element.on "dragenter", (e) =>
       noPropagation e
-      bean.fire @, "dragenter", e
+      @emit "dragenter", e
 
     @element.on "dragover", (e) =>
       noPropagation e
-      bean.fire @, "dragover", e
+      @emit "dragover", e
 
     @element.on "dragleave", (e) =>
-      bean.fire @, "dragleave", e
+      @emit "dragleave", e
 
     @element.on "drop", (e) =>
       noPropagation e
       @drop e
-      bean.fire @, "drop", e
+      @emit "drop", e
     
     @element.on "dragend", (e) =>
-      bean.fire @, "dragend", e
+      @emit "dragend", e
 
 
   # Returns a nicely formatted filesize
@@ -267,7 +263,7 @@ class Dropzone
     @files.push file
     @files.queue.push file
 
-    bean.fire @, "addedfile", file
+    @emit "addedfile", file
 
     @createThumbnail file  if @options.createImageThumbnails and file.type.match(/image.*/) and file.size <= @options.maxThumbnailFilesize * 1024 * 1024
 
@@ -316,7 +312,7 @@ class Dropzone
       ctx.drawImage img, srcX, srcY, srcWidth, srcHeight, trgX, trgY, trgWidth, trgHeight
       thumbnail = canvas.toDataURL("image/png")
 
-      bean.fire @, "thumbnail", [ file, thumbnail ]
+      @emit "thumbnail", [ file, thumbnail ]
 
       @URL.revokeObjectURL blobUrl
       img = null
@@ -342,7 +338,7 @@ class Dropzone
 
     @files.processing.push file
 
-    bean.fire @, "processingfile", file
+    @emit "processingfile", file
 
     if file.size > @options.maxFilesize * 1024 * 1024
       @errorProcessing file, "File is too big (" + (Math.round(file.size / 1024 / 10.24) / 100) + "MB). Max filesize: " + @options.maxFilesize + "MB"
@@ -359,7 +355,7 @@ class Dropzone
     if @elementTagName = "FORM"
       # Take care of other input elements
       for inputElement in @element.find "input, textarea, select, button"
-        input = $ inputElement
+        input = o inputElement
         inputName = input.attr("name")
 
         if !input.attr("type") or input.attr("type").toLowerCase() != "checkbox" or inputElement.checked
@@ -374,7 +370,7 @@ class Dropzone
       if xhr.status isnt 200
         handleError()
       else
-        bean.fire @, "uploadprogress", [ file, 100 ]
+        @emit "uploadprogress", [ file, 100 ]
         response = xhr.responseText
         if ~xhr.getResponseHeader("content-type").indexOf "application/json" then response = JSON.parse response
         @finished file, response, e
@@ -385,7 +381,7 @@ class Dropzone
     # Some browsers do not have the .upload property
     progressObj = xhr.upload ? xhr
     progressObj.onprogress = (e) =>
-      bean.fire @, "uploadprogress", [ file, Math.max(0, Math.min(100, (e.loaded / e.total) * 100)) ]
+      @emit "uploadprogress", [ file, Math.max(0, Math.min(100, (e.loaded / e.total) * 100)) ]
 
     xhr.setRequestHeader "Accept", "application/json"
     xhr.setRequestHeader "Cache-Control", "no-cache"
@@ -398,7 +394,7 @@ class Dropzone
   # Individual callbacks have to be called in the appropriate sections.
   finished: (file, responseText, e) ->
     @files.processing = without(@files.processing, file)
-    bean.fire @, "finished", [ file, responseText, e ]
+    @emit "finished", [ file, responseText, e ]
     @processQueue()
 
 
@@ -406,7 +402,7 @@ class Dropzone
   # Individual callbacks have to be called in the appropriate sections.
   errorProcessing: (file, message) ->
     @files.processing = without(@files.processing, file)
-    bean.fire @, "error", [ file, message ]
+    @emit "error", [ file, message ]
     @processQueue()
 
 

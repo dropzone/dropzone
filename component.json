@@ -4,9 +4,7 @@
   "description": "Handles drag and drop of files for you.",
   "scripts": [ "index.js", "lib/dropzone.js" ],
   "dependencies": {
-    "formwatcher/bonzo": "*",
-    "formwatcher/qwery": "*",
-    "formwatcher/domready": "*",
-    "formwatcher/bean": "*"
+    "component/jquery": "*",
+    "component/emitter": "*"
   }
 }
