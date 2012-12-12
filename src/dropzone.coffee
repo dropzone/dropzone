@@ -2,7 +2,7 @@
 
 # Dependencies
 o = require "jquery"
-emitter = require "emitter"
+Emitter = require "emitter"
 
 
 # Augment jQuery
@@ -246,9 +246,9 @@ class Dropzone extends Emitter
     "#{Math.round(size)/10} #{string}"
 
   drop: (e) ->
-    return unless e.dataTransfer
-    files = e.dataTransfer.files
-    @handleFiles files  if files.length
+    return unless e.originalEvent.dataTransfer
+    files = e.originalEvent.dataTransfer.files
+    @handleFiles files if files.length
 
   handleFiles: (files) ->
     @addFile file for file in files when @accept file
