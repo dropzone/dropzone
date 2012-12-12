@@ -19,6 +19,12 @@
       ]
     },
     {
+      "name": "component.json",
+      "regexs": [
+        "\"version\": \"###\""
+      ]
+    },
+    {
       "name": "readme.md",
       "regexs": [
         "Version ###"
