@@ -1,0 +1,14 @@
+{
+  "name": "dropzone",
+  "version": "1.0.1-dev",
+  "description": "Handles drag and drop of files for you.",
+  "scripts": [
+    "index.js",
+    "lib/dropzone.js"
+  ],
+  "dependencies": {
+    "component/jquery": "*",
+    "component/emitter": "*"
+  },
+  "repo": "https://raw.github.com/enyo/dropzone"
+}

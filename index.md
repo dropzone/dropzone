@@ -20,11 +20,13 @@ Try it out:
 installation
 ------------
 
-The easiest and recommended way to install dropzone is through [ender](http://ender.no.de/)
+The easiest and recommended way to install dropzone is through [component](https://github.com/component/component).
 
-    $ ender build dropzone
+Just add dropzone as a dependency:
 
-If you don't use ender (shame on you) you can [download a bundle here](https://github.com/enyo/dropzonejs).
+    "enyo/dropzone": "*"
+
+I'm working on standalone bundles. Please contact me if you need them NOW.
 
 
 usage
@@ -44,7 +46,7 @@ The instantiated dropzone object is stored in the HTML element itself. You can a
 $("form.dropzone").data("dropzone")
 {% endhighlight %}
 
-Dropzones don't have to be forms. To manually create a dropzone on an element you can use the `enderElement.dropzone()` helper like this:
+Dropzones don't have to be forms. To manually create a dropzone on an element you can use the jQuery `.dropzone()` helper like this:
 
 {% highlight javascript %}
 $("div#my-dropzone").dropzone({ url: "/file-upload", maxFilesize: 8 });
@@ -69,15 +71,15 @@ The valid options are:
 
 ### listen to events
 
-Dropzone triggers events when processing files to which you can register easily with the [bean event utility](https://github.com/fat/bean/).
+Dropzone triggers events when processing files to which you can register easily.
 
 Example:
 
 {% highlight javascript %}
-var bean = require("bean"),
-    myDropzone = $("div#my-dropzone").data("dropzone");
+// Already instantiated dropzones are accessible through `.data("dropzone")`
+var myDropzone = $("#my-dropzone").data("dropzone");
 
-bean.add(myDropzone, "addedfile", function(file) { /* handle the file */ });
+myDropzone.on("addedfile", function(file) { /* handle the file */ });
 {% endhighlight %}
 
 
@@ -85,7 +87,7 @@ Available events are:
 
 - `fallback` When the browser is not supported
 
-All of these receive the event as first parameter:
+All of these receive the [*jQuery* event](http://api.jquery.com/category/events/event-object/) as first parameter:
 
 - `drop` The user dropped something onto the dropzone
 - `dragstart`
@@ -100,7 +102,9 @@ All of these receive the [file](https://developer.mozilla.org/en-US/docs/DOM/Fil
 - `thumbnail` When the thumbnail has been generated. Receives the [**dataUrl**](http://en.wikipedia.org/wiki/Data_URI_scheme) as second parameter.
 - `error` An error occured. Receives the **errorMessage** as second parameter.
 - `processingfile` When a file gets processed (since there is a queue not all files are currently processed)
-- `uploadprogress` Gets called periodically whenever the file upload progress changes. Gets the **progress** parameter as second parameter which is a percentage (0-100). When an upload finishes dropzone *ensures* that uploadprogress will be called with a percentage of 100 *at least* once.
+- `uploadprogress` Gets called periodically whenever the file upload progress changes.
+  Gets the **progress** parameter as second parameter which is a percentage (0-100).
+  When an upload finishes dropzone *ensures* that uploadprogress will be called with a percentage of 100 *at least* once.
 - `finished`
 
 
@@ -152,7 +156,6 @@ out there but the reasons I decided to write my own are the following:
 - Big files should get uploaded without a problem.
 - I wanted a callback for image previews, that don't kill the browser if too many too big images are viewed.
 - I want to use the latest API of browsers. I don't care if it falls back to the normal upload form if the browser is too old.
-- I think [ender](http://ender.no.de) is the way to go.
 
 
 license

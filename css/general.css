@@ -456,6 +456,7 @@ blockquote {
   width: 100%;
   white-space: nowrap;
   overflow: hidden;
+  -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
 }
 .dropzone .preview .error-message {

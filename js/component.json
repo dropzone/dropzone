@@ -1,0 +1,9 @@
+{
+  "name": "boot",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "enyo/dropzone": "develop"
+  },
+  "scripts": [ "index.js" ]
+}
