@@ -312,7 +312,7 @@ class Dropzone extends Emitter
       ctx.drawImage img, srcX, srcY, srcWidth, srcHeight, trgX, trgY, trgWidth, trgHeight
       thumbnail = canvas.toDataURL("image/png")
 
-      @emit "thumbnail", [ file, thumbnail ]
+      @emit "thumbnail", file, thumbnail
 
       @URL.revokeObjectURL blobUrl
       img = null
@@ -370,7 +370,7 @@ class Dropzone extends Emitter
       if xhr.status isnt 200
         handleError()
       else
-        @emit "uploadprogress", [ file, 100 ]
+        @emit "uploadprogress", file, 100
         response = xhr.responseText
         if ~xhr.getResponseHeader("content-type").indexOf "application/json" then response = JSON.parse response
         @finished file, response, e
@@ -381,7 +381,7 @@ class Dropzone extends Emitter
     # Some browsers do not have the .upload property
     progressObj = xhr.upload ? xhr
     progressObj.onprogress = (e) =>
-      @emit "uploadprogress", [ file, Math.max(0, Math.min(100, (e.loaded / e.total) * 100)) ]
+      @emit "uploadprogress", file, Math.max(0, Math.min(100, (e.loaded / e.total) * 100))
 
     xhr.setRequestHeader "Accept", "application/json"
     xhr.setRequestHeader "Cache-Control", "no-cache"
@@ -394,7 +394,7 @@ class Dropzone extends Emitter
   # Individual callbacks have to be called in the appropriate sections.
   finished: (file, responseText, e) ->
     @files.processing = without(@files.processing, file)
-    @emit "finished", [ file, responseText, e ]
+    @emit "finished", file, responseText, e
     @processQueue()
 
 
@@ -402,7 +402,7 @@ class Dropzone extends Emitter
   # Individual callbacks have to be called in the appropriate sections.
   errorProcessing: (file, message) ->
     @files.processing = without(@files.processing, file)
-    @emit "error", [ file, message ]
+    @emit "error", file, message
     @processQueue()
 
 
