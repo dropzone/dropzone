@@ -17,7 +17,7 @@ o -> o(".dropzone").dropzone()
 
 class Dropzone extends Emitter
 
-  version: "1.1.0"
+  version: "1.2.0"
 
   ###
   This is a list of all available events you can register on a dropzone object.
@@ -55,8 +55,10 @@ class Dropzone extends Emitter
     thumbnailWidth: 100
     thumbnailHeight: 100
     
-    # If false the file does not get processed.
-    accept: (file) -> true
+    # If `done()` is called without argument the file is accepted
+    # If you call it with an error message, the file is rejected
+    # (This allows for asynchronous validation)
+    accept: (file, done) -> done()
 
 
     ###
@@ -149,6 +151,11 @@ class Dropzone extends Emitter
     throw new Error "Dropzone already attached." if @element.data("dropzone")
     @element.data "dropzone", @
 
+    
+    # Get the `Dropzone.opions.elementId` for this element if it exists
+    elementId = @element.attr "id"
+    elementOptions = (Dropzone.options[camelize elementId] if elementId) ? { }
+
     @elementTagName = @element.get(0).tagName
 
     extend = (target, objects...) ->
@@ -156,7 +163,7 @@ class Dropzone extends Emitter
         target[key] = val for key, val of object
       target
 
-    @options = extend { }, defaultOptions, options ? { }
+    @options = extend { }, defaultOptions, elementOptions, options ? { }
     
     @options.url = @element.attr "action" unless @options.url?
 
@@ -251,21 +258,31 @@ class Dropzone extends Emitter
     @handleFiles files if files.length
 
   handleFiles: (files) ->
-    @addFile file for file in files when @accept file
-    @processQueue()
+    @addFile file for file in files
 
-  accept: (file) ->
-    
-    # Add file size check here.
-    @options.accept.call this, file
+  # If `done()` is called without argument the file is accepted
+  # If you call it with an error message, the file is rejected
+  # (This allows for asynchronous validation)
+  accept: (file, done) ->
+    if file.size > @options.maxFilesize * 1024 * 1024
+      done "File is too big (" + (Math.round(file.size / 1024 / 10.24) / 100) + "MB). Max filesize: " + @options.maxFilesize + "MB"
+    else
+      # Add file size check here.
+      @options.accept.call this, file, done
 
   addFile: (file) ->
     @files.push file
-    @files.queue.push file
 
     @emit "addedfile", file
 
     @createThumbnail file  if @options.createImageThumbnails and file.type.match(/image.*/) and file.size <= @options.maxThumbnailFilesize * 1024 * 1024
+
+    @accept file, (error) =>
+      if error
+        @errorProcessing file, error
+      else
+        @files.queue.push file
+        @processQueue()
 
   createThumbnail: (file) ->
 
@@ -340,10 +357,7 @@ class Dropzone extends Emitter
 
     @emit "processingfile", file
 
-    if file.size > @options.maxFilesize * 1024 * 1024
-      @errorProcessing file, "File is too big (" + (Math.round(file.size / 1024 / 10.24) / 100) + "MB). Max filesize: " + @options.maxFilesize + "MB"
-    else
-      @uploadFile file
+    @uploadFile file
 
 
   uploadFile: (file) ->
@@ -407,13 +421,28 @@ class Dropzone extends Emitter
 
 
 
+# This is a map of options for your different dropzones. Add configurations
+# to this object for your different dropzone elemens.
+#
+# Example:
+# 
+#     Dropzone.options.myDropzoneElementId = { maxFilesize: 1 };
+# 
+# And in html:
+# 
+#     <form action="/upload" id="my-dropzone-element-id" class="dropzone"></form>
+Dropzone.options = { }
 
 
 without = (list, rejectedItem) -> item for item in list when item isnt rejectedItem
 
+# abc-def_ghi -> abcDefGhi
+camelize = (str) -> str.replace /[\-_](\w)/g, (match) -> match[1].toUpperCase()
 
 
 
-
-
+if module?
+  module.exports = Dropzone
+else
+  window.Dropzone = Dropzone
 
