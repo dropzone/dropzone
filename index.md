@@ -10,7 +10,7 @@ dropzone.js is an open source library that provides drag'n'drop file uploads by 
 
 Try it out:
 
-<div id="dropzone"><form action="http://www.torrentplease.com/dropzone.php" class="dropzone">
+<div id="dropzone"><form action="http://www.torrentplease.com/dropzone.php" class="dropzone" id="demo-upload">
 </form></div>
 
 
@@ -35,10 +35,24 @@ usage
 The typical way of using dropzone is by creating a form element with the class `dropzone`:
 
 {% highlight html %}
-<form action="/file-upload" class="dropzone"></form>
+<form action="/file-upload" class="dropzone" id="my-dropzone"></form>
 {% endhighlight %}
 
 *That's it.* Dropzone will find all form elements with the class dropzone, automatically attach itself to it, and upload files dropped into it to the specified `action` attribute.
+
+To configure Dropzones created like this, you can write the configuration in the `Dropzone.options` object, like this:
+
+{% highlight javascript %}
+Dropzone.options.myDropzone = {
+  maxFilesize: 2, // MB
+  accept: (file, done) {
+    if (file.name == "justinbieber.jpg") {
+      done("Naha, you don't.");
+    }
+    else { done(); }
+  }
+};
+{% endhighlight %}
 
 The instantiated dropzone object is stored in the HTML element itself. You can access it like this:
 
@@ -46,11 +60,21 @@ The instantiated dropzone object is stored in the HTML element itself. You can a
 $("form.dropzone").data("dropzone")
 {% endhighlight %}
 
-Dropzones don't have to be forms. To manually create a dropzone on an element you can use the jQuery `.dropzone()` helper like this:
+Dropzones don't have to be forms. Any element with a `.dropzone` class will do, but you have to configure the `url`
+if you choose another element (in forms, the `action` attribute is used as url).
+
+To programmatically create a dropzone on an element you can use the jQuery `.dropzone()` helper like this:
 
 {% highlight javascript %}
 $("div#my-dropzone").dropzone({ url: "/file-upload", maxFilesize: 8 });
 {% endhighlight %}
+
+or without the jQuery helper:
+
+{% highlight javascript %}
+new Dropzone($("div#my-dropzone"), { url: "/file-upload", maxFilesize: 8 });
+{% endhighlight %}
+
 
 The valid options are:
 
@@ -62,7 +86,7 @@ The valid options are:
 - `maxThumbnailFilesize` in MB. When the filename exeeds this limit, the thumbnail will not be generated
 - `thumbnailWidth`
 - `thumbnailHeight`
-- `accept` is a function that gets a [file](https://developer.mozilla.org/en-US/docs/DOM/File) as parameter. If it returns `true` the file will be processed. Otherwise it will not be handled.
+- `accept` is a function that gets a [file](https://developer.mozilla.org/en-US/docs/DOM/File) and a `done` function as parameter. If the done function is invoked without a parameter, the file will be processed. If you pass an error message it will be displayed and the file will not be uploaded.
 - `previewTemplate` is a string that contains the template used for each dropped image. Change it to fulfill your needs but make sure to properly provide all elements.
 
 > You can also overwrite all default event actions in the options. So if you provide the option `drop` you can overwrite the default `drop` event handler.

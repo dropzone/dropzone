@@ -89,6 +89,19 @@
   left: 17px;
   z-index: 100;
 }
+.dropzone .preview .details .content {
+  font-size: 3px;
+  white-space: pre;
+  position: absolute;
+  top: 5px;
+  left: 12px;
+  right: 19px;
+  bottom: 5px;
+  overflow: hidden;
+  line-height: 100%;
+  cursor: default;
+  word-wrap: break-word;
+}
 .dropzone .preview.file-preview .details {
   background: url("../images/spritemap.png") no-repeat 8px -265px;
 }

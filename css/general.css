@@ -214,14 +214,19 @@
   box-sizing: border-box;
 }
 body {
-  font-family: 'Source Sans Pro', arial, sans-serif;
+  font-family: 'Open Sans', arial, sans-serif;
   background: url("../images/background.png") repeat 0 0;
-  font-size: 14px;
+  font-size: 15px;
+  line-height: 140%;
   font-weight: 300;
   color: #000;
 }
+strong {
+  font-weight: 600;
+}
 code {
   font-family: menlo, monospace;
+  font-size: 14px;
 }
 a {
   color: #000;
@@ -356,6 +361,19 @@ blockquote {
   bottom: 2px;
   left: 17px;
   z-index: 100;
+}
+.dropzone .preview .details .content {
+  font-size: 3px;
+  white-space: pre;
+  position: absolute;
+  top: 5px;
+  left: 12px;
+  right: 19px;
+  bottom: 5px;
+  overflow: hidden;
+  line-height: 100%;
+  cursor: default;
+  word-wrap: break-word;
 }
 .dropzone .preview.file-preview .details {
   background: url("../images/spritemap.png") no-repeat 8px -265px;
