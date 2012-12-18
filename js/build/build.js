@@ -9777,7 +9777,7 @@ require.register("enyo-dropzone/lib/dropzone.js", function(module, exports, requ
 
     __extends(Dropzone, _super);
 
-    Dropzone.prototype.version = "1.1.1-dev";
+    Dropzone.prototype.version = "1.2.1-dev";
 
     /*
       This is a list of all available events you can register on a dropzone object.

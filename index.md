@@ -26,6 +26,14 @@ Just add dropzone as a dependency:
 
     "enyo/dropzone": "*"
 
+Then include it like this:
+
+{% highlight javascript %}
+var Dropzone = require("dropzone");
+{% endhighlight %}
+
+so it is activated and scans the document.
+
 I'm working on standalone bundles. Please contact me if you need them NOW.
 
 
@@ -38,7 +46,12 @@ The typical way of using dropzone is by creating a form element with the class `
 <form action="/file-upload" class="dropzone" id="my-dropzone"></form>
 {% endhighlight %}
 
-*That's it.* Dropzone will find all form elements with the class dropzone, automatically attach itself to it, and upload files dropped into it to the specified `action` attribute.
+*That's it. Dropzone will find all form elements with the class dropzone,
+*automatically attach itself to it, and upload files dropped into it to the
+*specified `action` attribute.
+
+> Don't forget to `require` dropzone, otherwise it won't be activated.
+
 
 To configure Dropzones created like this, you can write the configuration in the `Dropzone.options` object, like this:
 
