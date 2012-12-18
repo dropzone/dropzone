@@ -50,6 +50,8 @@ For a list of all events, please look at the [source line 25](https://github.com
 - Opera 12+
 - Safari 5+
 
+For all the other browsers, dropzone provides an oldschool file input fallback.
+
 ## Why another library?
 
 I realize that there [are](http://valums.com/ajax-upload/) [already](http://tutorialzine.com/2011/09/html5-file-upload-jquery-php/) [other](http://code.google.com/p/html5uploader/) [libraries](http://blueimp.github.com/jQuery-File-Upload/) out there but the reason I decided to write my own are the following:
