@@ -17,7 +17,7 @@ o -> o(".dropzone").dropzone()
 
 class Dropzone extends Emitter
 
-  version: "1.2.1"
+  version: "1.2.2-dev"
 
   ###
   This is a list of all available events you can register on a dropzone object.
