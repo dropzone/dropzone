@@ -1,7 +1,7 @@
 
 
 # Dependencies
-o = require "jquery"
+o = jQuery ? require "jquery" # Allows for a standalone package.
 Emitter = require "emitter"
 
 
