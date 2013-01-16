@@ -5,6 +5,7 @@ This means that a user can drag and drop a file onto it, and the file gets uploa
 
 It is written as a [component](https://github.com/component/component).
 
+![Screenshot](http://i.imgur.com/jpc80.png)
 
 ## Main features
 
