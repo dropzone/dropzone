@@ -1,0 +1,275 @@
+.dropzone,
+.dropzone * {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.dropzone {
+  position: relative;
+  min-height: 360px;
+  border: 1px solid rgba(0,0,0,0.03);
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  background: rgba(0,0,0,0.03);
+  padding: 23px;
+}
+.dropzone.drag-hover {
+  border-color: rgba(0,0,0,0.15);
+  background: rgba(0,0,0,0.04);
+}
+.dropzone.drag-hover .message {
+  opacity: 0.15;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=15);
+  filter: alpha(opacity=15);
+}
+.dropzone.started .message {
+  opacity: 0;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+  filter: alpha(opacity=0);
+}
+.dropzone .message {
+  opacity: 1;
+  -ms-filter: none;
+  filter: none;
+  -webkit-transition: opacity 0.3s ease-in-out;
+  -moz-transition: opacity 0.3s ease-in-out;
+  -o-transition: opacity 0.3s ease-in-out;
+  -ms-transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
+  background: url("../images/spritemap.png") no-repeat 0 -108px;
+  position: absolute;
+  width: 168px;
+  height: 157px;
+  margin-left: -84px;
+  margin-top: -78.5px;
+  top: 50%;
+  left: 50%;
+}
+.dropzone .message span {
+  display: none;
+}
+.dropzone.browser-not-supported {
+  padding: 30px;
+}
+.dropzone.browser-not-supported .message {
+  position: relative;
+  background: url("../images/spritemap.png") no-repeat 0 0;
+  width: 204px;
+  height: 108px;
+  top: 0;
+  left: 0;
+  margin-left: 0;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+.dropzone .preview {
+  width: 100px;
+  height: 136px;
+  display: inline-block;
+  margin: 18px;
+  position: relative;
+}
+.dropzone .preview .details {
+  width: 100px;
+  height: 100px;
+  position: relative;
+}
+.dropzone .preview .details img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100px;
+  height: 100px;
+}
+.dropzone .preview .details .size {
+  color: #666;
+  font: 500 31px/31px "League Gothic", sans-serif;
+  position: absolute;
+  bottom: 2px;
+  left: 17px;
+  z-index: 100;
+}
+.dropzone .preview .details .content {
+  font-size: 3px;
+  white-space: pre;
+  position: absolute;
+  top: 5px;
+  left: 12px;
+  right: 19px;
+  bottom: 5px;
+  overflow: hidden;
+  line-height: 100%;
+  cursor: default;
+  word-wrap: break-word;
+}
+.dropzone .preview.file-preview .details {
+  background: url("../images/spritemap.png") no-repeat 8px -265px;
+}
+.dropzone .preview.image-preview .details .size {
+  display: none;
+  color: #000;
+}
+.dropzone .preview.image-preview .details:hover .size {
+  display: block;
+}
+.dropzone .preview.image-preview .details:hover img {
+  opacity: 0.4;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40);
+  filter: alpha(opacity=40);
+}
+.dropzone .preview.success .success-mark {
+  opacity: 1;
+  -ms-filter: none;
+  filter: none;
+}
+.dropzone .preview.success .progress .upload {
+  background: #6fb61d;
+}
+.dropzone .preview.error .error-mark {
+  opacity: 1;
+  -ms-filter: none;
+  filter: none;
+}
+.dropzone .preview.error .progress .upload {
+  background: #bc311f;
+}
+.dropzone .preview .error-mark,
+.dropzone .preview .success-mark {
+  opacity: 0;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+  filter: alpha(opacity=0);
+  -webkit-transition: opacity 0.4s ease-in-out;
+  -moz-transition: opacity 0.4s ease-in-out;
+  -o-transition: opacity 0.4s ease-in-out;
+  -ms-transition: opacity 0.4s ease-in-out;
+  transition: opacity 0.4s ease-in-out;
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  top: -10px;
+  left: -5px;
+}
+.dropzone .preview .error-mark span,
+.dropzone .preview .success-mark span {
+  display: none;
+}
+.dropzone .preview .error-mark {
+  background: url("../images/spritemap.png") no-repeat 0 -365px;
+}
+.dropzone .preview .success-mark {
+  background: url("../images/spritemap.png") no-repeat -42px -365px;
+}
+.dropzone .preview .progress {
+  position: relative;
+  margin: 8px 0 4px 0;
+  height: 10px;
+  background: rgba(0,0,0,0.08);
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+}
+.dropzone .preview .progress .upload {
+  -webkit-animation: loading 0.4s linear infinite;
+  -moz-animation: loading 0.4s linear infinite;
+  -o-animation: loading 0.4s linear infinite;
+  -ms-animation: loading 0.4s linear infinite;
+  animation: loading 0.4s linear infinite;
+  -webkit-transition: width 0.3s ease-in-out;
+  -moz-transition: width 0.3s ease-in-out;
+  -o-transition: width 0.3s ease-in-out;
+  -ms-transition: width 0.3s ease-in-out;
+  transition: width 0.3s ease-in-out;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  background: url("../images/spritemap.png") repeat-x 0px -407px;
+}
+.dropzone .preview .filename {
+  font-size: 12px;
+  height: 12px;
+  position: relative;
+}
+.dropzone .preview .filename span {
+  width: 100px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+}
+.dropzone .preview .error-message {
+  opacity: 0;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+  filter: alpha(opacity=0);
+  -webkit-transition: opacity 0.3s ease-in-out;
+  -moz-transition: opacity 0.3s ease-in-out;
+  -o-transition: opacity 0.3s ease-in-out;
+  -ms-transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
+  position: absolute;
+  top: -5px;
+  left: -20px;
+  background: rgba(245,245,245,0.8);
+  padding: 8px 10px;
+  color: #800;
+  min-width: 140px;
+  max-width: 500px;
+  z-index: 500;
+}
+.dropzone .preview:hover.error .error-message {
+  opacity: 1;
+  -ms-filter: none;
+  filter: none;
+}
+@-moz-keyframes loading {
+  0% {
+    background-position: 0 -407px;
+  }
+
+  100% {
+    background-position: -14px -407px;
+  }
+}
+@-webkit-keyframes loading {
+  0% {
+    background-position: 0 -407px;
+  }
+
+  100% {
+    background-position: -14px -407px;
+  }
+}
+@-o-keyframes loading {
+  0% {
+    background-position: 0 -407px;
+  }
+
+  100% {
+    background-position: -14px -407px;
+  }
+}
+@-ms-keyframes loading {
+  0% {
+    background-position: 0 -407px;
+  }
+
+  100% {
+    background-position: -14px -407px;
+  }
+}
+@keyframes loading {
+  0% {
+    background-position: 0 -407px;
+  }
+
+  100% {
+    background-position: -14px -407px;
+  }
+}
