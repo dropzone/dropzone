@@ -1,9 +1,11 @@
-# Dropzone.js Version 1.2.1
+# Dropzone.js Version 1.2.2
 
 Dropzone.js is a light weight JavaScript library for jQuery that turns an HTML element into a dropzone.
 This means that a user can drag and drop a file onto it, and the file gets uploaded to the server via AJAX.
 
+It is written as a [component](https://github.com/component/component).
 
+![Screenshot](http://i.imgur.com/jpc80.png)
 
 ## Main features
 
@@ -12,19 +14,34 @@ This means that a user can drag and drop a file onto it, and the file gets uploa
 - Progress updates
 - Support for large files
 
+## Documentation
+
+For the full documentation and installation please visit www.dropzonejs.com
+
 ## Usage
 
 Implicit creation:
 
-    <form action="/target" class="dropzone"></form>
+```html
+<form id="my-awesome-dropzone" action="/target" class="dropzone"></form>
+```
 
 That's it. Really!
 
 Dropzone will automatically attach to it, and handle file drops.
 
-Want more control? You can instantiate dropzone manually like this:
+Want more control? You can configure dropzones like this:
 
-    $("div#my-zone").dropzone({ ...configuration... });
+```js
+// "myAwesomeDropzone" is the camelized version of the ID of your HTML element
+Dropzone.options.myAwesomeDropzone = { maxFilesize: 1 };
+```
+
+...or instantiate dropzone manually like this:
+
+```js
+$("div#my-zone").dropzone({ ...configuration... });
+```
 
 > Note that dropzones don't have to be forms. But if you choose another element you have to pass the `url` parameter in the options.
 
@@ -36,8 +53,10 @@ For configuration options please look at the [source line 48](https://github.com
 
 I use [emitter](https://github.com/component/emitter) to manage events. If you want to register to some event you can do so on the `dropzone` object itself:
 
-    var myDropzone = $("div#my-zone").dropzone({ ...configuration... });
-    myDropzone.on("error", function(file, message) { alert(message); });
+```js
+var myDropzone = $("div#my-zone").dropzone({ ...configuration... });
+myDropzone.on("error", function(file, message) { alert(message); });
+```
 
 For a list of all events, please look at the [source line 30](https://github.com/enyo/dropzone/blob/master/src/dropzone.coffee#L30).
 

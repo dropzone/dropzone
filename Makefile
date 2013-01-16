@@ -4,5 +4,8 @@ build:
 watch:
 	coffee -cwo lib/ src/
 
+download:
+	coffee make_download.coffee
+
 
 .PHONY: build
