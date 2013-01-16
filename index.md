@@ -20,9 +20,20 @@ Try it out:
 installation
 ------------
 
-The easiest and recommended way to install dropzone is through [component](https://github.com/component/component).
+Download the standalone [dropzone.js](https://raw.github.com/enyo/dropzone/master/downloads/dropzone.js)
+and include it with jQuery like this:
 
-Just add dropzone as a dependency:
+{% highlight html %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="./path/to/dropzone.js"></script>
+{% endhighlight %}
+
+Dropzone is now activated and available as `window.Dropzone`.
+
+### with component
+
+If you use [component](https://github.com/component/component) you can just add
+dropzone as a dependency:
 
     "enyo/dropzone": "*"
 
@@ -34,8 +45,13 @@ var Dropzone = require("dropzone");
 
 so it is activated and scans the document.
 
-I'm working on standalone bundles. Please contact me if you need them NOW.
 
+
+* * *
+
+This is all you need to get dropzone up and running. But if you want it to look
+as cool as my dropzone, you'll need to **download the dropzone.css and
+spritemap.png** as well from the [downloads folder](https://github.com/enyo/dropzone/tree/master/downloads).
 
 usage
 -----
@@ -43,20 +59,62 @@ usage
 The typical way of using dropzone is by creating a form element with the class `dropzone`:
 
 {% highlight html %}
-<form action="/file-upload" class="dropzone" id="my-dropzone"></form>
+<form action="/file-upload" class="dropzone" id="my-awesome-dropzone"></form>
 {% endhighlight %}
 
-*That's it. Dropzone will find all form elements with the class dropzone,
-*automatically attach itself to it, and upload files dropped into it to the
-*specified `action` attribute.
+That's it. Dropzone will find all form elements with the class dropzone,
+automatically attach itself to it, and upload files dropped into it to the
+specified `action` attribute. The uploaded files can be handled just as if
+there would have been a html input like this:
 
-> Don't forget to `require` dropzone, otherwise it won't be activated.
+{% highlight html %}
+<input type="file" name="file" />
+{% endhighlight %}
 
+If you want another name than `file` you can [configure dropzone](#configuration)
+with the option `paramName`.
 
-To configure Dropzones created like this, you can write the configuration in the `Dropzone.options` object, like this:
+> If you're using component don't forget to `require("dropzone");` otherwise it won't be activated.
+
+### create dropzones programmatically
+
+Alternatively you can create dropzones programmaticaly (even on non `form`
+elements) in two ways:
+
+- either with jQuery, or by simply
+- instantiating the `Dropzone` class
 
 {% highlight javascript %}
-Dropzone.options.myDropzone = {
+// jQuery
+$("div#myId").dropzone({ url: "/file/post" });
+// Dropzone class:
+var myDropzone = new Dropzone($("div#myId"), { url: "/file/post"})
+{% endhighlight %}
+
+> Don't forget to specify an `url` option if you're not using a form element,
+> since Dropzone doesn't know where to post to without an `action` attribute. 
+
+
+configuration
+-------------
+
+There are two ways to configure dropzones.
+
+The obvious way is to pass an options object when instantiating a dropzone
+programmatically like in the previous [create dropzones programmatically](#create_dropzones_programmatically)
+section.
+
+But if you just have HTML elements with the `dropzone` class, then you don't
+programmatically instantiate the objects, so you have to store the configuration
+somewhere so Dropzone knows how to configure the dropzones when instantiating
+them.
+
+This is done with the `Dropzone.options` object.
+
+{% highlight javascript %}
+// "myAwesomeDropzone" is the camelized version of the HTML element's ID
+Dropzone.options.myAwesomeDropzone = {
+  paramName: "file", // The name that will be used to transfer the file
   maxFilesize: 2, // MB
   accept: (file, done) {
     if (file.name == "justinbieber.jpg") {
@@ -67,31 +125,10 @@ Dropzone.options.myDropzone = {
 };
 {% endhighlight %}
 
-The instantiated dropzone object is stored in the HTML element itself. You can access it like this:
-
-{% highlight javascript %}
-$("form.dropzone").data("dropzone")
-{% endhighlight %}
-
-Dropzones don't have to be forms. Any element with a `.dropzone` class will do, but you have to configure the `url`
-if you choose another element (in forms, the `action` attribute is used as url).
-
-To programmatically create a dropzone on an element you can use the jQuery `.dropzone()` helper like this:
-
-{% highlight javascript %}
-$("div#my-dropzone").dropzone({ url: "/file-upload", maxFilesize: 8 });
-{% endhighlight %}
-
-or without the jQuery helper:
-
-{% highlight javascript %}
-new Dropzone($("div#my-dropzone"), { url: "/file-upload", maxFilesize: 8 });
-{% endhighlight %}
-
 
 The valid options are:
 
-- `url`
+- `url` Has to be specified on elements other than form (or when the form doesn't have an `action` attribute)
 - `parallelUploads` How many file uploads to process in parallel
 - `maxFilesize` in MB
 - `paramName` The name of the file param that gets transferred
@@ -104,11 +141,11 @@ The valid options are:
 
 > You can also overwrite all default event actions in the options. So if you provide the option `drop` you can overwrite the default `drop` event handler.
 > *You should be familiary with the code if you do that because you can easily break the upload like this.*
-> If you just want to do additional stuff, like adding a few classes here and there, **listen to the events instead**!
+> If you just want to do additional stuff, like adding a few classes here and there, **[listen to the events](#listen_to_events) instead**!
 
 ### listen to events
 
-Dropzone triggers events when processing files to which you can register easily.
+Dropzone triggers events when processing files, to which you can register easily.
 
 Example:
 
@@ -116,7 +153,9 @@ Example:
 // Already instantiated dropzones are accessible through `.data("dropzone")`
 var myDropzone = $("#my-dropzone").data("dropzone");
 
-myDropzone.on("addedfile", function(file) { /* handle the file */ });
+myDropzone.on("addedfile", function(file) {
+  /* Maybe display some more file information on your page */
+});
 {% endhighlight %}
 
 
