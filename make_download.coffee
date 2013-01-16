@@ -32,7 +32,7 @@ componentJson = componentJson.replace dependency, ""
 fs.writeFileSync "#{componentFilename}", componentJson
 
 # Build the component
-exec "component install && component build", (err) ->
+exec "component install && component build -s Dropzone", (err) ->
   if err
     console.error err
   else
