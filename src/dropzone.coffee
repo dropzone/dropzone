@@ -53,7 +53,6 @@ class Dropzone extends Emitter
 
   ###
   events: [
-    "fallback"
     "drop"
     "dragstart"
     "dragend"
@@ -103,6 +102,14 @@ class Dropzone extends Emitter
     accept: (file, done) -> done()
 
 
+    # Called when the browser does not support drag and drop
+    fallback: ->
+      @element.addClass "browser-not-supported"
+      @element.find(".message span").html "Your browser does not support drag'n'drop file uploads."
+      @element.append """<p>Sadly your dusty browser does not support nice drag'n'drop file uploads.<br />Please use the fallback form below to upload your files like in the olden days.</p>"""
+      @element.append @getFallbackForm()
+    
+
     ###
     Those functions register themselves to the events on init.
     You can overwrite them if you don't like the default behavior. If you just want to add an additional
@@ -112,13 +119,6 @@ class Dropzone extends Emitter
 
 
 
-    # Called when the browser does not support drag and drop
-    fallback: ->
-      @element.addClass "browser-not-supported"
-      @element.find(".message span").html "Your browser does not support drag'n'drop file uploads."
-      @element.append """<p>Sadly your dusty browser does not support nice drag'n'drop file uploads.<br />Please use the fallback form below to upload your files like in the olden days.</p>"""
-      @element.append @getFallbackForm()
-    
     # Those are self explanatory and simply concern the DragnDrop.
     drop: (e) ->
       @element.removeClass "drag-hover"
@@ -236,9 +236,8 @@ class Dropzone extends Emitter
       capableBrowser = no
 
 
-    unless capableBrowser
-      @options.fallback.call this
-      return
+    # If the browser failed, just call the fallback and leave
+    return @options.fallback.call this unless capableBrowser
 
 
     @files = [] # All files

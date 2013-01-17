@@ -419,7 +419,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
     __extends(Dropzone, _super);
 
-    Dropzone.prototype.version = "1.2.3-dev";
+    Dropzone.prototype.version = "1.2.4-dev";
 
     /*
       This is a list of all available events you can register on a dropzone object.
@@ -430,7 +430,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     */
 
 
-    Dropzone.prototype.events = ["fallback", "drop", "dragstart", "dragend", "dragenter", "dragover", "dragleave", "addedfile", "thumbnail", "error", "processingfile", "uploadprogress", "finished"];
+    Dropzone.prototype.events = ["drop", "dragstart", "dragend", "dragenter", "dragover", "dragleave", "addedfile", "thumbnail", "error", "processingfile", "uploadprogress", "finished"];
 
     Dropzone.prototype.blacklistedBrowsers = [/opera.*version\/12/i, /MSIE\ 10/i];
 
@@ -446,18 +446,18 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       accept: function(file, done) {
         return done();
       },
-      /*
-          Those functions register themselves to the events on init.
-          You can overwrite them if you don't like the default behavior. If you just want to add an additional
-          event handler, register it on the dropzone object and don't overwrite those options.
-      */
-
       fallback: function() {
         this.element.addClass("browser-not-supported");
         this.element.find(".message span").html("Your browser does not support drag'n'drop file uploads.");
         this.element.append("<p>Sadly your dusty browser does not support nice drag'n'drop file uploads.<br />Please use the fallback form below to upload your files like in the olden days.</p>");
         return this.element.append(this.getFallbackForm());
       },
+      /*
+          Those functions register themselves to the events on init.
+          You can overwrite them if you don't like the default behavior. If you just want to add an additional
+          event handler, register it on the dropzone object and don't overwrite those options.
+      */
+
       drop: function(e) {
         this.element.removeClass("drag-hover");
         return this.element.addClass("started");
@@ -562,8 +562,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         capableBrowser = false;
       }
       if (!capableBrowser) {
-        this.options.fallback.call(this);
-        return;
+        return this.options.fallback.call(this);
       }
       this.files = [];
       this.files.queue = [];
