@@ -45,7 +45,8 @@ $("div#my-zone").dropzone({ ...configuration... });
 
 > Note that dropzones don't have to be forms. But if you choose another element you have to pass the `url` parameter in the options.
 
-For configuration options please look at the [source line 48](https://github.com/enyo/dropzone/blob/master/src/dropzone.coffee#L48).
+For configuration options please look at the [documentation on the website](http://www.dropzonejs.com/#configuration)
+or at the [source](https://github.com/enyo/dropzone/blob/master/src/dropzone.coffee#L90).
 
 
 
@@ -58,15 +59,17 @@ var myDropzone = $("div#my-zone").dropzone({ ...configuration... });
 myDropzone.on("error", function(file, message) { alert(message); });
 ```
 
-For a list of all events, please look at the [source line 30](https://github.com/enyo/dropzone/blob/master/src/dropzone.coffee#L30).
+For a list of all events, please look at the chapter 
+[»listen to events«](http://www.dropzonejs.com/#listen_to_events) in the documentation
+or at the [source](https://github.com/enyo/dropzone/blob/master/src/dropzone.coffee#L47).
 
 
 ## Browser support
 
 - Chrome 7+
 - Firefox 4+
-- IE 10+
-- Opera 12+
+- IE 10+ (Currently disabled. I'm working on it!)
+- Opera 12+ (Currently disabled because their API is buggy)
 - Safari 5+
 
 For all the other browsers, dropzone provides an oldschool file input fallback.
