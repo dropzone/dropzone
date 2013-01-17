@@ -13,6 +13,12 @@
       ]
     },
     {
+      "name": "downloads/dropzone.js",
+      "regexs": [
+        "version = \"###\""
+      ]
+    },
+    {
       "name": "package.json",
       "regexs": [
         "\"version\": \"###\""
