@@ -85,6 +85,7 @@ I realize that there [are](http://valums.com/ajax-upload/) [already](http://tuto
 ## Other projects
 
 You might also be interested in my [open source tooltip library Opentip](http://www.opentip.org/).
+![Opentip](http://i.imgur.com/Zubpo.png)
 
 License
 -------
