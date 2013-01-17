@@ -234,6 +234,13 @@ out there but the reasons I decided to write my own are the following:
 - I want to use the latest API of browsers. I don't care if it falls back to the normal upload form if the browser is too old.
 
 
+other projects
+--------------
+
+<div id="opentip-demo" markdown="1">
+You might also be interested in my [open source tooltip library Opentip](http://www.opentip.org/).
+</div>
+
 license
 -------
 
