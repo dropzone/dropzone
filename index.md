@@ -24,7 +24,7 @@ Download the standalone [dropzone.js](https://raw.github.com/enyo/dropzone/maste
 and include it with jQuery like this:
 
 {% highlight html %}
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="./path/to/jquery/1.8.3/jquery.min.js"></script>
 <script src="./path/to/dropzone.js"></script>
 {% endhighlight %}
 
