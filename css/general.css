@@ -241,12 +241,28 @@ h3 {
 }
 h1 {
   font-size: 60px;
+  margin: 100px 0 40px 0;
 }
 h2 {
   font-size: 48px;
+  margin: 80px 0 35px 0;
 }
 h3 {
   font-size: 30px;
+  margin: 60px 0 30px 0;
+  color: #666;
+}
+hr {
+  height: 1px;
+  display: block;
+  border: none;
+  background: -webkit-gradient(linear, left top, right top, color-stop(0, rgba(0,0,0,0)), color-stop(0.5, rgba(0,0,0,0.1)), color-stop(1, rgba(0,0,0,0)));
+  background: -webkit-linear-gradient(left, rgba(0,0,0,0) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0) 100%);
+  background: -moz-linear-gradient(left, rgba(0,0,0,0) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0) 100%);
+  background: -o-linear-gradient(left, rgba(0,0,0,0) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0) 100%);
+  background: -ms-linear-gradient(left, rgba(0,0,0,0) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0) 100%);
+  background: linear-gradient(left, rgba(0,0,0,0) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0) 100%);
+  margin: 40px 0;
 }
 code {
   color: #005590;
