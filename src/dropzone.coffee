@@ -69,6 +69,23 @@ class Dropzone extends Emitter
   ]
 
 
+  # Since the whole Drag'n'Drop API is pretty new, some browsers implement it,
+  # but not correctly.
+  # So I created a blacklist of userAgents. Yes, yes. Browser sniffing, I know.
+  # But what to do when browsers *theoretically* support an API, but crash
+  # when using it.
+  # 
+  # This is a list of regular expressions tested against navigator.userAgent
+  # 
+  # ** It should only be used on browser that *do* support the API, but
+  # incorrectly **
+  # 
+  blacklistedBrowsers: [
+    /opera.*version\/12/i
+    /MSIE\ 10/i
+  ]
+
+
 
   defaultOptions =
     url: null
@@ -207,9 +224,22 @@ class Dropzone extends Emitter
     if @element.find(".message").length == 0
       @element.append o """<div class="message"><span>Drop files here to upload</span></div>"""
 
-    unless window.File and window.FileReader and window.FileList and window.Blob and window.FormData
+    capableBrowser = yes
+
+    if window.File and window.FileReader and window.FileList and window.Blob and window.FormData
+      # The browser supports the API, but may be blacklisted.
+      for regex in @blacklistedBrowsers
+        if regex.test navigator.userAgent
+          capableBrowser = no
+          continue
+    else
+      capableBrowser = no
+
+
+    unless capableBrowser
       @options.fallback.call this
       return
+
 
     @files = [] # All files
     @files.queue = [] # The files that still have to be processed
