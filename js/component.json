@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "enyo/dropzone": "develop"
+    "enyo/dropzone": "*",
+    "enyo/opentip": "*",
+    "component/jquery": "*"
   },
-  "scripts": [ "index.js" ]
+  "scripts": [
+    "index.js"
+  ]
 }

@@ -25,7 +25,7 @@ Download the standalone [dropzone.js](https://raw.github.com/enyo/dropzone/maste
 and include it with jQuery like this:
 
 ```html
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="./path/to/jquery/1.8/jquery.min.js"></script>
 <script src="./path/to/dropzone.js"></script>
 ```
 
@@ -237,8 +237,8 @@ browser support
 
 - Chrome 7+
 - Firefox 4+
-- IE 10+
-- Opera 12+
+- IE 10+ (Currently disabled. I'm working on it!)
+- Opera 12+ (Currently disabled because their API is buggy)
 - Safari 5+
 
 For all the other browsers, dropzone provides an oldschool file input fallback.
