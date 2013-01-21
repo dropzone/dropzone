@@ -1,0 +1,465 @@
+.hll {
+  background-color: #ffc;
+}
+.c {
+  color: #408080;
+  font-style: italic;
+}
+.err {
+  border: 1px solid #f00;
+}
+.k {
+  color: #008000;
+  font-weight: bold;
+}
+.o {
+  color: #666;
+}
+.cm {
+  color: #408080;
+  font-style: italic;
+}
+.cp {
+  color: #bc7a00;
+}
+.c1 {
+  color: #408080;
+  font-style: italic;
+}
+.cs {
+  color: #408080;
+  font-style: italic;
+}
+.gd {
+  color: #a00000;
+}
+.ge {
+  font-style: italic;
+}
+.gr {
+  color: #f00;
+}
+.gh {
+  color: #000080;
+  font-weight: bold;
+}
+.gi {
+  color: #00a000;
+}
+.go {
+  color: #808080;
+}
+.gp {
+  color: #000080;
+  font-weight: bold;
+}
+.gs {
+  font-weight: bold;
+}
+.gu {
+  color: #800080;
+  font-weight: bold;
+}
+.gt {
+  color: #0040d0;
+}
+.kc {
+  color: #008000;
+  font-weight: bold;
+}
+.kd {
+  color: #008000;
+  font-weight: bold;
+}
+.kn {
+  color: #008000;
+  font-weight: bold;
+}
+.kp {
+  color: #008000;
+}
+.kr {
+  color: #008000;
+  font-weight: bold;
+}
+.kt {
+  color: #b00040;
+}
+.m {
+  color: #666;
+}
+.s {
+  color: #ba2121;
+}
+.na {
+  color: #7d9029;
+}
+.nb {
+  color: #008000;
+}
+.nc {
+  color: #00f;
+  font-weight: bold;
+}
+.no {
+  color: #800;
+}
+.nd {
+  color: #a2f;
+}
+.ni {
+  color: #999;
+  font-weight: bold;
+}
+.ne {
+  color: #d2413a;
+  font-weight: bold;
+}
+.nf {
+  color: #00f;
+}
+.nl {
+  color: #a0a000;
+}
+.nn {
+  color: #00f;
+  font-weight: bold;
+}
+.nt {
+  color: #008000;
+  font-weight: bold;
+}
+.nv {
+  color: #19177c;
+}
+.ow {
+  color: #a2f;
+  font-weight: bold;
+}
+.w {
+  color: #bbb;
+}
+.mf {
+  color: #666;
+}
+.mh {
+  color: #666;
+}
+.mi {
+  color: #666;
+}
+.mo {
+  color: #666;
+}
+.sb {
+  color: #ba2121;
+}
+.sc {
+  color: #ba2121;
+}
+.sd {
+  color: #ba2121;
+  font-style: italic;
+}
+.s2 {
+  color: #ba2121;
+}
+.se {
+  color: #b62;
+  font-weight: bold;
+}
+.sh {
+  color: #ba2121;
+}
+.si {
+  color: #b68;
+  font-weight: bold;
+}
+.sx {
+  color: #008000;
+}
+.sr {
+  color: #b68;
+}
+.s1 {
+  color: #ba2121;
+}
+.ss {
+  color: #19177c;
+}
+.bp {
+  color: #008000;
+}
+.vc {
+  color: #19177c;
+}
+.vg {
+  color: #19177c;
+}
+.vi {
+  color: #19177c;
+}
+.il {
+  color: #666;
+}
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-family: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+body {
+  line-height: 1;
+  color: #000;
+  background: #fff;
+}
+ol,
+ul {
+  list-style: none;
+}
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  vertical-align: middle;
+}
+caption,
+th,
+td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+a img {
+  border: none;
+}
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+html {
+  font-size: 18px;
+}
+body {
+  background-color: #f4f4f4;
+  background-image: url("../images/background.png");
+  background-repeat: repeat;
+  line-height: 160%;
+  font-weight: 300;
+  color: #000;
+  padding: 50px 5px 0 5px;
+}
+a#fork-me {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border: 0;
+  width: 140px;
+  height: 140px;
+  background-image: url("../images/fork-me.png");
+}
+@media all and (-webkit-min-device-pixel-ratio: 1.5) {
+  a#fork-me {
+    background-image: url("../images/fork-me@2x.png");
+    -webkit-background-size: 140px 140px;
+    -moz-background-size: 140px 140px;
+    background-size: 140px 140px;
+  }
+}
+a#fork-me span {
+  display: none;
+}
+h1#logo {
+  margin: 0 auto;
+  padding-top: 0;
+  border: none !important;
+  width: 247px;
+  height: 267px;
+  background-image: url("../images/logo.png");
+}
+@media all and (-webkit-min-device-pixel-ratio: 1.5) {
+  h1#logo {
+    background-image: url("../images/logo@2x.png");
+    -webkit-background-size: 247px 267px;
+    -moz-background-size: 247px 267px;
+    background-size: 247px 267px;
+  }
+}
+h1#logo span {
+  display: none;
+}
+#intro {
+  background: #000;
+  margin: 100px 0;
+  padding: 0;
+}
+#intro h2 {
+  padding: 40px 50px;
+  color: #fff;
+  font-weight: 200;
+  font-size: 1.66em;
+  line-height: 140%;
+}
+article strong {
+  font-weight: 600;
+}
+article code {
+  font-family: menlo, monospace;
+  font-size: 14px;
+}
+article a {
+  color: #fff;
+  background: #000;
+  display: inline-block;
+  padding: 0px 8px;
+  text-decoration: underline;
+}
+article h1,
+article h2,
+article h3 {
+  color: #000;
+line-height
+}
+article h1 {
+  border-top: 3px solid #000;
+  font-weight: 600;
+  margin: 150px 0 80px 0;
+  font-size: 2.22em;
+  padding-top: 15px;
+  text-transform: uppercase;
+}
+article h2 {
+  font-weight: 400;
+  margin: 65px 0 20px 0;
+  font-size: 2.22em;
+}
+article h3 {
+  font-size: 2.22px;
+}
+article hr {
+  border: none;
+  display: block;
+  height: 2px;
+  background: #000;
+  margin: 60px 0;
+}
+article p {
+  margin: 50px 0;
+}
+article code {
+  color: #005590;
+}
+article blockquote {
+  margin: 30px 0;
+  padding: 0 0 0 10px;
+  border-left: 2px solid rgba(0,0,0,0.05);
+}
+footer {
+  margin-top: 300px;
+  background: #000;
+  padding-bottom: 100px;
+  color: #fff;
+}
+#intro,
+article section {
+  margin-left: auto;
+  margin-right: auto;
+}
+viewport {
+  width: device-width;
+}
+@media screen and (min-width: 13em) {
+  #intro,
+  article section {
+    width: 14.666666666666666rem;
+  }
+}
+@media screen and (min-width: 37.5em) {
+  #intro {
+    width: 30.666666666666668rem;
+  }
+  article section {
+    max-width: 30.666666666666668rem;
+  }
+}
+@media screen and (max-width: 16.875em) {
+  body {
+    font-size: 1em;
+  }
+}
+@media screen and (max-width: 19.9375em) {
+  body {
+    font-size: 1.0625em;
+  }
+}
+@media screen and (min-width: 32.5em) and (max-width: 37.4375em),screen and (min-width: 45em) and (max-width: 56.9375em),screen and (min-width: 77.5em) and (max-width: 102.4375em),screen and (min-width: 135em) {
+  body {
+    font-size: 1.1875em;
+  }
+}
+@media screen and (min-width: 102.5em) and (max-width: 117.9375em),screen and (min-width: 150em) {
+  body {
+    font-size: 1.25em;
+  }
+}

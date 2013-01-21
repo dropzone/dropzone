@@ -1,0 +1,295 @@
+@import "nib"
+@import "pygments"
+
+
+global-reset()
+
+
+
+//
+// Configuration
+//
+
+$system-base-font-size = 16px
+
+$font-size = 17px
+$column = 48px  // The column-width of your grid in pixels
+$gutter = 24px  // The gutter-width of your grid in pixels
+
+
+cols($cols)
+  (($cols * ($column + $gutter) - $gutter)/$font-size)rem
+
+//
+// Column-widths in a function, in ems
+//
+column-width($cols = 1)
+  width cols($cols)
+
+
+// Sets the left margin to account for the additional columns
+column-offset($cols = 2)
+  margin-left (-(($cols * ($column + $gutter) - $gutter)/$font-size)/2)rem
+
+
+
+
+*
+  box-sizing border-box
+
+html
+  font-size ($font-size / $system-base-font-size)em
+
+
+body
+  // Font family set by typekit
+  font-size 1em
+  background-color #f4f4f4
+  background-image url("../images/background.png")
+  background-repeat repeat
+
+  line-height 160%
+  font-weight 300
+  color black
+
+  padding 3.1em 0 0 0
+
+
+a#fork-me
+  position absolute
+  top 0
+  right 0
+  border 0
+  width 140px
+  height 140px
+  image "../images/fork-me.png" 140px 140px
+  span
+    display none
+
+
+article
+
+  > header
+
+    > img
+      display none
+
+    h1#logo
+
+      margin 0 auto
+
+      padding-top 0
+      border none !important
+
+      width 247px
+      height 267px
+
+      image "../images/logo.png" 247px 267px
+
+      span
+        display none
+
+
+    #intro
+      background black
+      margin-top 3.2em
+      margin-bottom 3.2em
+      padding 0
+
+      h2
+        padding 1.4em 1.9em
+        color white
+        font-weight 200
+        font-size 1.66em
+        line-height 140%
+
+  section
+    strong
+      font-weight 600
+
+    a
+      color white
+      background black
+      display inline-block
+      padding 0px 0.5em
+      text-decoration underline
+
+    h1
+    h2
+    h3
+      color black
+      line-height 140%
+
+    h1
+      border-top 3px solid black
+      font-weight 600
+      margin 4em 0 2em 0
+      font-size 2.22em
+      text-transform uppercase
+    h2
+      font-weight 400
+      margin 2em 0 0.7em 0
+      font-size 2.22em
+    h3
+      font-size 2em
+
+
+    hr
+      border none
+      display block
+      height 2px
+      background black
+      margin 3.75em 0
+
+
+    ul
+    ol
+    p
+      margin 1.4em 0
+    pre
+      margin 1.8em 0
+
+    pre
+      overflow auto
+      background #fff
+      padding 0.5em 0.8em
+    code
+      // Font will be set by typekit
+
+
+    blockquote
+      margin 3.1em 0
+
+      background black
+      padding 1.3em 1.9em
+      color white
+      font-weight 200
+      font-size 1.1em
+      line-height 140%
+
+      p
+        margin 0
+
+
+
+
+footer
+  margin-top 19em
+  background black
+  padding-top 3em
+  padding-bottom 6.25em
+  color white
+
+  h1
+    color white
+    line-height 140%
+    font-weight 600
+    margin 0 0 1em 0
+    font-size 2.22em
+
+  p
+    margin 0.5em 0
+
+  clearfix()
+
+
+// Grid
+
+article section
+footer > div
+  margin-left auto
+  margin-right auto
+
+
+
+@viewport
+  width device-width
+
+
+
+
+//  Mobile layout 
+//  240–479 px
+//  Zoomed out below 320 px
+@media screen and (min-width: 13em)
+  article section, footer > div
+    column-width 4
+
+
+
+//  Tablet layout 
+//  600-911 px
+//  Zoomed in above 600 px
+@media screen and (min-width: 37.5em)
+  article section, footer > div
+    column-width 8
+
+
+
+//  Widescreen layout 
+//  912-1887 px
+//  Zoomed in above 912 px
+@media screen and (min-width: 57em)
+  article section, footer > div
+    column-width 10
+
+  footer section
+    column-width 5
+    float left
+    padding 0 15px
+
+
+
+//  Huge-screen layout 
+//  1888-2520 px
+//  Zoomed in above 1920 px
+@media screen and (min-width: 70em)
+  article section
+    pre
+      column-offset 2
+      column-width 12
+
+
+
+
+//  Full page zooms
+@media screen and (max-width: 16.875em)
+  html
+    font-size: (($font-size - 2)/$system-base-font-size)em;
+
+
+@media screen and (max-width: 19.9375em)
+  html
+    font-size: (($font-size - 1)/$system-base-font-size)em;
+
+
+@media screen and (min-width: 32.5em) and (max-width: 37.4375em),
+       screen and (min-width: 45em) and (max-width: 56.9375em) {
+  html {
+    font-size: (($font-size + 1)/$system-base-font-size)em;
+  }
+}
+
+@media screen and (min-width: 56.9em) {
+  html {
+    font-size: (($font-size + 2)/$system-base-font-size)em;
+  }
+}
+
+// @media screen and (min-width: 32.5em) and (max-width: 37.4375em),
+//        screen and (min-width: 45em) and (max-width: 56.9375em),
+//        screen and (min-width: 77.5em) and (max-width: 102.4375em),
+//        screen and (min-width: 135em) {
+//   html {
+//     font-size: (($font-size + 1)/$system-base-font-size)em;
+//   }
+// }
+// 
+// @media screen and (min-width: 102.5em) and (max-width: 117.9375em),
+//        screen and (min-width: 150em) {
+//   html {
+//     font-size: (($font-size + 2)/$system-base-font-size)em;
+//   }
+// }
+
+

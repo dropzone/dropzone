@@ -3,3 +3,4 @@ auto: true
 server: true
 permalink: none
 pygments: true
+markdown: redcarpet

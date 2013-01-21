@@ -3,10 +3,7 @@ layout: default
 title: Dropzone.js
 ---
 
-dropzone.js
-===========
-
-dropzone.js is an open source library that provides drag'n'drop file uploads by simply including a java-script file. It views previews of images and you can register to different events to control how and which files are uploaded.
+<section markdown="1">
 
 Try it out:
 
@@ -16,21 +13,32 @@ Try it out:
 
 (This is just a demo dropzone. Uploaded files are **not** stored.)
 
+</section>
 
-installation
-------------
+
+<section markdown="1">
+
+Installation
+============
 
 Download the standalone [dropzone.js](https://raw.github.com/enyo/dropzone/master/downloads/dropzone.js)
 and include it with jQuery like this:
 
-{% highlight html %}
+```html
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 <script src="./path/to/dropzone.js"></script>
-{% endhighlight %}
+```
 
 Dropzone is now activated and available as `window.Dropzone`.
 
-### with component
+</section>
+
+
+
+<section markdown="1">
+
+With component
+--------------
 
 If you use [component](https://github.com/component/component) you can just add
 dropzone as a dependency:
@@ -53,14 +61,21 @@ This is all you need to get dropzone up and running. But if you want it to look
 as cool as my dropzone, you'll need to **download the dropzone.css and
 spritemap.png** as well from the [downloads folder](https://github.com/enyo/dropzone/tree/master/downloads).
 
-usage
------
+</section>
+
+
+<section markdown="1">
+
+Usage
+=====
 
 The typical way of using dropzone is by creating a form element with the class `dropzone`:
 
-{% highlight html %}
-<form action="/file-upload" class="dropzone" id="my-awesome-dropzone"></form>
-{% endhighlight %}
+```html
+<form action="/file-upload"
+      class="dropzone"
+      id="my-awesome-dropzone"></form>
+```
 
 That's it. Dropzone will find all form elements with the class dropzone,
 automatically attach itself to it, and upload files dropped into it to the
@@ -71,12 +86,13 @@ there would have been a html input like this:
 <input type="file" name="file" />
 {% endhighlight %}
 
-If you want another name than `file` you can [configure dropzone](#configuration)
+If you want another name than `file` you can [configure dropzone](#configure)
 with the option `paramName`.
 
 > If you're using component don't forget to `require("dropzone");` otherwise it won't be activated.
 
-### create dropzones programmatically
+Create dropzones programmatically
+---------------------------------
 
 Alternatively you can create dropzones programmaticaly (even on non `form`
 elements) in two ways:
@@ -84,19 +100,24 @@ elements) in two ways:
 - either with jQuery, or by simply
 - instantiating the `Dropzone` class
 
-{% highlight javascript %}
+```js
 // jQuery
 $("div#myId").dropzone({ url: "/file/post" });
 // Dropzone class:
 var myDropzone = new Dropzone($("div#myId"), { url: "/file/post"})
-{% endhighlight %}
+```
 
 > Don't forget to specify an `url` option if you're not using a form element,
 > since Dropzone doesn't know where to post to without an `action` attribute. 
 
+</section>
 
-configuration
--------------
+
+<section markdown="1">
+
+
+Configure
+=========
 
 There are two ways to configure dropzones.
 
@@ -143,7 +164,7 @@ The valid options are:
 > *You should be familiary with the code if you do that because you can easily break the upload like this.*
 > If you just want to do additional stuff, like adding a few classes here and there, **[listen to the events](#listen_to_events) instead**!
 
-### listen to events
+## listen to events
 
 Dropzone triggers events when processing files, to which you can register easily.
 
@@ -184,7 +205,7 @@ All of these receive the [file](https://developer.mozilla.org/en-US/docs/DOM/Fil
 - `finished`
 
 
-### layout
+## layout
 
 The HTML that is generated for each file by dropzone looks like this (although you can change it with the `previewTemplate` option):
 
@@ -205,8 +226,14 @@ Want your dropzone to look like the dropzone on this page? Just take [my stylesh
 is [League Gothic](http://www.theleagueofmoveabletype.com/league-gothic).
 
 
+</section>
+
+
+<section markdown="1">
+
+
 browser support
----------------
+===============
 
 - Chrome 7+
 - Firefox 4+
@@ -216,9 +243,13 @@ browser support
 
 For all the other browsers, dropzone provides an oldschool file input fallback.
 
+</section>
+
+
+<section markdown="1">
 
 why?
-----
+====
 
 I realize that there
 [are](http://valums.com/ajax-upload/)
@@ -233,29 +264,5 @@ out there but the reasons I decided to write my own are the following:
 - I wanted a callback for image previews, that don't kill the browser if too many too big images are viewed.
 - I want to use the latest API of browsers. I don't care if it falls back to the normal upload form if the browser is too old.
 
-
-license
--------
-
-> Dropzone is licensed under MIT.
-> 
-> Copyright (c) 2012 Matias Meno
-> 
-> Permission is hereby granted, free of charge, to any person obtaining a copy
-> of this software and associated documentation files (the "Software"), to deal
-> in the Software without restriction, including without limitation the rights
-> to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-> copies of the Software, and to permit persons to whom the Software is
-> furnished to do so, subject to the following conditions:
-> 
-> The above copyright notice and this permission notice shall be included in all
-> copies or substantial portions of the Software.
-> 
-> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-> IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-> FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-> AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-> LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-> OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-> SOFTWARE.
+</section>
 
