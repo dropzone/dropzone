@@ -404,6 +404,9 @@ article section hr {
   background: #000;
   margin: 3.75em 0;
 }
+article section ul {
+  list-style: disc;
+}
 article section ul,
 article section ol,
 article section p {
