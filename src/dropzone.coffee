@@ -27,22 +27,12 @@
 
 # Dependencies
 o = jQuery ? require "jquery" # Allows for a standalone package.
-Emitter = require "emitter"
+Em = Emitter ? require "emitter" # Can't be the same name because it will lead to a local variable
 
 
-# Augment jQuery
-o.fn.dropzone = (options) ->
-  this.each -> new Dropzone this, options
+class Dropzone extends Em
 
-
-o -> o(".dropzone").dropzone()
-
-
-
-
-class Dropzone extends Emitter
-
-  version: "1.2.4"
+  version: "1.2.5"
 
   ###
   This is a list of all available events you can register on a dropzone object.
@@ -492,6 +482,17 @@ without = (list, rejectedItem) -> item for item in list when item isnt rejectedI
 
 # abc-def_ghi -> abcDefGhi
 camelize = (str) -> str.replace /[\-_](\w)/g, (match) -> match[1].toUpperCase()
+
+
+
+# Augment jQuery
+o.fn.dropzone = (options) ->
+  this.each -> new Dropzone this, options
+
+
+o -> o(".dropzone").dropzone()
+
+
 
 
 

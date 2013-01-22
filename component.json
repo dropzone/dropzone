@@ -1,6 +1,6 @@
 {
   "name": "dropzone",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Handles drag and drop of files for you.",
   "scripts": [ "index.js", "lib/dropzone.js" ],
   "dependencies": {
