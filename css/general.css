@@ -328,7 +328,7 @@ body {
   -o-animation: rotating 2s linear infinite;
   -ms-animation: rotating 2s linear infinite;
   animation: rotating 2s linear infinite;
-  position: fixed;
+  position: absolute;
   opacity: 0;
   -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
   filter: alpha(opacity=0);
