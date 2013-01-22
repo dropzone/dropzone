@@ -52,7 +52,75 @@ body
   font-weight 300
   color black
 
-  padding 3.1em 0 0 0
+  padding 4.5em 0 0 0
+
+
+
+
+
+//
+// Handling the font loading
+//
+//
+@keyframes rotating
+  from
+    transform rotate(0deg)
+  to
+    transform rotate(360deg)
+
+
+#loading-font
+  animation  rotating 2s linear infinite
+
+  position fixed
+
+  opacity 0
+  transition opacity 0.4s ease-in-out
+  width 88px
+  height @width
+  image "../images/loading.png" 88px 88px
+  
+  top 450px
+  left 50%
+  margin-left -(@width/2)
+  .ie &
+    display none
+  span
+    display none
+
+
+article section
+  opacity 0
+  transition opacity 0.4s ease-in-out
+
+.wf-active
+.wf-inactive
+  article section
+    opacity 1
+
+.wf-loading 
+  #loading-font
+    opacity 1
+    .ie &
+      display block
+
+
+
+  article section
+    opacity 0
+  &.ie
+    article section
+      visibility hidden
+
+
+
+
+
+
+
+
+
+
 
 
 a#fork-me
@@ -198,7 +266,7 @@ footer
 
 // Grid
 
-article section
+article
 footer > div
   margin-left auto
   margin-right auto
@@ -215,7 +283,7 @@ footer > div
 //  240–479 px
 //  Zoomed out below 320 px
 @media screen and (min-width: 13em)
-  article section, footer > div
+  article, footer > div
     column-width 4
 
 
@@ -224,7 +292,7 @@ footer > div
 //  600-911 px
 //  Zoomed in above 600 px
 @media screen and (min-width: 37.5em)
-  article section, footer > div
+  article, footer > div
     column-width 8
 
 
@@ -233,7 +301,7 @@ footer > div
 //  912-1887 px
 //  Zoomed in above 912 px
 @media screen and (min-width: 57em)
-  article section, footer > div
+  article, footer > div
     column-width 10
 
   footer section
@@ -247,11 +315,10 @@ footer > div
 //  1888-2520 px
 //  Zoomed in above 1920 px
 @media screen and (min-width: 70em)
-  article section
-    pre
-      column-offset 2
-      column-width 12
-      padding 1em 1.2em
+  article section pre
+    column-offset 2
+    column-width 12
+    padding 1em 1.2em
 
 
 
