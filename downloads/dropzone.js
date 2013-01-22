@@ -395,24 +395,14 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
 
 (function() {
-  var Dropzone, Emitter, camelize, o, without,
+  var Dropzone, Em, camelize, o, without,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     __slice = [].slice;
 
   o = typeof jQuery !== "undefined" && jQuery !== null ? jQuery : require("jquery");
 
-  Emitter = require("emitter");
-
-  o.fn.dropzone = function(options) {
-    return this.each(function() {
-      return new Dropzone(this, options);
-    });
-  };
-
-  o(function() {
-    return o(".dropzone").dropzone();
-  });
+  Em = typeof Emitter !== "undefined" && Emitter !== null ? Emitter : require("emitter");
 
   Dropzone = (function(_super) {
     var defaultOptions;
@@ -817,7 +807,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
     return Dropzone;
 
-  })(Emitter);
+  })(Em);
 
   Dropzone.options = {};
 
@@ -838,6 +828,16 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       return match[1].toUpperCase();
     });
   };
+
+  o.fn.dropzone = function(options) {
+    return this.each(function() {
+      return new Dropzone(this, options);
+    });
+  };
+
+  o(function() {
+    return o(".dropzone").dropzone();
+  });
 
   if (typeof module !== "undefined" && module !== null) {
     module.exports = Dropzone;

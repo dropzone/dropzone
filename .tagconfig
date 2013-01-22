@@ -19,6 +19,12 @@
       ]
     },
     {
+      "name": "downloads/dropzone-amd-module.js",
+      "regexs": [
+        "version = \"###\""
+      ]
+    },
+    {
       "name": "package.json",
       "regexs": [
         "\"version\": \"###\""
