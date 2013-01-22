@@ -54,6 +54,15 @@ var Dropzone = require("dropzone");
 so it is activated and scans the document.
 
 
+With RequireJS
+--------------
+
+Dropzone is also available as an [AMD module](https://github.com/amdjs/amdjs-api/wiki/AMD)
+for [RequireJS](http://requirejs.org).
+
+You can find the [dropzone-amd-module](https://raw.github.com/enyo/dropzone/master/downloads/dropzone-amd-module.js)
+in the downloads folder.
+
 
 * * *
 
