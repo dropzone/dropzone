@@ -323,15 +323,8 @@ body {
   }
 }
 #loading-font {
-  -webkit-animation: rotating 2s linear infinite;
-  -moz-animation: rotating 2s linear infinite;
-  -o-animation: rotating 2s linear infinite;
-  -ms-animation: rotating 2s linear infinite;
-  animation: rotating 2s linear infinite;
   position: absolute;
-  opacity: 0;
-  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
-  filter: alpha(opacity=0);
+  display: none;
   -webkit-transition: opacity 0.4s ease-in-out;
   -moz-transition: opacity 0.4s ease-in-out;
   -o-transition: opacity 0.4s ease-in-out;
@@ -366,9 +359,12 @@ article section {
   filter: none;
 }
 .wf-loading #loading-font {
-  opacity: 1;
-  -ms-filter: none;
-  filter: none;
+  display: block;
+  -webkit-animation: rotating 2s linear infinite;
+  -moz-animation: rotating 2s linear infinite;
+  -o-animation: rotating 2s linear infinite;
+  -ms-animation: rotating 2s linear infinite;
+  animation: rotating 2s linear infinite;
 }
 .ie .wf-loading #loading-font {
   display: block;
@@ -474,6 +470,32 @@ article section hr {
   background: #000;
   margin: 3.75em 0;
 }
+article section table {
+  width: 100%;
+  border: 1px solid #000;
+  border-left: none;
+  border-top: none;
+}
+article section table td,
+article section table th {
+  border: 1px solid #000;
+  border-right: none;
+  border-bottom: none;
+  padding: 0.5em 0.9em;
+  vertical-align: top;
+}
+article section table tbody tr:first-of-type td:first-of-type {
+  border-top-color: #000;
+}
+article section table tbody tr td:first-of-type {
+  background: #000;
+  color: #fff;
+  border-top-color: #fff;
+  text-align: right;
+}
+article section table tbody tr td {
+  background: #fff;
+}
 article section ul {
   list-style: disc;
 }
@@ -501,6 +523,11 @@ article section blockquote {
 }
 article section blockquote p {
   margin: 0;
+}
+article section blockquote a {
+  display: inline;
+  padding: 0;
+  background: transparent;
 }
 footer {
   margin-top: 19em;
@@ -540,6 +567,20 @@ viewport {
   article,
   footer > div {
     width: 15.529411764705882rem;
+  }
+}
+@media screen and (max-width: 37.5em) {
+  & {
+    table: tr;
+  }
+  table td {
+    display: block;
+  }
+  article section table tbody tr td:first-of-type {
+    text-align: left;
+  }
+  table thead {
+    display: none;
   }
 }
 @media screen and (min-width: 37.5em) {

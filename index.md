@@ -158,20 +158,24 @@ Dropzone.options.myAwesomeDropzone = {
 
 The valid options are:
 
-- `url` Has to be specified on elements other than form (or when the form doesn't have an `action` attribute)
-- `parallelUploads` How many file uploads to process in parallel
-- `maxFilesize` in MB
-- `paramName` The name of the file param that gets transferred
-- `createImageThumbnails`
-- `maxThumbnailFilesize` in MB. When the filename exeeds this limit, the thumbnail will not be generated
-- `thumbnailWidth`
-- `thumbnailHeight`
-- `accept` is a function that gets a [file](https://developer.mozilla.org/en-US/docs/DOM/File) and a `done` function as parameter. If the done function is invoked without a parameter, the file will be processed. If you pass an error message it will be displayed and the file will not be uploaded.
-- `previewTemplate` is a string that contains the template used for each dropped image. Change it to fulfill your needs but make sure to properly provide all elements.
+| Option                  | Description
+|-------------------------|-------------
+| `url`                   | Has to be specified on elements other than form (or when the form doesn't have an `action` attribute)
+| `parallelUploads`       | How many file uploads to process in parallel
+| `maxFilesize`           | in MB
+| `paramName`             | The name of the file param that gets transferred
+| `createImageThumbnails` |
+| `maxThumbnailFilesize`  | in MB. When the filename exeeds this limit, the thumbnail will not be generated
+| `thumbnailWidth`        |
+| `thumbnailHeight`       |
+| `accept`                | is a function that gets a [file](https://developer.mozilla.org/en-US/docs/DOM/File) and a `done` function as parameter. If the done function is invoked without a parameter, the file will be processed. If you pass an error message it will be displayed and the file will not be uploaded.
+| `previewTemplate`       | is a string that contains the template used for each dropped image. Change it to fulfill your needs but make sure to properly provide all elements.
+| `fallback`              | is a function that gets called when the browser is not supported. The default implementation shows the fallback input field and adds a text.
 
 > You can also overwrite all default event actions in the options. So if you provide the option `drop` you can overwrite the default `drop` event handler.
 > *You should be familiary with the code if you do that because you can easily break the upload like this.*
 > If you just want to do additional stuff, like adding a few classes here and there, **[listen to the events](#listen_to_events) instead**!
+
 
 ## listen to events
 
@@ -189,29 +193,31 @@ myDropzone.on("addedfile", function(file) {
 {% endhighlight %}
 
 
-Available events are:
-
-- `fallback` When the browser is not supported
+Available events:
 
 All of these receive the [*jQuery* event](http://api.jquery.com/category/events/event-object/) as first parameter:
 
-- `drop` The user dropped something onto the dropzone
-- `dragstart`
-- `dragend`
-- `dragenter`
-- `dragover`
-- `dragleave`
+
+| Parameter   | Description
+|-------------|-------------
+| `drop`      | The user dropped something onto the dropzone
+| `dragstart` |
+| `dragend`   |
+| `dragenter` |
+| `dragover`  |
+| `dragleave` |
+
 
 All of these receive the [file](https://developer.mozilla.org/en-US/docs/DOM/File) as the first parameter:
 
-- `addedfile`
-- `thumbnail` When the thumbnail has been generated. Receives the [**dataUrl**](http://en.wikipedia.org/wiki/Data_URI_scheme) as second parameter.
-- `error` An error occured. Receives the **errorMessage** as second parameter.
-- `processingfile` When a file gets processed (since there is a queue not all files are currently processed)
-- `uploadprogress` Gets called periodically whenever the file upload progress changes.
-  Gets the **progress** parameter as second parameter which is a percentage (0-100).
-  When an upload finishes dropzone *ensures* that uploadprogress will be called with a percentage of 100 *at least* once.
-- `finished`
+| Parameter         | Description
+|-------------------|-------------
+| `addedfile`       | 
+| `thumbnail`       | When the thumbnail has been generated. Receives the [**dataUrl**](http://en.wikipedia.org/wiki/Data_URI_scheme) as second parameter.
+| `error`           | An error occured. Receives the **errorMessage** as second parameter.
+| `processingfile`  | When a file gets processed (since there is a queue not all files are currently processed)
+| `uploadprogress`  | Gets called periodically whenever the file upload progress changes.<br />Gets the **progress** parameter as second parameter which is a percentage (0-100).<br />When an upload finishes dropzone *ensures* that uploadprogress will be called with a percentage of 100 *at least* once.
+| `finished`        |
 
 
 ## layout

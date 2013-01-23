@@ -85,11 +85,11 @@ body
 }
 
 #loading-font
-  animation  rotating 2s linear infinite
-
   position absolute
 
-  opacity 0
+  // opacity 0
+  // Chrome doesn't handle hidden transformations too well
+  display none
   transition opacity 0.4s ease-in-out
   width 88px
   height @width
@@ -114,7 +114,9 @@ article section
 
 .wf-loading 
   #loading-font
-    opacity 1
+    // opacity 1
+    display block
+    animation rotating 2s linear infinite
     .ie &
       display block
 
@@ -196,6 +198,12 @@ article
       padding 0px 0.5em
       text-decoration underline
 
+
+
+    //
+    // Headers
+    // 
+    
     h1
     h2
     h3
@@ -223,6 +231,31 @@ article
       background black
       margin 3.75em 0
 
+
+    table
+      width 100%
+      border 1px solid black
+      border-left none
+      border-top none
+      td
+      th
+        border 1px solid black
+        border-right none
+        border-bottom none
+        padding 0.5em 0.9em
+        vertical-align top
+      tbody
+        tr:first-of-type
+          td:first-of-type
+            border-top-color black
+        tr
+          td:first-of-type
+            background black
+            color white
+            border-top-color white
+            text-align right
+          td
+            background white
 
     ul
       list-style disc
@@ -254,6 +287,10 @@ article
 
       p
         margin 0
+      a
+        display inline
+        padding 0
+        background transparent
 
 
 
@@ -299,6 +336,20 @@ footer > div
 @media screen and (min-width: 13em)
   article, footer > div
     column-width 4
+
+@media screen and (max-width: 37.5em)
+  table
+  table tr
+  table td
+    display block
+  article section table
+    tbody
+      tr
+        td:first-of-type
+          text-align left
+  table
+    thead
+      display none
 
 
 
