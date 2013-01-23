@@ -432,6 +432,10 @@ article > header #intro h2 {
   font-size: 1.66em;
   line-height: 140%;
 }
+article > header #github-buttons {
+  margin: 1em auto 2em auto;
+  width: 85px;
+}
 article section strong {
   font-weight: 600;
 }
