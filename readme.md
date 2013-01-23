@@ -71,8 +71,8 @@ or at the [source](https://github.com/enyo/dropzone/blob/master/src/dropzone.cof
 
 - Chrome 7+
 - Firefox 4+
-- IE 10+ (Currently disabled. I'm working on it!)
-- Opera 12+ (Currently disabled because their API is buggy)
+- IE 10+
+- Opera 12+ (Currently disabled for MacOS because their API is buggy)
 - Safari 5+
 
 For all the other browsers, dropzone provides an oldschool file input fallback.
