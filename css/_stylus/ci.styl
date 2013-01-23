@@ -258,7 +258,16 @@ article
             background white
 
     ul
-      list-style disc
+      li
+        border-top 1px solid black
+        &:first-of-type
+          border none
+        padding 0.4em 0 0.4em 20px
+        background url("../images/arrow.png") no-repeat left 0.9em
+        @media all and (-webkit-min-device-pixel-ratio: 1.5)
+          background-image url("../images/arrow@2x.png")
+          background-size 12px 9px
+
 
     ul
     ol

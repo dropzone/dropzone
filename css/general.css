@@ -496,8 +496,21 @@ article section table tbody tr td:first-of-type {
 article section table tbody tr td {
   background: #fff;
 }
-article section ul {
-  list-style: disc;
+article section ul li {
+  border-top: 1px solid #000;
+  padding: 0.4em 0 0.4em 20px;
+  background: url("../images/arrow.png") no-repeat left 0.9em;
+}
+article section ul li:first-of-type {
+  border: none;
+}
+@media all and (-webkit-min-device-pixel-ratio: 1.5) {
+  article section ul li {
+    background-image: url("../images/arrow@2x.png");
+    -webkit-background-size: 12px 9px;
+    -moz-background-size: 12px 9px;
+    background-size: 12px 9px;
+  }
 }
 article section ul,
 article section ol,
