@@ -2,7 +2,7 @@
   "name": "dropzone",
   "version": "1.2.6-dev",
   "description": "Handles drag and drop of files for you.",
-  "keywords": [ "dragndrop", "ender", "drag and drop", "file upload", "upload" ],
+  "keywords": [ "dragndrop", "drag and drop", "file upload", "upload" ],
   "homepage": "http://www.dropzonejs.com",
   "main": [
     "./lib/dropzone.js"
@@ -36,11 +36,5 @@
       "url": "https://github.com/enyo/dropzone.git" 
     } 
   ],
-  "dependencies": {
-    "qwery": "3.x",
-    "domready": "0.x",
-    "bean": "0.x",
-    "bonzo": "1.x"
-  },
-  "ender": "noop"
+  "dependencies": { }
 }

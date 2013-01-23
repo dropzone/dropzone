@@ -70,8 +70,9 @@ class Dropzone extends Em
   # incorrectly **
   # 
   blacklistedBrowsers: [
-    /opera.*version\/12/i
-    /MSIE\ 10/i
+    # The mac os version of opera 12 seems to have a problem with the File drag'n'drop API.
+    /opera.*Macintosh.*version\/12/i
+    # /MSIE\ 10/i
   ]
 
 
@@ -330,55 +331,53 @@ class Dropzone extends Em
 
   createThumbnail: (file) ->
 
-    img = new Image()
-    blobUrl = @URL.createObjectURL file
-    img.onerror = img.onabort = ->
-      @URL.revokeObjectURL blobUrl
-      img = null
+    fileReader = new FileReader
 
-    img.onload = =>
-      canvas = document.createElement("canvas")
-      ctx = canvas.getContext("2d")
-      srcX = 0
-      srcY = 0
-      srcWidth = img.width
-      srcHeight = img.height
-      canvas.width = @options.thumbnailWidth
-      canvas.height = @options.thumbnailHeight
-      trgX = 0
-      trgY = 0
-      trgWidth = canvas.width
-      trgHeight = canvas.height
-      srcRatio = img.width / img.height
-      trgRatio = canvas.width / canvas.height
-      
-      if img.height < canvas.height or img.width < canvas.width
-        # This image is smaller than the canvas
-        trgHeight = srcHeight
-        trgWidth = srcWidth
-      else
-        # Image is bigger and needs rescaling
-        if srcRatio > trgRatio
-          srcHeight = img.height
-          srcWidth = srcHeight * trgRatio
+    fileReader.onload = =>
+      img = new Image
+
+      img.onload = =>
+        canvas = document.createElement("canvas")
+        ctx = canvas.getContext("2d")
+        srcX = 0
+        srcY = 0
+        srcWidth = img.width
+        srcHeight = img.height
+        canvas.width = @options.thumbnailWidth
+        canvas.height = @options.thumbnailHeight
+        trgX = 0
+        trgY = 0
+        trgWidth = canvas.width
+        trgHeight = canvas.height
+        srcRatio = img.width / img.height
+        trgRatio = canvas.width / canvas.height
+        
+        if img.height < canvas.height or img.width < canvas.width
+          # This image is smaller than the canvas
+          trgHeight = srcHeight
+          trgWidth = srcWidth
         else
-          srcWidth = img.width
-          srcHeight = srcWidth / trgRatio
+          # Image is bigger and needs rescaling
+          if srcRatio > trgRatio
+            srcHeight = img.height
+            srcWidth = srcHeight * trgRatio
+          else
+            srcWidth = img.width
+            srcHeight = srcWidth / trgRatio
 
 
-      srcX = (img.width - srcWidth) / 2
-      srcY = (img.height - srcHeight) / 2
-      trgY = (canvas.height - trgHeight) / 2
-      trgX = (canvas.width - trgWidth) / 2
-      ctx.drawImage img, srcX, srcY, srcWidth, srcHeight, trgX, trgY, trgWidth, trgHeight
-      thumbnail = canvas.toDataURL("image/png")
+        srcX = (img.width - srcWidth) / 2
+        srcY = (img.height - srcHeight) / 2
+        trgY = (canvas.height - trgHeight) / 2
+        trgX = (canvas.width - trgWidth) / 2
+        ctx.drawImage img, srcX, srcY, srcWidth, srcHeight, trgX, trgY, trgWidth, trgHeight
+        thumbnail = canvas.toDataURL("image/png")
 
-      @emit "thumbnail", file, thumbnail
+        @emit "thumbnail", file, thumbnail
 
-      @URL.revokeObjectURL blobUrl
-      img = null
+      img.src = fileReader.result
 
-    img.src = blobUrl
+    fileReader.readAsDataURL file
 
 
   # Goes through the qeue and processes files if there aren't too many already.
@@ -395,8 +394,6 @@ class Dropzone extends Em
 
   # Loads the file, then calls finishedLoading()
   processFile: (file) ->
-    fileReader = new FileReader()
-
     @files.processing.push file
 
     @emit "processingfile", file
