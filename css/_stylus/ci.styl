@@ -306,11 +306,15 @@ footer
     color white
     line-height 140%
     font-weight 600
-    margin 0 0 1em 0
+    margin 0 0 0.5em 0
     font-size 2.22em
 
   p
     margin 0.5em 0
+
+
+  section
+    padding-bottom 1.5em
 
   clearfix()
 
@@ -369,10 +373,18 @@ footer > div
   article, footer > div
     column-width 10
 
-  footer section
-    column-width 5
-    float left
-    padding 0 15px
+  footer
+    section
+      h1 span
+        display block // Make sure the titles break at the right places
+      column-width 5
+      display inline-block
+
+      &:nth-child(odd)
+        padding-right 1em
+      &:nth-child(even)
+        padding-left 1em
+      vertical-align top
 
 
 

@@ -541,11 +541,14 @@ footer h1 {
   color: #fff;
   line-height: 140%;
   font-weight: 600;
-  margin: 0 0 1em 0;
+  margin: 0 0 0.5em 0;
   font-size: 2.22em;
 }
 footer p {
   margin: 0.5em 0;
+}
+footer section {
+  padding-bottom: 1.5em;
 }
 footer:before,
 footer:after {
@@ -596,8 +599,17 @@ viewport {
   }
   footer section {
     width: 19.764705882352942rem;
-    float: left;
-    padding: 0 15px;
+    display: inline-block;
+    vertical-align: top;
+  }
+  footer section h1 span {
+    display: block;
+  }
+  footer section:nth-child(odd) {
+    padding-right: 1em;
+  }
+  footer section:nth-child(even) {
+    padding-left: 1em;
   }
 }
 @media screen and (min-width: 70em) {
