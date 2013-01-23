@@ -28,31 +28,21 @@
 
 
 (function() {
-  var Dropzone, Emitter, camelize, o, without,
+  var Dropzone, Em, camelize, o, without,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     __slice = [].slice;
 
   o = typeof jQuery !== "undefined" && jQuery !== null ? jQuery : require("jquery");
 
-  Emitter = require("emitter");
-
-  o.fn.dropzone = function(options) {
-    return this.each(function() {
-      return new Dropzone(this, options);
-    });
-  };
-
-  o(function() {
-    return o(".dropzone").dropzone();
-  });
+  Em = typeof Emitter !== "undefined" && Emitter !== null ? Emitter : require("emitter");
 
   Dropzone = (function(_super) {
     var defaultOptions;
 
     __extends(Dropzone, _super);
 
-    Dropzone.prototype.version = "1.2.4";
+    Dropzone.prototype.version = "1.2.6";
 
     /*
       This is a list of all available events you can register on a dropzone object.
@@ -65,7 +55,7 @@
 
     Dropzone.prototype.events = ["drop", "dragstart", "dragend", "dragenter", "dragover", "dragleave", "addedfile", "thumbnail", "error", "processingfile", "uploadprogress", "finished"];
 
-    Dropzone.prototype.blacklistedBrowsers = [/opera.*version\/12/i, /MSIE\ 10/i];
+    Dropzone.prototype.blacklistedBrowsers = [/opera.*Macintosh.*version\/12/i];
 
     defaultOptions = {
       url: null,
@@ -317,53 +307,51 @@
     };
 
     Dropzone.prototype.createThumbnail = function(file) {
-      var blobUrl, img,
+      var fileReader,
         _this = this;
-      img = new Image();
-      blobUrl = this.URL.createObjectURL(file);
-      img.onerror = img.onabort = function() {
-        this.URL.revokeObjectURL(blobUrl);
-        return img = null;
-      };
-      img.onload = function() {
-        var canvas, ctx, srcHeight, srcRatio, srcWidth, srcX, srcY, thumbnail, trgHeight, trgRatio, trgWidth, trgX, trgY;
-        canvas = document.createElement("canvas");
-        ctx = canvas.getContext("2d");
-        srcX = 0;
-        srcY = 0;
-        srcWidth = img.width;
-        srcHeight = img.height;
-        canvas.width = _this.options.thumbnailWidth;
-        canvas.height = _this.options.thumbnailHeight;
-        trgX = 0;
-        trgY = 0;
-        trgWidth = canvas.width;
-        trgHeight = canvas.height;
-        srcRatio = img.width / img.height;
-        trgRatio = canvas.width / canvas.height;
-        if (img.height < canvas.height || img.width < canvas.width) {
-          trgHeight = srcHeight;
-          trgWidth = srcWidth;
-        } else {
-          if (srcRatio > trgRatio) {
-            srcHeight = img.height;
-            srcWidth = srcHeight * trgRatio;
+      fileReader = new FileReader;
+      fileReader.onload = function() {
+        var img;
+        img = new Image;
+        img.onload = function() {
+          var canvas, ctx, srcHeight, srcRatio, srcWidth, srcX, srcY, thumbnail, trgHeight, trgRatio, trgWidth, trgX, trgY;
+          canvas = document.createElement("canvas");
+          ctx = canvas.getContext("2d");
+          srcX = 0;
+          srcY = 0;
+          srcWidth = img.width;
+          srcHeight = img.height;
+          canvas.width = _this.options.thumbnailWidth;
+          canvas.height = _this.options.thumbnailHeight;
+          trgX = 0;
+          trgY = 0;
+          trgWidth = canvas.width;
+          trgHeight = canvas.height;
+          srcRatio = img.width / img.height;
+          trgRatio = canvas.width / canvas.height;
+          if (img.height < canvas.height || img.width < canvas.width) {
+            trgHeight = srcHeight;
+            trgWidth = srcWidth;
           } else {
-            srcWidth = img.width;
-            srcHeight = srcWidth / trgRatio;
+            if (srcRatio > trgRatio) {
+              srcHeight = img.height;
+              srcWidth = srcHeight * trgRatio;
+            } else {
+              srcWidth = img.width;
+              srcHeight = srcWidth / trgRatio;
+            }
           }
-        }
-        srcX = (img.width - srcWidth) / 2;
-        srcY = (img.height - srcHeight) / 2;
-        trgY = (canvas.height - trgHeight) / 2;
-        trgX = (canvas.width - trgWidth) / 2;
-        ctx.drawImage(img, srcX, srcY, srcWidth, srcHeight, trgX, trgY, trgWidth, trgHeight);
-        thumbnail = canvas.toDataURL("image/png");
-        _this.emit("thumbnail", file, thumbnail);
-        _this.URL.revokeObjectURL(blobUrl);
-        return img = null;
+          srcX = (img.width - srcWidth) / 2;
+          srcY = (img.height - srcHeight) / 2;
+          trgY = (canvas.height - trgHeight) / 2;
+          trgX = (canvas.width - trgWidth) / 2;
+          ctx.drawImage(img, srcX, srcY, srcWidth, srcHeight, trgX, trgY, trgWidth, trgHeight);
+          thumbnail = canvas.toDataURL("image/png");
+          return _this.emit("thumbnail", file, thumbnail);
+        };
+        return img.src = fileReader.result;
       };
-      return img.src = blobUrl;
+      return fileReader.readAsDataURL(file);
     };
 
     Dropzone.prototype.processQueue = function() {
@@ -381,8 +369,6 @@
     };
 
     Dropzone.prototype.processFile = function(file) {
-      var fileReader;
-      fileReader = new FileReader();
       this.files.processing.push(file);
       this.emit("processingfile", file);
       return this.uploadFile(file);
@@ -450,7 +436,7 @@
 
     return Dropzone;
 
-  })(Emitter);
+  })(Em);
 
   Dropzone.options = {};
 
@@ -471,6 +457,16 @@
       return match[1].toUpperCase();
     });
   };
+
+  o.fn.dropzone = function(options) {
+    return this.each(function() {
+      return new Dropzone(this, options);
+    });
+  };
+
+  o(function() {
+    return o(".dropzone").dropzone();
+  });
 
   if (typeof module !== "undefined" && module !== null) {
     module.exports = Dropzone;
