@@ -418,6 +418,8 @@ class Dropzone extends Em
 
     xhr.open "POST", @options.url, true
 
+    $.rails.CSRFProtection xhr if $.rails?
+
     handleError = =>
       @errorProcessing file, xhr.responseText || "Server responded with #{xhr.status} code."
 
