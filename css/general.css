@@ -432,9 +432,12 @@ article > header #intro h2 {
   font-size: 1.66em;
   line-height: 140%;
 }
-article > header #github-buttons {
-  margin: 1em auto 2em auto;
-  width: 85px;
+article > header #social-buttons {
+  margin: 1em 0 2em 0;
+  text-align: center;
+}
+article > header #social-buttons .twitter-share-button {
+  margin-left: 20px;
 }
 article section strong {
   font-weight: 600;
