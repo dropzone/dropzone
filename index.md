@@ -165,7 +165,7 @@ The valid options are:
 | `maxFilesize`           | in MB
 | `paramName`             | The name of the file param that gets transferred
 | `createImageThumbnails` |
-| `maxThumbnailFilesize`  | in MB. When the filename exeeds this limit, the thumbnail will not be generated
+| `maxThumbnailFilesize`  | in MB. When the filename exceeds this limit, the thumbnail will not be generated
 | `thumbnailWidth`        |
 | `thumbnailHeight`       |
 | `accept`                | is a function that gets a [file](https://developer.mozilla.org/en-US/docs/DOM/File) and a `done` function as parameter. If the done function is invoked without a parameter, the file will be processed. If you pass an error message it will be displayed and the file will not be uploaded.
