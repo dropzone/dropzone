@@ -272,7 +272,7 @@ I realize that there
 [libraries](http://blueimp.github.com/jQuery-File-Upload/)
 out there but the reasons I decided to write my own are the following:
 
-- I didn't want it to be too big, and to cumbersome to dive into.
+- I didn't want it to be too big, and too cumbersome to dive into.
 - I want to design my own elements. I only want to register callbacks so I can update my elements accordingly.
 - Big files should get uploaded without a problem.
 - I wanted a callback for image previews, that don't kill the browser if too many too big images are viewed.
