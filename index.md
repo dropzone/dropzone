@@ -173,7 +173,7 @@ The valid options are:
 | `fallback`              | is a function that gets called when the browser is not supported. The default implementation shows the fallback input field and adds a text.
 
 > You can also overwrite all default event actions in the options. So if you provide the option `drop` you can overwrite the default `drop` event handler.
-> *You should be familiary with the code if you do that because you can easily break the upload like this.*
+> *You should be familiar with the code if you do that because you can easily break the upload like this.*
 > If you just want to do additional stuff, like adding a few classes here and there, **[listen to the events](#listen_to_events) instead**!
 
 
