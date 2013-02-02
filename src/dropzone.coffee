@@ -83,7 +83,7 @@ class Dropzone extends Em
     maxFilesize: 256 # in MB
     paramName: "file" # The name of the file param that gets transferred.
     createImageThumbnails: true
-    maxThumbnailFilesize: 2 # in MB. When the filename exeeds this limit, the thumbnail will not be generated.
+    maxThumbnailFilesize: 2 # in MB. When the filename exceeds this limit, the thumbnail will not be generated.
     thumbnailWidth: 100
     thumbnailHeight: 100
     
@@ -138,7 +138,7 @@ class Dropzone extends Em
       file.previewTemplate.find(".details").append o """<img alt="#{file.name}" src="#{dataUrl}"/>"""
 
     
-    # Called whenever an error occures
+    # Called whenever an error occurs
     # Receives `file` and `message`
     error: (file, message) ->
       file.previewTemplate.addClass "error"
@@ -150,7 +150,7 @@ class Dropzone extends Em
     processingfile: (file) ->
       file.previewTemplate.addClass "processing"
     
-    # Called whenever the upload progress gets upadted.
+    # Called whenever the upload progress gets updated.
     # You can be sure that this will be called with the percentage 100% when the file is finished uploading.
     # Receives `file` and `progress` (percentage)
     uploadprogress: (file, progress) ->
@@ -185,7 +185,7 @@ class Dropzone extends Em
     @element.data "dropzone", @
 
     
-    # Get the `Dropzone.opions.elementId` for this element if it exists
+    # Get the `Dropzone.options.elementId` for this element if it exists
     elementId = @element.attr "id"
     elementOptions = (Dropzone.options[camelize elementId] if elementId) ? { }
 
@@ -380,7 +380,7 @@ class Dropzone extends Em
     fileReader.readAsDataURL file
 
 
-  # Goes through the qeue and processes files if there aren't too many already.
+  # Goes through the queue and processes files if there aren't too many already.
   processQueue: ->
     parallelUploads = @options.parallelUploads
     processingLength = @files.processing.length
