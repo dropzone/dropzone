@@ -1,0 +1,150 @@
+@import "nib"
+@import "basic"
+
+@keyframes loading
+  from
+    background-position: 0 -400px
+  to
+    background-position: -7px -400px
+
+.dropzone
+  border 1px solid rgba(0, 0, 0, 0.03)
+  min-height 360px
+  border-radius 3px
+  background rgba(0, 0, 0, 0.03)
+  padding 23px
+
+  .default.message
+    opacity 1
+    transition opacity 0.3s ease-in-out
+    background url("../images/spritemap.png?v2") no-repeat 0 0
+    position absolute
+    width 428px
+    height 123px
+    margin-left -(@width / 2)
+    margin-top -(@height / 2)
+    top 50%
+    left 50%
+    span
+      display none
+
+  &.drag-hover
+    .message
+      opacity 0.15
+
+  &.started
+    .message
+      display block
+      opacity 0 // Rather fade out nicely
+
+  &.browser-not-supported
+    padding 30px
+    .message
+      position relative
+      background url("../images/spritemap.png") no-repeat 0 0
+      width 204px
+      height 108px
+      top 0
+      left 0
+      margin-left 0
+      margin-top 0
+      margin-bottom 20px
+      
+
+
+  .preview
+    box-shadow 1px 1px 4px rgba(0, 0, 0, 0.16)
+
+    .details
+      img
+        width 100px
+        height 100px
+
+      // Not implemented yet. This is the CSS definition of the file
+      // content as text.
+      // .content
+      //   font-size 3px
+      //   white-space pre
+      //   position absolute
+      //   top 5px
+      //   left 12px
+      //   right 19px
+      //   bottom 5px
+      //   overflow hidden
+      //   line-height 100%
+      //   cursor default
+      //   word-wrap break-word
+
+    &.image-preview
+      &:hover
+        .details
+          img
+            display block
+            opacity 0.1
+
+    &.success
+      .success-mark
+        opacity 1
+    &.error
+      .error-mark
+        opacity 1
+      .progress .upload
+        background #EE1E2D
+
+    .error-mark
+    .success-mark
+      display block
+      opacity 0 // Fade in / out
+      transition opacity 0.4s ease-in-out
+      span
+        display none
+    .error-mark
+      background url("../images/spritemap.png?v2") no-repeat -268px -123px
+    .success-mark
+      background url("../images/spritemap.png?v2") no-repeat -268px -163px
+
+    .progress
+      .upload
+        animation loading 0.4s linear infinite
+        transition width 0.3s ease-in-out
+        // background url("../images/spritemap.png") repeat-x 0px -407px
+
+
+
+    .progress
+      .upload
+        animation loading 0.4s linear infinite
+        transition width 0.3s ease-in-out
+        border-radius 2px
+        position absolute
+        top 0
+        left 0
+        width 0%
+        height 100%
+        background-repeat repeat-x
+        background-position 0px -400px
+        background-image url("../images/spritemap.png?v2")
+
+
+    &.success
+      .progress
+        display block
+        opacity 0
+        transition opacity 0.4s ease-in-out
+
+
+    .filename
+      span
+        overflow ellipsis
+
+    .error-message
+      display block
+      opacity 0 // Rather fade in / out
+      transition opacity 0.3s ease-in-out
+
+    &:hover.error
+      .error-message
+        opacity 1
+
+
+
