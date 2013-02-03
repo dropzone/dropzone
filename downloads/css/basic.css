@@ -75,9 +75,8 @@
   height: 40px;
   font-size: 30px;
   text-align: center;
-  left: 50%;
-  margin-left: -20px;
-  top: 36px;
+  right: -10px;
+  top: -10px;
 }
 .dropzone .preview .success-mark {
   color: #8cc657;
