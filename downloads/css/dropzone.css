@@ -50,7 +50,7 @@
 .dropzone .preview .details .size {
   position: absolute;
   bottom: -28px;
-  left: 0;
+  left: 3px;
   height: 28px;
   line-height: 28px;
 }
@@ -126,6 +126,7 @@
   border-radius: 3px;
   background: rgba(0,0,0,0.03);
   padding: 23px;
+  font-size: 14px;
 }
 .dropzone .default.message {
   opacity: 1;
