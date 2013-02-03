@@ -70,6 +70,7 @@ require.aliases = {};
  */
 
 require.resolve = function(path) {
+  if (path.charAt(0) === '/') path = path.slice(1);
   var index = path + '/index.js';
 
   var paths = [
@@ -182,17 +183,18 @@ require.relative = function(parent) {
    */
 
   localRequire.resolve = function(path) {
+    var c = path.charAt(0);
+    if ('/' == c) return path.slice(1);
+    if ('.' == c) return require.normalize(p, path);
+
     // resolve deps by returning
     // the dep in the nearest "deps"
     // directory
-    if ('.' != path.charAt(0)) {
-      var segs = parent.split('/');
-      var i = lastIndexOf(segs, 'deps') + 1;
-      if (!i) i = 0;
-      path = segs.slice(0, i + 1).join('/') + '/deps/' + path;
-      return path;
-    }
-    return require.normalize(p, path);
+    var segs = parent.split('/');
+    var i = lastIndexOf(segs, 'deps') + 1;
+    if (!i) i = 0;
+    path = segs.slice(0, i + 1).join('/') + '/deps/' + path;
+    return path;
   };
 
   /**
@@ -491,7 +493,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       finished: function(file) {
         return file.previewTemplate.addClass("success");
       },
-      previewTemplate: "<div class=\"preview file-preview\">\n  <div class=\"details\"></div>\n  <div class=\"progress\"><span class=\"load\"></span><span class=\"upload\"></span></div>\n  <div class=\"success-mark\"><span>✔</span></div>\n  <div class=\"error-mark\"><span>✘</span></div>\n  <div class=\"error-message\"><span></span></div>\n  <div class=\"filename\"><span></span></div>\n</div>"
+      previewTemplate: "<div class=\"preview file-preview\">\n  <div class=\"details\">\n   <div class=\"filename\"><span></span></div>\n  </div>\n  <div class=\"progress\"><span class=\"upload\"></span></div>\n  <div class=\"success-mark\"><span>✔</span></div>\n  <div class=\"error-mark\"><span>✘</span></div>\n  <div class=\"error-message\"><span></span></div>\n</div>"
     };
 
     defaultOptions.previewTemplate = defaultOptions.previewTemplate.replace(/\n*/g, "");
@@ -537,7 +539,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         this.element.attr("enctype", "multipart/form-data");
       }
       if (this.element.find(".message").length === 0) {
-        this.element.append(o("<div class=\"message\"><span>Drop files here to upload</span></div>"));
+        this.element.append(o("<div class=\"default message\"><span>Drop files here to upload</span></div>"));
       }
       capableBrowser = true;
       if (window.File && window.FileReader && window.FileList && window.Blob && window.FormData) {
@@ -611,21 +613,21 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       var string;
       if (size >= 100000000000) {
         size = size / 100000000000;
-        string = "tb";
+        string = "TB";
       } else if (size >= 100000000) {
         size = size / 100000000;
-        string = "gb";
+        string = "GB";
       } else if (size >= 100000) {
         size = size / 100000;
-        string = "mb";
+        string = "MB";
       } else if (size >= 100) {
         size = size / 100;
-        string = "kb";
+        string = "KB";
       } else {
         size = size * 10;
-        string = "by";
+        string = "b";
       }
-      return "" + (Math.round(size) / 10) + " " + string;
+      return "<strong>" + (Math.round(size) / 10) + "</strong> " + string;
     };
 
     Dropzone.prototype.drop = function(e) {

@@ -283,20 +283,20 @@ class Dropzone extends Em
   filesize: (size) ->
     if size >= 100000000000
       size = size / 100000000000
-      string = "tb"
+      string = "TB"
     else if size >= 100000000
       size = size / 100000000
-      string = "gb"
+      string = "GB"
     else if size >= 100000
       size = size / 100000
-      string = "mb"
+      string = "MB"
     else if size >= 100
       size = size / 100 
-      string = "kb"
+      string = "KB"
     else
       size = size * 10
-      string = "by"
-    "#{Math.round(size)/10} #{string}"
+      string = "b"
+    "<strong>#{Math.round(size)/10}</strong> #{string}"
 
   drop: (e) ->
     return unless e.originalEvent.dataTransfer

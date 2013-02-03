@@ -283,7 +283,7 @@ Emitter.prototype.hasListeners = function(event){
       finished: function(file) {
         return file.previewTemplate.addClass("success");
       },
-      previewTemplate: "<div class=\"preview file-preview\">\n  <div class=\"details\"></div>\n  <div class=\"progress\"><span class=\"load\"></span><span class=\"upload\"></span></div>\n  <div class=\"success-mark\"><span>✔</span></div>\n  <div class=\"error-mark\"><span>✘</span></div>\n  <div class=\"error-message\"><span></span></div>\n  <div class=\"filename\"><span></span></div>\n</div>"
+      previewTemplate: "<div class=\"preview file-preview\">\n  <div class=\"details\">\n   <div class=\"filename\"><span></span></div>\n  </div>\n  <div class=\"progress\"><span class=\"upload\"></span></div>\n  <div class=\"success-mark\"><span>✔</span></div>\n  <div class=\"error-mark\"><span>✘</span></div>\n  <div class=\"error-message\"><span></span></div>\n</div>"
     };
 
     defaultOptions.previewTemplate = defaultOptions.previewTemplate.replace(/\n*/g, "");
@@ -329,7 +329,7 @@ Emitter.prototype.hasListeners = function(event){
         this.element.attr("enctype", "multipart/form-data");
       }
       if (this.element.find(".message").length === 0) {
-        this.element.append(o("<div class=\"message\"><span>Drop files here to upload</span></div>"));
+        this.element.append(o("<div class=\"default message\"><span>Drop files here to upload</span></div>"));
       }
       capableBrowser = true;
       if (window.File && window.FileReader && window.FileList && window.Blob && window.FormData) {
@@ -403,21 +403,21 @@ Emitter.prototype.hasListeners = function(event){
       var string;
       if (size >= 100000000000) {
         size = size / 100000000000;
-        string = "tb";
+        string = "TB";
       } else if (size >= 100000000) {
         size = size / 100000000;
-        string = "gb";
+        string = "GB";
       } else if (size >= 100000) {
         size = size / 100000;
-        string = "mb";
+        string = "MB";
       } else if (size >= 100) {
         size = size / 100;
-        string = "kb";
+        string = "KB";
       } else {
         size = size * 10;
-        string = "by";
+        string = "b";
       }
-      return "" + (Math.round(size) / 10) + " " + string;
+      return "<strong>" + (Math.round(size) / 10) + "</strong> " + string;
     };
 
     Dropzone.prototype.drop = function(e) {
