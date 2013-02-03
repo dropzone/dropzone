@@ -4,37 +4,32 @@
   "description": "Handles drag and drop of files for you.",
   "keywords": [ "dragndrop", "drag and drop", "file upload", "upload" ],
   "homepage": "http://www.dropzonejs.com",
-  "main": [
-    "./lib/dropzone.js"
-  ],
-  "maintainers": [
-    {
+  "main": [ "./lib/dropzone.js" ],
+  "maintainers": [{
       "name": "Matias Meno",
       "email": "m@tias.me",
       "web": "http://www.matiasmeno.com"
-    } 
-  ],
-  "contributors": [
-    {
+  }],
+  "contributors": [{
       "name": "Matias Meno",
       "email": "m@tias.me",
       "web": "http://www.matiasmeno.com"
-    } 
-  ],
+  }],
   "bugs": {
     "mail": "m@tias.me"
   },
-  "licenses": [
-    {
+  "licenses": [{
       "type": "MIT",
       "url": "http://www.opensource.org/licenses/MIT" 
-    } 
-  ],
-  "repositories": [
-    {
+  }],
+  "repositories": [{
       "type": "git",
       "url": "https://github.com/enyo/dropzone.git" 
-    } 
-  ],
-  "dependencies": { }
+  }],
+  "dependencies": { },
+  "devDependencies": {
+    "stylus": "*",
+    "nib": "*"
+  }
+
 }
