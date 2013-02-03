@@ -164,15 +164,16 @@ class Dropzone extends Em
 
     # This template will be chosen when a new file is dropped.
     previewTemplate: """
-                     <div class="preview file-preview">
-                       <div class="details"></div>
-                       <div class="progress"><span class="load"></span><span class="upload"></span></div>
-                       <div class="success-mark"><span>✔</span></div>
-                       <div class="error-mark"><span>✘</span></div>
-                       <div class="error-message"><span></span></div>
-                       <div class="filename"><span></span></div>
-                     </div>
-                     """
+                      <div class="preview file-preview">
+                        <div class="details">
+                         <div class="filename"><span></span></div>
+                        </div>
+                        <div class="progress"><span class="upload"></span></div>
+                        <div class="success-mark"><span>✔</span></div>
+                        <div class="error-mark"><span>✘</span></div>
+                        <div class="error-message"><span></span></div>
+                      </div>
+                      """
 
   defaultOptions.previewTemplate = defaultOptions.previewTemplate.replace /\n*/g, ""
 
@@ -213,7 +214,7 @@ class Dropzone extends Em
       @element.attr "enctype", "multipart/form-data"
 
     if @element.find(".message").length == 0
-      @element.append o """<div class="message"><span>Drop files here to upload</span></div>"""
+      @element.append o """<div class="default message"><span>Drop files here to upload</span></div>"""
 
     capableBrowser = yes
 
