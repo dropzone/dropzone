@@ -8,7 +8,7 @@ there's a standalone version, and an [AMD](https://github.com/amdjs/amdjs-api/wi
 module that's compatible with [RequireJS](http://requirejs.org) in the downloads
 folder.
 
-![Screenshot](http://i.imgur.com/StaS02g.png)
+![Screenshot](http://i.imgur.com/zXyTjMp.png)
 
 ## Main features
 
