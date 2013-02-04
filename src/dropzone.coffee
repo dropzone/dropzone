@@ -32,7 +32,7 @@ Em = Emitter ? require "emitter" # Can't be the same name because it will lead t
 
 class Dropzone extends Em
 
-  version: "1.2.6"
+  version: "1.3.0"
 
   ###
   This is a list of all available events you can register on a dropzone object.
@@ -49,6 +49,7 @@ class Dropzone extends Em
     "dragenter"
     "dragover"
     "dragleave"
+    "selectedfiles"
     "addedfile"
     "thumbnail"
     "error"
@@ -83,9 +84,18 @@ class Dropzone extends Em
     maxFilesize: 256 # in MB
     paramName: "file" # The name of the file param that gets transferred.
     createImageThumbnails: true
-    maxThumbnailFilesize: 2 # in MB. When the filename exeeds this limit, the thumbnail will not be generated.
+    maxThumbnailFilesize: 2 # in MB. When the filename exceeds this limit, the thumbnail will not be generated.
     thumbnailWidth: 100
     thumbnailHeight: 100
+
+    clickable: yes
+
+    # Can be a jQuery or HTML element that will hold the file previews
+    # If null, the dropzone element will be used
+    # 
+    # Not implemented yet.
+    # 
+    # previewsContainer: null
     
     # If `done()` is called without argument the file is accepted
     # If you call it with an error message, the file is rejected
@@ -96,8 +106,9 @@ class Dropzone extends Em
     # Called when the browser does not support drag and drop
     fallback: ->
       @element.addClass "browser-not-supported"
+      @element.find(".message").removeClass "default"
       @element.find(".message span").html "Your browser does not support drag'n'drop file uploads."
-      @element.append """<p>Sadly your dusty browser does not support nice drag'n'drop file uploads.<br />Please use the fallback form below to upload your files like in the olden days.</p>"""
+      @element.append """Please use the fallback form below to upload your files like in the olden days.</p>"""
       @element.append @getFallbackForm()
     
 
@@ -111,15 +122,18 @@ class Dropzone extends Em
 
 
     # Those are self explanatory and simply concern the DragnDrop.
-    drop: (e) ->
-      @element.removeClass "drag-hover"
-      @element.addClass "started"
+    drop: (e) -> @element.removeClass "drag-hover"
     dragstart: (e) ->
     dragend: (e) -> @element.removeClass "drag-hover"
     dragenter: (e) -> @element.addClass "drag-hover"
     dragover: (e) -> @element.addClass "drag-hover"
     dragleave: (e) -> @element.removeClass "drag-hover"
     
+    selectedfiles: (files) ->
+    # Called whenever files are dropped or selected
+      @element.addClass "started"
+
+
     # Called when a file is added to the queue
     # Receives `file`
     addedfile: (file) ->
@@ -138,7 +152,7 @@ class Dropzone extends Em
       file.previewTemplate.find(".details").append o """<img alt="#{file.name}" src="#{dataUrl}"/>"""
 
     
-    # Called whenever an error occures
+    # Called whenever an error occurs
     # Receives `file` and `message`
     error: (file, message) ->
       file.previewTemplate.addClass "error"
@@ -150,7 +164,7 @@ class Dropzone extends Em
     processingfile: (file) ->
       file.previewTemplate.addClass "processing"
     
-    # Called whenever the upload progress gets upadted.
+    # Called whenever the upload progress gets updated.
     # You can be sure that this will be called with the percentage 100% when the file is finished uploading.
     # Receives `file` and `progress` (percentage)
     uploadprogress: (file, progress) ->
@@ -164,15 +178,16 @@ class Dropzone extends Em
 
     # This template will be chosen when a new file is dropped.
     previewTemplate: """
-                     <div class="preview file-preview">
-                       <div class="details"></div>
-                       <div class="progress"><span class="load"></span><span class="upload"></span></div>
-                       <div class="success-mark"><span>✔</span></div>
-                       <div class="error-mark"><span>✘</span></div>
-                       <div class="error-message"><span></span></div>
-                       <div class="filename"><span></span></div>
-                     </div>
-                     """
+                      <div class="preview file-preview">
+                        <div class="details">
+                         <div class="filename"><span></span></div>
+                        </div>
+                        <div class="progress"><span class="upload"></span></div>
+                        <div class="success-mark"><span>✔</span></div>
+                        <div class="error-mark"><span>✘</span></div>
+                        <div class="error-message"><span></span></div>
+                      </div>
+                      """
 
   defaultOptions.previewTemplate = defaultOptions.previewTemplate.replace /\n*/g, ""
 
@@ -185,7 +200,7 @@ class Dropzone extends Em
     @element.data "dropzone", @
 
     
-    # Get the `Dropzone.opions.elementId` for this element if it exists
+    # Get the `Dropzone.options.elementId` for this element if it exists
     elementId = @element.attr "id"
     elementOptions = (Dropzone.options[camelize elementId] if elementId) ? { }
 
@@ -213,7 +228,7 @@ class Dropzone extends Em
       @element.attr "enctype", "multipart/form-data"
 
     if @element.find(".message").length == 0
-      @element.append o """<div class="message"><span>Drop files here to upload</span></div>"""
+      @element.append o """<div class="default message"><span>Drop files here to upload</span></div>"""
 
     capableBrowser = yes
 
@@ -229,6 +244,16 @@ class Dropzone extends Em
 
     # If the browser failed, just call the fallback and leave
     return @options.fallback.call this unless capableBrowser
+
+
+    if @options.clickable
+      @element.addClass "clickable"
+      @hiddenFileInput = o """<input type="file" multiple />"""
+      @element.click => @hiddenFileInput.click() # Forward the click
+      @hiddenFileInput.change =>
+        files = @hiddenFileInput.get(0).files
+        @emit "selectedfiles", files
+        @handleFiles files if files.length
 
 
     @files = [] # All files
@@ -282,25 +307,27 @@ class Dropzone extends Em
   filesize: (size) ->
     if size >= 100000000000
       size = size / 100000000000
-      string = "tb"
+      string = "TB"
     else if size >= 100000000
       size = size / 100000000
-      string = "gb"
+      string = "GB"
     else if size >= 100000
       size = size / 100000
-      string = "mb"
+      string = "MB"
     else if size >= 100
       size = size / 100 
-      string = "kb"
+      string = "KB"
     else
       size = size * 10
-      string = "by"
-    "#{Math.round(size)/10} #{string}"
+      string = "b"
+    "<strong>#{Math.round(size)/10}</strong> #{string}"
 
   drop: (e) ->
     return unless e.originalEvent.dataTransfer
     files = e.originalEvent.dataTransfer.files
+    @emit "selectedfiles", files
     @handleFiles files if files.length
+
 
   handleFiles: (files) ->
     @addFile file for file in files
@@ -380,7 +407,7 @@ class Dropzone extends Em
     fileReader.readAsDataURL file
 
 
-  # Goes through the qeue and processes files if there aren't too many already.
+  # Goes through the queue and processes files if there aren't too many already.
   processQueue: ->
     parallelUploads = @options.parallelUploads
     processingLength = @files.processing.length
