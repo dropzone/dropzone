@@ -228,7 +228,7 @@ class Dropzone extends Em
       @element.attr "enctype", "multipart/form-data"
 
     if @element.find(".message").length == 0
-      @element.append o """<div class="message"><span>Drop files here to upload</span></div>"""
+      @element.append o """<div class="default message"><span>Drop files here to upload</span></div>"""
 
     capableBrowser = yes
 
