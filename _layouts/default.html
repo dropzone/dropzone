@@ -53,8 +53,18 @@
       var h=document.getElementsByTagName("html")[0];h.className+=" wf-loading";var t=setTimeout(function(){h.className=h.className.replace(/(\s|^)wf-loading(\s|$)/g," ");h.className+=" wf-inactive"},config.scriptTimeout);var tk=document.createElement("script"),d=false;tk.src='//use.typekit.net/'+config.kitId+'.js';tk.type="text/javascript";tk.async="true";tk.onload=tk.onreadystatechange=function(){var a=this.readyState;if(d||a&&a!="complete"&&a!="loaded")return;d=true;clearTimeout(t);try{Typekit.load(config)}catch(b){}};var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(tk,s)
     })();
   </script>
+
 </head>
 <body>
+  <!-- Facebook like button -->
+  <div id="fb-root"></div>
+  <script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));</script>
 
   <article itemscope  itemtype="http://schema.org/WebApplication">
 
@@ -74,22 +84,34 @@
 
 
       <section id="social-buttons">
-        <iframe src="http://ghbtns.com/github-btn.html?user=enyo&amp;repo=dropzone&amp;type=watch&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="85px" height="20px"></iframe>
+        <div class="social-button">
+          <iframe src="http://ghbtns.com/github-btn.html?user=enyo&amp;repo=dropzone&amp;type=watch&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="85px" height="20px"></iframe>
+        </div>
 
-        <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.dropzonejs.com" data-text="DropzoneJS is an open source library that provides drag'n'drop file uploads with image previews" data-via="matenyo">Tweet</a>
-        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        <div class="social-button">
+          <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.dropzonejs.com" data-text="DropzoneJS is an open source library that provides drag'n'drop file uploads with image previews" data-via="matenyo">Tweet</a>
+          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
 
-        <!-- Place this tag where you want the +1 button to render. -->
-        <div class="g-plusone" data-size="medium" data-href="http://www.dropzonejs.com"></div>
+        <div class="social-button">
+          <!-- Place this tag where you want the +1 button to render. -->
+          <div class="g-plusone" data-size="medium" data-href="http://www.dropzonejs.com"></div>
+        </div>
 
-        <!-- Place this tag after the last +1 button tag. -->
-        <script type="text/javascript">
-          (function() {
-            var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-            po.src = 'https://apis.google.com/js/plusone.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-          })();
-        </script>
+        <div class="social-button">
+          <!-- Place this tag after the last +1 button tag. -->
+          <script type="text/javascript">
+            (function() {
+              var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+              po.src = 'https://apis.google.com/js/plusone.js';
+              var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+            })();
+          </script>
+        </div>
+
+        <div class="social-button">
+          <div class="fb-like" data-href="http://www.dropzonejs.com" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false" data-font="trebuchet ms"></div>
+        </div>
       </section>
 
     </header>

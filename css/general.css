@@ -436,8 +436,19 @@ article > header #social-buttons {
   margin: 1em 0 2em 0;
   text-align: center;
 }
+article > header #social-buttons .social-button {
+  display: inline-block;
+}
+@media screen and (max-width: 500px) {
+  article > header #social-buttons .social-button {
+    display: block;
+  }
+}
 article > header #social-buttons .twitter-share-button {
   margin-left: 20px;
+}
+article > header #social-buttons .fb-like span {
+  vertical-align: top;
 }
 article section strong {
   font-weight: 600;
