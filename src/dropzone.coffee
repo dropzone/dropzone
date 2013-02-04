@@ -87,6 +87,12 @@ class Dropzone extends Em
     maxThumbnailFilesize: 2 # in MB. When the filename exceeds this limit, the thumbnail will not be generated.
     thumbnailWidth: 100
     thumbnailHeight: 100
+
+    clickable: yes
+
+    # Can be a jQuery or HTML element that will hold the file previews
+    # If null, the dropzone element will be used
+    previewsContainer: null
     
     # If `done()` is called without argument the file is accepted
     # If you call it with an error message, the file is rejected
@@ -112,8 +118,7 @@ class Dropzone extends Em
 
 
     # Those are self explanatory and simply concern the DragnDrop.
-    drop: (e) ->
-      @element.removeClass "drag-hover"
+    drop: (e) -> @element.removeClass "drag-hover"
     dragstart: (e) ->
     dragend: (e) -> @element.removeClass "drag-hover"
     dragenter: (e) -> @element.addClass "drag-hover"
@@ -236,13 +241,15 @@ class Dropzone extends Em
     # If the browser failed, just call the fallback and leave
     return @options.fallback.call this unless capableBrowser
 
-    # Now to handle click events on the dropzone
-    @hiddenFileInput = o """<input type="file" multiple />"""
-    @element.click => @hiddenFileInput.click() # Forward the click
-    @hiddenFileInput.change =>
-      files = @hiddenFileInput.get(0).files
-      @emit "selectedfiles", files
-      @handleFiles files if files.length
+
+    if @options.clickable
+      @element.addClass "clickable"
+      @hiddenFileInput = o """<input type="file" multiple />"""
+      @element.click => @hiddenFileInput.click() # Forward the click
+      @hiddenFileInput.change =>
+        files = @hiddenFileInput.get(0).files
+        @emit "selectedfiles", files
+        @handleFiles files if files.length
 
 
     @files = [] # All files

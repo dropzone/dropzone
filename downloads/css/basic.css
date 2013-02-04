@@ -10,6 +10,9 @@
   background: rgba(0,0,0,0.02);
   padding: 1em;
 }
+.dropzone.clickable {
+  cursor: pointer;
+}
 .dropzone .message {
   opacity: 1;
   -ms-filter: none;
