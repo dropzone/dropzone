@@ -18,14 +18,17 @@ h1#project
   background url("../images/dropzonejs.png") no-repeat center bottom
 
 
+@import "dropzone"
+
+
 #dropzone
   margin 30px 0
-  box-shadow 0 0 50px rgba(0, 0, 0, 0.2)
+  box-shadow 0 0 50px rgba(0, 0, 0, 0.13)
   padding 4px
-  border-radius 5px
+  border-radius 3px
+  .dropzone
+    box-shadow none
 
-
-@import "dropzone"
 
 
 // Make the dropzone text square when the screen is too small

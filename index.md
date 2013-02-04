@@ -164,6 +164,7 @@ The valid options are:
 | `parallelUploads`       | How many file uploads to process in parallel
 | `maxFilesize`           | in MB
 | `paramName`             | The name of the file param that gets transferred
+| `clickable`             | Whether the dropzone should be clickable. Defaults to `true`
 | `createImageThumbnails` |
 | `maxThumbnailFilesize`  | in MB. When the filename exceeds this limit, the thumbnail will not be generated
 | `thumbnailWidth`        |
@@ -213,6 +214,7 @@ All of these receive the [file](https://developer.mozilla.org/en-US/docs/DOM/Fil
 | Parameter         | Description
 |-------------------|-------------
 | `addedfile`       | 
+| `selectedfiles`   | Receives an array of files and gets called whenever files are dropped or selected.
 | `thumbnail`       | When the thumbnail has been generated. Receives the [**dataUrl**](http://en.wikipedia.org/wiki/Data_URI_scheme) as second parameter.
 | `error`           | An error occured. Receives the **errorMessage** as second parameter.
 | `processingfile`  | When a file gets processed (since there is a queue not all files are currently processed)
@@ -226,12 +228,13 @@ The HTML that is generated for each file by dropzone looks like this (although y
 
 {% highlight html %}
 <div class="preview file-preview">
- <div class="details"></div>
- <div class="progress"><span class="load"></span><span class="upload"></span></div>
- <div class="success-mark"><span>Success</span></div>
- <div class="error-mark"><span>Error</span></div>
- <div class="error-message"><span></span></div>
- <div class="filename"><span></span></div>
+  <div class="details">
+    <div class="filename"><span></span></div>    
+  </div>
+  <div class="progress"><span class="upload"></span></div>
+  <div class="success-mark"><span>Success</span></div>
+  <div class="error-mark"><span>Error</span></div>
+  <div class="error-message"><span></span></div>
 </div>
 {% endhighlight %}
 
@@ -239,6 +242,25 @@ The HTML that is generated for each file by dropzone looks like this (although y
 
 Want your dropzone to look like the dropzone on this page? Just take [my stylesheet](/css/dropzone.css) and make sure you also provide the referenced [spritemap image](/images/spritemap.png).
 
+
+## tips
+
+If your dropzone is rather square than a wide horizontal bar, you can add the class
+`square` to your dropzone and it will create the default message in three lines
+so it's not that wide.
+
+If you do not want the default message at all (»Drop files to upload (or click)«), you can
+put an element inside your dropzone element with the class `message` and dropzone
+will not create the message for you.
+
+Dropzone will submit any hidden fields you have in your dropzone form. So this
+is an easy way to submit additional data.
+
+I'll add more examples soon (How to add delete/download buttons when an upload finished,
+how to add file previews on your own, etc...)
+
+Don't hesitate to create an issue on github if you're stuck or think a feature
+is missing.
 
 </section>
 
