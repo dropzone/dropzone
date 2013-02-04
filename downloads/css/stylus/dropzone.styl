@@ -19,7 +19,11 @@
   .default.message
     opacity 1
     transition opacity 0.3s ease-in-out
-    background url("../images/spritemap.png?v2") no-repeat 0 0
+    
+    image "../images/spritemap.png" 428px 406px
+    background-repeat no-repeat
+    background-position 0 0
+
     position absolute
     width 428px
     height 123px
@@ -84,12 +88,15 @@
       display block
       opacity 0 // Fade in / out
       transition opacity 0.4s ease-in-out
+      image "../images/spritemap.png" 428px 406px
+      background-repeat no-repeat
+
       span
         display none
     .error-mark
-      background url("../images/spritemap.png?v2") no-repeat -268px -123px
+      background-position -268px -123px
     .success-mark
-      background url("../images/spritemap.png?v2") no-repeat -268px -163px
+      background-position -268px -163px
 
 
 
@@ -103,9 +110,10 @@
         left 0
         width 0%
         height 100%
+        
+        image "../images/spritemap.png" 428px 406px
         background-repeat repeat-x
         background-position 0px -400px
-        background-image url("../images/spritemap.png?v2")
 
 
     &.success

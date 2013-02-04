@@ -423,7 +423,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     */
 
 
-    Dropzone.prototype.events = ["drop", "dragstart", "dragend", "dragenter", "dragover", "dragleave", "addedfile", "thumbnail", "error", "processingfile", "uploadprogress", "finished"];
+    Dropzone.prototype.events = ["drop", "dragstart", "dragend", "dragenter", "dragover", "dragleave", "selectedfiles", "addedfile", "thumbnail", "error", "processingfile", "uploadprogress", "finished"];
 
     Dropzone.prototype.blacklistedBrowsers = [/opera.*Macintosh.*version\/12/i];
 
@@ -436,13 +436,15 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       maxThumbnailFilesize: 2,
       thumbnailWidth: 100,
       thumbnailHeight: 100,
+      clickable: true,
       accept: function(file, done) {
         return done();
       },
       fallback: function() {
         this.element.addClass("browser-not-supported");
+        this.element.find(".message").removeClass("default");
         this.element.find(".message span").html("Your browser does not support drag'n'drop file uploads.");
-        this.element.append("<p>Sadly your dusty browser does not support nice drag'n'drop file uploads.<br />Please use the fallback form below to upload your files like in the olden days.</p>");
+        this.element.append("Please use the fallback form below to upload your files like in the olden days.</p>");
         return this.element.append(this.getFallbackForm());
       },
       /*
@@ -452,8 +454,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       */
 
       drop: function(e) {
-        this.element.removeClass("drag-hover");
-        return this.element.addClass("started");
+        return this.element.removeClass("drag-hover");
       },
       dragstart: function(e) {},
       dragend: function(e) {
@@ -467,6 +468,9 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       },
       dragleave: function(e) {
         return this.element.removeClass("drag-hover");
+      },
+      selectedfiles: function(files) {
+        return this.element.addClass("started");
       },
       addedfile: function(file) {
         file.previewTemplate = o(this.options.previewTemplate);
@@ -534,7 +538,8 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     }
 
     Dropzone.prototype.init = function() {
-      var capableBrowser, regex, _i, _len, _ref, _ref1;
+      var capableBrowser, regex, _i, _len, _ref, _ref1,
+        _this = this;
       if (this.elementTagName === "form" && this.element.attr("enctype") !== "multipart/form-data") {
         this.element.attr("enctype", "multipart/form-data");
       }
@@ -556,6 +561,21 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       }
       if (!capableBrowser) {
         return this.options.fallback.call(this);
+      }
+      if (this.options.clickable) {
+        this.element.addClass("clickable");
+        this.hiddenFileInput = o("<input type=\"file\" multiple />");
+        this.element.click(function() {
+          return _this.hiddenFileInput.click();
+        });
+        this.hiddenFileInput.change(function() {
+          var files;
+          files = _this.hiddenFileInput.get(0).files;
+          _this.emit("selectedfiles", files);
+          if (files.length) {
+            return _this.handleFiles(files);
+          }
+        });
       }
       this.files = [];
       this.files.queue = [];
@@ -636,6 +656,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         return;
       }
       files = e.originalEvent.dataTransfer.files;
+      this.emit("selectedfiles", files);
       if (files.length) {
         return this.handleFiles(files);
       }

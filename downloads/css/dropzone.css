@@ -141,7 +141,9 @@
   -o-transition: opacity 0.3s ease-in-out;
   -ms-transition: opacity 0.3s ease-in-out;
   transition: opacity 0.3s ease-in-out;
-  background: url("../images/spritemap.png?v2") no-repeat 0 0;
+  background-image: url("../images/spritemap.png");
+  background-repeat: no-repeat;
+  background-position: 0 0;
   position: absolute;
   width: 428px;
   height: 123px;
@@ -149,6 +151,14 @@
   margin-top: -61.5px;
   top: 50%;
   left: 50%;
+}
+@media all and (-webkit-min-device-pixel-ratio: 1.5) {
+  .dropzone .default.message {
+    background-image: url("../images/spritemap@2x.png");
+    -webkit-background-size: 428px 406px;
+    -moz-background-size: 428px 406px;
+    background-size: 428px 406px;
+  }
 }
 .dropzone .default.message span {
   display: none;
@@ -202,16 +212,27 @@
   -o-transition: opacity 0.4s ease-in-out;
   -ms-transition: opacity 0.4s ease-in-out;
   transition: opacity 0.4s ease-in-out;
+  background-image: url("../images/spritemap.png");
+  background-repeat: no-repeat;
+}
+@media all and (-webkit-min-device-pixel-ratio: 1.5) {
+  .dropzone .preview .error-mark,
+  .dropzone .preview .success-mark {
+    background-image: url("../images/spritemap@2x.png");
+    -webkit-background-size: 428px 406px;
+    -moz-background-size: 428px 406px;
+    background-size: 428px 406px;
+  }
 }
 .dropzone .preview .error-mark span,
 .dropzone .preview .success-mark span {
   display: none;
 }
 .dropzone .preview .error-mark {
-  background: url("../images/spritemap.png?v2") no-repeat -268px -123px;
+  background-position: -268px -123px;
 }
 .dropzone .preview .success-mark {
-  background: url("../images/spritemap.png?v2") no-repeat -268px -163px;
+  background-position: -268px -163px;
 }
 .dropzone .preview .progress .upload {
   -webkit-animation: loading 0.4s linear infinite;
@@ -231,9 +252,17 @@
   left: 0;
   width: 0%;
   height: 100%;
+  background-image: url("../images/spritemap.png");
   background-repeat: repeat-x;
   background-position: 0px -400px;
-  background-image: url("../images/spritemap.png?v2");
+}
+@media all and (-webkit-min-device-pixel-ratio: 1.5) {
+  .dropzone .preview .progress .upload {
+    background-image: url("../images/spritemap@2x.png");
+    -webkit-background-size: 428px 406px;
+    -moz-background-size: 428px 406px;
+    background-size: 428px 406px;
+  }
 }
 .dropzone .preview.success .progress {
   display: block;
