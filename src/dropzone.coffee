@@ -49,6 +49,7 @@ class Dropzone extends Em
     "dragenter"
     "dragover"
     "dragleave"
+    "selectedfiles"
     "addedfile"
     "thumbnail"
     "error"
@@ -113,13 +114,17 @@ class Dropzone extends Em
     # Those are self explanatory and simply concern the DragnDrop.
     drop: (e) ->
       @element.removeClass "drag-hover"
-      @element.addClass "started"
     dragstart: (e) ->
     dragend: (e) -> @element.removeClass "drag-hover"
     dragenter: (e) -> @element.addClass "drag-hover"
     dragover: (e) -> @element.addClass "drag-hover"
     dragleave: (e) -> @element.removeClass "drag-hover"
     
+    selectedfiles: (files) ->
+    # Called whenever files are dropped or selected
+      @element.addClass "started"
+
+
     # Called when a file is added to the queue
     # Receives `file`
     addedfile: (file) ->
@@ -231,6 +236,14 @@ class Dropzone extends Em
     # If the browser failed, just call the fallback and leave
     return @options.fallback.call this unless capableBrowser
 
+    # Now to handle click events on the dropzone
+    @hiddenFileInput = o """<input type="file" multiple />"""
+    @element.click => @hiddenFileInput.click() # Forward the click
+    @hiddenFileInput.change =>
+      files = @hiddenFileInput.get(0).files
+      @emit "selectedfiles", files
+      @handleFiles files if files.length
+
 
     @files = [] # All files
     @files.queue = [] # The files that still have to be processed
@@ -301,7 +314,9 @@ class Dropzone extends Em
   drop: (e) ->
     return unless e.originalEvent.dataTransfer
     files = e.originalEvent.dataTransfer.files
+    @emit "selectedfiles", files
     @handleFiles files if files.length
+
 
   handleFiles: (files) ->
     @addFile file for file in files
