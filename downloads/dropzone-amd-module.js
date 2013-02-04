@@ -201,7 +201,7 @@ Emitter.prototype.hasListeners = function(event){
 
     __extends(Dropzone, _super);
 
-    Dropzone.prototype.version = "1.3.1-dev";
+    Dropzone.prototype.version = "1.3.1";
 
     /*
       This is a list of all available events you can register on a dropzone object.
