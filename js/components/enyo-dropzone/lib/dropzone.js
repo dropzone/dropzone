@@ -38,11 +38,10 @@
   Em = typeof Emitter !== "undefined" && Emitter !== null ? Emitter : require("emitter");
 
   Dropzone = (function(_super) {
-    var defaultOptions;
 
     __extends(Dropzone, _super);
 
-    Dropzone.prototype.version = "1.3.0";
+    Dropzone.prototype.version = "1.3.2";
 
     /*
       This is a list of all available events you can register on a dropzone object.
@@ -57,7 +56,7 @@
 
     Dropzone.prototype.blacklistedBrowsers = [/opera.*Macintosh.*version\/12/i];
 
-    defaultOptions = {
+    Dropzone.prototype.defaultOptions = {
       url: null,
       parallelUploads: 2,
       maxFilesize: 256,
@@ -130,10 +129,9 @@
       previewTemplate: "<div class=\"preview file-preview\">\n  <div class=\"details\">\n   <div class=\"filename\"><span></span></div>\n  </div>\n  <div class=\"progress\"><span class=\"upload\"></span></div>\n  <div class=\"success-mark\"><span>✔</span></div>\n  <div class=\"error-mark\"><span>✘</span></div>\n  <div class=\"error-message\"><span></span></div>\n</div>"
     };
 
-    defaultOptions.previewTemplate = defaultOptions.previewTemplate.replace(/\n*/g, "");
-
     function Dropzone(element, options) {
       var elementId, elementOptions, extend, _ref;
+      this.defaultOptions.previewTemplate = this.defaultOptions.previewTemplate.replace(/\n*/g, "");
       this.element = o(element);
       if (this.element.length !== 1) {
         throw new Error("You can only instantiate dropzone on a single element.");
@@ -157,7 +155,7 @@
         }
         return target;
       };
-      this.options = extend({}, defaultOptions, elementOptions, options != null ? options : {});
+      this.options = extend({}, this.defaultOptions, elementOptions, options != null ? options : {});
       if (this.options.url == null) {
         this.options.url = this.element.attr("action");
       }

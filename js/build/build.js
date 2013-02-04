@@ -407,11 +407,10 @@ require.register("enyo-dropzone/lib/dropzone.js", function(exports, require, mod
   Em = typeof Emitter !== "undefined" && Emitter !== null ? Emitter : require("emitter");
 
   Dropzone = (function(_super) {
-    var defaultOptions;
 
     __extends(Dropzone, _super);
 
-    Dropzone.prototype.version = "1.3.0";
+    Dropzone.prototype.version = "1.3.2";
 
     /*
       This is a list of all available events you can register on a dropzone object.
@@ -426,7 +425,7 @@ require.register("enyo-dropzone/lib/dropzone.js", function(exports, require, mod
 
     Dropzone.prototype.blacklistedBrowsers = [/opera.*Macintosh.*version\/12/i];
 
-    defaultOptions = {
+    Dropzone.prototype.defaultOptions = {
       url: null,
       parallelUploads: 2,
       maxFilesize: 256,
@@ -499,10 +498,9 @@ require.register("enyo-dropzone/lib/dropzone.js", function(exports, require, mod
       previewTemplate: "<div class=\"preview file-preview\">\n  <div class=\"details\">\n   <div class=\"filename\"><span></span></div>\n  </div>\n  <div class=\"progress\"><span class=\"upload\"></span></div>\n  <div class=\"success-mark\"><span>✔</span></div>\n  <div class=\"error-mark\"><span>✘</span></div>\n  <div class=\"error-message\"><span></span></div>\n</div>"
     };
 
-    defaultOptions.previewTemplate = defaultOptions.previewTemplate.replace(/\n*/g, "");
-
     function Dropzone(element, options) {
       var elementId, elementOptions, extend, _ref;
+      this.defaultOptions.previewTemplate = this.defaultOptions.previewTemplate.replace(/\n*/g, "");
       this.element = o(element);
       if (this.element.length !== 1) {
         throw new Error("You can only instantiate dropzone on a single element.");
@@ -526,7 +524,7 @@ require.register("enyo-dropzone/lib/dropzone.js", function(exports, require, mod
         }
         return target;
       };
-      this.options = extend({}, defaultOptions, elementOptions, options != null ? options : {});
+      this.options = extend({}, this.defaultOptions, elementOptions, options != null ? options : {});
       if (this.options.url == null) {
         this.options.url = this.element.attr("action");
       }
@@ -11996,11 +11994,8 @@ var Dropzone = require("dropzone"),
 
 Dropzone.options.demoUpload = {
   fallback: function() {
-    this.element.addClass("browser-not-supported");
-    this.element.find(".message span").html("Your browser does not support drag'n'drop file uploads.");
-    this.element.append("<p>Sadly your dusty browser does not support nice drag'n'drop file uploads.<br />Please use the fallback form below to upload your files like in the olden days.</p>");
-    this.element.append(this.getFallbackForm());
-    this.element.append("<p>This is what your file upload should look like:<br /><img src=\"/images/preview.png\" alt=\"preview\" /></p>");
+    Dropzone.prototype.defaultOptions.fallback.call(this);
+    this.element.append("<p>This is what the file uploads with Dropzone look like in modern browsers:<br /><img src=\"/images/preview.png\" alt=\"preview\" /></p>");
   }
 };
 
@@ -12009,10 +12004,6 @@ o(function() {
   new Opentip("#opentip-demo", "Hi, I'm an Opentip", { style: "dark" });
 
   var dropzone = o("#demo-upload").data("dropzone");
-  dropzone.on("fallback", function() {
-    console.log("HI");
-    this.element.append("bla");
-  });
 });
 
 });
