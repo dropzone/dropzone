@@ -163,6 +163,13 @@
 .dropzone .default.message span {
   display: none;
 }
+.dropzone.square .default.message {
+  background-position: 0 -123px;
+  width: 268px;
+  margin-left: -134px;
+  height: 174px;
+  margin-top: -87px;
+}
 .dropzone.drag-hover .message {
   opacity: 0.15;
   filter: alpha(opacity=15);
