@@ -26,4 +26,16 @@ h1#project
 
 
 @import "dropzone"
+
+
+// Make the dropzone text square when the screen is too small
+@media screen and (max-width: 37.5em)
+  .dropzone
+    .default.message
+      background-position 0 -123px
+      width 268px
+      margin-left -(@width / 2)
+      height 174px
+      margin-top -(@height / 2)
+
 @import "opentip"

@@ -1,152 +1,114 @@
 @import "nib"
+@import "dropzone-basic"
 
-@keyframes loading {
-  from {
-    background-position: 0 -407px
-  }
-  to {
-    background-position: -14px -407px
-  }
-}
+@keyframes loading
+  from
+    background-position: 0 -400px
+  to
+    background-position: -7px -400px
 
 .dropzone
-.dropzone *
-  box-sizing border-box
-
-.dropzone
-  position relative
-  min-height 360px
   border 1px solid rgba(0, 0, 0, 0.03)
-  border-radius 4px
+  min-height 360px
+  border-radius 3px
   background rgba(0, 0, 0, 0.03)
   padding 23px
 
-  &.drag-hover
-    border-color rgba(0, 0, 0, 0.15)
-    background rgba(0, 0, 0, 0.04)
-    .message
-      opacity 0.15
+  font-size 14px
 
-  &.started
-    .message
-      opacity 0
-  .message
+  .default.message
     opacity 1
     transition opacity 0.3s ease-in-out
-    background url("../images/spritemap.png") no-repeat 0 -108px
+    
+    image "../images/spritemap.png" 428px 406px
+    background-repeat no-repeat
+    background-position 0 0
+
     position absolute
-    width 168px
-    height 157px
+    width 428px
+    height 123px
     margin-left -(@width / 2)
     margin-top -(@height / 2)
     top 50%
     left 50%
     span
       display none
-  &.browser-not-supported
-    padding 30px
+
+  &.square
+    .default.message
+      background-position 0 -123px
+      width 268px
+      margin-left -(@width / 2)
+      height 174px
+      margin-top -(@height / 2)
+
+  &.drag-hover
     .message
-      position relative
-      background url("../images/spritemap.png") no-repeat 0 0
-      width 204px
-      height 108px
-      top 0
-      left 0
-      margin-left 0
-      margin-top 0
-      margin-bottom 20px
-      
+      opacity 0.15
+
+  &.started
+    .message
+      display block
+      opacity 0 // Rather fade out nicely
 
 
   .preview
-    width 100px
-    height 136px
-    display inline-block
-    margin 18px
-    position relative
-
-    //background rgba(0, 0, 0, 0.1)
+    box-shadow 1px 1px 4px rgba(0, 0, 0, 0.16)
 
     .details
-      width 100px
-      height 100px
-      position relative
       img
-        position absolute
-        top 0
-        left 0
         width 100px
         height 100px
 
-      .size
-        color #666
-        font 500 31px/31px "League Gothic", sans-serif
-        position absolute
-        bottom 2px
-        left 17px
-        z-index 100
       // Not implemented yet. This is the CSS definition of the file
       // content as text.
-      .content
-        font-size 3px
-        white-space pre
-        position absolute
-        top 5px
-        left 12px
-        right 19px
-        bottom 5px
-        overflow hidden
-        line-height 100%
-        cursor default
-        word-wrap break-word
+      // .content
+      //   font-size 3px
+      //   white-space pre
+      //   position absolute
+      //   top 5px
+      //   left 12px
+      //   right 19px
+      //   bottom 5px
+      //   overflow hidden
+      //   line-height 100%
+      //   cursor default
+      //   word-wrap break-word
 
-    &.file-preview
-      .details
-        background url("../images/spritemap.png") no-repeat 8px -265px
     &.image-preview
-      .details
-        .size
-          display none
-          color black
-        &:hover
-          .size
-            display block
+      &:hover
+        .details
           img
-            opacity: 0.4
+            display block
+            opacity 0.1
 
     &.success
       .success-mark
         opacity 1
-      .progress .upload
-        background #6fb61d
     &.error
       .error-mark
         opacity 1
       .progress .upload
-        background #bc311f
+        background #EE1E2D
 
     .error-mark
     .success-mark
-      opacity 0
+      display block
+      opacity 0 // Fade in / out
       transition opacity 0.4s ease-in-out
-      position absolute
-      width 42px
-      height 42px
-      top -10px
-      left -5px
+      image "../images/spritemap.png" 428px 406px
+      background-repeat no-repeat
+
       span
         display none
     .error-mark
-      background url("../images/spritemap.png") no-repeat 0 -365px
+      background-position -268px -123px
     .success-mark
-      background url("../images/spritemap.png") no-repeat -42px -365px
+      background-position -268px -163px
+
+
 
     .progress
-      position relative
-      margin 8px 0 4px 0
-      height 10px
-      background rgba(0,0,0,0.08)
-      border-radius 2px
       .upload
         animation loading 0.4s linear infinite
         transition width 0.3s ease-in-out
@@ -156,32 +118,29 @@
         left 0
         width 0%
         height 100%
-        background url("../images/spritemap.png") repeat-x 0px -407px
-    .filename
-      font-size 12px
-      height 12px
-      position relative
-      span
-        width 100px
-        position absolute
-        top 0
-        left 0
+        
+        image "../images/spritemap.png" 428px 406px
+        background-repeat repeat-x
+        background-position 0px -400px
+
+
+    &.success
+      .progress
         display block
-        width 100%
-        overflow ellipsis
+        opacity 0
+        transition opacity 0.4s ease-in-out
+
+
+    // Disabled for now until I find a better way to cope with long filenames
+    // .filename
+    //   span
+    //     overflow ellipsis
 
     .error-message
-      opacity 0
+      display block
+      opacity 0 // Rather fade in / out
       transition opacity 0.3s ease-in-out
-      position absolute
-      top -5px
-      left -20px
-      background rgba(245, 245, 245, 0.8)
-      padding 8px 10px
-      color #800
-      min-width 140px
-      max-width 500px
-      z-index 500
+
     &:hover.error
       .error-message
         opacity 1

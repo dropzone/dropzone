@@ -92,7 +92,7 @@
   -ms-transform: translateY(-5px) translateX(-5px);
   transform: translateY(-5px) translateX(-5px);
 }
-.opentip-container.fixed {
+.opentip-container.fixed .opentip {
   pointer-events: auto;
 }
 .opentip-container.hidden {
