@@ -92,7 +92,10 @@ class Dropzone extends Em
 
     # Can be a jQuery or HTML element that will hold the file previews
     # If null, the dropzone element will be used
-    previewsContainer: null
+    # 
+    # Not implemented yet.
+    # 
+    # previewsContainer: null
     
     # If `done()` is called without argument the file is accepted
     # If you call it with an error message, the file is rejected
@@ -103,8 +106,9 @@ class Dropzone extends Em
     # Called when the browser does not support drag and drop
     fallback: ->
       @element.addClass "browser-not-supported"
+      @element.find(".message").removeClass "default"
       @element.find(".message span").html "Your browser does not support drag'n'drop file uploads."
-      @element.append """<p>Sadly your dusty browser does not support nice drag'n'drop file uploads.<br />Please use the fallback form below to upload your files like in the olden days.</p>"""
+      @element.append """Please use the fallback form below to upload your files like in the olden days.</p>"""
       @element.append @getFallbackForm()
     
 
@@ -224,7 +228,7 @@ class Dropzone extends Em
       @element.attr "enctype", "multipart/form-data"
 
     if @element.find(".message").length == 0
-      @element.append o """<div class="default message"><span>Drop files here to upload</span></div>"""
+      @element.append o """<div class="message"><span>Drop files here to upload</span></div>"""
 
     capableBrowser = yes
 

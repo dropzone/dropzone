@@ -164,20 +164,6 @@
   filter: alpha(opacity=0);
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
 }
-.dropzone.browser-not-supported {
-  padding: 30px;
-}
-.dropzone.browser-not-supported .message {
-  position: relative;
-  background: url("../images/spritemap.png") no-repeat 0 0;
-  width: 204px;
-  height: 108px;
-  top: 0;
-  left: 0;
-  margin-left: 0;
-  margin-top: 0;
-  margin-bottom: 20px;
-}
 .dropzone .preview {
   -webkit-box-shadow: 1px 1px 4px rgba(0,0,0,0.16);
   box-shadow: 1px 1px 4px rgba(0,0,0,0.16);
