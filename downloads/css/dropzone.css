@@ -130,7 +130,6 @@
   border-radius: 3px;
   background: rgba(0,0,0,0.03);
   padding: 23px;
-  font-size: 14px;
 }
 .dropzone .default.message {
   opacity: 1;
@@ -184,6 +183,7 @@
 .dropzone .preview {
   -webkit-box-shadow: 1px 1px 4px rgba(0,0,0,0.16);
   box-shadow: 1px 1px 4px rgba(0,0,0,0.16);
+  font-size: 14px;
 }
 .dropzone .preview .details img {
   width: 100px;
