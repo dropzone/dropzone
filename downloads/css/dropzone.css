@@ -272,12 +272,6 @@
   -ms-transition: opacity 0.4s ease-in-out;
   transition: opacity 0.4s ease-in-out;
 }
-.dropzone .preview .filename span {
-  white-space: nowrap;
-  overflow: hidden;
-  -o-text-overflow: ellipsis;
-  text-overflow: ellipsis;
-}
 .dropzone .preview .error-message {
   display: block;
   opacity: 0;
