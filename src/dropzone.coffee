@@ -32,7 +32,7 @@ Em = Emitter ? require "emitter" # Can't be the same name because it will lead t
 
 class Dropzone extends Em
 
-  version: "1.3.0"
+  version: "1.3.1"
 
   ###
   This is a list of all available events you can register on a dropzone object.
@@ -78,7 +78,7 @@ class Dropzone extends Em
 
 
 
-  defaultOptions =
+  defaultOptions:
     url: null
     parallelUploads: 2
     maxFilesize: 256 # in MB
@@ -189,9 +189,9 @@ class Dropzone extends Em
                       </div>
                       """
 
-  defaultOptions.previewTemplate = defaultOptions.previewTemplate.replace /\n*/g, ""
-
   constructor: (element, options) ->
+    @defaultOptions.previewTemplate = @defaultOptions.previewTemplate.replace /\n*/g, ""
+
     @element = o element
 
     throw new Error "You can only instantiate dropzone on a single element." if @element.length != 1
@@ -211,7 +211,7 @@ class Dropzone extends Em
         target[key] = val for key, val of object
       target
 
-    @options = extend { }, defaultOptions, elementOptions, options ? { }
+    @options = extend { }, @defaultOptions, elementOptions, options ? { }
     
     @options.url = @element.attr "action" unless @options.url?
 
