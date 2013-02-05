@@ -249,7 +249,11 @@ class Dropzone extends Em
     if @options.clickable
       @element.addClass "clickable"
       @hiddenFileInput = o """<input type="file" multiple />"""
-      @element.click => @hiddenFileInput.click() # Forward the click
+      @element.click (evt) =>
+        target = o evt.target
+        # Only the actual dropzone or the message element should trigger file selection
+        if target.is(@element) or target.is(@element.find(".message"))
+          @hiddenFileInput.click() # Forward the click
       @hiddenFileInput.change =>
         files = @hiddenFileInput.get(0).files
         @emit "selectedfiles", files

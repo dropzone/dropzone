@@ -353,8 +353,12 @@ Emitter.prototype.hasListeners = function(event){
       if (this.options.clickable) {
         this.element.addClass("clickable");
         this.hiddenFileInput = o("<input type=\"file\" multiple />");
-        this.element.click(function() {
-          return _this.hiddenFileInput.click();
+        this.element.click(function(evt) {
+          var target;
+          target = o(evt.target);
+          if (target.is(_this.element) || target.is(_this.element.find(".message"))) {
+            return _this.hiddenFileInput.click();
+          }
         });
         this.hiddenFileInput.change(function() {
           var files;

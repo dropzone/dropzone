@@ -13,6 +13,12 @@
 .dropzone.clickable {
   cursor: pointer;
 }
+.dropzone.clickable .message {
+  cursor: pointer;
+}
+.dropzone.clickable * {
+  cursor: default;
+}
 .dropzone .message {
   opacity: 1;
   -ms-filter: none;
