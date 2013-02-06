@@ -70,7 +70,6 @@ require.aliases = {};
  */
 
 require.resolve = function(path) {
-  if (path.charAt(0) === '/') path = path.slice(1);
   var index = path + '/index.js';
 
   var paths = [
@@ -183,18 +182,17 @@ require.relative = function(parent) {
    */
 
   localRequire.resolve = function(path) {
-    var c = path.charAt(0);
-    if ('/' == c) return path.slice(1);
-    if ('.' == c) return require.normalize(p, path);
-
     // resolve deps by returning
     // the dep in the nearest "deps"
     // directory
-    var segs = parent.split('/');
-    var i = lastIndexOf(segs, 'deps') + 1;
-    if (!i) i = 0;
-    path = segs.slice(0, i + 1).join('/') + '/deps/' + path;
-    return path;
+    if ('.' != path.charAt(0)) {
+      var segs = parent.split('/');
+      var i = lastIndexOf(segs, 'deps') + 1;
+      if (!i) i = 0;
+      path = segs.slice(0, i + 1).join('/') + '/deps/' + path;
+      return path;
+    }
+    return require.normalize(p, path);
   };
 
   /**
@@ -411,7 +409,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
     __extends(Dropzone, _super);
 
-    Dropzone.prototype.version = "1.3.4";
+    Dropzone.prototype.version = "1.3.5";
 
     /*
       This is a list of all available events you can register on a dropzone object.
@@ -590,9 +588,16 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
     Dropzone.prototype.getFallbackForm = function() {
       var fields;
-      fields = o("<div class=\"fallback-elements\"><input type=\"file\" name=\"newFiles\" multiple=\"multiple\" /><button type=\"submit\">Upload!</button></div>");
+      fields = o("<div class=\"fallback-elements\"><input type=\"file\" name=\"" + this.options.paramName + "\" multiple=\"multiple\" /><button type=\"submit\">Upload!</button></div>");
       if (this.elementTagName !== "FORM") {
         fields = o("<form action=\"" + this.options.url + "\" enctype=\"multipart/form-data\" method=\"post\"></form>").append(fields);
+      } else {
+        if (!this.element.attr("enctype")) {
+          this.element.attr("enctype", "multipart/form-data");
+        }
+        if (!this.element.attr("method")) {
+          this.element.attr("method", "post");
+        }
       }
       return fields;
     };

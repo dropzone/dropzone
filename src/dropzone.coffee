@@ -32,7 +32,7 @@ Em = Emitter ? require "emitter" # Can't be the same name because it will lead t
 
 class Dropzone extends Em
 
-  version: "1.3.4"
+  version: "1.3.5"
 
   ###
   This is a list of all available events you can register on a dropzone object.
@@ -282,9 +282,13 @@ class Dropzone extends Em
   #
   # If the dropzone is already a form, only the input field and button are returned. Otherwise a complete form element is provided.
   getFallbackForm: ->
-    fields = o """<div class="fallback-elements"><input type="file" name="newFiles" multiple="multiple" /><button type="submit">Upload!</button></div>"""
+    fields = o """<div class="fallback-elements"><input type="file" name="#{@options.paramName}" multiple="multiple" /><button type="submit">Upload!</button></div>"""
     if @elementTagName isnt "FORM"
       fields = o("""<form action="#{@options.url}" enctype="multipart/form-data" method="post"></form>""").append fields
+    else
+      # Make sure that the enctype and method attributes are set properly
+      @element.attr "enctype", "multipart/form-data" unless @element.attr "enctype"
+      @element.attr "method", "post" unless @element.attr "method"
     fields
 
   setupEventListeners: ->
