@@ -422,7 +422,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     */
 
 
-    Dropzone.prototype.events = ["drop", "dragstart", "dragend", "dragenter", "dragover", "dragleave", "selectedfiles", "addedfile", "thumbnail", "error", "processingfile", "uploadprogress", "success", "complete"];
+    Dropzone.prototype.events = ["drop", "dragstart", "dragend", "dragenter", "dragover", "dragleave", "selectedfiles", "addedfile", "thumbnail", "error", "processingfile", "uploadprogress", "sending", "success", "complete"];
 
     Dropzone.prototype.blacklistedBrowsers = [/opera.*Macintosh.*version\/12/i];
 
@@ -455,7 +455,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       drop: function(e) {
         return this.element.removeClass("drag-hover");
       },
-      dragstart: function(e) {},
+      dragstart: o.noop,
       dragend: function(e) {
         return this.element.removeClass("drag-hover");
       },
@@ -493,10 +493,11 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
           width: "" + progress + "%"
         });
       },
+      sending: o.noop,
       success: function(file) {
         return file.previewTemplate.addClass("success");
       },
-      complete: function(file) {},
+      complete: o.noop,
       previewTemplate: "<div class=\"preview file-preview\">\n  <div class=\"details\">\n   <div class=\"filename\"><span></span></div>\n  </div>\n  <div class=\"progress\"><span class=\"upload\"></span></div>\n  <div class=\"success-mark\"><span>✔</span></div>\n  <div class=\"error-mark\"><span>✘</span></div>\n  <div class=\"error-message\"><span></span></div>\n</div>"
     };
 
@@ -813,6 +814,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       xhr.setRequestHeader("Cache-Control", "no-cache");
       xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
       xhr.setRequestHeader("X-File-Name", file.name);
+      this.emit("sending", file, xhr);
       return xhr.send(formData);
     };
 
