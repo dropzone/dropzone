@@ -226,8 +226,9 @@ All of these receive the [file](https://developer.mozilla.org/en-US/docs/DOM/Fil
 | `selectedfiles`   | Receives an array of files and gets called whenever files are dropped or selected.
 | `thumbnail`       | When the thumbnail has been generated. Receives the [**dataUrl**](http://en.wikipedia.org/wiki/Data_URI_scheme) as second parameter.
 | `error`           | An error occured. Receives the **errorMessage** as second parameter.
-| `processingfile`  | When a file gets processed (since there is a queue not all files are currently processed)
+| `processingfile`  | When a file gets processed (since there is a queue not all files are processed immediately)
 | `uploadprogress`  | Gets called periodically whenever the file upload progress changes.<br />Gets the **progress** parameter as second parameter which is a percentage (0-100).<br />When an upload finishes dropzone *ensures* that uploadprogress will be called with a percentage of 100 *at least* once.
+| `sending`         | Called just before the file is sent. Gets the xhr object as second parameter, so you can modify it (for example to add a CSRF token)
 | `success`         | The file has been uploaded successfully. (This event was called `finished` previously)
 | `complete`        | Called when the upload was either successful or erroneous.
 
