@@ -32,7 +32,7 @@ Em = Emitter ? require "emitter" # Can't be the same name because it will lead t
 
 class Dropzone extends Em
 
-  version: "1.3.2"
+  version: "1.3.3"
 
   ###
   This is a list of all available events you can register on a dropzone object.
@@ -55,7 +55,8 @@ class Dropzone extends Em
     "error"
     "processingfile"
     "uploadprogress"
-    "finished"
+    "success"
+    "complete"
   ]
 
 
@@ -170,10 +171,14 @@ class Dropzone extends Em
     uploadprogress: (file, progress) ->
       file.previewTemplate.find(".progress .upload").css { width: "#{progress}%" }
     
-    # When the complete upload is finished
+    # When the complete upload is finished and successfull
     # Receives `file`
-    finished: (file) ->
+    success: (file) ->
       file.previewTemplate.addClass "success"
+
+    # When the upload is finished, either with success or an error.
+    # Receives `file`
+    complete: (file) ->
 
 
     # This template will be chosen when a new file is dropped.
@@ -249,7 +254,11 @@ class Dropzone extends Em
     if @options.clickable
       @element.addClass "clickable"
       @hiddenFileInput = o """<input type="file" multiple />"""
-      @element.click => @hiddenFileInput.click() # Forward the click
+      @element.click (evt) =>
+        target = o evt.target
+        # Only the actual dropzone or the message element should trigger file selection
+        if target.is(@element) or target.is(@element.find(".message"))
+          @hiddenFileInput.click() # Forward the click
       @hiddenFileInput.change =>
         files = @hiddenFileInput.get(0).files
         @emit "selectedfiles", files
@@ -476,7 +485,9 @@ class Dropzone extends Em
   # Individual callbacks have to be called in the appropriate sections.
   finished: (file, responseText, e) ->
     @files.processing = without(@files.processing, file)
-    @emit "finished", file, responseText, e
+    @emit "success", file, responseText, e
+    @emit "finished", file, responseText, e # For backwards compatibility
+    @emit "complete", file
     @processQueue()
 
 
@@ -485,6 +496,7 @@ class Dropzone extends Em
   errorProcessing: (file, message) ->
     @files.processing = without(@files.processing, file)
     @emit "error", file, message
+    @emit "complete", file
     @processQueue()
 
 

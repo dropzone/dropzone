@@ -411,7 +411,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
     __extends(Dropzone, _super);
 
-    Dropzone.prototype.version = "1.3.2";
+    Dropzone.prototype.version = "1.3.3";
 
     /*
       This is a list of all available events you can register on a dropzone object.
@@ -422,7 +422,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     */
 
 
-    Dropzone.prototype.events = ["drop", "dragstart", "dragend", "dragenter", "dragover", "dragleave", "selectedfiles", "addedfile", "thumbnail", "error", "processingfile", "uploadprogress", "finished"];
+    Dropzone.prototype.events = ["drop", "dragstart", "dragend", "dragenter", "dragover", "dragleave", "selectedfiles", "addedfile", "thumbnail", "error", "processingfile", "uploadprogress", "success", "complete"];
 
     Dropzone.prototype.blacklistedBrowsers = [/opera.*Macintosh.*version\/12/i];
 
@@ -493,9 +493,10 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
           width: "" + progress + "%"
         });
       },
-      finished: function(file) {
+      success: function(file) {
         return file.previewTemplate.addClass("success");
       },
+      complete: function(file) {},
       previewTemplate: "<div class=\"preview file-preview\">\n  <div class=\"details\">\n   <div class=\"filename\"><span></span></div>\n  </div>\n  <div class=\"progress\"><span class=\"upload\"></span></div>\n  <div class=\"success-mark\"><span>✔</span></div>\n  <div class=\"error-mark\"><span>✘</span></div>\n  <div class=\"error-message\"><span></span></div>\n</div>"
     };
 
@@ -563,8 +564,12 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       if (this.options.clickable) {
         this.element.addClass("clickable");
         this.hiddenFileInput = o("<input type=\"file\" multiple />");
-        this.element.click(function() {
-          return _this.hiddenFileInput.click();
+        this.element.click(function(evt) {
+          var target;
+          target = o(evt.target);
+          if (target.is(_this.element) || target.is(_this.element.find(".message"))) {
+            return _this.hiddenFileInput.click();
+          }
         });
         this.hiddenFileInput.change(function() {
           var files;
@@ -813,13 +818,16 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
     Dropzone.prototype.finished = function(file, responseText, e) {
       this.files.processing = without(this.files.processing, file);
+      this.emit("success", file, responseText, e);
       this.emit("finished", file, responseText, e);
+      this.emit("complete", file);
       return this.processQueue();
     };
 
     Dropzone.prototype.errorProcessing = function(file, message) {
       this.files.processing = without(this.files.processing, file);
       this.emit("error", file, message);
+      this.emit("complete", file);
       return this.processQueue();
     };
 
