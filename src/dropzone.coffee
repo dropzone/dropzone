@@ -32,7 +32,7 @@ Em = Emitter ? require "emitter" # Can't be the same name because it will lead t
 
 class Dropzone extends Em
 
-  version: "1.3.3"
+  version: "1.3.4"
 
   ###
   This is a list of all available events you can register on a dropzone object.
@@ -55,6 +55,7 @@ class Dropzone extends Em
     "error"
     "processingfile"
     "uploadprogress"
+    "sending"
     "success"
     "complete"
   ]
@@ -124,7 +125,7 @@ class Dropzone extends Em
 
     # Those are self explanatory and simply concern the DragnDrop.
     drop: (e) -> @element.removeClass "drag-hover"
-    dragstart: (e) ->
+    dragstart: o.noop
     dragend: (e) -> @element.removeClass "drag-hover"
     dragenter: (e) -> @element.addClass "drag-hover"
     dragover: (e) -> @element.addClass "drag-hover"
@@ -160,7 +161,8 @@ class Dropzone extends Em
       file.previewTemplate.find(".error-message span").text message
     
     
-    # Called when a file gets processed
+    # Called when a file gets processed. Since there is a cue, not all added
+    # files are processed immediately.
     # Receives `file`
     processingfile: (file) ->
       file.previewTemplate.addClass "processing"
@@ -170,6 +172,10 @@ class Dropzone extends Em
     # Receives `file` and `progress` (percentage)
     uploadprogress: (file, progress) ->
       file.previewTemplate.find(".progress .upload").css { width: "#{progress}%" }
+
+    # Called just before the file is sent. Gets the xhr object as second
+    # parameter, so you can modify it, for example to add a CSRF token.
+    sending: o.noop
     
     # When the complete upload is finished and successfull
     # Receives `file`
@@ -178,7 +184,8 @@ class Dropzone extends Em
 
     # When the upload is finished, either with success or an error.
     # Receives `file`
-    complete: (file) ->
+    complete: o.noop
+
 
 
     # This template will be chosen when a new file is dropped.
@@ -478,6 +485,8 @@ class Dropzone extends Em
     xhr.setRequestHeader "Cache-Control", "no-cache"
     xhr.setRequestHeader "X-Requested-With", "XMLHttpRequest"
     xhr.setRequestHeader "X-File-Name", file.name
+
+    @emit "sending", file, xhr
     xhr.send formData
 
 
