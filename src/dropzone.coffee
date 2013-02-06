@@ -282,7 +282,7 @@ class Dropzone extends Em
   #
   # If the dropzone is already a form, only the input field and button are returned. Otherwise a complete form element is provided.
   getFallbackForm: ->
-    fields = o """<div class="fallback-elements"><input type="file" name="newFiles" multiple="multiple" /><button type="submit">Upload!</button></div>"""
+    fields = o """<div class="fallback-elements"><input type="file" name="#{@options.paramName}" multiple="multiple" /><button type="submit">Upload!</button></div>"""
     if @elementTagName isnt "FORM"
       fields = o("""<form action="#{@options.url}" enctype="multipart/form-data" method="post"></form>""").append fields
     fields

@@ -380,7 +380,7 @@ Emitter.prototype.hasListeners = function(event){
 
     Dropzone.prototype.getFallbackForm = function() {
       var fields;
-      fields = o("<div class=\"fallback-elements\"><input type=\"file\" name=\"newFiles\" multiple=\"multiple\" /><button type=\"submit\">Upload!</button></div>");
+      fields = o("<div class=\"fallback-elements\"><input type=\"file\" name=\"" + this.options.paramName + "\" multiple=\"multiple\" /><button type=\"submit\">Upload!</button></div>");
       if (this.elementTagName !== "FORM") {
         fields = o("<form action=\"" + this.options.url + "\" enctype=\"multipart/form-data\" method=\"post\"></form>").append(fields);
       }
