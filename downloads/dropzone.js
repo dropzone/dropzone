@@ -591,6 +591,13 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       fields = o("<div class=\"fallback-elements\"><input type=\"file\" name=\"" + this.options.paramName + "\" multiple=\"multiple\" /><button type=\"submit\">Upload!</button></div>");
       if (this.elementTagName !== "FORM") {
         fields = o("<form action=\"" + this.options.url + "\" enctype=\"multipart/form-data\" method=\"post\"></form>").append(fields);
+      } else {
+        if (!this.element.attr("enctype")) {
+          this.element.attr("enctype", "multipart/form-data");
+        }
+        if (!this.element.attr("method")) {
+          this.element.attr("method", "post");
+        }
       }
       return fields;
     };

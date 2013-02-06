@@ -285,6 +285,10 @@ class Dropzone extends Em
     fields = o """<div class="fallback-elements"><input type="file" name="#{@options.paramName}" multiple="multiple" /><button type="submit">Upload!</button></div>"""
     if @elementTagName isnt "FORM"
       fields = o("""<form action="#{@options.url}" enctype="multipart/form-data" method="post"></form>""").append fields
+    else
+      # Make sure that the enctype and method attributes are set properly
+      @element.attr "enctype", "multipart/form-data" unless @element.attr "enctype"
+      @element.attr "method", "post" unless @element.attr "method"
     fields
 
   setupEventListeners: ->
