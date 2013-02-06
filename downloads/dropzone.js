@@ -786,6 +786,9 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         }
       }
       xhr.open("POST", this.options.url, true);
+      if ($.rails != null) {
+        $.rails.CSRFProtection(xhr);
+      }
       handleError = function() {
         return _this.errorProcessing(file, xhr.responseText || ("Server responded with " + xhr.status + " code."));
       };
