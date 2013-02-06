@@ -161,7 +161,8 @@ class Dropzone extends Em
       file.previewTemplate.find(".error-message span").text message
     
     
-    # Called when a file gets processed
+    # Called when a file gets processed. Since there is a cue, not all added
+    # files are processed immediately.
     # Receives `file`
     processingfile: (file) ->
       file.previewTemplate.addClass "processing"
