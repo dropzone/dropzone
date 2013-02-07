@@ -89,6 +89,7 @@ class Dropzone extends Em
     maxThumbnailFilesize: 2 # in MB. When the filename exceeds this limit, the thumbnail will not be generated.
     thumbnailWidth: 100
     thumbnailHeight: 100
+    thumbnailClass: ""
 
     clickable: yes
 
@@ -151,7 +152,7 @@ class Dropzone extends Em
       file.previewTemplate
         .removeClass("file-preview")
         .addClass("image-preview")
-      file.previewTemplate.find(".details").append o """<img alt="#{file.name}" src="#{dataUrl}"/>"""
+      file.previewTemplate.find(".details").append o """<img alt="#{file.name}" class="#{@options.thumbnailClass}" src="#{dataUrl}"/>"""
 
     
     # Called whenever an error occurs
