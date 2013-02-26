@@ -251,7 +251,7 @@ The HTML that is generated for each file by dropzone looks like this (although y
 
 `div.preview` gets the `processing` class when the file gets processed, `success` when the file got uploaded and `error` in case the file couldn't be uploaded. In the latter case, `div.error-message` will contain the text returned by the server.
 
-Want your dropzone to look like the dropzone on this page? Just take [my stylesheet](/css/dropzone.css) and make sure you also provide the referenced [spritemap image](/images/spritemap.png).
+See the installation section on how to add the stylesheet and spritemaps if you want your dropzone to look like the one on this page.
 
 
 ## tips
