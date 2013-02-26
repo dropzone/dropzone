@@ -274,6 +274,8 @@ myDropzone.on("complete", function(file) {
 {% endhighlight %}
 
 
+If you do not need a dropzone anymore, just call `.disable()` on the object. This
+will remove all event listeners on the element, and clear all file arrays.
 
 ## tips
 
