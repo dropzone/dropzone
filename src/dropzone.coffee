@@ -51,6 +51,7 @@ class Dropzone extends Em
     "dragleave"
     "selectedfiles"
     "addedfile"
+    "removedfile"
     "thumbnail"
     "error"
     "processingfile"
@@ -131,8 +132,8 @@ class Dropzone extends Em
     dragover: (e) -> @element.addClass "drag-hover"
     dragleave: (e) -> @element.removeClass "drag-hover"
     
-    selectedfiles: (files) ->
     # Called whenever files are dropped or selected
+    selectedfiles: (files) ->
       @element.addClass "started"
 
 
@@ -144,6 +145,10 @@ class Dropzone extends Em
       file.previewTemplate.find(".filename span").text file.name
       file.previewTemplate.find(".details").append o """<div class="size">#{@filesize file.size}</div>"""
 
+
+    # Called whenever a file is removed.
+    removedfile: (file) ->
+      file.previewTemplate.remove()
 
     # Called when a thumbnail has been generated
     # Receives `file` and `dataUrl`
@@ -376,6 +381,13 @@ class Dropzone extends Em
         @files.queue.push file
         @processQueue()
 
+  # Can be called by the user to remove a file
+  removeFile: (file) ->
+    throw new Error "Can't remove file currently processing" if file.processing
+    @files = without @files, file
+
+    @emit "removedfile", file
+
   createThumbnail: (file) ->
 
     fileReader = new FileReader
@@ -442,6 +454,7 @@ class Dropzone extends Em
   # Loads the file, then calls finishedLoading()
   processFile: (file) ->
     @files.processing.push file
+    file.processing = yes
 
     @emit "processingfile", file
 
@@ -498,6 +511,7 @@ class Dropzone extends Em
   # Individual callbacks have to be called in the appropriate sections.
   finished: (file, responseText, e) ->
     @files.processing = without(@files.processing, file)
+    file.processing = no
     @emit "success", file, responseText, e
     @emit "finished", file, responseText, e # For backwards compatibility
     @emit "complete", file
@@ -508,6 +522,7 @@ class Dropzone extends Em
   # Individual callbacks have to be called in the appropriate sections.
   errorProcessing: (file, message) ->
     @files.processing = without(@files.processing, file)
+    file.processing = no
     @emit "error", file, message
     @emit "complete", file
     @processQueue()
