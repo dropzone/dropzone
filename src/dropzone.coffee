@@ -56,6 +56,7 @@ class Dropzone extends Em
     "error"
     "processingfile"
     "uploadprogress"
+    "preparingupload"
     "sending"
     "success"
     "complete"
@@ -193,6 +194,12 @@ class Dropzone extends Em
     # Called just before the file is sent. Gets the xhr object as second
     # parameter, so you can modify it, for example to add a CSRF token.
     sending: o.noop
+    
+    # Called just before adding the file and sending the whole request to the
+    # server.
+    # This is the ideal place to add additional data to be sent.
+    # Receives `file`, `xhr` and `formData`
+    preparingupload: o.noop
     
     # When the complete upload is finished and successfull
     # Receives `file`
@@ -478,25 +485,6 @@ class Dropzone extends Em
   uploadFile: (file) ->
     xhr = new XMLHttpRequest()
 
-    formData = new FormData()
-
-    # Adding all @options parameters
-    formData.append name, key for key, name of @options.params if @options.params
-
-    # Take care of other input elements
-    if @elementTagName = "FORM"
-      for inputElement in @element.find "input, textarea, select, button"
-        input = o inputElement
-        inputName = input.attr("name")
-
-        if !input.attr("type") or input.attr("type").toLowerCase() != "checkbox" or inputElement.checked
-          formData.append input.attr("name"), input.val()
-
-    # Finally add the file
-    # Has to be last because some servers (eg: S3) expect the file to be the
-    # last parameter
-    formData.append @options.paramName, file
-
     xhr.open "POST", @options.url, true
 
     handleError = =>
@@ -523,6 +511,30 @@ class Dropzone extends Em
     xhr.setRequestHeader "Cache-Control", "no-cache"
     xhr.setRequestHeader "X-Requested-With", "XMLHttpRequest"
     xhr.setRequestHeader "X-File-Name", file.name
+
+
+    formData = new FormData()
+
+    # Adding all @options parameters
+    formData.append name, key for key, name of @options.params if @options.params
+
+    # Take care of other input elements
+    if @elementTagName = "FORM"
+      for inputElement in @element.find "input, textarea, select, button"
+        input = o inputElement
+        inputName = input.attr("name")
+
+        if !input.attr("type") or input.attr("type").toLowerCase() != "checkbox" or inputElement.checked
+          formData.append input.attr("name"), input.val()
+
+    # Let the user add additional data if necessary
+    @emit "preparingupload", file, xhr, formData
+
+    # Finally add the file
+    # Has to be last because some servers (eg: S3) expect the file to be the
+    # last parameter
+    formData.append @options.paramName, file
+
 
     @emit "sending", file, xhr
     xhr.send formData
