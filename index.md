@@ -282,7 +282,7 @@ put an element inside your dropzone element with the class `message` and dropzon
 will not create the message for you.
 
 Dropzone will submit any hidden fields you have in your dropzone form. So this
-is an easy way to submit additional data.
+is an easy way to submit additional data. You can also use the `params` option.
 
 I'll add more examples soon (How to add delete/download buttons when an upload finished,
 how to add file previews on your own, etc...)
