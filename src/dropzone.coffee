@@ -96,7 +96,15 @@ class Dropzone extends Em
     # This is the same as adding hidden input fields in the form element.
     params: { }
 
+    # If true, the dropzone will present a file selector when clicked.
     clickable: yes
+
+    # If false, files will not be added to the process queue automatically.
+    # This can be useful if you need some additional user input before sending
+    # files.
+    # If you're ready to send the file, add it to the `filesQueue` and call
+    # processQueue()
+    enqueueForUpload: yes
 
     # Can be a jQuery or HTML element that will hold the file previews
     # If null, the dropzone element will be used
@@ -391,8 +399,9 @@ class Dropzone extends Em
       if error
         @errorProcessing file, error
       else
-        @filesQueue.push file
-        @processQueue()
+        if @options.enqueueForUpload
+          @filesQueue.push file
+          @processQueue()
 
   # Can be called by the user to remove a file
   removeFile: (file) ->
