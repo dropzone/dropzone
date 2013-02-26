@@ -32,7 +32,7 @@ Em = Emitter ? require "emitter" # Can't be the same name because it will lead t
 
 class Dropzone extends Em
 
-  version: "1.3.5"
+  version: "1.3.6"
 
   ###
   This is a list of all available events you can register on a dropzone object.
@@ -51,6 +51,7 @@ class Dropzone extends Em
     "dragleave"
     "selectedfiles"
     "addedfile"
+    "removedfile"
     "thumbnail"
     "error"
     "processingfile"
@@ -58,6 +59,7 @@ class Dropzone extends Em
     "sending"
     "success"
     "complete"
+    "reset"
   ]
 
 
@@ -131,10 +133,14 @@ class Dropzone extends Em
     dragover: (e) -> @element.addClass "drag-hover"
     dragleave: (e) -> @element.removeClass "drag-hover"
     
-    selectedfiles: (files) ->
     # Called whenever files are dropped or selected
+    selectedfiles: (files) ->
       @element.addClass "started"
 
+    # Called whenever there are no files left in the dropzone anymore, and the
+    # dropzone should be displayed as if in the initial state.
+    reset: ->
+      @element.removeClass "started"
 
     # Called when a file is added to the queue
     # Receives `file`
@@ -144,6 +150,10 @@ class Dropzone extends Em
       file.previewTemplate.find(".filename span").text file.name
       file.previewTemplate.find(".details").append o """<div class="size">#{@filesize file.size}</div>"""
 
+
+    # Called whenever a file is removed.
+    removedfile: (file) ->
+      file.previewTemplate.remove()
 
     # Called when a thumbnail has been generated
     # Receives `file` and `dataUrl`
@@ -273,8 +283,8 @@ class Dropzone extends Em
 
 
     @files = [] # All files
-    @files.queue = [] # The files that still have to be processed
-    @files.processing = [] # The files currently processed
+    @filesQueue = [] # The files that still have to be processed
+    @filesProcessing = [] # The files currently processed
     @URL = window.URL ? window.webkitURL
     @setupEventListeners()
 
@@ -373,8 +383,17 @@ class Dropzone extends Em
       if error
         @errorProcessing file, error
       else
-        @files.queue.push file
+        @filesQueue.push file
         @processQueue()
+
+  # Can be called by the user to remove a file
+  removeFile: (file) ->
+    throw new Error "Can't remove file currently processing" if file.processing
+    @files = without @files, file
+    @filesQueue = without @filesQueue, file
+
+    @emit "removedfile", file
+    @emit "reset" if @files.length == 0
 
   createThumbnail: (file) ->
 
@@ -430,18 +449,19 @@ class Dropzone extends Em
   # Goes through the queue and processes files if there aren't too many already.
   processQueue: ->
     parallelUploads = @options.parallelUploads
-    processingLength = @files.processing.length
+    processingLength = @filesProcessing.length
     i = processingLength
 
     while i < parallelUploads
-      return  unless @files.queue.length # Nothing left to process
-      @processFile @files.queue.shift()
+      return unless @filesQueue.length # Nothing left to process
+      @processFile @filesQueue.shift()
       i++
 
 
   # Loads the file, then calls finishedLoading()
   processFile: (file) ->
-    @files.processing.push file
+    @filesProcessing.push file
+    file.processing = yes
 
     @emit "processingfile", file
 
@@ -497,20 +517,22 @@ class Dropzone extends Em
   # Called internally when processing is finished.
   # Individual callbacks have to be called in the appropriate sections.
   finished: (file, responseText, e) ->
-    @files.processing = without(@files.processing, file)
+    @filesProcessing = without(@filesProcessing, file)
+    file.processing = no
+    @processQueue()
     @emit "success", file, responseText, e
     @emit "finished", file, responseText, e # For backwards compatibility
     @emit "complete", file
-    @processQueue()
 
 
   # Called internally when processing is finished.
   # Individual callbacks have to be called in the appropriate sections.
   errorProcessing: (file, message) ->
-    @files.processing = without(@files.processing, file)
+    @filesProcessing = without(@filesProcessing, file)
+    file.processing = no
+    @processQueue()
     @emit "error", file, message
     @emit "complete", file
-    @processQueue()
 
 
 
