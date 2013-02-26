@@ -31,6 +31,9 @@ and include it with jQuery like this:
 
 Dropzone is now activated and available as `window.Dropzone`.
 
+> Dropzone does *not* handle your file uploads on the server. You have to implement
+> the code to receive and store the file yourself.
+
 </section>
 
 
@@ -292,6 +295,16 @@ myDropzone.on("sending", function(file, xhr, formData) {
   formData.append("filesize", file.size); // Will send the filesize along with the file as POST data.
 });
 {% endhighlight %}
+
+To access the preview html of a file, you can access `file.previewTemplate`. For
+example:
+
+{% highlight js %}
+myDropzone.on("addedfile", function(file) {
+  file.previewTemplate.click(function() { myDropzone.removeFile(file); });
+});
+{% endhighlight %}
+
 
 I'll add more examples soon (How to add delete/download buttons when an upload finished,
 how to add file previews on your own, etc...)
