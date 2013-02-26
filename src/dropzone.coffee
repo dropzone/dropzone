@@ -32,7 +32,7 @@ Em = Emitter ? require "emitter" # Can't be the same name because it will lead t
 
 class Dropzone extends Em
 
-  version: "1.3.6"
+  version: "1.3.7"
 
   ###
   This is a list of all available events you can register on a dropzone object.
@@ -92,6 +92,10 @@ class Dropzone extends Em
     thumbnailWidth: 100
     thumbnailHeight: 100
 
+    # Can be an object of additional parameters to transfer to the server.
+    # This is the same as adding hidden input fields in the form element.
+    params: { }
+
     clickable: yes
 
     # Can be a jQuery or HTML element that will hold the file previews
@@ -117,9 +121,12 @@ class Dropzone extends Em
     
 
     ###
-    Those functions register themselves to the events on init.
-    You can overwrite them if you don't like the default behavior. If you just want to add an additional
-    event handler, register it on the dropzone object and don't overwrite those options.
+    Those functions register themselves to the events on init and handle all
+    the user interface specific stuff. Overwriting them won't break the upload
+    but can break the way it's displayed.
+    You can overwrite them if you don't like the default behavior. If you just
+    want to add an additional event handler, register it on the dropzone object
+    and don't overwrite those options.
     ###
 
 
@@ -183,8 +190,9 @@ class Dropzone extends Em
     uploadprogress: (file, progress) ->
       file.previewTemplate.find(".progress .upload").css { width: "#{progress}%" }
 
-    # Called just before the file is sent. Gets the xhr object as second
-    # parameter, so you can modify it, for example to add a CSRF token.
+    # Called just before the file is sent. Gets the `xhr` object as second
+    # parameter, so you can modify it (for example to add a CSRF token) and a
+    # `formData` object to add additional information.
     sending: o.noop
     
     # When the complete upload is finished and successfull
@@ -471,18 +479,6 @@ class Dropzone extends Em
   uploadFile: (file) ->
     xhr = new XMLHttpRequest()
 
-    formData = new FormData()
-    formData.append @options.paramName, file
-
-    if @elementTagName = "FORM"
-      # Take care of other input elements
-      for inputElement in @element.find "input, textarea, select, button"
-        input = o inputElement
-        inputName = input.attr("name")
-
-        if !input.attr("type") or input.attr("type").toLowerCase() != "checkbox" or inputElement.checked
-          formData.append input.attr("name"), input.val()
-
     xhr.open "POST", @options.url, true
 
     handleError = =>
@@ -494,7 +490,7 @@ class Dropzone extends Em
       else
         @emit "uploadprogress", file, 100
         response = xhr.responseText
-        if ~xhr.getResponseHeader("content-type").indexOf "application/json" then response = JSON.parse response
+        if xhr.getResponseHeader("content-type") and ~xhr.getResponseHeader("content-type").indexOf "application/json" then response = JSON.parse response
         @finished file, response, e
 
     xhr.onerror = =>
@@ -510,7 +506,30 @@ class Dropzone extends Em
     xhr.setRequestHeader "X-Requested-With", "XMLHttpRequest"
     xhr.setRequestHeader "X-File-Name", file.name
 
-    @emit "sending", file, xhr
+
+    formData = new FormData()
+
+    # Adding all @options parameters
+    formData.append name, key for key, name of @options.params if @options.params
+
+    # Take care of other input elements
+    if @elementTagName = "FORM"
+      for inputElement in @element.find "input, textarea, select, button"
+        input = o inputElement
+        inputName = input.attr("name")
+
+        if !input.attr("type") or input.attr("type").toLowerCase() != "checkbox" or inputElement.checked
+          formData.append input.attr("name"), input.val()
+
+
+    # Let the user add additional data if necessary
+    @emit "sending", file, xhr, formData
+
+    # Finally add the file
+    # Has to be last because some servers (eg: S3) expect the file to be the
+    # last parameter
+    formData.append @options.paramName, file
+
     xhr.send formData
 
 
