@@ -182,6 +182,7 @@ The valid options are:
 | `thumbnailWidth`        |
 | `thumbnailHeight`       |
 | `accept`                | is a function that gets a [file](https://developer.mozilla.org/en-US/docs/DOM/File) and a `done` function as parameter. If the done function is invoked without a parameter, the file will be processed. If you pass an error message it will be displayed and the file will not be uploaded.
+| `enqueueForUpload`      | When false, dropped files aren't uploaded automatically. You have to call `myDZ.processFile(file)` or `myDZ.filesQueue.push(file); myDZ.processQueue();` yourself.
 | `previewTemplate`       | is a string that contains the template used for each dropped image. Change it to fulfill your needs but make sure to properly provide all elements.
 | `fallback`              | is a function that gets called when the browser is not supported. The default implementation shows the fallback input field and adds a text.
 
