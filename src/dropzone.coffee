@@ -59,6 +59,7 @@ class Dropzone extends Em
     "sending"
     "success"
     "complete"
+    "reset"
   ]
 
 
@@ -136,6 +137,10 @@ class Dropzone extends Em
     selectedfiles: (files) ->
       @element.addClass "started"
 
+    # Called whenever there are no files left in the dropzone anymore, and the
+    # dropzone should be displayed as if in the initial state.
+    reset: ->
+      @element.removeClass "started"
 
     # Called when a file is added to the queue
     # Receives `file`
@@ -385,8 +390,10 @@ class Dropzone extends Em
   removeFile: (file) ->
     throw new Error "Can't remove file currently processing" if file.processing
     @files = without @files, file
+    @filesQueue = without @filesQueue, file
 
     @emit "removedfile", file
+    @emit "reset" if @files.length == 0
 
   createThumbnail: (file) ->
 
@@ -446,7 +453,7 @@ class Dropzone extends Em
     i = processingLength
 
     while i < parallelUploads
-      return  unless @filesQueue.length # Nothing left to process
+      return unless @filesQueue.length # Nothing left to process
       @processFile @filesQueue.shift()
       i++
 
