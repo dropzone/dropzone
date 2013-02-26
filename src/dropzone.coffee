@@ -56,7 +56,6 @@ class Dropzone extends Em
     "error"
     "processingfile"
     "uploadprogress"
-    "preparingupload"
     "sending"
     "success"
     "complete"
@@ -191,15 +190,10 @@ class Dropzone extends Em
     uploadprogress: (file, progress) ->
       file.previewTemplate.find(".progress .upload").css { width: "#{progress}%" }
 
-    # Called just before the file is sent. Gets the xhr object as second
-    # parameter, so you can modify it, for example to add a CSRF token.
+    # Called just before the file is sent. Gets the `xhr` object as second
+    # parameter, so you can modify it (for example to add a CSRF token) and a
+    # `formData` object to add additional information.
     sending: o.noop
-    
-    # Called just before adding the file and sending the whole request to the
-    # server.
-    # This is the ideal place to add additional data to be sent.
-    # Receives `file`, `xhr` and `formData`
-    preparingupload: o.noop
     
     # When the complete upload is finished and successfull
     # Receives `file`
@@ -527,16 +521,15 @@ class Dropzone extends Em
         if !input.attr("type") or input.attr("type").toLowerCase() != "checkbox" or inputElement.checked
           formData.append input.attr("name"), input.val()
 
+
     # Let the user add additional data if necessary
-    @emit "preparingupload", file, xhr, formData
+    @emit "sending", file, xhr, formData
 
     # Finally add the file
     # Has to be last because some servers (eg: S3) expect the file to be the
     # last parameter
     formData.append @options.paramName, file
 
-
-    @emit "sending", file, xhr
     xhr.send formData
 
 
