@@ -225,6 +225,7 @@ Emitter.prototype.hasListeners = function(event){
       maxThumbnailFilesize: 2,
       thumbnailWidth: 100,
       thumbnailHeight: 100,
+      params: {},
       clickable: true,
       accept: function(file, done) {
         return done();
@@ -237,9 +238,12 @@ Emitter.prototype.hasListeners = function(event){
         return this.element.append(this.getFallbackForm());
       },
       /*
-          Those functions register themselves to the events on init.
-          You can overwrite them if you don't like the default behavior. If you just want to add an additional
-          event handler, register it on the dropzone object and don't overwrite those options.
+          Those functions register themselves to the events on init and handle all
+          the user interface specific stuff. Overwriting them won't break the upload
+          but can break the way it's displayed.
+          You can overwrite them if you don't like the default behavior. If you just
+          want to add an additional event handler, register it on the dropzone object
+          and don't overwrite those options.
       */
 
       drop: function(e) {
@@ -586,22 +590,9 @@ Emitter.prototype.hasListeners = function(event){
     };
 
     Dropzone.prototype.uploadFile = function(file) {
-      var formData, handleError, input, inputElement, inputName, progressObj, xhr, _i, _len, _ref, _ref1,
+      var formData, handleError, input, inputElement, inputName, key, name, progressObj, xhr, _i, _len, _ref, _ref1, _ref2,
         _this = this;
       xhr = new XMLHttpRequest();
-      formData = new FormData();
-      formData.append(this.options.paramName, file);
-      if (this.elementTagName = "FORM") {
-        _ref = this.element.find("input, textarea, select, button");
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          inputElement = _ref[_i];
-          input = o(inputElement);
-          inputName = input.attr("name");
-          if (!input.attr("type") || input.attr("type").toLowerCase() !== "checkbox" || inputElement.checked) {
-            formData.append(input.attr("name"), input.val());
-          }
-        }
-      }
       xhr.open("POST", this.options.url, true);
       handleError = function() {
         return _this.errorProcessing(file, xhr.responseText || ("Server responded with " + xhr.status + " code."));
@@ -613,7 +604,7 @@ Emitter.prototype.hasListeners = function(event){
         } else {
           _this.emit("uploadprogress", file, 100);
           response = xhr.responseText;
-          if (~xhr.getResponseHeader("content-type").indexOf("application/json")) {
+          if (xhr.getResponseHeader("content-type") && ~xhr.getResponseHeader("content-type").indexOf("application/json")) {
             response = JSON.parse(response);
           }
           return _this.finished(file, response, e);
@@ -622,7 +613,7 @@ Emitter.prototype.hasListeners = function(event){
       xhr.onerror = function() {
         return handleError();
       };
-      progressObj = (_ref1 = xhr.upload) != null ? _ref1 : xhr;
+      progressObj = (_ref = xhr.upload) != null ? _ref : xhr;
       progressObj.onprogress = function(e) {
         return _this.emit("uploadprogress", file, Math.max(0, Math.min(100, (e.loaded / e.total) * 100)));
       };
@@ -630,7 +621,27 @@ Emitter.prototype.hasListeners = function(event){
       xhr.setRequestHeader("Cache-Control", "no-cache");
       xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
       xhr.setRequestHeader("X-File-Name", file.name);
-      this.emit("sending", file, xhr);
+      formData = new FormData();
+      if (this.options.params) {
+        _ref1 = this.options.params;
+        for (key in _ref1) {
+          name = _ref1[key];
+          formData.append(name, key);
+        }
+      }
+      if (this.elementTagName = "FORM") {
+        _ref2 = this.element.find("input, textarea, select, button");
+        for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+          inputElement = _ref2[_i];
+          input = o(inputElement);
+          inputName = input.attr("name");
+          if (!input.attr("type") || input.attr("type").toLowerCase() !== "checkbox" || inputElement.checked) {
+            formData.append(input.attr("name"), input.val());
+          }
+        }
+      }
+      this.emit("sending", file, xhr, formData);
+      formData.append(this.options.paramName, file);
       return xhr.send(formData);
     };
 
