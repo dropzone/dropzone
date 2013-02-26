@@ -32,7 +32,7 @@ Em = Emitter ? require "emitter" # Can't be the same name because it will lead t
 
 class Dropzone extends Em
 
-  version: "1.3.7"
+  version: "1.3.8"
 
   ###
   This is a list of all available events you can register on a dropzone object.
@@ -96,7 +96,15 @@ class Dropzone extends Em
     # This is the same as adding hidden input fields in the form element.
     params: { }
 
+    # If true, the dropzone will present a file selector when clicked.
     clickable: yes
+
+    # If false, files will not be added to the process queue automatically.
+    # This can be useful if you need some additional user input before sending
+    # files.
+    # If you're ready to send the file, add it to the `filesQueue` and call
+    # processQueue()
+    enqueueForUpload: yes
 
     # Can be a jQuery or HTML element that will hold the file previews
     # If null, the dropzone element will be used
@@ -318,28 +326,36 @@ class Dropzone extends Em
       e.stopPropagation()
       e.preventDefault()
 
-    @element.on "dragstart", (e) =>
+    @element.on "dragstart.dropzone", (e) =>
       @emit "dragstart", e
 
-    @element.on "dragenter", (e) =>
+    @element.on "dragenter.dropzone", (e) =>
       noPropagation e
       @emit "dragenter", e
 
-    @element.on "dragover", (e) =>
+    @element.on "dragover.dropzone", (e) =>
       noPropagation e
       @emit "dragover", e
 
-    @element.on "dragleave", (e) =>
+    @element.on "dragleave.dropzone", (e) =>
       @emit "dragleave", e
 
-    @element.on "drop", (e) =>
+    @element.on "drop.dropzone", (e) =>
       noPropagation e
       @drop e
       @emit "drop", e
     
-    @element.on "dragend", (e) =>
+    @element.on "dragend.dropzone", (e) =>
       @emit "dragend", e
 
+  removeEventListeners: -> @element.off ".dropzone"
+
+  # Removes all event listeners and clears the arrays.
+  disable: ->
+    @removeEventListeners()
+    @files = [ ]
+    @filesProcessing = [ ]
+    @filesQueue = [ ]
 
   # Returns a nicely formatted filesize
   filesize: (size) ->
@@ -391,8 +407,9 @@ class Dropzone extends Em
       if error
         @errorProcessing file, error
       else
-        @filesQueue.push file
-        @processQueue()
+        if @options.enqueueForUpload
+          @filesQueue.push file
+          @processQueue()
 
   # Can be called by the user to remove a file
   removeFile: (file) ->
