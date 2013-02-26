@@ -475,7 +475,6 @@ class Dropzone extends Em
     xhr = new XMLHttpRequest()
 
     formData = new FormData()
-    formData.append @options.paramName, file
 
     if @elementTagName = "FORM"
       # Take care of other input elements
@@ -485,6 +484,10 @@ class Dropzone extends Em
 
         if !input.attr("type") or input.attr("type").toLowerCase() != "checkbox" or inputElement.checked
           formData.append input.attr("name"), input.val()
+
+    # Has to be last because some servers (eg: S3) expect the file to be the
+    # last parameter
+    formData.append @options.paramName, file
 
     xhr.open "POST", @options.url, true
 
