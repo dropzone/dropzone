@@ -176,6 +176,7 @@ The valid options are:
 | `parallelUploads`       | How many file uploads to process in parallel
 | `maxFilesize`           | in MB
 | `paramName`             | The name of the file param that gets transferred
+| `previewsContainer`     | defines where to display the file previews – if `null` the Dropzone element is used. Can be a jQuery object or a selector. The element should have the `dropzone-previews` class so the previews are displayed properly.
 | `clickable`             | Whether the dropzone should be clickable. Defaults to `true`
 | `createImageThumbnails` |
 | `maxThumbnailFilesize`  | in MB. When the filename exceeds this limit, the thumbnail will not be generated
@@ -307,6 +308,22 @@ myDropzone.on("addedfile", function(file) {
   file.previewTemplate.click(function() { myDropzone.removeFile(file); });
 });
 {% endhighlight %}
+
+
+If you want the whole body to be a Dropzone and display the files somewhere else
+you can simply instantiate a Dropzone object for the body, and define the
+`previewsContainer` option. The `previewsContainer` should have the
+`dropzone-previews` or `dropzone` class to properly display the file previews.
+
+{% highlight js %}
+new Dropzone(document.body, {
+  previewsContainer: ".dropzone-previews",
+  // You probably don't want the whole body
+  // to be clickable to select files
+  clickable: false
+});
+{% endhighlight %}
+
 
 
 I'll add more examples soon (How to add delete/download buttons when an upload finished,
