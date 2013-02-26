@@ -437,6 +437,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       thumbnailHeight: 100,
       params: {},
       clickable: true,
+      enqueueForUpload: true,
       accept: function(file, done) {
         return done();
       },
@@ -626,28 +627,39 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         e.stopPropagation();
         return e.preventDefault();
       };
-      this.element.on("dragstart", function(e) {
+      this.element.on("dragstart.dropzone", function(e) {
         return _this.emit("dragstart", e);
       });
-      this.element.on("dragenter", function(e) {
+      this.element.on("dragenter.dropzone", function(e) {
         noPropagation(e);
         return _this.emit("dragenter", e);
       });
-      this.element.on("dragover", function(e) {
+      this.element.on("dragover.dropzone", function(e) {
         noPropagation(e);
         return _this.emit("dragover", e);
       });
-      this.element.on("dragleave", function(e) {
+      this.element.on("dragleave.dropzone", function(e) {
         return _this.emit("dragleave", e);
       });
-      this.element.on("drop", function(e) {
+      this.element.on("drop.dropzone", function(e) {
         noPropagation(e);
         _this.drop(e);
         return _this.emit("drop", e);
       });
-      return this.element.on("dragend", function(e) {
+      return this.element.on("dragend.dropzone", function(e) {
         return _this.emit("dragend", e);
       });
+    };
+
+    Dropzone.prototype.removeEventListeners = function() {
+      return this.element.off(".dropzone");
+    };
+
+    Dropzone.prototype.disable = function() {
+      this.removeEventListeners();
+      this.files = [];
+      this.filesProcessing = [];
+      return this.filesQueue = [];
     };
 
     Dropzone.prototype.filesize = function(size) {
@@ -712,8 +724,10 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         if (error) {
           return _this.errorProcessing(file, error);
         } else {
-          _this.filesQueue.push(file);
-          return _this.processQueue();
+          if (_this.options.enqueueForUpload) {
+            _this.filesQueue.push(file);
+            return _this.processQueue();
+          }
         }
       });
     };

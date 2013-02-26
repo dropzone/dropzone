@@ -102,6 +102,7 @@
   right: 6px;
   height: 6px;
   background: #d7d7d7;
+  display: none;
 }
 .dropzone .preview .progress .upload {
   position: absolute;
@@ -111,8 +112,8 @@
   width: 0%;
   background-color: #8cc657;
 }
-.dropzone .preview.success .progress {
-  display: none;
+.dropzone .preview.processing .progress {
+  display: block;
 }
 .dropzone .preview .error-message {
   display: none;
