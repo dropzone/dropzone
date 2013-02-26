@@ -92,6 +92,10 @@ class Dropzone extends Em
     thumbnailWidth: 100
     thumbnailHeight: 100
 
+    # Can be an object of additional parameters to transfer to the server.
+    # This is the same as adding hidden input fields in the form element.
+    params: { }
+
     clickable: yes
 
     # Can be a jQuery or HTML element that will hold the file previews
@@ -476,8 +480,11 @@ class Dropzone extends Em
 
     formData = new FormData()
 
+    # Adding all @options parameters
+    formData.append name, key for key, name of @options.params if @options.params
+
+    # Take care of other input elements
     if @elementTagName = "FORM"
-      # Take care of other input elements
       for inputElement in @element.find "input, textarea, select, button"
         input = o inputElement
         inputName = input.attr("name")
@@ -485,6 +492,7 @@ class Dropzone extends Em
         if !input.attr("type") or input.attr("type").toLowerCase() != "checkbox" or inputElement.checked
           formData.append input.attr("name"), input.val()
 
+    # Finally add the file
     # Has to be last because some servers (eg: S3) expect the file to be the
     # last parameter
     formData.append @options.paramName, file
