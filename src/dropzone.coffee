@@ -278,8 +278,8 @@ class Dropzone extends Em
 
 
     @files = [] # All files
-    @files.queue = [] # The files that still have to be processed
-    @files.processing = [] # The files currently processed
+    @filesQueue = [] # The files that still have to be processed
+    @filesProcessing = [] # The files currently processed
     @URL = window.URL ? window.webkitURL
     @setupEventListeners()
 
@@ -378,7 +378,7 @@ class Dropzone extends Em
       if error
         @errorProcessing file, error
       else
-        @files.queue.push file
+        @filesQueue.push file
         @processQueue()
 
   # Can be called by the user to remove a file
@@ -442,18 +442,18 @@ class Dropzone extends Em
   # Goes through the queue and processes files if there aren't too many already.
   processQueue: ->
     parallelUploads = @options.parallelUploads
-    processingLength = @files.processing.length
+    processingLength = @filesProcessing.length
     i = processingLength
 
     while i < parallelUploads
-      return  unless @files.queue.length # Nothing left to process
-      @processFile @files.queue.shift()
+      return  unless @filesQueue.length # Nothing left to process
+      @processFile @filesQueue.shift()
       i++
 
 
   # Loads the file, then calls finishedLoading()
   processFile: (file) ->
-    @files.processing.push file
+    @filesProcessing.push file
     file.processing = yes
 
     @emit "processingfile", file
@@ -510,22 +510,22 @@ class Dropzone extends Em
   # Called internally when processing is finished.
   # Individual callbacks have to be called in the appropriate sections.
   finished: (file, responseText, e) ->
-    @files.processing = without(@files.processing, file)
+    @filesProcessing = without(@filesProcessing, file)
     file.processing = no
+    @processQueue()
     @emit "success", file, responseText, e
     @emit "finished", file, responseText, e # For backwards compatibility
     @emit "complete", file
-    @processQueue()
 
 
   # Called internally when processing is finished.
   # Individual callbacks have to be called in the appropriate sections.
   errorProcessing: (file, message) ->
-    @files.processing = without(@files.processing, file)
+    @filesProcessing = without(@filesProcessing, file)
     file.processing = no
+    @processQueue()
     @emit "error", file, message
     @emit "complete", file
-    @processQueue()
 
 
 
