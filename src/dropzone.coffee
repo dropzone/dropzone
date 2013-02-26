@@ -326,28 +326,36 @@ class Dropzone extends Em
       e.stopPropagation()
       e.preventDefault()
 
-    @element.on "dragstart", (e) =>
+    @element.on "dragstart.dropzone", (e) =>
       @emit "dragstart", e
 
-    @element.on "dragenter", (e) =>
+    @element.on "dragenter.dropzone", (e) =>
       noPropagation e
       @emit "dragenter", e
 
-    @element.on "dragover", (e) =>
+    @element.on "dragover.dropzone", (e) =>
       noPropagation e
       @emit "dragover", e
 
-    @element.on "dragleave", (e) =>
+    @element.on "dragleave.dropzone", (e) =>
       @emit "dragleave", e
 
-    @element.on "drop", (e) =>
+    @element.on "drop.dropzone", (e) =>
       noPropagation e
       @drop e
       @emit "drop", e
     
-    @element.on "dragend", (e) =>
+    @element.on "dragend.dropzone", (e) =>
       @emit "dragend", e
 
+  removeEventListeners: -> @element.off ".dropzone"
+
+  # Removes all event listeners and clears the arrays.
+  disable: ->
+    @removeEventListeners()
+    @files = [ ]
+    @filesProcessing = [ ]
+    @filesQueue = [ ]
 
   # Returns a nicely formatted filesize
   filesize: (size) ->
