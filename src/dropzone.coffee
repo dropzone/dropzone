@@ -32,7 +32,7 @@ Em = Emitter ? require "emitter" # Can't be the same name because it will lead t
 
 class Dropzone extends Em
 
-  version: "1.3.8"
+  version: "1.3.9"
 
   ###
   This is a list of all available events you can register on a dropzone object.
@@ -108,10 +108,7 @@ class Dropzone extends Em
 
     # Can be a jQuery or HTML element that will hold the file previews
     # If null, the dropzone element will be used
-    # 
-    # Not implemented yet.
-    # 
-    # previewsContainer: null
+    previewsContainer: null
     
     # If `done()` is called without argument the file is accepted
     # If you call it with an error message, the file is rejected
@@ -150,7 +147,7 @@ class Dropzone extends Em
     
     # Called whenever files are dropped or selected
     selectedfiles: (files) ->
-      @element.addClass "started"
+      @element.addClass "started" if @element.is @previewsContainer
 
     # Called whenever there are no files left in the dropzone anymore, and the
     # dropzone should be displayed as if in the initial state.
@@ -161,7 +158,7 @@ class Dropzone extends Em
     # Receives `file`
     addedfile: (file) ->
       file.previewTemplate = o @options.previewTemplate
-      @element.append file.previewTemplate
+      @previewsContainer.append file.previewTemplate
       file.previewTemplate.find(".filename span").text file.name
       file.previewTemplate.find(".details").append o """<div class="size">#{@filesize file.size}</div>"""
 
@@ -255,6 +252,8 @@ class Dropzone extends Em
 
     throw new Error "No URL provided." unless @options.url
 
+    @previewsContainer = if @options.previewsContainer then o @options.previewsContainer else @element
+
     @init()
 
 
@@ -265,7 +264,7 @@ class Dropzone extends Em
     if @elementTagName == "form" and @element.attr("enctype") != "multipart/form-data"
       @element.attr "enctype", "multipart/form-data"
 
-    if @element.find(".message").length == 0
+    if @element.hasClass("dropzone") and @element.find(".message").length == 0
       @element.append o """<div class="default message"><span>Drop files here to upload</span></div>"""
 
     capableBrowser = yes

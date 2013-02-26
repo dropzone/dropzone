@@ -201,7 +201,7 @@ Emitter.prototype.hasListeners = function(event){
 
     __extends(Dropzone, _super);
 
-    Dropzone.prototype.version = "1.3.8";
+    Dropzone.prototype.version = "1.3.9";
 
     /*
       This is a list of all available events you can register on a dropzone object.
@@ -228,6 +228,7 @@ Emitter.prototype.hasListeners = function(event){
       params: {},
       clickable: true,
       enqueueForUpload: true,
+      previewsContainer: null,
       accept: function(file, done) {
         return done();
       },
@@ -264,14 +265,16 @@ Emitter.prototype.hasListeners = function(event){
         return this.element.removeClass("drag-hover");
       },
       selectedfiles: function(files) {
-        return this.element.addClass("started");
+        if (this.element.is(this.previewsContainer)) {
+          return this.element.addClass("started");
+        }
       },
       reset: function() {
         return this.element.removeClass("started");
       },
       addedfile: function(file) {
         file.previewTemplate = o(this.options.previewTemplate);
-        this.element.append(file.previewTemplate);
+        this.previewsContainer.append(file.previewTemplate);
         file.previewTemplate.find(".filename span").text(file.name);
         return file.previewTemplate.find(".details").append(o("<div class=\"size\">" + (this.filesize(file.size)) + "</div>"));
       },
@@ -335,6 +338,7 @@ Emitter.prototype.hasListeners = function(event){
       if (!this.options.url) {
         throw new Error("No URL provided.");
       }
+      this.previewsContainer = this.options.previewsContainer ? o(this.options.previewsContainer) : this.element;
       this.init();
     }
 
@@ -344,7 +348,7 @@ Emitter.prototype.hasListeners = function(event){
       if (this.elementTagName === "form" && this.element.attr("enctype") !== "multipart/form-data") {
         this.element.attr("enctype", "multipart/form-data");
       }
-      if (this.element.find(".message").length === 0) {
+      if (this.element.hasClass("dropzone") && this.element.find(".message").length === 0) {
         this.element.append(o("<div class=\"default message\"><span>Drop files here to upload</span></div>"));
       }
       capableBrowser = true;

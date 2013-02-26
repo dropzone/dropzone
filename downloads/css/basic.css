@@ -1,5 +1,7 @@
 .dropzone,
-.dropzone * {
+.dropzone *,
+.dropzone-previews,
+.dropzone-previews * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -31,7 +33,8 @@
 .dropzone.started .message {
   display: none;
 }
-.dropzone .preview {
+.dropzone .preview,
+.dropzone-previews .preview {
   background: rgba(255,255,255,0.8);
   position: relative;
   display: inline-block;
@@ -40,46 +43,57 @@
   border: 1px solid #acacac;
   padding: 6px 6px 28px 6px;
 }
-.dropzone .preview .details {
+.dropzone .preview .details,
+.dropzone-previews .preview .details {
   width: 100px;
   height: 100px;
   position: relative;
   background: #ebebeb;
   padding: 5px;
 }
-.dropzone .preview .details .filename {
+.dropzone .preview .details .filename,
+.dropzone-previews .preview .details .filename {
   overflow: hidden;
   height: 100%;
 }
-.dropzone .preview .details img {
+.dropzone .preview .details img,
+.dropzone-previews .preview .details img {
   position: absolute;
   top: 0;
   left: 0;
   width: 100px;
   height: 100px;
 }
-.dropzone .preview .details .size {
+.dropzone .preview .details .size,
+.dropzone-previews .preview .details .size {
   position: absolute;
   bottom: -28px;
   left: 3px;
   height: 28px;
   line-height: 28px;
 }
-.dropzone .preview.error .error-mark {
+.dropzone .preview.error .error-mark,
+.dropzone-previews .preview.error .error-mark {
   display: block;
 }
-.dropzone .preview.success .success-mark {
+.dropzone .preview.success .success-mark,
+.dropzone-previews .preview.success .success-mark {
   display: block;
 }
-.dropzone .preview:hover .details img {
+.dropzone .preview:hover .details img,
+.dropzone-previews .preview:hover .details img {
   display: none;
 }
 .dropzone .preview:hover .success-mark,
-.dropzone .preview:hover .error-mark {
+.dropzone-previews .preview:hover .success-mark,
+.dropzone .preview:hover .error-mark,
+.dropzone-previews .preview:hover .error-mark {
   display: none;
 }
 .dropzone .preview .success-mark,
-.dropzone .preview .error-mark {
+.dropzone-previews .preview .success-mark,
+.dropzone .preview .error-mark,
+.dropzone-previews .preview .error-mark {
   display: none;
   position: absolute;
   width: 40px;
@@ -89,13 +103,16 @@
   right: -10px;
   top: -10px;
 }
-.dropzone .preview .success-mark {
+.dropzone .preview .success-mark,
+.dropzone-previews .preview .success-mark {
   color: #8cc657;
 }
-.dropzone .preview .error-mark {
+.dropzone .preview .error-mark,
+.dropzone-previews .preview .error-mark {
   color: #ee162d;
 }
-.dropzone .preview .progress {
+.dropzone .preview .progress,
+.dropzone-previews .preview .progress {
   position: absolute;
   top: 100px;
   left: 6px;
@@ -104,7 +121,8 @@
   background: #d7d7d7;
   display: none;
 }
-.dropzone .preview .progress .upload {
+.dropzone .preview .progress .upload,
+.dropzone-previews .preview .progress .upload {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -112,10 +130,12 @@
   width: 0%;
   background-color: #8cc657;
 }
-.dropzone .preview.processing .progress {
+.dropzone .preview.processing .progress,
+.dropzone-previews .preview.processing .progress {
   display: block;
 }
-.dropzone .preview .error-message {
+.dropzone .preview .error-message,
+.dropzone-previews .preview .error-message {
   display: none;
   position: absolute;
   top: -5px;
@@ -127,6 +147,7 @@
   max-width: 500px;
   z-index: 500;
 }
-.dropzone .preview:hover.error .error-message {
+.dropzone .preview:hover.error .error-message,
+.dropzone-previews .preview:hover.error .error-message {
   display: block;
 }
