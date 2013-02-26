@@ -284,6 +284,15 @@ will not create the message for you.
 Dropzone will submit any hidden fields you have in your dropzone form. So this
 is an easy way to submit additional data. You can also use the `params` option.
 
+If you want to add additional data to the file upload that has to be specific for
+each file, you can register for the `sending` event:
+
+{% highlight js %}
+myDropzone.on("sending", function(file, xhr, formData) {
+  formData.append("filesize", file.size); // Will send the filesize along with the file as POST data.
+});
+{% endhighlight %}
+
 I'll add more examples soon (How to add delete/download buttons when an upload finished,
 how to add file previews on your own, etc...)
 
