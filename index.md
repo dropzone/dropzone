@@ -223,6 +223,7 @@ All of these receive the [file](https://developer.mozilla.org/en-US/docs/DOM/Fil
 | Parameter         | Description
 |-------------------|-------------
 | `addedfile`       | 
+| `removedfile`     | Called whenever a file is removed from the list. You can listen to this and delete the file from your server if you want to.
 | `selectedfiles`   | Receives an array of files and gets called whenever files are dropped or selected.
 | `thumbnail`       | When the thumbnail has been generated. Receives the [**dataUrl**](http://en.wikipedia.org/wiki/Data_URI_scheme) as second parameter.
 | `error`           | An error occured. Receives the **errorMessage** as second parameter.
@@ -231,6 +232,7 @@ All of these receive the [file](https://developer.mozilla.org/en-US/docs/DOM/Fil
 | `sending`         | Called just before the file is sent. Gets the xhr object as second parameter, so you can modify it (for example to add a CSRF token)
 | `success`         | The file has been uploaded successfully. (This event was called `finished` previously)
 | `complete`        | Called when the upload was either successful or erroneous.
+| `reset`           | Called when all files in the list are removed and the dropzone is reset to initial state.
 
 
 ## layout
@@ -257,6 +259,7 @@ See the installation section on how to add the stylesheet and spritemaps if you 
 ## dropzone methods
 
 If you want to remove an added file from the dropzone, you can call `.removeFile(file)`.
+This method also triggers the `removedfile` event.
 
 Here's an example that would automatically remove a file when it's finished uploading:
 
