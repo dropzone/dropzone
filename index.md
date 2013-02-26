@@ -254,6 +254,20 @@ The HTML that is generated for each file by dropzone looks like this (although y
 See the installation section on how to add the stylesheet and spritemaps if you want your dropzone to look like the one on this page.
 
 
+## dropzone methods
+
+If you want to remove an added file from the dropzone, you can call `.removeFile(file)`.
+
+Here's an example that would automatically remove a file when it's finished uploading:
+
+{% highlight js %}
+myDropzone.on("complete", function(file) {
+  myDropzone.removeFile(file);
+});
+{% endhighlight %}
+
+
+
 ## tips
 
 If your dropzone is rather square than a wide horizontal bar, you can add the class
