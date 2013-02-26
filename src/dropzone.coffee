@@ -497,7 +497,7 @@ class Dropzone extends Em
       else
         @emit "uploadprogress", file, 100
         response = xhr.responseText
-        if ~xhr.getResponseHeader("content-type").indexOf "application/json" then response = JSON.parse response
+        if xhr.getResponseHeader("content-type") and ~xhr.getResponseHeader("content-type").indexOf "application/json" then response = JSON.parse response
         @finished file, response, e
 
     xhr.onerror = =>
