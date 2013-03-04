@@ -608,7 +608,7 @@ Emitter.prototype.hasListeners = function(event){
     };
 
     Dropzone.prototype.uploadFile = function(file) {
-      var formData, handleError, input, inputElement, inputName, key, name, progressObj, xhr, _i, _len, _ref, _ref1, _ref2,
+      var formData, handleError, input, inputElement, inputName, key, progressObj, value, xhr, _i, _len, _ref, _ref1, _ref2,
         _this = this;
       xhr = new XMLHttpRequest();
       xhr.open("POST", this.options.url, true);
@@ -643,8 +643,8 @@ Emitter.prototype.hasListeners = function(event){
       if (this.options.params) {
         _ref1 = this.options.params;
         for (key in _ref1) {
-          name = _ref1[key];
-          formData.append(name, key);
+          value = _ref1[key];
+          formData.append(key, value);
         }
       }
       if (this.elementTagName = "FORM") {

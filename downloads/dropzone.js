@@ -70,7 +70,6 @@ require.aliases = {};
  */
 
 require.resolve = function(path) {
-  if (path.charAt(0) === '/') path = path.slice(1);
   var index = path + '/index.js';
 
   var paths = [
@@ -183,18 +182,17 @@ require.relative = function(parent) {
    */
 
   localRequire.resolve = function(path) {
-    var c = path.charAt(0);
-    if ('/' == c) return path.slice(1);
-    if ('.' == c) return require.normalize(p, path);
-
     // resolve deps by returning
     // the dep in the nearest "deps"
     // directory
-    var segs = parent.split('/');
-    var i = lastIndexOf(segs, 'deps') + 1;
-    if (!i) i = 0;
-    path = segs.slice(0, i + 1).join('/') + '/deps/' + path;
-    return path;
+    if ('.' != path.charAt(0)) {
+      var segs = parent.split('/');
+      var i = lastIndexOf(segs, 'deps') + 1;
+      if (!i) i = 0;
+      path = segs.slice(0, i + 1).join('/') + '/deps/' + path;
+      return path;
+    }
+    return require.normalize(p, path);
   };
 
   /**
@@ -818,7 +816,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     };
 
     Dropzone.prototype.uploadFile = function(file) {
-      var formData, handleError, input, inputElement, inputName, key, name, progressObj, xhr, _i, _len, _ref, _ref1, _ref2,
+      var formData, handleError, input, inputElement, inputName, key, progressObj, value, xhr, _i, _len, _ref, _ref1, _ref2,
         _this = this;
       xhr = new XMLHttpRequest();
       xhr.open("POST", this.options.url, true);
@@ -853,8 +851,8 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       if (this.options.params) {
         _ref1 = this.options.params;
         for (key in _ref1) {
-          name = _ref1[key];
-          formData.append(name, key);
+          value = _ref1[key];
+          formData.append(key, value);
         }
       }
       if (this.elementTagName = "FORM") {

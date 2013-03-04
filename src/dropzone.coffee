@@ -526,7 +526,7 @@ class Dropzone extends Em
     formData = new FormData()
 
     # Adding all @options parameters
-    formData.append name, key for key, name of @options.params if @options.params
+    formData.append key, value for key, value of @options.params if @options.params
 
     # Take care of other input elements
     if @elementTagName = "FORM"
