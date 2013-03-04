@@ -173,7 +173,7 @@ The valid options are:
 | Option                  | Description
 |-------------------------|-------------
 | `url`                   | Has to be specified on elements other than form (or when the form doesn't have an `action` attribute)
-| `parallelUploads`       | How many file uploads to process in parallel
+| `parallelUploads`       | How many file uploads to process in parallel (See the *Enqueuing file uploads* section for more info)
 | `maxFilesize`           | in MB
 | `paramName`             | The name of the file param that gets transferred
 | `previewsContainer`     | defines where to display the file previews – if `null` the Dropzone element is used. Can be a jQuery object or a selector. The element should have the `dropzone-previews` class so the previews are displayed properly.
@@ -183,13 +183,35 @@ The valid options are:
 | `thumbnailWidth`        |
 | `thumbnailHeight`       |
 | `accept`                | is a function that gets a [file](https://developer.mozilla.org/en-US/docs/DOM/File) and a `done` function as parameter. If the done function is invoked without a parameter, the file will be processed. If you pass an error message it will be displayed and the file will not be uploaded.
-| `enqueueForUpload`      | When false, dropped files aren't uploaded automatically. You have to call `myDZ.processFile(file)` or `myDZ.filesQueue.push(file); myDZ.processQueue();` yourself.
+| `enqueueForUpload`      | When false, dropped files aren't uploaded automatically. See below for more info on enqueuing file uploads.
 | `previewTemplate`       | is a string that contains the template used for each dropped image. Change it to fulfill your needs but make sure to properly provide all elements.
 | `fallback`              | is a function that gets called when the browser is not supported. The default implementation shows the fallback input field and adds a text.
 
 > You can also overwrite all default event actions in the options. So if you provide the option `drop` you can overwrite the default `drop` event handler.
 > *You should be familiar with the code if you do that because you can easily break the upload like this.*
 > If you just want to do additional stuff, like adding a few classes here and there, **[listen to the events](#listen_to_events) instead**!
+
+
+### Enqueuing file uploads
+
+When a file gets added to the dropzone, it gets pushed to the `.filesQueue` Array.
+Whenever this happens or a file upload has finished `.processQueue()` is called
+which checks how many files are currently uploading, and if it's less than
+`options.parallelUploads` `.processFile(file)` is called.
+
+So if you set `enqueueForUpload` to false, can either call
+
+```js
+myDropzone.processFile(file);
+```
+if you want it to be processed immediately, or
+
+```js
+myDropzone.filesQueue.push(file);
+myDropzone.processQueue();
+```
+
+if you want to use a queue.
 
 
 ## listen to events
