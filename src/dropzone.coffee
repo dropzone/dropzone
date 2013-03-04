@@ -32,7 +32,7 @@ Em = Emitter ? require "emitter" # Can't be the same name because it will lead t
 
 class Dropzone extends Em
 
-  version: "1.3.9"
+  version: "1.3.10"
 
   ###
   This is a list of all available events you can register on a dropzone object.
@@ -526,7 +526,7 @@ class Dropzone extends Em
     formData = new FormData()
 
     # Adding all @options parameters
-    formData.append name, key for key, name of @options.params if @options.params
+    formData.append key, value for key, value of @options.params if @options.params
 
     # Take care of other input elements
     if @elementTagName = "FORM"
