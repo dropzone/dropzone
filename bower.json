@@ -6,7 +6,6 @@
         "downloads/css/basic.css"
     ],
     "dependencies": {
-        "jquery": "~1.8.1",
-        "component/emitter": ""
+        "jquery": "~1.8.1"
     }
 }
