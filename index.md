@@ -257,7 +257,7 @@ All of these receive the [file](https://developer.mozilla.org/en-US/docs/DOM/Fil
 | `processingfile`  | When a file gets processed (since there is a queue not all files are processed immediately)
 | `uploadprogress`  | Gets called periodically whenever the file upload progress changes.<br />Gets the **progress** parameter as second parameter which is a percentage (0-100).<br />When an upload finishes dropzone *ensures* that uploadprogress will be called with a percentage of 100 *at least* once.
 | `sending`         | Called just before the file is sent. Gets the xhr object and the [formData](https://developer.mozilla.org/en-US/docs/DOM/XMLHttpRequest/FormData) objects as second and third parameters, so you can modify them (for example to add a CSRF token) or add additional data.
-| `success`         | The file has been uploaded successfully. (This event was called `finished` previously)
+| `success`         | The file has been uploaded successfully. Gets the server response as second argument. (This event was called `finished` previously)
 | `complete`        | Called when the upload was either successful or erroneous.
 | `reset`           | Called when all files in the list are removed and the dropzone is reset to initial state.
 
