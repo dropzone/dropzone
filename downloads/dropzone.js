@@ -70,7 +70,6 @@ require.aliases = {};
  */
 
 require.resolve = function(path) {
-  if (path.charAt(0) === '/') path = path.slice(1);
   var index = path + '/index.js';
 
   var paths = [
@@ -183,18 +182,17 @@ require.relative = function(parent) {
    */
 
   localRequire.resolve = function(path) {
-    var c = path.charAt(0);
-    if ('/' == c) return path.slice(1);
-    if ('.' == c) return require.normalize(p, path);
-
     // resolve deps by returning
     // the dep in the nearest "deps"
     // directory
-    var segs = parent.split('/');
-    var i = lastIndexOf(segs, 'deps') + 1;
-    if (!i) i = 0;
-    path = segs.slice(0, i + 1).join('/') + '/deps/' + path;
-    return path;
+    if ('.' != path.charAt(0)) {
+      var segs = parent.split('/');
+      var i = lastIndexOf(segs, 'deps') + 1;
+      if (!i) i = 0;
+      path = segs.slice(0, i + 1).join('/') + '/deps/' + path;
+      return path;
+    }
+    return require.normalize(p, path);
   };
 
   /**
@@ -411,7 +409,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
     __extends(Dropzone, _super);
 
-    Dropzone.prototype.version = "1.3.11";
+    Dropzone.prototype.version = "1.3.12";
 
     /*
       This is a list of all available events you can register on a dropzone object.
@@ -441,6 +439,9 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       previewsContainer: null,
       accept: function(file, done) {
         return done();
+      },
+      init: function() {
+        return o.noop;
       },
       fallback: function() {
         this.element.addClass("browser-not-supported");
@@ -583,7 +584,8 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       this.filesQueue = [];
       this.filesProcessing = [];
       this.URL = (_ref1 = window.URL) != null ? _ref1 : window.webkitURL;
-      return this.setupEventListeners();
+      this.setupEventListeners();
+      return this.options.init.call(this);
     };
 
     Dropzone.prototype.getFallbackForm = function() {

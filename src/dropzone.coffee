@@ -32,7 +32,7 @@ Em = Emitter ? require "emitter" # Can't be the same name because it will lead t
 
 class Dropzone extends Em
 
-  version: "1.3.11"
+  version: "1.3.12"
 
   ###
   This is a list of all available events you can register on a dropzone object.
@@ -115,6 +115,10 @@ class Dropzone extends Em
     # (This allows for asynchronous validation)
     accept: (file, done) -> done()
 
+
+    # Called when dropzone initialized
+    # You can add event listeners here
+    init: -> o.noop
 
     # Called when the browser does not support drag and drop
     fallback: ->
@@ -290,6 +294,7 @@ class Dropzone extends Em
     @filesProcessing = [] # The files currently processed
     @URL = window.URL ? window.webkitURL
     @setupEventListeners()
+    @options.init.call @
 
   # Returns a form that can be used as fallback if the browser does not support DragnDrop
   #
