@@ -32,7 +32,7 @@ Em = Emitter ? require "emitter" # Can't be the same name because it will lead t
 
 class Dropzone extends Em
 
-  version: "1.3.12-dev"
+  version: "1.3.12"
 
   ###
   This is a list of all available events you can register on a dropzone object.
