@@ -109,12 +109,17 @@ class Dropzone extends Em
 
       for child in @element.getElementsByTagName "div"
         if /message/.test child.className
+          messageElement = child
           child.className = "message" # Removes the 'default' class
-          span = child.getElementsByTagName("span")[0]
-          span.textContent = "Your browser does not support drag'n'drop file uploads." if span
-          @element.appendChild createElement """<p>Please use the fallback form below to upload your files like in the olden days.</p>"""
           continue
-      
+      unless messageElement
+        messageElement = createElement """<div class="message"><span></span></div>"""
+        @element.appendChild messageElement
+          
+      span = messageElement.getElementsByTagName("span")[0]
+      span.textContent = "Your browser does not support drag'n'drop file uploads." if span
+
+      @element.appendChild createElement """<p>Please use the fallback form below to upload your files like in the olden days.</p>"""
       @element.appendChild @getFallbackForm()
     
 
