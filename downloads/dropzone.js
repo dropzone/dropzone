@@ -70,6 +70,7 @@ require.aliases = {};
  */
 
 require.resolve = function(path) {
+  if (path.charAt(0) === '/') path = path.slice(1);
   var index = path + '/index.js';
 
   var paths = [
@@ -182,17 +183,18 @@ require.relative = function(parent) {
    */
 
   localRequire.resolve = function(path) {
+    var c = path.charAt(0);
+    if ('/' == c) return path.slice(1);
+    if ('.' == c) return require.normalize(p, path);
+
     // resolve deps by returning
     // the dep in the nearest "deps"
     // directory
-    if ('.' != path.charAt(0)) {
-      var segs = parent.split('/');
-      var i = lastIndexOf(segs, 'deps') + 1;
-      if (!i) i = 0;
-      path = segs.slice(0, i + 1).join('/') + '/deps/' + path;
-      return path;
-    }
-    return require.normalize(p, path);
+    var segs = parent.split('/');
+    var i = lastIndexOf(segs, 'deps') + 1;
+    if (!i) i = 0;
+    path = segs.slice(0, i + 1).join('/') + '/deps/' + path;
+    return path;
   };
 
   /**
@@ -396,20 +398,20 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
 
 (function() {
-  var Dropzone, Em, camelize, o, without,
+  var Dropzone, Em, camelize, contentLoaded, createElement, noop, without,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     __slice = [].slice;
 
-  o = typeof jQuery !== "undefined" && jQuery !== null ? jQuery : require("jquery");
-
   Em = typeof Emitter !== "undefined" && Emitter !== null ? Emitter : require("emitter");
+
+  noop = function() {};
 
   Dropzone = (function(_super) {
 
     __extends(Dropzone, _super);
 
-    Dropzone.prototype.version = "1.3.13-dev";
+    Dropzone.prototype.version = "2.0.0-dev";
 
     /*
       This is a list of all available events you can register on a dropzone object.
@@ -421,8 +423,6 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
 
     Dropzone.prototype.events = ["drop", "dragstart", "dragend", "dragenter", "dragover", "dragleave", "selectedfiles", "addedfile", "removedfile", "thumbnail", "error", "processingfile", "uploadprogress", "sending", "success", "complete", "reset"];
-
-    Dropzone.prototype.blacklistedBrowsers = [/opera.*Macintosh.*version\/12/i];
 
     Dropzone.prototype.defaultOptions = {
       url: null,
@@ -441,14 +441,30 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         return done();
       },
       init: function() {
-        return o.noop;
+        return noop;
       },
       fallback: function() {
-        this.element.addClass("browser-not-supported");
-        this.element.find(".message").removeClass("default");
-        this.element.find(".message span").html("Your browser does not support drag'n'drop file uploads.");
-        this.element.append("Please use the fallback form below to upload your files like in the olden days.</p>");
-        return this.element.append(this.getFallbackForm());
+        var child, messageElement, span, _i, _len, _ref;
+        this.element.className = "" + this.element.className + " browser-not-supported";
+        _ref = this.element.getElementsByTagName("div");
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          child = _ref[_i];
+          if (/message/.test(child.className)) {
+            messageElement = child;
+            child.className = "message";
+            continue;
+          }
+        }
+        if (!messageElement) {
+          messageElement = createElement("<div class=\"message\"><span></span></div>");
+          this.element.appendChild(messageElement);
+        }
+        span = messageElement.getElementsByTagName("span")[0];
+        if (span) {
+          span.textContent = "Your browser does not support drag'n'drop file uploads.";
+        }
+        this.element.appendChild(createElement("<p>Please use the fallback form below to upload your files like in the olden days.</p>"));
+        return this.element.appendChild(this.getFallbackForm());
       },
       /*
           Those functions register themselves to the events on init and handle all
@@ -460,76 +476,76 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       */
 
       drop: function(e) {
-        return this.element.removeClass("drag-hover");
+        return this.element.classList.remove("drag-hover");
       },
-      dragstart: o.noop,
+      dragstart: noop,
       dragend: function(e) {
-        return this.element.removeClass("drag-hover");
+        return this.element.classList.remove("drag-hover");
       },
       dragenter: function(e) {
-        return this.element.addClass("drag-hover");
+        return this.element.classList.add("drag-hover");
       },
       dragover: function(e) {
-        return this.element.addClass("drag-hover");
+        return this.element.classList.add("drag-hover");
       },
       dragleave: function(e) {
-        return this.element.removeClass("drag-hover");
+        return this.element.classList.remove("drag-hover");
       },
       selectedfiles: function(files) {
-        if (this.element.is(this.previewsContainer)) {
-          return this.element.addClass("started");
+        if (this.element === this.previewsContainer) {
+          return this.element.classList.add("started");
         }
       },
       reset: function() {
-        return this.element.removeClass("started");
+        return this.element.classList.remove("started");
       },
       addedfile: function(file) {
-        file.previewTemplate = o(this.options.previewTemplate);
-        this.previewsContainer.append(file.previewTemplate);
-        file.previewTemplate.find(".filename span").text(file.name);
-        return file.previewTemplate.find(".details").append(o("<div class=\"size\">" + (this.filesize(file.size)) + "</div>"));
+        file.previewTemplate = createElement(this.options.previewTemplate);
+        this.previewsContainer.appendChild(file.previewTemplate);
+        file.previewTemplate.querySelector(".filename span").textContent = file.name;
+        return file.previewTemplate.querySelector(".details").appendChild(createElement("<div class=\"size\">" + (this.filesize(file.size)) + "</div>"));
       },
       removedfile: function(file) {
-        return file.previewTemplate.remove();
+        return file.previewTemplate.parentNode.removeChild(file.previewTemplate);
       },
       thumbnail: function(file, dataUrl) {
-        file.previewTemplate.removeClass("file-preview").addClass("image-preview");
-        return file.previewTemplate.find(".details").append(o("<img alt=\"" + file.name + "\" src=\"" + dataUrl + "\"/>"));
+        file.previewTemplate.classList.remove("file-preview");
+        file.previewTemplate.classList.add("image-preview");
+        return file.previewTemplate.querySelector(".details").appendChild(createElement("<img alt=\"" + file.name + "\" src=\"" + dataUrl + "\"/>"));
       },
       error: function(file, message) {
-        file.previewTemplate.addClass("error");
-        return file.previewTemplate.find(".error-message span").text(message);
+        file.previewTemplate.classList.add("error");
+        return file.previewTemplate.querySelector(".error-message span").textContent = message;
       },
       processingfile: function(file) {
-        return file.previewTemplate.addClass("processing");
+        return file.previewTemplate.classList.add("processing");
       },
       uploadprogress: function(file, progress) {
-        return file.previewTemplate.find(".progress .upload").css({
-          width: "" + progress + "%"
-        });
+        return file.previewTemplate.querySelector(".progress .upload").style.width = "" + progress + "%";
       },
-      sending: o.noop,
+      sending: noop,
       success: function(file) {
-        return file.previewTemplate.addClass("success");
+        return file.previewTemplate.classList.add("success");
       },
-      complete: o.noop,
+      complete: noop,
       previewTemplate: "<div class=\"preview file-preview\">\n  <div class=\"details\">\n   <div class=\"filename\"><span></span></div>\n  </div>\n  <div class=\"progress\"><span class=\"upload\"></span></div>\n  <div class=\"success-mark\"><span>✔</span></div>\n  <div class=\"error-mark\"><span>✘</span></div>\n  <div class=\"error-message\"><span></span></div>\n</div>"
     };
 
     function Dropzone(element, options) {
       var elementId, elementOptions, extend, _ref;
+      this.element = element;
       this.defaultOptions.previewTemplate = this.defaultOptions.previewTemplate.replace(/\n*/g, "");
-      this.element = o(element);
-      if (this.element.length !== 1) {
-        throw new Error("You can only instantiate dropzone on a single element.");
+      if (typeof this.element === "string") {
+        this.element = document.querySelector(this.element);
       }
-      if (this.element.data("dropzone")) {
+      if (!(this.element instanceof HTMLElement)) {
+        throw new Error("Invalid dropzone element.");
+      }
+      if (Dropzone.forElement(this.element)) {
         throw new Error("Dropzone already attached.");
       }
-      this.element.data("dropzone", this);
-      elementId = this.element.attr("id");
+      elementId = this.element.id;
       elementOptions = (_ref = (elementId ? Dropzone.options[camelize(elementId)] : void 0)) != null ? _ref : {};
-      this.elementTagName = this.element.get(0).tagName;
       extend = function() {
         var key, object, objects, target, val, _i, _len;
         target = arguments[0], objects = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
@@ -544,141 +560,142 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       };
       this.options = extend({}, this.defaultOptions, elementOptions, options != null ? options : {});
       if (this.options.url == null) {
-        this.options.url = this.element.attr("action");
+        this.options.url = this.element.action;
       }
       if (!this.options.url) {
         throw new Error("No URL provided.");
       }
-      this.previewsContainer = this.options.previewsContainer ? o(this.options.previewsContainer) : this.element;
+      if (!Dropzone.isBrowserSupported()) {
+        return this.options.fallback.call(this);
+      }
+      this.previewsContainer = this.options.previewsContainer ? createElement(this.options.previewsContainer) : this.element;
       this.init();
     }
 
     Dropzone.prototype.init = function() {
-      var capableBrowser, regex, _i, _len, _ref, _ref1;
-      if (this.elementTagName === "form" && this.element.attr("enctype") !== "multipart/form-data") {
-        this.element.attr("enctype", "multipart/form-data");
-      }
-      if (this.element.hasClass("dropzone") && this.element.find(".message").length === 0) {
-        this.element.append(o("<div class=\"default message\"><span>Drop files here to upload</span></div>"));
-      }
-      capableBrowser = true;
-      if (window.File && window.FileReader && window.FileList && window.Blob && window.FormData) {
-        _ref = this.blacklistedBrowsers;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          regex = _ref[_i];
-          if (regex.test(navigator.userAgent)) {
-            capableBrowser = false;
-            continue;
-          }
-        }
-      } else {
-        capableBrowser = false;
-      }
-      if (!capableBrowser) {
-        return this.options.fallback.call(this);
-      }
-      if (this.options.clickable) {
-        this.hiddenFileInput = o("<input type=\"file\" multiple />");
-      }
-      this.files = [];
-      this.filesQueue = [];
-      this.filesProcessing = [];
-      this.URL = (_ref1 = window.URL) != null ? _ref1 : window.webkitURL;
-      this.setupEventListeners();
-      return this.options.init.call(this);
-    };
-
-    Dropzone.prototype.getFallbackForm = function() {
-      var fields;
-      fields = o("<div class=\"fallback-elements\"><input type=\"file\" name=\"" + this.options.paramName + "\" multiple=\"multiple\" /><button type=\"submit\">Upload!</button></div>");
-      if (this.elementTagName !== "FORM") {
-        fields = o("<form action=\"" + this.options.url + "\" enctype=\"multipart/form-data\" method=\"post\"></form>").append(fields);
-      } else {
-        if (!this.element.attr("enctype")) {
-          this.element.attr("enctype", "multipart/form-data");
-        }
-        if (!this.element.attr("method")) {
-          this.element.attr("method", "post");
-        }
-      }
-      return fields;
-    };
-
-    Dropzone.prototype.setupEventListeners = function(initial) {
-      var eventName, noPropagation, _i, _len, _ref,
+      var eventName, noPropagation, _i, _len, _ref, _ref1,
         _this = this;
-      if (initial == null) {
-        initial = true;
+      if (this.element.tagName === "form") {
+        this.element.setAttribute("enctype", "multipart/form-data");
       }
-      if (initial) {
-        _ref = this.events;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          eventName = _ref[_i];
-          this.on(eventName, this.options[eventName]);
-        }
+      if (this.element.classList.contains("dropzone") && !this.element.querySelector(".message")) {
+        this.element.appendChild(createElement("<div class=\"default message\"><span>Drop files here to upload</span></div>"));
       }
-      noPropagation = function(e) {
-        e.stopPropagation();
-        return e.preventDefault();
-      };
-      this.element.on("dragstart.dropzone", function(e) {
-        return _this.emit("dragstart", e);
-      });
-      this.element.on("dragenter.dropzone", function(e) {
-        noPropagation(e);
-        return _this.emit("dragenter", e);
-      });
-      this.element.on("dragover.dropzone", function(e) {
-        noPropagation(e);
-        return _this.emit("dragover", e);
-      });
-      this.element.on("dragleave.dropzone", function(e) {
-        return _this.emit("dragleave", e);
-      });
-      this.element.on("drop.dropzone", function(e) {
-        noPropagation(e);
-        _this.drop(e);
-        return _this.emit("drop", e);
-      });
-      this.element.on("dragend.dropzone", function(e) {
-        return _this.emit("dragend", e);
-      });
       if (this.options.clickable) {
-        this.element.addClass("clickable");
-        this.element.on("click.dropzone", function(evt) {
-          var target;
-          target = o(evt.target);
-          if (target.is(_this.element) || target.is(_this.element.find(".message"))) {
-            return _this.hiddenFileInput.click();
-          }
-        });
-        return this.hiddenFileInput.on("change", function() {
+        this.hiddenFileInput = document.createElement("input");
+        this.hiddenFileInput.setAttribute("type", "file");
+        this.hiddenFileInput.setAttribute("multiple", "multiple");
+        this.hiddenFileInput.addEventListener("change", function() {
           var files;
-          files = _this.hiddenFileInput.get(0).files;
-          _this.emit("selectedfiles", files);
+          files = _this.hiddenFileInput.files;
           if (files.length) {
+            _this.emit("selectedfiles", files);
             return _this.handleFiles(files);
           }
         });
       }
+      this.files = [];
+      this.filesQueue = [];
+      this.filesProcessing = [];
+      this.URL = (_ref = window.URL) != null ? _ref : window.webkitURL;
+      _ref1 = this.events;
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        eventName = _ref1[_i];
+        this.on(eventName, this.options[eventName]);
+      }
+      noPropagation = function(e) {
+        e.stopPropagation();
+        if (e.preventDefault) {
+          return e.preventDefault();
+        } else {
+          return e.returnValue = false;
+        }
+      };
+      this.listeners = {
+        "dragstart": function(e) {
+          return _this.emit("dragstart", e);
+        },
+        "dragenter": function(e) {
+          noPropagation(e);
+          return _this.emit("dragenter", e);
+        },
+        "dragover": function(e) {
+          noPropagation(e);
+          return _this.emit("dragover", e);
+        },
+        "dragleave": function(e) {
+          return _this.emit("dragleave", e);
+        },
+        "drop": function(e) {
+          noPropagation(e);
+          _this.drop(e);
+          return _this.emit("drop", e);
+        },
+        "dragend": function(e) {
+          return _this.emit("dragend", e);
+        },
+        "click": function(evt) {
+          if (!_this.options.clickable) {
+            return;
+          }
+          if (evt.target === _this.element || evt.target === _this.element.querySelector(".message")) {
+            return _this.hiddenFileInput.click();
+          }
+        }
+      };
+      this.enable();
+      return this.options.init.call(this);
+    };
+
+    Dropzone.prototype.getFallbackForm = function() {
+      var fields, form;
+      fields = createElement("<div class=\"fallback-elements\"><input type=\"file\" name=\"" + this.options.paramName + "\" multiple=\"multiple\" /><button type=\"submit\">Upload!</button></div>");
+      if (this.element.tagName !== "FORM") {
+        form = createElement("<form action=\"" + this.options.url + "\" enctype=\"multipart/form-data\" method=\"post\"></form>");
+        form.appendChild(fields);
+      } else {
+        this.element.setAttribute("enctype", "multipart/form-data");
+        this.element.setAttribute("method", "post");
+      }
+      return form != null ? form : fields;
+    };
+
+    Dropzone.prototype.setupEventListeners = function() {
+      var event, listener, _ref, _results;
+      _ref = this.listeners;
+      _results = [];
+      for (event in _ref) {
+        listener = _ref[event];
+        _results.push(this.element.addEventListener(event, listener, false));
+      }
+      return _results;
     };
 
     Dropzone.prototype.removeEventListeners = function() {
-      this.element.off(".dropzone");
-      if (this.options.clickable) {
-        this.element.removeClass("clickable");
-        return this.hiddenFileInput.off();
+      var event, listener, _ref, _results;
+      _ref = this.listeners;
+      _results = [];
+      for (event in _ref) {
+        listener = _ref[event];
+        _results.push(this.element.removeEventListener(event, listener, false));
       }
+      return _results;
     };
 
     Dropzone.prototype.disable = function() {
+      if (this.options.clickable) {
+        this.element.classList.remove("clickable");
+      }
       this.removeEventListeners();
       this.filesProcessing = [];
       return this.filesQueue = [];
     };
 
     Dropzone.prototype.enable = function() {
-      return this.setupEventListeners(false);
+      if (this.options.clickable) {
+        this.element.classList.add("clickable");
+      }
+      return this.setupEventListeners();
     };
 
     Dropzone.prototype.filesize = function(size) {
@@ -704,10 +721,10 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
     Dropzone.prototype.drop = function(e) {
       var files;
-      if (!e.originalEvent.dataTransfer) {
+      if (!e.dataTransfer) {
         return;
       }
-      files = e.originalEvent.dataTransfer.files;
+      files = e.dataTransfer.files;
       this.emit("selectedfiles", files);
       if (files.length) {
         return this.handleFiles(files);
@@ -833,7 +850,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     };
 
     Dropzone.prototype.uploadFile = function(file) {
-      var formData, handleError, input, inputElement, inputName, key, progressObj, value, xhr, _i, _len, _ref, _ref1, _ref2,
+      var formData, handleError, input, inputName, inputType, key, progressObj, value, xhr, _i, _len, _ref, _ref1, _ref2,
         _this = this;
       xhr = new XMLHttpRequest();
       xhr.open("POST", this.options.url, true);
@@ -872,14 +889,14 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
           formData.append(key, value);
         }
       }
-      if (this.elementTagName = "FORM") {
-        _ref2 = this.element.find("input, textarea, select, button");
+      if (this.element.tagName = "FORM") {
+        _ref2 = this.element.querySelectorAll("input, textarea, select, button");
         for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-          inputElement = _ref2[_i];
-          input = o(inputElement);
-          inputName = input.attr("name");
-          if (!input.attr("type") || input.attr("type").toLowerCase() !== "checkbox" || inputElement.checked) {
-            formData.append(input.attr("name"), input.val());
+          input = _ref2[_i];
+          inputName = input.getAttribute("name");
+          inputType = input.getAttribute("type");
+          if (!inputType || inputType.toLowerCase() !== "checkbox" || input.checked) {
+            formData.append(inputName, input.value);
           }
         }
       }
@@ -911,6 +928,47 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
   Dropzone.options = {};
 
+  Dropzone.instances = [];
+
+  Dropzone.forElement = function(element) {
+    var instance, _i, _len, _ref;
+    if (typeof element === "string") {
+      element = document.querySelector(element);
+    }
+    _ref = Dropzone.instances;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      instance = _ref[_i];
+      if (instance.element === element) {
+        return instance;
+      }
+    }
+    return null;
+  };
+
+  Dropzone.blacklistedBrowsers = [/opera.*Macintosh.*version\/12/i];
+
+  Dropzone.isBrowserSupported = function() {
+    var capableBrowser, regex, _i, _len, _ref;
+    capableBrowser = true;
+    if (window.File && window.FileReader && window.FileList && window.Blob && window.FormData) {
+      if (!("classList" in document.createElement("a"))) {
+        capableBrowser = false;
+      } else {
+        _ref = Dropzone.blacklistedBrowsers;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          regex = _ref[_i];
+          if (regex.test(navigator.userAgent)) {
+            capableBrowser = false;
+            continue;
+          }
+        }
+      }
+    } else {
+      capableBrowser = false;
+    }
+    return capableBrowser;
+  };
+
   without = function(list, rejectedItem) {
     var item, _i, _len, _results;
     _results = [];
@@ -929,21 +987,98 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     });
   };
 
-  o.fn.dropzone = function(options) {
-    return this.each(function() {
-      return new Dropzone(this, options);
-    });
+  createElement = function(string) {
+    var div;
+    div = document.createElement("div");
+    div.innerHTML = string;
+    return div.childNodes[0];
   };
 
-  o(function() {
-    return o(".dropzone").dropzone();
-  });
+  if (typeof jQuery !== "undefined" && jQuery !== null) {
+    jQuery.fn.dropzone = function(options) {
+      return this.each(function() {
+        return new Dropzone(this, options);
+      });
+    };
+  }
 
   if (typeof module !== "undefined" && module !== null) {
     module.exports = Dropzone;
   } else {
     window.Dropzone = Dropzone;
   }
+
+  contentLoaded = function(win, fn) {
+    var add, doc, done, init, poll, pre, rem, root, top;
+    done = false;
+    top = true;
+    doc = win.document;
+    root = doc.documentElement;
+    add = (doc.addEventListener ? "addEventListener" : "attachEvent");
+    rem = (doc.addEventListener ? "removeEventListener" : "detachEvent");
+    pre = (doc.addEventListener ? "" : "on");
+    init = function(e) {
+      if (e.type === "readystatechange" && doc.readyState !== "complete") {
+        return;
+      }
+      (e.type === "load" ? win : doc)[rem](pre + e.type, init, false);
+      if (!done && (done = true)) {
+        return fn.call(win, e.type || e);
+      }
+    };
+    poll = function() {
+      try {
+        root.doScroll("left");
+      } catch (e) {
+        setTimeout(poll, 50);
+        return;
+      }
+      return init("poll");
+    };
+    if (doc.readyState !== "complete") {
+      if (doc.createEventObject && root.doScroll) {
+        try {
+          top = !win.frameElement;
+        } catch (_error) {}
+        if (top) {
+          poll();
+        }
+      }
+      doc[add](pre + "DOMContentLoaded", init, false);
+      doc[add](pre + "readystatechange", init, false);
+      return win[add](pre + "load", init, false);
+    }
+  };
+
+  contentLoaded(window, function() {
+    var checkElements, dropzone, dropzones, _i, _len, _results;
+    if (false) {
+      dropzones = document.querySelectorAll(".dropzone");
+    } else {
+      dropzones = [];
+      checkElements = function(elements) {
+        var el, _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = elements.length; _i < _len; _i++) {
+          el = elements[_i];
+          if (/dropzone/.test(el.className)) {
+            _results.push(dropzones.push(el));
+          } else {
+            _results.push(void 0);
+          }
+        }
+        return _results;
+      };
+      checkElements(document.getElementsByTagName("div"));
+      checkElements(document.getElementsByTagName("form"));
+    }
+    _results = [];
+    for (_i = 0, _len = dropzones.length; _i < _len; _i++) {
+      dropzone = dropzones[_i];
+      _results.push(new Dropzone(dropzone));
+    }
+    return _results;
+  });
 
 }).call(this);
 
