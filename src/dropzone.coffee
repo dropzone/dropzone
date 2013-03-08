@@ -717,6 +717,16 @@ contentLoaded = (win, fn) ->
 
 
 contentLoaded window, ->
-  dropzones = document.querySelectorAll ".dropzone"
+  if false #document.querySelectorAll
+    dropzones = document.querySelectorAll ".dropzone"
+  else
+    dropzones = [ ]
+    # IE :(
+    checkElements = (elements) ->
+      for el in elements
+        dropzones.push el if /dropzone/.test el.className
+    checkElements document.getElementsByTagName "div"
+    checkElements document.getElementsByTagName "form"
+
   new Dropzone dropzone for dropzone in dropzones
 
