@@ -13,6 +13,10 @@ Try it out:
 
 (This is just a demo dropzone. Uploaded files are **not** stored.)
 
+
+> Version 2.0 is nearly finished and doesn't require jQuery anymore. Please
+> refer to the section »version 2.0« at the bottom of the page for more information.
+
 </section>
 
 
@@ -400,6 +404,27 @@ out there but the reasons I decided to write my own are the following:
 - Big files should get uploaded without a problem.
 - I wanted a callback for image previews, that don't kill the browser if too many too big images are viewed.
 - I want to use the latest API of browsers. I don't care if it falls back to the normal upload form if the browser is too old.
+
+
+version 2.0
+===========
+
+I will be releasing version 2.0 in a few days/weeks. The implementation is
+finished but I didn't have the time yet to do the required testing.
+
+I have already tested it in:
+
+- the latest Chrome, Firefox and Safari versions (where Dropzone works normally)
+- in Firefox 3.5 and MacOS Opera 12 (where it falls back to the fallback form)
+
+but all IE versions have yet to be done.
+
+If you feel adventurous, I would be very glad if you could download the [`2.0.0-dev`
+version](https://github.com/enyo/dropzone/tree/develop) and report back any
+browser issues you may encounter. In general the Dropzone should either work
+completely or fall back to the fallback form.
+
+Thank you.
 
 </section>
 
