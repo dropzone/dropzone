@@ -116,6 +116,10 @@ class Dropzone extends Em
     accept: (file, done) -> done()
 
 
+    # Called when dropzone initialized
+    # You can add event listeners here
+    init: -> o.noop
+
     # Called when the browser does not support drag and drop
     fallback: ->
       @element.addClass "browser-not-supported"
@@ -290,6 +294,7 @@ class Dropzone extends Em
     @filesProcessing = [] # The files currently processed
     @URL = window.URL ? window.webkitURL
     @setupEventListeners()
+    @options.init.call @
 
   # Returns a form that can be used as fallback if the browser does not support DragnDrop
   #
