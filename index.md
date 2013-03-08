@@ -424,6 +424,11 @@ version](https://github.com/enyo/dropzone/tree/develop) and report back any
 browser issues you may encounter. In general the Dropzone should either work
 completely or fall back to the fallback form.
 
+The API for Version 2.0 stayed the same, except for a few details:
+
+- If you use `new Dropzone(element)` the `element` has to be a raw `HTMLElement` now instead of a jQuery object.
+- To get an existing dropzone for an element use `Dropzone.forElement(element)` now instead of `$(element).data('dropzone')`
+
 Thank you.
 
 </section>
