@@ -439,13 +439,16 @@ article > header #social-buttons {
 article > header #social-buttons .social-button {
   display: inline-block;
 }
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 600px) {
   article > header #social-buttons .social-button {
     display: block;
   }
 }
 article > header #social-buttons .twitter-share-button {
   margin-left: 20px;
+}
+article > header #social-buttons .facebook-social-button {
+  margin-right: 20px;
 }
 article > header #social-buttons .fb-like span {
   vertical-align: top;
