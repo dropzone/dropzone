@@ -104,12 +104,18 @@ class Dropzone extends Em
 
     # Called when the browser does not support drag and drop
     fallback: ->
-      # TODO
-      @element.addClass "browser-not-supported"
-      @element.find(".message").removeClass "default"
-      @element.find(".message span").html "Your browser does not support drag'n'drop file uploads."
-      @element.append """Please use the fallback form below to upload your files like in the olden days.</p>"""
-      @element.append @getFallbackForm()
+      # This code should pass in IE6... :(
+      @element.className = "#{@element.className} browser-not-supported"
+
+      for child in @element.getElementsByTagName "div"
+        if /message/.test child.className
+          child.className = "message" # Removes the 'default' class
+          span = child.getElementsByTagName("span")[0]
+          span.textContent = "Your browser does not support drag'n'drop file uploads." if span
+          @element.appendChild createElement """<p>Please use the fallback form below to upload your files like in the olden days.</p>"""
+          continue
+      
+      @element.appendChild @getFallbackForm()
     
 
     ###
@@ -220,11 +226,6 @@ class Dropzone extends Em
 
     throw new Error "Dropzone already attached." if Dropzone.forElement @element
 
-    
-
-    # If the browser failed, just call the fallback and leave
-    return @options.fallback.call this unless Dropzone.isBrowserSupported()
-
 
     # Get the `Dropzone.options.elementId` for this element if it exists
     elementId = @element.id
@@ -236,10 +237,15 @@ class Dropzone extends Em
       target
 
     @options = extend { }, @defaultOptions, elementOptions, options ? { }
-    
+
+
     @options.url = @element.action unless @options.url?
 
     throw new Error "No URL provided." unless @options.url
+
+    # If the browser failed, just call the fallback and leave
+    return @options.fallback.call this unless Dropzone.isBrowserSupported()
+
 
     @previewsContainer = if @options.previewsContainer then createElement(@options.previewsContainer) else @element
 
@@ -316,14 +322,16 @@ class Dropzone extends Em
   #
   # If the dropzone is already a form, only the input field and button are returned. Otherwise a complete form element is provided.
   getFallbackForm: ->
-    fields = o """<div class="fallback-elements"><input type="file" name="#{@options.paramName}" multiple="multiple" /><button type="submit">Upload!</button></div>"""
+    # This code has to pass in IE6 :(
+    fields = createElement """<div class="fallback-elements"><input type="file" name="#{@options.paramName}" multiple="multiple" /><button type="submit">Upload!</button></div>"""
     if @element.tagName isnt "FORM"
-      fields = o("""<form action="#{@options.url}" enctype="multipart/form-data" method="post"></form>""").append fields
+      form = createElement("""<form action="#{@options.url}" enctype="multipart/form-data" method="post"></form>""")
+      form.appendChild fields
     else
       # Make sure that the enctype and method attributes are set properly
-      @element.attr "enctype", "multipart/form-data" unless @element.attr "enctype"
-      @element.attr "method", "post" unless @element.attr "method"
-    fields
+      @element.setAttribute "enctype", "multipart/form-data"
+      @element.setAttribute "method", "post"
+    form ? fields
 
   # Activates all listeners stored in @listeners
   setupEventListeners: ->
@@ -642,9 +650,6 @@ if jQuery?
   jQuery.fn.dropzone = (options) ->
     this.each -> new Dropzone this, options
 
-  jQuery -> jQuery(".dropzone").dropzone()
-
-
 
 
 
@@ -652,4 +657,66 @@ if module?
   module.exports = Dropzone
 else
   window.Dropzone = Dropzone
+
+
+
+
+
+
+
+
+
+
+
+#!
+# * contentloaded.js
+# *
+# * Author: Diego Perini (diego.perini at gmail.com)
+# * Summary: cross-browser wrapper for DOMContentLoaded
+# * Updated: 20101020
+# * License: MIT
+# * Version: 1.2
+# *
+# * URL:
+# * http://javascript.nwbox.com/ContentLoaded/
+# * http://javascript.nwbox.com/ContentLoaded/MIT-LICENSE
+# *
+# 
+
+# @win window reference
+# @fn function reference
+contentLoaded = (win, fn) ->
+  done = false
+  top = true
+  doc = win.document
+  root = doc.documentElement
+  add = (if doc.addEventListener then "addEventListener" else "attachEvent")
+  rem = (if doc.addEventListener then "removeEventListener" else "detachEvent")
+  pre = (if doc.addEventListener then "" else "on")
+  init = (e) ->
+    return  if e.type is "readystatechange" and doc.readyState isnt "complete"
+    ((if e.type is "load" then win else doc))[rem] pre + e.type, init, false
+    fn.call win, e.type or e  if not done and (done = true)
+
+  poll = ->
+    try
+      root.doScroll "left"
+    catch e
+      setTimeout poll, 50
+      return
+    init "poll"
+
+  unless doc.readyState is "complete"
+    if doc.createEventObject and root.doScroll
+      try
+        top = not win.frameElement
+      poll()  if top
+    doc[add] pre + "DOMContentLoaded", init, false
+    doc[add] pre + "readystatechange", init, false
+    win[add] pre + "load", init, false
+
+
+contentLoaded window, ->
+  dropzones = document.querySelectorAll ".dropzone"
+  new Dropzone dropzone for dropzone in dropzones
 
