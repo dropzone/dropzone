@@ -182,6 +182,7 @@ The valid options are:
 | `maxThumbnailFilesize`  | in MB. When the filename exceeds this limit, the thumbnail will not be generated
 | `thumbnailWidth`        |
 | `thumbnailHeight`       |
+| `init`                  | is a function that gets called when Dropzone is initialized. You can setup event listeners inside this function.
 | `accept`                | is a function that gets a [file](https://developer.mozilla.org/en-US/docs/DOM/File) and a `done` function as parameter. If the done function is invoked without a parameter, the file will be processed. If you pass an error message it will be displayed and the file will not be uploaded.
 | `enqueueForUpload`      | When false, dropped files aren't uploaded automatically. See below for more info on enqueuing file uploads.
 | `previewTemplate`       | is a string that contains the template used for each dropped image. Change it to fulfill your needs but make sure to properly provide all elements.
@@ -227,6 +228,13 @@ var myDropzone = $("#my-dropzone").data("dropzone");
 myDropzone.on("addedfile", function(file) {
   /* Maybe display some more file information on your page */
 });
+
+// Or from within a configuration:
+Dropzone.options.myAwesomeFropzone = {
+  init: function() {
+    this.on("addedfile", function(file) { alert("Added file."); });
+  }
+};
 {% endhighlight %}
 
 
