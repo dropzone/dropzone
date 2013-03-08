@@ -232,6 +232,9 @@ Emitter.prototype.hasListeners = function(event){
       accept: function(file, done) {
         return done();
       },
+      init: function() {
+        return o.noop;
+      },
       fallback: function() {
         this.element.addClass("browser-not-supported");
         this.element.find(".message").removeClass("default");
@@ -373,7 +376,8 @@ Emitter.prototype.hasListeners = function(event){
       this.filesQueue = [];
       this.filesProcessing = [];
       this.URL = (_ref1 = window.URL) != null ? _ref1 : window.webkitURL;
-      return this.setupEventListeners();
+      this.setupEventListeners();
+      return this.options.init.call(this);
     };
 
     Dropzone.prototype.getFallbackForm = function() {
