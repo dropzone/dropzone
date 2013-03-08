@@ -586,6 +586,7 @@ Dropzone.instances = [ ]
 
 # Returns the dropzone for given element if any
 Dropzone.forElement = (element) ->
+  element = document.querySelector element if typeof element == "string"
   for instance in Dropzone.instances
     return instance if instance.element == element
   return null
