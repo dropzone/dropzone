@@ -70,6 +70,7 @@ require.aliases = {};
  */
 
 require.resolve = function(path) {
+  if (path.charAt(0) === '/') path = path.slice(1);
   var index = path + '/index.js';
 
   var paths = [
@@ -182,17 +183,18 @@ require.relative = function(parent) {
    */
 
   localRequire.resolve = function(path) {
+    var c = path.charAt(0);
+    if ('/' == c) return path.slice(1);
+    if ('.' == c) return require.normalize(p, path);
+
     // resolve deps by returning
     // the dep in the nearest "deps"
     // directory
-    if ('.' != path.charAt(0)) {
-      var segs = parent.split('/');
-      var i = lastIndexOf(segs, 'deps') + 1;
-      if (!i) i = 0;
-      path = segs.slice(0, i + 1).join('/') + '/deps/' + path;
-      return path;
-    }
-    return require.normalize(p, path);
+    var segs = parent.split('/');
+    var i = lastIndexOf(segs, 'deps') + 1;
+    if (!i) i = 0;
+    path = segs.slice(0, i + 1).join('/') + '/deps/' + path;
+    return path;
   };
 
   /**
@@ -409,7 +411,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
     __extends(Dropzone, _super);
 
-    Dropzone.prototype.version = "1.3.10";
+    Dropzone.prototype.version = "1.3.11";
 
     /*
       This is a list of all available events you can register on a dropzone object.
@@ -551,8 +553,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     }
 
     Dropzone.prototype.init = function() {
-      var capableBrowser, regex, _i, _len, _ref, _ref1,
-        _this = this;
+      var capableBrowser, regex, _i, _len, _ref, _ref1;
       if (this.elementTagName === "form" && this.element.attr("enctype") !== "multipart/form-data") {
         this.element.attr("enctype", "multipart/form-data");
       }
@@ -576,23 +577,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         return this.options.fallback.call(this);
       }
       if (this.options.clickable) {
-        this.element.addClass("clickable");
         this.hiddenFileInput = o("<input type=\"file\" multiple />");
-        this.element.click(function(evt) {
-          var target;
-          target = o(evt.target);
-          if (target.is(_this.element) || target.is(_this.element.find(".message"))) {
-            return _this.hiddenFileInput.click();
-          }
-        });
-        this.hiddenFileInput.change(function() {
-          var files;
-          files = _this.hiddenFileInput.get(0).files;
-          _this.emit("selectedfiles", files);
-          if (files.length) {
-            return _this.handleFiles(files);
-          }
-        });
       }
       this.files = [];
       this.filesQueue = [];
@@ -617,13 +602,18 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       return fields;
     };
 
-    Dropzone.prototype.setupEventListeners = function() {
+    Dropzone.prototype.setupEventListeners = function(initial) {
       var eventName, noPropagation, _i, _len, _ref,
         _this = this;
-      _ref = this.events;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        eventName = _ref[_i];
-        this.on(eventName, this.options[eventName]);
+      if (initial == null) {
+        initial = true;
+      }
+      if (initial) {
+        _ref = this.events;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          eventName = _ref[_i];
+          this.on(eventName, this.options[eventName]);
+        }
       }
       noPropagation = function(e) {
         e.stopPropagation();
@@ -648,20 +638,45 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         _this.drop(e);
         return _this.emit("drop", e);
       });
-      return this.element.on("dragend.dropzone", function(e) {
+      this.element.on("dragend.dropzone", function(e) {
         return _this.emit("dragend", e);
       });
+      if (this.options.clickable) {
+        this.element.addClass("clickable");
+        this.element.on("click.dropzone", function(evt) {
+          var target;
+          target = o(evt.target);
+          if (target.is(_this.element) || target.is(_this.element.find(".message"))) {
+            return _this.hiddenFileInput.click();
+          }
+        });
+        return this.hiddenFileInput.on("change", function() {
+          var files;
+          files = _this.hiddenFileInput.get(0).files;
+          _this.emit("selectedfiles", files);
+          if (files.length) {
+            return _this.handleFiles(files);
+          }
+        });
+      }
     };
 
     Dropzone.prototype.removeEventListeners = function() {
-      return this.element.off(".dropzone");
+      this.element.off(".dropzone");
+      if (this.options.clickable) {
+        this.element.removeClass("clickable");
+        return this.hiddenFileInput.off();
+      }
     };
 
     Dropzone.prototype.disable = function() {
       this.removeEventListeners();
-      this.files = [];
       this.filesProcessing = [];
       return this.filesQueue = [];
+    };
+
+    Dropzone.prototype.enable = function() {
+      return this.setupEventListeners(false);
     };
 
     Dropzone.prototype.filesize = function(size) {

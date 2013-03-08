@@ -32,7 +32,7 @@ Em = Emitter ? require "emitter" # Can't be the same name because it will lead t
 
 class Dropzone extends Em
 
-  version: "1.3.10"
+  version: "1.3.11"
 
   ###
   This is a list of all available events you can register on a dropzone object.
@@ -282,20 +282,8 @@ class Dropzone extends Em
     # If the browser failed, just call the fallback and leave
     return @options.fallback.call this unless capableBrowser
 
-
     if @options.clickable
-      @element.addClass "clickable"
       @hiddenFileInput = o """<input type="file" multiple />"""
-      @element.click (evt) =>
-        target = o evt.target
-        # Only the actual dropzone or the message element should trigger file selection
-        if target.is(@element) or target.is(@element.find(".message"))
-          @hiddenFileInput.click() # Forward the click
-      @hiddenFileInput.change =>
-        files = @hiddenFileInput.get(0).files
-        @emit "selectedfiles", files
-        @handleFiles files if files.length
-
 
     @files = [] # All files
     @filesQueue = [] # The files that still have to be processed
@@ -316,10 +304,11 @@ class Dropzone extends Em
       @element.attr "method", "post" unless @element.attr "method"
     fields
 
-  setupEventListeners: ->
+  setupEventListeners: (initial = yes) ->
 
-    # First setup all event listeners on the dropzone object itself.
-    @on eventName, @options[eventName] for eventName in @events
+    if initial
+      # First setup all event listeners on the dropzone object itself.
+      @on eventName, @options[eventName] for eventName in @events
 
     noPropagation = (e) ->
       e.stopPropagation()
@@ -347,14 +336,33 @@ class Dropzone extends Em
     @element.on "dragend.dropzone", (e) =>
       @emit "dragend", e
 
-  removeEventListeners: -> @element.off ".dropzone"
+    if @options.clickable
+      @element.addClass "clickable"
+      @element.on "click.dropzone", (evt) =>
+        target = o evt.target
+        # Only the actual dropzone or the message element should trigger file selection
+        if target.is(@element) or target.is(@element.find(".message"))
+          @hiddenFileInput.click() # Forward the click
+      @hiddenFileInput.on "change", =>
+        files = @hiddenFileInput.get(0).files
+        @emit "selectedfiles", files
+        @handleFiles files if files.length
+
+
+  removeEventListeners: ->
+    @element.off ".dropzone"
+    if @options.clickable
+      @element.removeClass "clickable"
+      @hiddenFileInput.off()
 
   # Removes all event listeners and clears the arrays.
   disable: ->
     @removeEventListeners()
-    @files = [ ]
     @filesProcessing = [ ]
     @filesQueue = [ ]
+
+  enable: ->
+    @setupEventListeners no # not initial
 
   # Returns a nicely formatted filesize
   filesize: (size) ->
