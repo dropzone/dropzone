@@ -436,6 +436,9 @@ article > header #social-buttons {
   margin: 1em 0 2em 0;
   text-align: center;
 }
+article > header #social-buttons a {
+  background: none;
+}
 article > header #social-buttons .social-button {
   display: inline-block;
 }
