@@ -419,11 +419,14 @@ I have already tested it in:
 
 but all IE versions have yet to be done.
 
-If you feel adventurous, I would be very glad if you could download the [`2.0.0-dev`
-version](https://github.com/enyo/dropzone/tree/develop) and report back any
-browser issues you may encounter. In general the Dropzone should either work
-completely or fall back to the fallback form. (See the section »browser support«
+There is a [Version 2.0 test page](/test.html) and I would be happy if you could
+report back any browser issues you may encounter. In general the Dropzone should
+either completely work or fall back to the fallback form. (See the section »browser support«
 for a list of fully supported browsers.)
+
+If you feel adventurous you can download the [`2.0.0-dev`
+version](https://github.com/enyo/dropzone/tree/develop) and use it in your project.
+
 
 The API for Version 2.0 stayed the same, except for a few details:
 
