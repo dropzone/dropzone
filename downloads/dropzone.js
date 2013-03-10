@@ -538,7 +538,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       if (typeof this.element === "string") {
         this.element = document.querySelector(this.element);
       }
-      if (!(this.element instanceof HTMLElement)) {
+      if (!(this.element instanceof (typeof HTMLElement !== "undefined" && HTMLElement !== null ? HTMLElement : Element))) {
         throw new Error("Invalid dropzone element.");
       }
       if (Dropzone.forElement(this.element)) {
