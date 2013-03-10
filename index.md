@@ -380,7 +380,7 @@ browser support
 - Firefox 4+
 - IE 10+
 - Opera 12+ (Currently disabled for MacOS because their API is buggy)
-- Safari 5+
+- Safari 6+
 
 For all the other browsers, dropzone provides an oldschool file input fallback.
 
