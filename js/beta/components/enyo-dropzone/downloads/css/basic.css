@@ -1,0 +1,154 @@
+.dropzone,
+.dropzone *,
+.dropzone-previews,
+.dropzone-previews * {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.dropzone {
+  position: relative;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: rgba(0,0,0,0.02);
+  padding: 1em;
+}
+.dropzone.clickable {
+  cursor: pointer;
+}
+.dropzone.clickable .message {
+  cursor: pointer;
+}
+.dropzone.clickable * {
+  cursor: default;
+}
+.dropzone .message {
+  opacity: 1;
+  -ms-filter: none;
+  filter: none;
+}
+.dropzone.drag-hover {
+  border-color: rgba(0,0,0,0.15);
+  background: rgba(0,0,0,0.04);
+}
+.dropzone.started .message {
+  display: none;
+}
+.dropzone .preview,
+.dropzone-previews .preview {
+  background: rgba(255,255,255,0.8);
+  position: relative;
+  display: inline-block;
+  margin: 17px;
+  vertical-align: top;
+  border: 1px solid #acacac;
+  padding: 6px 6px 6px 6px;
+}
+.dropzone .preview .details,
+.dropzone-previews .preview .details {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  background: #ebebeb;
+  padding: 5px;
+  margin-bottom: 22px;
+}
+.dropzone .preview .details .filename,
+.dropzone-previews .preview .details .filename {
+  overflow: hidden;
+  height: 100%;
+}
+.dropzone .preview .details img,
+.dropzone-previews .preview .details img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100px;
+  height: 100px;
+}
+.dropzone .preview .details .size,
+.dropzone-previews .preview .details .size {
+  position: absolute;
+  bottom: -28px;
+  left: 3px;
+  height: 28px;
+  line-height: 28px;
+}
+.dropzone .preview.error .error-mark,
+.dropzone-previews .preview.error .error-mark {
+  display: block;
+}
+.dropzone .preview.success .success-mark,
+.dropzone-previews .preview.success .success-mark {
+  display: block;
+}
+.dropzone .preview:hover .details img,
+.dropzone-previews .preview:hover .details img {
+  display: none;
+}
+.dropzone .preview:hover .success-mark,
+.dropzone-previews .preview:hover .success-mark,
+.dropzone .preview:hover .error-mark,
+.dropzone-previews .preview:hover .error-mark {
+  display: none;
+}
+.dropzone .preview .success-mark,
+.dropzone-previews .preview .success-mark,
+.dropzone .preview .error-mark,
+.dropzone-previews .preview .error-mark {
+  display: none;
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  font-size: 30px;
+  text-align: center;
+  right: -10px;
+  top: -10px;
+}
+.dropzone .preview .success-mark,
+.dropzone-previews .preview .success-mark {
+  color: #8cc657;
+}
+.dropzone .preview .error-mark,
+.dropzone-previews .preview .error-mark {
+  color: #ee162d;
+}
+.dropzone .preview .progress,
+.dropzone-previews .preview .progress {
+  position: absolute;
+  top: 100px;
+  left: 6px;
+  right: 6px;
+  height: 6px;
+  background: #d7d7d7;
+  display: none;
+}
+.dropzone .preview .progress .upload,
+.dropzone-previews .preview .progress .upload {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  background-color: #8cc657;
+}
+.dropzone .preview.processing .progress,
+.dropzone-previews .preview.processing .progress {
+  display: block;
+}
+.dropzone .preview .error-message,
+.dropzone-previews .preview .error-message {
+  display: none;
+  position: absolute;
+  top: -5px;
+  left: -20px;
+  background: rgba(245,245,245,0.8);
+  padding: 8px 10px;
+  color: #800;
+  min-width: 140px;
+  max-width: 500px;
+  z-index: 500;
+}
+.dropzone .preview:hover.error .error-message,
+.dropzone-previews .preview:hover.error .error-message {
+  display: block;
+}

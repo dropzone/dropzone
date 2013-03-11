@@ -13,6 +13,10 @@ Try it out:
 
 (This is just a demo dropzone. Uploaded files are **not** stored.)
 
+
+> Version 2.0 is nearly finished and doesn't require jQuery anymore. Please
+> refer to the section »version 2.0« at the bottom of the page for more information.
+
 </section>
 
 
@@ -401,7 +405,7 @@ browser support
 - Firefox 4+
 - IE 10+
 - Opera 12+ (Currently disabled for MacOS because their API is buggy)
-- Safari 5+
+- Safari 6+
 
 For all the other browsers, dropzone provides an oldschool file input fallback.
 
@@ -437,6 +441,36 @@ out there but the reasons I decided to write my own are the following:
 - Big files should get uploaded without a problem.
 - I wanted a callback for image previews, that don't kill the browser if too many too big images are viewed.
 - I want to use the latest API of browsers. I don't care if it falls back to the normal upload form if the browser is too old.
+
+
+version 2.0
+===========
+
+I will be releasing version 2.0 in a few days/weeks. The implementation is
+finished but I didn't have the time yet to do the required testing.
+
+I have already tested it in:
+
+- the latest Chrome, Firefox and Safari versions (where Dropzone works normally)
+- in Firefox 3.5 and MacOS Opera 12 (where it falls back to the fallback form)
+
+but all IE versions have yet to be done.
+
+There is a [Version 2.0 test page](/test.html) and I would be happy if you could
+report back any browser issues you may encounter. In general the Dropzone should
+either completely work or fall back to the fallback form. (See the section »browser support«
+for a list of fully supported browsers.)
+
+If you feel adventurous you can download the [`2.0.0-dev`
+version](https://github.com/enyo/dropzone/tree/develop) and use it in your project.
+
+
+The API for Version 2.0 stayed the same, except for a few details:
+
+- If you use `new Dropzone(element)` the `element` has to be a raw `HTMLElement` now instead of a jQuery object.
+- To get an existing dropzone for an element use `Dropzone.forElement(element)` now instead of `$(element).data('dropzone')`
+
+Thank you.
 
 </section>
 
