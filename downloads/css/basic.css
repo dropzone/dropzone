@@ -41,7 +41,7 @@
   margin: 17px;
   vertical-align: top;
   border: 1px solid #acacac;
-  padding: 6px 6px 28px 6px;
+  padding: 6px 6px 6px 6px;
 }
 .dropzone .preview .details,
 .dropzone-previews .preview .details {
@@ -50,6 +50,7 @@
   position: relative;
   background: #ebebeb;
   padding: 5px;
+  margin-bottom: 22px;
 }
 .dropzone .preview .details .filename,
 .dropzone-previews .preview .details .filename {
