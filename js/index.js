@@ -6,7 +6,7 @@ var Dropzone = require("dropzone"),
 Dropzone.options.demoUpload = {
   fallback: function() {
     Dropzone.prototype.defaultOptions.fallback.call(this);
-    this.element.append("<p>This is what the file uploads with Dropzone look like in modern browsers:<br /><img src=\"/images/preview.png\" alt=\"preview\" /></p>");
+    o(this.element).append("<p>This is what the file uploads with Dropzone look like in modern browsers:<br /><img src=\"/images/preview.png\" alt=\"preview\" /></p>");
   }
 };
 

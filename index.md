@@ -14,8 +14,8 @@ Try it out:
 (This is just a demo dropzone. Uploaded files are **not** stored.)
 
 
-> Version 2.0 is nearly finished and doesn't require jQuery anymore. Please
-> refer to the section »version 2.0« at the bottom of the page for more information.
+> Starting with Version 2.0 Dropzone no longer depends on jQuery!
+> See the section "version 2.0" at the bottom of the page for more information.
 
 </section>
 
@@ -444,31 +444,39 @@ out there but the reasons I decided to write my own are the following:
 version 2.0
 ===========
 
-I will be releasing version 2.0 in a few days/weeks. The implementation is
-finished but I didn't have the time yet to do the required testing.
+Starting with version 2.0, Dropzone no longer depends on jQuery, but Dropzone
+still registers itself as a jQuery module if available.
 
-I have already tested it in:
+That means that creating your Dropzones like this still works:
 
-- the latest Chrome, Firefox and Safari versions (where Dropzone works normally)
-- in Firefox 3.5 and MacOS Opera 12 (where it falls back to the fallback form)
+```js
+$("#my-dropzone").dropzone({ /* options */ });
+```
 
-but all IE versions have yet to be done.
+If you create your Dropzones with the normal constructor though, you have to
+pass either the raw HTMLElement, or a selector string. So those versions all
+work:
 
-There is a [Version 2.0 test page](/test.html) and I would be happy if you could
-report back any browser issues you may encounter. In general the Dropzone should
-either completely work or fall back to the fallback form. (See the section »browser support«
-for a list of fully supported browsers.)
+```js
+// With jQuery
+new Dropzone($("#my-dropzone").get(0));
+// Without jQuery
+new Dropzone("#my-dropzone");
+new Dropzone(document.querySelector("#my-dropzone"));
+```
 
-If you feel adventurous you can download the [`2.0.0-dev`
-version](https://github.com/enyo/dropzone/tree/develop) and use it in your project.
+Another thing that changed, is that Dropzone no longer stores it's instances
+inside the element's data property. So to get a dropzone for an element do this
+now:
 
-
-The API for Version 2.0 stayed the same, except for a few details:
-
-- If you use `new Dropzone(element)` the `element` has to be a raw `HTMLElement` now instead of a jQuery object.
-- To get an existing dropzone for an element use `Dropzone.forElement(element)` now instead of `$(element).data('dropzone')`
-
-Thank you.
+```js
+// DEPRECATED, do not use:
+$("#my-dropzone").data("dropzone"); // won't work anymore
+// Do this now:
+Dropzone.forElement(element); // Providing a raw HTMLElement
+// or
+Dropzone.forElement("#my-dropzone"); // Providing a selector string.
+```
 
 </section>
 
