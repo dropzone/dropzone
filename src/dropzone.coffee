@@ -269,6 +269,8 @@ class Dropzone extends Em
       @hiddenFileInput = document.createElement "input"
       @hiddenFileInput.setAttribute "type", "file"
       @hiddenFileInput.setAttribute "multiple", "multiple"
+      @hiddenFileInput.style.display = "none"
+      document.body.appendChild @hiddenFileInput
       @hiddenFileInput.addEventListener "change", =>
         files = @hiddenFileInput.files
         if files.length
