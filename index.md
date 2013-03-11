@@ -123,7 +123,9 @@ Typically this will look like this:
 <form action="/file-upload"
       class="dropzone">
   <div class="fallback">
-    <input type="file" multiple />
+    <input name="file"
+           type="file"
+           multiple />
   </div>
 </form>
 ```
