@@ -227,6 +227,9 @@ Emitter.prototype.hasListeners = function(event){
       clickable: true,
       enqueueForUpload: true,
       previewsContainer: null,
+      dictDefaultMessage: "Drop files here to upload",
+      dictFallbackMessage: "Your browser does not support drag'n'drop file uploads.",
+      dictFallbackText: "Please use the fallback form below to upload your files like in the olden days.",
       accept: function(file, done) {
         return done();
       },
@@ -251,9 +254,8 @@ Emitter.prototype.hasListeners = function(event){
         }
         span = messageElement.getElementsByTagName("span")[0];
         if (span) {
-          span.textContent = "Your browser does not support drag'n'drop file uploads.";
+          span.textContent = this.options.dictFallbackMessage;
         }
-        this.element.appendChild(createElement("<p>Please use the fallback form below to upload your files like in the olden days.</p>"));
         return this.element.appendChild(this.getFallbackForm());
       },
       /*
@@ -322,13 +324,13 @@ Emitter.prototype.hasListeners = function(event){
     };
 
     function Dropzone(element, options) {
-      var elementId, elementOptions, extend, _ref;
+      var elementId, elementOptions, extend, fallback, _ref;
       this.element = element;
       this.defaultOptions.previewTemplate = this.defaultOptions.previewTemplate.replace(/\n*/g, "");
       if (typeof this.element === "string") {
         this.element = document.querySelector(this.element);
       }
-      if (!(this.element instanceof (typeof HTMLElement !== "undefined" && HTMLElement !== null ? HTMLElement : Element))) {
+      if (!(this.element && (this.element.nodeType != null))) {
         throw new Error("Invalid dropzone element.");
       }
       if (Dropzone.forElement(this.element)) {
@@ -358,6 +360,9 @@ Emitter.prototype.hasListeners = function(event){
       if (!Dropzone.isBrowserSupported()) {
         return this.options.fallback.call(this);
       }
+      if (fallback = this.getExistingFallback()) {
+        fallback.remove();
+      }
       this.previewsContainer = this.options.previewsContainer ? createElement(this.options.previewsContainer) : this.element;
       this.init();
     }
@@ -369,12 +374,14 @@ Emitter.prototype.hasListeners = function(event){
         this.element.setAttribute("enctype", "multipart/form-data");
       }
       if (this.element.classList.contains("dropzone") && !this.element.querySelector(".message")) {
-        this.element.appendChild(createElement("<div class=\"default message\"><span>Drop files here to upload</span></div>"));
+        this.element.appendChild(createElement("<div class=\"default message\"><span>" + this.options.dictDefaultMessage + "</span></div>"));
       }
       if (this.options.clickable) {
         this.hiddenFileInput = document.createElement("input");
         this.hiddenFileInput.setAttribute("type", "file");
         this.hiddenFileInput.setAttribute("multiple", "multiple");
+        this.hiddenFileInput.style.display = "none";
+        document.body.appendChild(this.hiddenFileInput);
         this.hiddenFileInput.addEventListener("change", function() {
           var files;
           files = _this.hiddenFileInput.files;
@@ -438,8 +445,16 @@ Emitter.prototype.hasListeners = function(event){
     };
 
     Dropzone.prototype.getFallbackForm = function() {
-      var fields, form;
-      fields = createElement("<div class=\"fallback-elements\"><input type=\"file\" name=\"" + this.options.paramName + "\" multiple=\"multiple\" /><button type=\"submit\">Upload!</button></div>");
+      var existingFallback, fields, fieldsString, form;
+      if (existingFallback = this.getExistingFallback()) {
+        return existingFallback;
+      }
+      fieldsString = "<div class=\"fallback\">";
+      if (this.options.dictFallbackText) {
+        fieldsString += "<p>" + this.options.dictFallbackText + "</p>";
+      }
+      fieldsString += "<input type=\"file\" name=\"" + this.options.paramName + "\" multiple=\"multiple\" /><button type=\"submit\">Upload!</button></div>";
+      fields = createElement(fieldsString);
       if (this.element.tagName !== "FORM") {
         form = createElement("<form action=\"" + this.options.url + "\" enctype=\"multipart/form-data\" method=\"post\"></form>");
         form.appendChild(fields);
@@ -448,6 +463,26 @@ Emitter.prototype.hasListeners = function(event){
         this.element.setAttribute("method", "post");
       }
       return form != null ? form : fields;
+    };
+
+    Dropzone.prototype.getExistingFallback = function() {
+      var fallback, getFallback, tagName, _i, _len, _ref;
+      getFallback = function(elements) {
+        var el, _i, _len;
+        for (_i = 0, _len = elements.length; _i < _len; _i++) {
+          el = elements[_i];
+          if (/fallback/.test(el.className)) {
+            return el;
+          }
+        }
+      };
+      _ref = ["div", "form"];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        tagName = _ref[_i];
+        if (fallback = getFallback(this.element.getElementsByTagName("div"))) {
+          return fallback;
+        }
+      }
     };
 
     Dropzone.prototype.setupEventListeners = function() {
