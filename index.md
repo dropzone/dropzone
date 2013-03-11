@@ -22,10 +22,9 @@ Installation
 ============
 
 Download the standalone [dropzone.js](https://raw.github.com/enyo/dropzone/master/downloads/dropzone.js)
-and include it with jQuery like this:
+and include it like this:
 
 ```html
-<script src="./path/to/jquery/1.8/jquery.min.js"></script>
 <script src="./path/to/dropzone.js"></script>
 ```
 
@@ -112,20 +111,41 @@ with the option `paramName`.
 
 > If you're using component don't forget to `require("dropzone");` otherwise it won't be activated.
 
+
+If you want your file uploads to work even without JavaScript, you can include
+an element with the class `fallback` that dropzone will remove if the browser
+is supported. If the browser isn't supported, Dropzone will not create fallback
+elements if there is a fallback element already provided.
+
+Typically this will look like this:
+
+```html
+<form action="/file-upload"
+      class="dropzone">
+  <div class="fallback">
+    <input type="file" multiple />
+  </div>
+</form>
+```
+
+
+
 Create dropzones programmatically
 ---------------------------------
 
 Alternatively you can create dropzones programmaticaly (even on non `form`
-elements) in two ways:
+elements) by instantiating the `Dropzone` class
 
-- either with jQuery, or by simply
-- instantiating the `Dropzone` class
+```js
+// Dropzone class:
+var myDropzone = new Dropzone($("div#myId"), { url: "/file/post"})
+```
+
+or if you use jQuery, you can use the jQuery plugin Dropzone ships with:
 
 ```js
 // jQuery
 $("div#myId").dropzone({ url: "/file/post" });
-// Dropzone class:
-var myDropzone = new Dropzone($("div#myId"), { url: "/file/post"})
 ```
 
 > Don't forget to specify an `url` option if you're not using a form element,
@@ -176,7 +196,7 @@ The valid options are:
 | `parallelUploads`       | How many file uploads to process in parallel (See the *Enqueuing file uploads* section for more info)
 | `maxFilesize`           | in MB
 | `paramName`             | The name of the file param that gets transferred
-| `previewsContainer`     | defines where to display the file previews – if `null` the Dropzone element is used. Can be a jQuery object or a selector. The element should have the `dropzone-previews` class so the previews are displayed properly.
+| `previewsContainer`     | defines where to display the file previews – if `null` the Dropzone element is used. Can be an HTMLElement or a selector. The element should have the `dropzone-previews` class so the previews are displayed properly.
 | `clickable`             | Whether the dropzone should be clickable. Defaults to `true`
 | `createImageThumbnails` |
 | `maxThumbnailFilesize`  | in MB. When the filename exceeds this limit, the thumbnail will not be generated
@@ -240,7 +260,7 @@ Dropzone.options.myAwesomeFropzone = {
 
 Available events:
 
-All of these receive the [*jQuery* event](http://api.jquery.com/category/events/event-object/) as first parameter:
+All of these receive the [event](https://developer.mozilla.org/en-US/docs/DOM/event) as first parameter:
 
 
 | Parameter   | Description
@@ -380,6 +400,17 @@ browser support
 
 For all the other browsers, dropzone provides an oldschool file input fallback.
 
+As a side note: I have received various «complaints» about not supporting
+earlier versions of Internet Explorer – some even called me an IE hater. Although
+I don't really object to that, the reason I do not support earlier versions of
+IE is very simple: IE up until version 10 does not provide the required APIs
+to implement only a fraction of what Dropzone aspires to do. If I were an IE
+hater, I wouldn't implement IE10 neither. But IE10 actually supports the APIs
+Dropzone requires, so it's supported. It's as simple as that. (The same goes
+for earlier versions of Firefox, Opera and Safari but those browsers have a
+good conversion rate and nobody uses Firefox 3.5 anymore. Why some people still
+use IE8 is beyond me.)
+
 </section>
 
 
@@ -396,6 +427,7 @@ I realize that there
 out there but the reasons I decided to write my own are the following:
 
 - I didn't want it to be too big, and too cumbersome to dive into.
+- I want it to work without frameworks (like jQuery)
 - I want to design my own elements. I only want to register callbacks so I can update my elements accordingly.
 - Big files should get uploaded without a problem.
 - I wanted a callback for image previews, that don't kill the browser if too many too big images are viewed.
