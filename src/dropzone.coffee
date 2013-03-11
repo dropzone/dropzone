@@ -104,7 +104,7 @@ class Dropzone extends Em
 
     # Called when the browser does not support drag and drop
     fallback: ->
-      # This code should pass in IE6... :(
+      # This code should pass in IE7... :(
       @element.className = "#{@element.className} browser-not-supported"
 
       for child in @element.getElementsByTagName "div"
@@ -252,6 +252,7 @@ class Dropzone extends Em
     # If the browser failed, just call the fallback and leave
     return @options.fallback.call this unless Dropzone.isBrowserSupported()
 
+    fallback.remove() if fallback = @getExistingFallback()
 
     @previewsContainer = if @options.previewsContainer then createElement(@options.previewsContainer) else @element
 
@@ -329,9 +330,11 @@ class Dropzone extends Em
   # Returns a form that can be used as fallback if the browser does not support DragnDrop
   #
   # If the dropzone is already a form, only the input field and button are returned. Otherwise a complete form element is provided.
+  # This code has to pass in IE7 :(
   getFallbackForm: ->
-    # This code has to pass in IE6 :(
-    fields = createElement """<div class="fallback-elements"><input type="file" name="#{@options.paramName}" multiple="multiple" /><button type="submit">Upload!</button></div>"""
+    return existingFallback if existingFallback = @getExistingFallback()
+
+    fields = createElement """<div class="fallback"><input type="file" name="#{@options.paramName}" multiple="multiple" /><button type="submit">Upload!</button></div>"""
     if @element.tagName isnt "FORM"
       form = createElement("""<form action="#{@options.url}" enctype="multipart/form-data" method="post"></form>""")
       form.appendChild fields
@@ -340,6 +343,17 @@ class Dropzone extends Em
       @element.setAttribute "enctype", "multipart/form-data"
       @element.setAttribute "method", "post"
     form ? fields
+
+
+  # Returns the fallback elements if they exist already
+  # 
+  # This code has to pass in IE7 :(
+  getExistingFallback: ->
+    getFallback = (elements) -> return el for el in elements when /fallback/.test el.className
+
+    for tagName in [ "div", "form" ]
+      return fallback if fallback = getFallback @element.getElementsByTagName "div"
+
 
   # Activates all listeners stored in @listeners
   setupEventListeners: ->
