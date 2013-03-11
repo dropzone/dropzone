@@ -119,17 +119,15 @@ with the option `paramName`.
 If you want your file uploads to work even without JavaScript, you can include
 an element with the class `fallback` that dropzone will remove if the browser
 is supported. If the browser isn't supported, Dropzone will not create fallback
-elements if there is a fallback element already provided.
+elements if there is a fallback element already provided. (Obviously, if the
+browser doesn't support JavaScript, the form will stay as is)
 
 Typically this will look like this:
 
 ```html
-<form action="/file-upload"
-      class="dropzone">
+<form action="/file-upload" class="dropzone">
   <div class="fallback">
-    <input name="file"
-           type="file"
-           multiple />
+    <input name="file" type="file" multiple />
   </div>
 </form>
 ```
@@ -251,8 +249,8 @@ Dropzone triggers events when processing files, to which you can register easily
 Example:
 
 {% highlight javascript %}
-// Already instantiated dropzones are accessible through `.data("dropzone")`
-var myDropzone = $("#my-dropzone").data("dropzone");
+// Already instantiated dropzones are accessible with `Dropzone.forElement(element)`
+var myDropzone = Dropzone.forElement("#my-dropzone");
 
 myDropzone.on("addedfile", function(file) {
   /* Maybe display some more file information on your page */
