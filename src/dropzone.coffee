@@ -92,6 +92,20 @@ class Dropzone extends Em
     # If null, the dropzone element will be used
     previewsContainer: null
     
+
+    # Dictionary
+     
+    # The text used before any files are dropped
+    dictDefaultMessage: "Drop files here to upload"
+
+    # The text that replaces the default message text it the browser is not supported
+    dictFallbackMessage: "Your browser does not support drag'n'drop file uploads."
+
+    # The text that will be added before the fallback form
+    # If null, no text will be added at all.
+    dictFallbackText: "Please use the fallback form below to upload your files like in the olden days."
+
+
     # If `done()` is called without argument the file is accepted
     # If you call it with an error message, the file is rejected
     # (This allows for asynchronous validation)
@@ -117,9 +131,8 @@ class Dropzone extends Em
         @element.appendChild messageElement
           
       span = messageElement.getElementsByTagName("span")[0]
-      span.textContent = "Your browser does not support drag'n'drop file uploads." if span
+      span.textContent = @options.dictFallbackMessage if span
 
-      @element.appendChild createElement """<p>Please use the fallback form below to upload your files like in the olden days.</p>"""
       @element.appendChild @getFallbackForm()
     
 
@@ -265,7 +278,7 @@ class Dropzone extends Em
     @element.setAttribute("enctype", "multipart/form-data") if @element.tagName == "form"
 
     if @element.classList.contains("dropzone") and !@element.querySelector(".message")
-      @element.appendChild createElement """<div class="default message"><span>Drop files here to upload</span></div>"""
+      @element.appendChild createElement """<div class="default message"><span>#{@options.dictDefaultMessage}</span></div>"""
 
     if @options.clickable
       @hiddenFileInput = document.createElement "input"
@@ -334,7 +347,11 @@ class Dropzone extends Em
   getFallbackForm: ->
     return existingFallback if existingFallback = @getExistingFallback()
 
-    fields = createElement """<div class="fallback"><input type="file" name="#{@options.paramName}" multiple="multiple" /><button type="submit">Upload!</button></div>"""
+    fieldsString = """<div class="fallback">"""
+    fieldsString += """<p>#{@options.dictFallbackText}</p>""" if @options.dictFallbackText
+    fieldsString += """<input type="file" name="#{@options.paramName}" multiple="multiple" /><button type="submit">Upload!</button></div>"""
+
+    fields = createElement fieldsString
     if @element.tagName isnt "FORM"
       form = createElement("""<form action="#{@options.url}" enctype="multipart/form-data" method="post"></form>""")
       form.appendChild fields
