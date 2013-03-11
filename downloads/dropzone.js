@@ -409,7 +409,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
     __extends(Dropzone, _super);
 
-    Dropzone.prototype.version = "2.0.0-dev";
+    Dropzone.prototype.version = "2.0.0";
 
     /*
       This is a list of all available events you can register on a dropzone object.
