@@ -227,7 +227,8 @@ class Dropzone extends Em
 
     @element = document.querySelector @element if typeof @element == "string"
 
-    throw new Error "Invalid dropzone element." unless @element instanceof (HTMLElement ? Element)
+    # Not checking if instance of HTMLElement or Element since IE9 is extremely weird.
+    throw new Error "Invalid dropzone element." unless @element and @element.nodeType?
 
     throw new Error "Dropzone already attached." if Dropzone.forElement @element
 
