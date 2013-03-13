@@ -537,7 +537,7 @@ class Dropzone extends Em
       @errorProcessing file, xhr.responseText || "Server responded with #{xhr.status} code."
 
     xhr.onload = (e) =>
-      if xhr.status isnt 200
+      if xhr.status < 200 or xhr.status >= 300
         handleError()
       else
         @emit "uploadprogress", file, 100
