@@ -683,8 +683,8 @@ Emitter.prototype.hasListeners = function(event){
         return _this.errorProcessing(file, xhr.responseText || ("Server responded with " + xhr.status + " code."));
       };
       xhr.onload = function(e) {
-        var response;
-        if (xhr.status !== 200) {
+        var response, _ref;
+        if (!((200 <= (_ref = xhr.status) && _ref < 300))) {
           return handleError();
         } else {
           _this.emit("uploadprogress", file, 100);

@@ -70,6 +70,7 @@ require.aliases = {};
  */
 
 require.resolve = function(path) {
+  if (path.charAt(0) === '/') path = path.slice(1);
   var index = path + '/index.js';
 
   var paths = [
@@ -182,17 +183,18 @@ require.relative = function(parent) {
    */
 
   localRequire.resolve = function(path) {
+    var c = path.charAt(0);
+    if ('/' == c) return path.slice(1);
+    if ('.' == c) return require.normalize(p, path);
+
     // resolve deps by returning
     // the dep in the nearest "deps"
     // directory
-    if ('.' != path.charAt(0)) {
-      var segs = parent.split('/');
-      var i = lastIndexOf(segs, 'deps') + 1;
-      if (!i) i = 0;
-      path = segs.slice(0, i + 1).join('/') + '/deps/' + path;
-      return path;
-    }
-    return require.normalize(p, path);
+    var segs = parent.split('/');
+    var i = lastIndexOf(segs, 'deps') + 1;
+    if (!i) i = 0;
+    path = segs.slice(0, i + 1).join('/') + '/deps/' + path;
+    return path;
   };
 
   /**
@@ -891,8 +893,8 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         return _this.errorProcessing(file, xhr.responseText || ("Server responded with " + xhr.status + " code."));
       };
       xhr.onload = function(e) {
-        var response;
-        if (xhr.status !== 200) {
+        var response, _ref;
+        if (!((200 <= (_ref = xhr.status) && _ref < 300))) {
           return handleError();
         } else {
           _this.emit("uploadprogress", file, 100);
@@ -1121,7 +1123,7 @@ require.alias("component-emitter/index.js", "dropzone/deps/emitter/index.js");
 if (typeof exports == "object") {
   module.exports = require("dropzone");
 } else if (typeof define == "function" && define.amd) {
-  define(require("dropzone"));
+  define(function(){ return require("dropzone"); });
 } else {
   window["Dropzone"] = require("dropzone");
 }})();
