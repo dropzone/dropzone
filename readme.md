@@ -1,4 +1,4 @@
-# Dropzone.js Version 2.0.0
+# Dropzone.js Version 2.0.1
 
 Dropzone.js is a light weight JavaScript library that turns an HTML element into a dropzone.
 This means that a user can drag and drop a file onto it, and the file gets uploaded to the server via AJAX.
@@ -46,7 +46,7 @@ Dropzone.options.myAwesomeDropzone = { maxFilesize: 1 };
 ...or instantiate dropzone manually like this:
 
 ```js
-$("div#my-zone").dropzone({ ...configuration... });
+new Dropzone("div#my-dropzone", { /* options */ });
 ```
 
 > Note that dropzones don't have to be forms. But if you choose another element you have to pass the `url` parameter in the options.
@@ -61,7 +61,7 @@ or at the [source](https://github.com/enyo/dropzone/blob/master/src/dropzone.cof
 I use [emitter](https://github.com/component/emitter) to manage events. If you want to register to some event you can do so on the `dropzone` object itself:
 
 ```js
-var myDropzone = $("div#my-zone").dropzone({ ...configuration... });
+var myDropzone = Dropzone.forElement("div#my-dropzone");
 myDropzone.on("error", function(file, message) { alert(message); });
 ```
 

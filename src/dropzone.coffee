@@ -32,7 +32,7 @@ noop = ->
 
 class Dropzone extends Em
 
-  version: "2.0.0"
+  version: "2.0.1"
 
   ###
   This is a list of all available events you can register on a dropzone object.
@@ -537,7 +537,7 @@ class Dropzone extends Em
       @errorProcessing file, xhr.responseText || "Server responded with #{xhr.status} code."
 
     xhr.onload = (e) =>
-      if xhr.status isnt 200
+      unless 200 <= xhr.status < 300
         handleError()
       else
         @emit "uploadprogress", file, 100
