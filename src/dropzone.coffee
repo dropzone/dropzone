@@ -122,7 +122,7 @@ class Dropzone extends Em
       @element.className = "#{@element.className} browser-not-supported"
 
       for child in @element.getElementsByTagName "div"
-        if /message/.test child.className
+        if /(^| )message($| )/.test child.className
           messageElement = child
           child.className = "message" # Removes the 'default' class
           continue
@@ -366,7 +366,7 @@ class Dropzone extends Em
   # 
   # This code has to pass in IE7 :(
   getExistingFallback: ->
-    getFallback = (elements) -> return el for el in elements when /fallback/.test el.className
+    getFallback = (elements) -> return el for el in elements when /(^| )fallback($| )/.test el.className
 
     for tagName in [ "div", "form" ]
       return fallback if fallback = getFallback @element.getElementsByTagName "div"
@@ -764,7 +764,7 @@ contentLoaded window, ->
     # IE :(
     checkElements = (elements) ->
       for el in elements
-        dropzones.push el if /dropzone/.test el.className
+        dropzones.push el if /(^| )dropzone($| )/.test el.className
     checkElements document.getElementsByTagName "div"
     checkElements document.getElementsByTagName "form"
 
