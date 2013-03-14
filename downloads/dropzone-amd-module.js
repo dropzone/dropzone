@@ -242,7 +242,7 @@ Emitter.prototype.hasListeners = function(event){
         _ref = this.element.getElementsByTagName("div");
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           child = _ref[_i];
-          if (/message/.test(child.className)) {
+          if (/(^| )message($| )/.test(child.className)) {
             messageElement = child;
             child.className = "message";
             continue;
@@ -336,6 +336,7 @@ Emitter.prototype.hasListeners = function(event){
       if (Dropzone.forElement(this.element)) {
         throw new Error("Dropzone already attached.");
       }
+      Dropzone.instances.push(this);
       elementId = this.element.id;
       elementOptions = (_ref = (elementId ? Dropzone.options[camelize(elementId)] : void 0)) != null ? _ref : {};
       extend = function() {
@@ -471,7 +472,7 @@ Emitter.prototype.hasListeners = function(event){
         var el, _i, _len;
         for (_i = 0, _len = elements.length; _i < _len; _i++) {
           el = elements[_i];
-          if (/fallback/.test(el.className)) {
+          if (/(^| )fallback($| )/.test(el.className)) {
             return el;
           }
         }
@@ -886,7 +887,7 @@ Emitter.prototype.hasListeners = function(event){
         _results = [];
         for (_i = 0, _len = elements.length; _i < _len; _i++) {
           el = elements[_i];
-          if (/dropzone/.test(el.className)) {
+          if (/(^| )dropzone($| )/.test(el.className)) {
             _results.push(dropzones.push(el));
           } else {
             _results.push(void 0);
