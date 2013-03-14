@@ -245,6 +245,8 @@ class Dropzone extends Em
 
     throw new Error "Dropzone already attached." if Dropzone.forElement @element
 
+    # Now add this dropzone to the instances.
+    Dropzone.instances.push @
 
     # Get the `Dropzone.options.elementId` for this element if it exists
     elementId = @element.id
