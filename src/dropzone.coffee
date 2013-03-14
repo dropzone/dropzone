@@ -32,7 +32,7 @@ noop = ->
 
 class Dropzone extends Em
 
-  version: "2.0.2"
+  version: "2.0.3-dev"
 
   ###
   This is a list of all available events you can register on a dropzone object.
