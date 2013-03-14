@@ -257,7 +257,7 @@ myDropzone.on("addedfile", function(file) {
 });
 
 // Or from within a configuration:
-Dropzone.options.myAwesomeFropzone = {
+Dropzone.options.myAwesomeDropzone = {
   init: function() {
     this.on("addedfile", function(file) { alert("Added file."); });
   }
