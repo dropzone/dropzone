@@ -267,7 +267,9 @@ class Dropzone extends Em
     # If the browser failed, just call the fallback and leave
     return @options.fallback.call this unless Dropzone.isBrowserSupported()
 
-    fallback.remove() if fallback = @getExistingFallback()
+    if (fallback = @getExistingFallback()) and fallback.parentNode
+      # Remove the fallback
+      fallback.parentNode.removeChild fallback
 
     @previewsContainer = if @options.previewsContainer then createElement(@options.previewsContainer) else @element
 
