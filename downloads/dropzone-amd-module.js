@@ -201,8 +201,6 @@ Emitter.prototype.hasListeners = function(event){
 
     __extends(Dropzone, _super);
 
-    Dropzone.prototype.version = "2.0.2";
-
     /*
       This is a list of all available events you can register on a dropzone object.
     
@@ -326,6 +324,7 @@ Emitter.prototype.hasListeners = function(event){
     function Dropzone(element, options) {
       var elementId, elementOptions, extend, fallback, _ref;
       this.element = element;
+      this.version = Dropzone.version;
       this.defaultOptions.previewTemplate = this.defaultOptions.previewTemplate.replace(/\n*/g, "");
       if (typeof this.element === "string") {
         this.element = document.querySelector(this.element);
@@ -361,8 +360,8 @@ Emitter.prototype.hasListeners = function(event){
       if (!Dropzone.isBrowserSupported()) {
         return this.options.fallback.call(this);
       }
-      if (fallback = this.getExistingFallback()) {
-        fallback.remove();
+      if ((fallback = this.getExistingFallback()) && fallback.parentNode) {
+        fallback.parentNode.removeChild(fallback);
       }
       this.previewsContainer = this.options.previewsContainer ? createElement(this.options.previewsContainer) : this.element;
       this.init();
@@ -751,6 +750,8 @@ Emitter.prototype.hasListeners = function(event){
     return Dropzone;
 
   })(Em);
+
+  Dropzone.version = "2.0.3";
 
   Dropzone.options = {};
 

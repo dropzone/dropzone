@@ -32,8 +32,6 @@ noop = ->
 
 class Dropzone extends Em
 
-  version: "2.0.2"
-
   ###
   This is a list of all available events you can register on a dropzone object.
 
@@ -235,6 +233,9 @@ class Dropzone extends Em
                       """
 
   constructor: (@element, options) ->
+    # For backwards compatibility since the version was in the prototype previously
+    @version = Dropzone.version
+
     @defaultOptions.previewTemplate = @defaultOptions.previewTemplate.replace /\n*/g, ""
 
 
@@ -267,7 +268,9 @@ class Dropzone extends Em
     # If the browser failed, just call the fallback and leave
     return @options.fallback.call this unless Dropzone.isBrowserSupported()
 
-    fallback.remove() if fallback = @getExistingFallback()
+    if (fallback = @getExistingFallback()) and fallback.parentNode
+      # Remove the fallback
+      fallback.parentNode.removeChild fallback
 
     @previewsContainer = if @options.previewsContainer then createElement(@options.previewsContainer) else @element
 
@@ -607,6 +610,9 @@ class Dropzone extends Em
     @emit "error", file, message
     @emit "complete", file
 
+
+
+Dropzone.version = "2.0.3"
 
 
 # This is a map of options for your different dropzones. Add configurations
