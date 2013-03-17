@@ -411,8 +411,6 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
     __extends(Dropzone, _super);
 
-    Dropzone.prototype.version = "2.0.3-dev";
-
     /*
       This is a list of all available events you can register on a dropzone object.
     
@@ -536,6 +534,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     function Dropzone(element, options) {
       var elementId, elementOptions, extend, fallback, _ref;
       this.element = element;
+      this.version = Dropzone.version;
       this.defaultOptions.previewTemplate = this.defaultOptions.previewTemplate.replace(/\n*/g, "");
       if (typeof this.element === "string") {
         this.element = document.querySelector(this.element);
@@ -571,8 +570,8 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       if (!Dropzone.isBrowserSupported()) {
         return this.options.fallback.call(this);
       }
-      if (fallback = this.getExistingFallback()) {
-        fallback.remove();
+      if ((fallback = this.getExistingFallback()) && fallback.parentNode) {
+        fallback.parentNode.removeChild(fallback);
       }
       this.previewsContainer = this.options.previewsContainer ? createElement(this.options.previewsContainer) : this.element;
       this.init();
@@ -961,6 +960,8 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     return Dropzone;
 
   })(Em);
+
+  Dropzone.version = "2.0.3-dev";
 
   Dropzone.options = {};
 
