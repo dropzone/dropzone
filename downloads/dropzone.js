@@ -573,7 +573,18 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       if ((fallback = this.getExistingFallback()) && fallback.parentNode) {
         fallback.parentNode.removeChild(fallback);
       }
-      this.previewsContainer = this.options.previewsContainer ? createElement(this.options.previewsContainer) : this.element;
+      if (this.options.previewsContainer) {
+        if (typeof this.options.previewsContainer === "string") {
+          this.previewsContainer = document.querySelector(this.options.previewsContainer);
+        } else if (this.options.previewsContainer.nodeType != null) {
+          this.previewsContainer = this.options.previewsContainer;
+        }
+        if (this.previewsContainer == null) {
+          throw new Error("Invalid `previewsContainer` option provided. Please provide a CSS selector or a plain HTML element.");
+        }
+      } else {
+        this.previewsContainer = this.element;
+      }
       this.init();
     }
 
@@ -961,7 +972,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
   })(Em);
 
-  Dropzone.version = "2.0.3";
+  Dropzone.version = "2.0.4";
 
   Dropzone.options = {};
 
@@ -987,7 +998,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
   Dropzone.isBrowserSupported = function() {
     var capableBrowser, regex, _i, _len, _ref;
     capableBrowser = true;
-    if (window.File && window.FileReader && window.FileList && window.Blob && window.FormData) {
+    if (window.File && window.FileReader && window.FileList && window.Blob && window.FormData && document.querySelector) {
       if (!("classList" in document.createElement("a"))) {
         capableBrowser = false;
       } else {
