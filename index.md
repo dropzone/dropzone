@@ -203,7 +203,7 @@ The valid options are:
 | `dictDefaultMessage`    | The message that gets displayed before any files are dropped. This is normally replaced by an image but defaults to "Drop files here to upload"
 | `dictFallbackMessage`   | If the browser is not supported, the default message will be replaced with this text. Defaults to "Your browser does not support drag'n'drop file uploads."
 | `dictFallbackText`      | This will be added before the file input files. If you provide a fallback element yourself, or if this option is `null` this will be ignored. Defaults to "Please use the fallback form below to upload your files like in the olden days."
-| `previewsContainer`     | defines where to display the file previews – if `null` the Dropzone element is used. Can be an HTMLElement or a selector. The element should have the `dropzone-previews` class so the previews are displayed properly.
+| `previewsContainer`     | defines where to display the file previews – if `null` the Dropzone element is used. Can be a plain HTMLElement or a CSS selector. The element should have the `dropzone-previews` class so the previews are displayed properly.
 | `clickable`             | Whether the dropzone should be clickable. Defaults to `true`
 | `createImageThumbnails` |
 | `maxThumbnailFilesize`  | in MB. When the filename exceeds this limit, the thumbnail will not be generated
