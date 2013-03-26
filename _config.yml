@@ -6,5 +6,4 @@ pygments: true
 markdown: redcarpet
 
 redcarpet:
-  extensions: [ "tables" ]
-  with_toc_data: true
+  extensions: [ "tables", "with_toc_data" ]
