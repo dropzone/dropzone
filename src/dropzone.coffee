@@ -86,8 +86,8 @@ class Dropzone extends Em
     # processQueue()
     enqueueForUpload: yes
 
-    # Can be a jQuery or HTML element that will hold the file previews
-    # If null, the dropzone element will be used
+    # A CSS selector or HTML element for the file previews container.
+    # If null, the dropzone element itself will be used
     previewsContainer: null
     
 
@@ -272,7 +272,15 @@ class Dropzone extends Em
       # Remove the fallback
       fallback.parentNode.removeChild fallback
 
-    @previewsContainer = if @options.previewsContainer then createElement(@options.previewsContainer) else @element
+    if @options.previewsContainer
+      if typeof @options.previewsContainer == "string"
+        @previewsContainer = document.querySelector @options.previewsContainer
+      else if @options.previewsContainer.nodeType?
+        @previewsContainer = @options.previewsContainer
+      throw new Error "Invalid `previewsContainer` option provided. Please provide a CSS selector or a plain HTML element." unless @previewsContainer?
+    else
+      @previewsContainer = @element
+
 
     @init()
 
@@ -663,7 +671,7 @@ Dropzone.blacklistedBrowsers = [
 Dropzone.isBrowserSupported = ->
   capableBrowser = yes
 
-  if window.File and window.FileReader and window.FileList and window.Blob and window.FormData
+  if window.File and window.FileReader and window.FileList and window.Blob and window.FormData and document.querySelector
     unless "classList" of document.createElement "a"
       capableBrowser = no
     else
