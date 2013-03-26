@@ -972,7 +972,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
   })(Em);
 
-  Dropzone.version = "2.0.4-dev";
+  Dropzone.version = "2.0.4";
 
   Dropzone.options = {};
 
