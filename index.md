@@ -155,6 +155,30 @@ $("div#myId").dropzone({ url: "/file/post" });
 > Don't forget to specify an `url` option if you're not using a form element,
 > since Dropzone doesn't know where to post to without an `action` attribute. 
 
+
+
+Server side implementation
+--------------------------
+
+Dropzone does *not* provide the server side implementation of handling the files,
+but the way files are uploaded is identical to simple file upload forms like this:
+
+```html
+<form action="" method="post" enctype="multipart/form-data">
+  <input type="file" name="file" />
+</form>
+```
+
+To handle basic file uploads on the server, please look at the corresponding
+documentation. Here are a few documentations, if you think I should add some,
+please contact me.
+
+- [NodeJS with express](http://howtonode.org/af136c8ce966618cc0857dbc5e5da01e9d4d87d5/really-simple-file-uploads)
+- [Ruby on rails](http://guides.rubyonrails.org/form_helpers.html#uploading-files)
+- [PHP file upload](http://www.php.net/manual/en/features.file-upload.post-method.php#example-354)
+- [Tutorial for Dropzone and Lavarel (PHP)](http://maxoffsky.com/code-blog/howto-ajax-multiple-file-upload-in-laravel/) written by Maksim Surguy
+
+
 </section>
 
 
