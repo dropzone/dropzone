@@ -26,7 +26,7 @@ For the full documentation and installation please visit www.dropzonejs.com
 
 ## Examples
 
-For examples, please see the [GitHub wiki](https://github.com/enyo/dropzone/wiki/_pages).
+For examples, please see the [GitHub wiki](https://github.com/enyo/dropzone/wiki).
 
 ## Usage
 
