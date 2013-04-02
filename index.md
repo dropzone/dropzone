@@ -221,6 +221,7 @@ The valid options are:
 | Option                  | Description
 |-------------------------|-------------
 | `url`                   | Has to be specified on elements other than form (or when the form doesn't have an `action` attribute)
+| `method`                | Defaults to `"post"` and can be changed to `"put"` if necessary.
 | `parallelUploads`       | How many file uploads to process in parallel (See the *Enqueuing file uploads* section for more info)
 | `maxFilesize`           | in MB
 | `paramName`             | The name of the file param that gets transferred. Defaults to `file`.
@@ -355,6 +356,9 @@ myDropzone.on("complete", function(file) {
 });
 {% endhighlight %}
 
+If you want to remove all files, simply use `.removeAllFiles()`. Files that are
+in the process of being uploaded won't be removed.
+
 
 If you do not need a dropzone anymore, just call `.disable()` on the object. This
 will remove all event listeners on the element, and clear all file arrays. To
@@ -409,7 +413,8 @@ new Dropzone(document.body, {
 
 
 I'll add more examples soon (How to add delete/download buttons when an upload finished,
-how to add file previews on your own, etc...)
+how to add file previews on your own, etc...). In the meantime you can look at
+the [github wiki](https://github.com/enyo/dropzone/wiki) for some information.
 
 Don't hesitate to create an issue on github if you're stuck or think a feature
 is missing.
