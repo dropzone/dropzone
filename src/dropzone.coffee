@@ -63,8 +63,8 @@ class Dropzone extends Em
 
 
   defaultOptions:
-    method: "POST"
     url: null
+    method: "post"
     parallelUploads: 2
     maxFilesize: 256 # in MB
     paramName: "file" # The name of the file param that gets transferred.
@@ -265,6 +265,8 @@ class Dropzone extends Em
     @options.url = @element.action unless @options.url?
 
     throw new Error "No URL provided." unless @options.url
+
+    @options.method = @options.method.toUpperCase()
 
     # If the browser failed, just call the fallback and leave
     return @options.fallback.call this unless Dropzone.isBrowserSupported()
