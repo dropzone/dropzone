@@ -63,7 +63,7 @@ class Dropzone extends Em
 
 
   defaultOptions:
-    verb: "POST"
+    method: "POST"
     url: null
     parallelUploads: 2
     maxFilesize: 256 # in MB
@@ -367,12 +367,12 @@ class Dropzone extends Em
 
     fields = createElement fieldsString
     if @element.tagName isnt "FORM"
-      form = createElement("""<form action="#{@options.url}" enctype="multipart/form-data" method="#{@options.verb}"></form>""")
+      form = createElement("""<form action="#{@options.url}" enctype="multipart/form-data" method="#{@options.method}"></form>""")
       form.appendChild fields
     else
       # Make sure that the enctype and method attributes are set properly
       @element.setAttribute "enctype", "multipart/form-data"
-      @element.setAttribute "method", @options.verb
+      @element.setAttribute "method", @options.method
     form ? fields
 
 
@@ -545,7 +545,7 @@ class Dropzone extends Em
   uploadFile: (file) ->
     xhr = new XMLHttpRequest()
 
-    xhr.open @options.verb, @options.url, true
+    xhr.open @options.method, @options.url, true
 
     handleError = =>
       @errorProcessing file, xhr.responseText || "Server responded with #{xhr.status} code."
