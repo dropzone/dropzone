@@ -191,7 +191,8 @@ Emitter.prototype.hasListeners = function(event){
   var Dropzone, Em, camelize, contentLoaded, createElement, noop, without,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    __slice = [].slice;
+    __slice = [].slice,
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   Em = typeof Emitter !== "undefined" && Emitter !== null ? Emitter : require("emitter");
 
@@ -214,6 +215,7 @@ Emitter.prototype.hasListeners = function(event){
 
     Dropzone.prototype.defaultOptions = {
       url: null,
+      method: "post",
       parallelUploads: 2,
       maxFilesize: 256,
       paramName: "file",
@@ -357,6 +359,7 @@ Emitter.prototype.hasListeners = function(event){
       if (!this.options.url) {
         throw new Error("No URL provided.");
       }
+      this.options.method = this.options.method.toUpperCase();
       if (!Dropzone.isBrowserSupported()) {
         return this.options.fallback.call(this);
       }
@@ -467,11 +470,11 @@ Emitter.prototype.hasListeners = function(event){
       fieldsString += "<input type=\"file\" name=\"" + this.options.paramName + "\" multiple=\"multiple\" /><button type=\"submit\">Upload!</button></div>";
       fields = createElement(fieldsString);
       if (this.element.tagName !== "FORM") {
-        form = createElement("<form action=\"" + this.options.url + "\" enctype=\"multipart/form-data\" method=\"post\"></form>");
+        form = createElement("<form action=\"" + this.options.url + "\" enctype=\"multipart/form-data\" method=\"" + this.options.method + "\"></form>");
         form.appendChild(fields);
       } else {
         this.element.setAttribute("enctype", "multipart/form-data");
-        this.element.setAttribute("method", "post");
+        this.element.setAttribute("method", this.options.method);
       }
       return form != null ? form : fields;
     };
@@ -616,6 +619,18 @@ Emitter.prototype.hasListeners = function(event){
       }
     };
 
+    Dropzone.prototype.removeAllFiles = function() {
+      var file, _i, _len, _ref;
+      _ref = this.files.slice();
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        file = _ref[_i];
+        if (__indexOf.call(this.filesProcessing, file) < 0) {
+          this.removeFile(file);
+        }
+      }
+      return null;
+    };
+
     Dropzone.prototype.createThumbnail = function(file) {
       var fileReader,
         _this = this;
@@ -689,7 +704,7 @@ Emitter.prototype.hasListeners = function(event){
       var formData, handleError, input, inputName, inputType, key, progressObj, value, xhr, _i, _len, _ref, _ref1, _ref2,
         _this = this;
       xhr = new XMLHttpRequest();
-      xhr.open("POST", this.options.url, true);
+      xhr.open(this.options.method, this.options.url, true);
       handleError = function() {
         return _this.errorProcessing(file, xhr.responseText || ("Server responded with " + xhr.status + " code."));
       };
@@ -762,7 +777,7 @@ Emitter.prototype.hasListeners = function(event){
 
   })(Em);
 
-  Dropzone.version = "2.0.4";
+  Dropzone.version = "2.0.5";
 
   Dropzone.options = {};
 
