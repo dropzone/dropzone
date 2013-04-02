@@ -469,6 +469,13 @@ class Dropzone extends Em
     @emit "removedfile", file
     @emit "reset" if @files.length == 0
 
+  # Removes all files that aren't currently processed from the list
+  removeAllFiles: ->
+    # Create a copy of files since removeFile() changes the @files array.
+    for file in @files.slice()
+      @removeFile file unless file in @filesProcessing
+    return null
+
   createThumbnail: (file) ->
 
     fileReader = new FileReader
