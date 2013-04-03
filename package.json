@@ -28,8 +28,15 @@
   }],
   "dependencies": { },
   "devDependencies": {
-    "stylus": "*",
-    "nib": "*"
+    "nib": "*",
+    "grunt": "*",
+    "grunt-contrib-coffee": "*",
+    "grunt-contrib-concat": "*",
+    "grunt-contrib-stylus": "*",
+    "grunt-contrib-uglify": "*",
+    "grunt-component-build": "*",
+    "grunt-contrib-copy": "*",
+    "grunt-contrib-watch": "*"
   }
 
 }
