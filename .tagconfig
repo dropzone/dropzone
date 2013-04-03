@@ -19,9 +19,21 @@
       ]
     },
     {
+      "name": "downloads/dropzone.min.js",
+      "regexs": [
+        "version=\"###\""
+      ]
+    },
+    {
       "name": "downloads/dropzone-amd-module.js",
       "regexs": [
         "version = \"###\""
+      ]
+    },
+    {
+      "name": "downloads/dropzone-amd-module.min.js",
+      "regexs": [
+        "version=\"###\""
       ]
     },
     {
