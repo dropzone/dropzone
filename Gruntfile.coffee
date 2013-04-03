@@ -44,8 +44,6 @@ module.exports = (grunt) ->
         ]
         dest: "downloads/dropzone-amd-module.js"
 
-
-
     watch:
       js:
         files: [
@@ -60,6 +58,13 @@ module.exports = (grunt) ->
         tasks: [ "css" ]
         options: nospawn: on
 
+    uglify:
+      js:
+        files: [
+          "downloads/dropzone-amd-module.min.js": "downloads/dropzone-amd-module.js"
+          "downloads/dropzone.min.js": "downloads/dropzone.js"
+        ]
+
 
 
   grunt.loadNpmTasks "grunt-contrib-coffee"
@@ -68,6 +73,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks "grunt-contrib-copy"
   grunt.loadNpmTasks "grunt-contrib-concat"
   grunt.loadNpmTasks "grunt-contrib-watch"
+  grunt.loadNpmTasks "grunt-contrib-uglify"
 
   # Default tasks
   grunt.registerTask "default", [ "downloads" ]
@@ -76,4 +82,4 @@ module.exports = (grunt) ->
 
   grunt.registerTask "js", "Compile coffeescript and create all download files", [ "coffee", "component", "copy", "concat" ]
 
-  grunt.registerTask "downloads", [ "js", "css" ]
+  grunt.registerTask "downloads", [ "js", "css", "uglify" ]
