@@ -950,7 +950,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
           formData.append(key, value);
         }
       }
-      if (this.element.tagName = "FORM") {
+      if (this.element.tagName === "FORM") {
         _ref2 = this.element.querySelectorAll("input, textarea, select, button");
         for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
           input = _ref2[_i];
@@ -987,7 +987,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
   })(Em);
 
-  Dropzone.version = "2.0.5";
+  Dropzone.version = "2.0.6";
 
   Dropzone.options = {};
 

@@ -588,7 +588,7 @@ class Dropzone extends Em
     formData.append key, value for key, value of @options.params if @options.params
 
     # Take care of other input elements
-    if @element.tagName = "FORM"
+    if @element.tagName == "FORM"
       for input in @element.querySelectorAll "input, textarea, select, button"
         inputName = input.getAttribute "name"
         inputType = input.getAttribute "type"
@@ -630,7 +630,7 @@ class Dropzone extends Em
 
 
 
-Dropzone.version = "2.0.5"
+Dropzone.version = "2.0.6"
 
 
 # This is a map of options for your different dropzones. Add configurations
