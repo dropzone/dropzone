@@ -46,19 +46,19 @@ module.exports = (grunt) ->
 
 
 
-    # watch:
-    #   shop:
-    #     files: "public_src/js/shop/**/*.coffee"
-    #     tasks: [ "shop" ]
-    #     options: nospawn: on
-    #   admin:
-    #     files: "public_src/js/admin/**/*.coffee"
-    #     tasks: [ "admin" ]
-    #     options: nospawn: on
-    #   css:
-    #     files: [ "public_src/css/**/*.styl", "public_src/css/**/*.css" ]
-    #     tasks: [ "css" ]
-    #     options: nospawn: on
+    watch:
+      js:
+        files: [
+          "src/dropzone.coffee"
+        ]
+        tasks: [ "js" ]
+        options: nospawn: on
+      css:
+        files: [
+          "downloads/css/stylus/*.styl"
+        ]
+        tasks: [ "css" ]
+        options: nospawn: on
 
 
 
@@ -70,8 +70,10 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks "grunt-contrib-watch"
 
   # Default tasks
-  grunt.registerTask "default", [ "coffee" ]
+  grunt.registerTask "default", [ "downloads" ]
 
-  grunt.registerTask "css", [ "stylus" ]
+  grunt.registerTask "css", "Compile the stylus files to css", [ "stylus" ]
 
-  grunt.registerTask "downloads", [ "coffee", "stylus", "component", "copy", "concat" ]
+  grunt.registerTask "js", "Compile coffeescript and create all download files", [ "coffee", "component", "copy", "concat" ]
+
+  grunt.registerTask "downloads", [ "js", "css" ]
