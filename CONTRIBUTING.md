@@ -26,14 +26,12 @@ immediately what you changed.
 
 ### Building
 
-If you want to build the library to test it, use `make`.
+If you want to build the library to test it, use [grunt](http://gruntjs.com).
 
 ```bash
-$ make build # compiles the coffeescript files to lib/
-$ make watch # watches for changes and builds on the fly
-$ make download # takes the compiled lib/dropzone.js file and builds the downloads/*.js files
-$ make css # compiles the stylus files
-$ make watchcss # watches for changes
+$ grunt -h # Displays available options
+$ grunt # compiles all coffeescript and stylus files
+$ grunt watch # watches for changes and builds on the fly
 ```
 
 

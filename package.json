@@ -1,6 +1,6 @@
 {
   "name": "dropzone",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "Handles drag and drop of files for you.",
   "keywords": [ "dragndrop", "drag and drop", "file upload", "upload" ],
   "homepage": "http://www.dropzonejs.com",
@@ -28,8 +28,15 @@
   }],
   "dependencies": { },
   "devDependencies": {
-    "stylus": "*",
-    "nib": "*"
+    "nib": "*",
+    "grunt": "*",
+    "grunt-contrib-coffee": "*",
+    "grunt-contrib-concat": "*",
+    "grunt-contrib-stylus": "*",
+    "grunt-contrib-uglify": "*",
+    "grunt-component-build": "*",
+    "grunt-contrib-copy": "*",
+    "grunt-contrib-watch": "*"
   }
 
 }
