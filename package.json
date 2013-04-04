@@ -15,6 +15,9 @@
       "email": "m@tias.me",
       "web": "http://www.matiasmeno.com"
   }],
+  "scripts": {
+    "test": "node_modules/mocha-phantomjs/bin/mocha-phantomjs test/test.html"
+  },
   "bugs": {
     "mail": "m@tias.me"
   },
@@ -36,7 +39,10 @@
     "grunt-contrib-uglify": "*",
     "grunt-component-build": "*",
     "grunt-contrib-copy": "*",
-    "grunt-contrib-watch": "*"
+    "grunt-contrib-watch": "*",
+    "mocha-phantomjs": "*",
+    "mocha": "*",
+    "chai": "*"
   }
 
 }
