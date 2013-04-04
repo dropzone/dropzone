@@ -18,7 +18,9 @@ module.exports = (grunt) ->
       default:
         files:
           "lib/dropzone.js": "src/dropzone.coffee"
-
+      test:
+        files:
+          "test/test.js": "test/*.coffee"
 
     component:
       app:
@@ -50,6 +52,12 @@ module.exports = (grunt) ->
           "src/dropzone.coffee"
         ]
         tasks: [ "js" ]
+        options: nospawn: on
+      test:
+        files: [
+          "test/*.coffee"
+        ]
+        tasks: [ "coffee:test" ]
         options: nospawn: on
       css:
         files: [

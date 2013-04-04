@@ -12,6 +12,17 @@ Please do also **send pull requests to the `develop` branch**.
 I will **not** merge pull requests to the `master` branch.
 
 
+### Developer Dependencies
+
+The first thing you need to do, is to install the developer dependencies:
+
+```bash
+$ npm install
+```
+
+This will install all the tools you need to compile the source files and to test
+the library.
+
 ### Coffeescript & Stylus (-> Javascript & CSS)
 
 Dropzone is written in [Coffeescript](http://coffeescript.org) and
@@ -24,15 +35,25 @@ Please don't include compiled `.js` or `.css` files in your pull requests but on
 `.coffee` or `.styl` files. That way pull requests aren't polluted and I can see
 immediately what you changed.
 
-### Building
 
-If you want to build the library to test it, use [grunt](http://gruntjs.com).
+To build the library use [grunt](http://gruntjs.com).
 
 ```bash
 $ grunt -h # Displays available options
 $ grunt # compiles all coffeescript and stylus files
 $ grunt watch # watches for changes and builds on the fly
 ```
+
+> I recommend using `grunt watch` when you begin developing. This way you can't
+> forget to compile the source files and will avoid headaches.
+
+### Testing
+
+To test the library, open `test/test.html` in your browser or type `npm test`
+which will run the tests in your console in a headless browser.
+
+The tests are also written in coffeescript in the `test/test.coffee` file,
+and compiled with `grunt js` or `grunt watch`.
 
 
 * Thanks for contributing!*
