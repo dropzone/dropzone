@@ -1,4 +1,4 @@
-# Dropzone.js Version 2.0.9
+# Dropzone.js Version 2.0.10-dev
 
 ![Build status](https://travis-ci.org/enyo/dropzone.png?branch=master) (Master)  
 ![Build status](https://travis-ci.org/enyo/dropzone.png) (Development)
