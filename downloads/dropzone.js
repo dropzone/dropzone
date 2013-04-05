@@ -396,7 +396,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
 
 (function() {
-  var Dropzone, Em, camelize, contentLoaded, createElement, noop, without,
+  var Dropzone, Em, camelize, contentLoaded, noop, without,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     __slice = [].slice,
@@ -457,7 +457,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
           }
         }
         if (!messageElement) {
-          messageElement = createElement("<div class=\"message\"><span></span></div>");
+          messageElement = Dropzone.createElement("<div class=\"message\"><span></span></div>");
           this.element.appendChild(messageElement);
         }
         span = messageElement.getElementsByTagName("span")[0];
@@ -500,10 +500,10 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         return this.element.classList.remove("started");
       },
       addedfile: function(file) {
-        file.previewTemplate = createElement(this.options.previewTemplate);
+        file.previewTemplate = Dropzone.createElement(this.options.previewTemplate);
         this.previewsContainer.appendChild(file.previewTemplate);
         file.previewTemplate.querySelector(".filename span").textContent = file.name;
-        return file.previewTemplate.querySelector(".details").appendChild(createElement("<div class=\"size\">" + (this.filesize(file.size)) + "</div>"));
+        return file.previewTemplate.querySelector(".details").appendChild(Dropzone.createElement("<div class=\"size\">" + (this.filesize(file.size)) + "</div>"));
       },
       removedfile: function(file) {
         return file.previewTemplate.parentNode.removeChild(file.previewTemplate);
@@ -511,7 +511,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       thumbnail: function(file, dataUrl) {
         file.previewTemplate.classList.remove("file-preview");
         file.previewTemplate.classList.add("image-preview");
-        return file.previewTemplate.querySelector(".details").appendChild(createElement("<img alt=\"" + file.name + "\" src=\"" + dataUrl + "\"/>"));
+        return file.previewTemplate.querySelector(".details").appendChild(Dropzone.createElement("<img alt=\"" + file.name + "\" src=\"" + dataUrl + "\"/>"));
       },
       error: function(file, message) {
         file.previewTemplate.classList.add("error");
@@ -592,30 +592,37 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     }
 
     Dropzone.prototype.init = function() {
-      var eventName, noPropagation, _i, _len, _ref, _ref1,
+      var eventName, noPropagation, setupHiddenFileInput, _i, _len, _ref, _ref1,
         _this = this;
 
       if (this.element.tagName === "form") {
         this.element.setAttribute("enctype", "multipart/form-data");
       }
       if (this.element.classList.contains("dropzone") && !this.element.querySelector(".message")) {
-        this.element.appendChild(createElement("<div class=\"default message\"><span>" + this.options.dictDefaultMessage + "</span></div>"));
+        this.element.appendChild(Dropzone.createElement("<div class=\"default message\"><span>" + this.options.dictDefaultMessage + "</span></div>"));
       }
       if (this.options.clickable) {
-        this.hiddenFileInput = document.createElement("input");
-        this.hiddenFileInput.setAttribute("type", "file");
-        this.hiddenFileInput.setAttribute("multiple", "multiple");
-        this.hiddenFileInput.style.display = "none";
-        document.body.appendChild(this.hiddenFileInput);
-        this.hiddenFileInput.addEventListener("change", function() {
-          var files;
-
-          files = _this.hiddenFileInput.files;
-          if (files.length) {
-            _this.emit("selectedfiles", files);
-            return _this.handleFiles(files);
+        setupHiddenFileInput = function() {
+          if (_this.hiddenFileInput) {
+            document.body.removeChild(_this.hiddenFileInput);
           }
-        });
+          _this.hiddenFileInput = document.createElement("input");
+          _this.hiddenFileInput.setAttribute("type", "file");
+          _this.hiddenFileInput.setAttribute("multiple", "multiple");
+          _this.hiddenFileInput.style.display = "none";
+          document.body.appendChild(_this.hiddenFileInput);
+          return _this.hiddenFileInput.addEventListener("change", function() {
+            var files;
+
+            files = _this.hiddenFileInput.files;
+            if (files.length) {
+              _this.emit("selectedfiles", files);
+              _this.handleFiles(files);
+            }
+            return setupHiddenFileInput();
+          });
+        };
+        setupHiddenFileInput();
       }
       this.files = [];
       this.filesQueue = [];
@@ -661,7 +668,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
           if (!_this.options.clickable) {
             return;
           }
-          if (evt.target === _this.element || evt.target === _this.element.querySelector(".message")) {
+          if (evt.target === _this.element || Dropzone.elementInside(evt.target, _this.element.querySelector(".message"))) {
             return _this.hiddenFileInput.click();
           }
         }
@@ -681,9 +688,9 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         fieldsString += "<p>" + this.options.dictFallbackText + "</p>";
       }
       fieldsString += "<input type=\"file\" name=\"" + this.options.paramName + "\" multiple=\"multiple\" /><button type=\"submit\">Upload!</button></div>";
-      fields = createElement(fieldsString);
+      fields = Dropzone.createElement(fieldsString);
       if (this.element.tagName !== "FORM") {
-        form = createElement("<form action=\"" + this.options.url + "\" enctype=\"multipart/form-data\" method=\"" + this.options.method + "\"></form>");
+        form = Dropzone.createElement("<form action=\"" + this.options.url + "\" enctype=\"multipart/form-data\" method=\"" + this.options.method + "\"></form>");
         form.appendChild(fields);
       } else {
         this.element.setAttribute("enctype", "multipart/form-data");
@@ -1005,7 +1012,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
   })(Em);
 
-  Dropzone.version = "2.0.10";
+  Dropzone.version = "2.0.11";
 
   Dropzone.options = {};
 
@@ -1071,12 +1078,24 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     });
   };
 
-  createElement = function(string) {
+  Dropzone.createElement = function(string) {
     var div;
 
     div = document.createElement("div");
     div.innerHTML = string;
     return div.childNodes[0];
+  };
+
+  Dropzone.elementInside = function(element, container) {
+    if (element === container) {
+      return true;
+    }
+    while (element = element.parentNode) {
+      if (element === container) {
+        return true;
+      }
+    }
+    return false;
   };
 
   if (typeof jQuery !== "undefined" && jQuery !== null) {

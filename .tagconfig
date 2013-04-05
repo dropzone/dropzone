@@ -51,7 +51,7 @@
     {
       "name": "readme.md",
       "regexs": [
-        "Version ###"
+        "\\*Version ###\\*"
       ]
     }
   ]

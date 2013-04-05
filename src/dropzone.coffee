@@ -126,7 +126,7 @@ class Dropzone extends Em
           child.className = "message" # Removes the 'default' class
           continue
       unless messageElement
-        messageElement = createElement """<div class="message"><span></span></div>"""
+        messageElement = Dropzone.createElement """<div class="message"><span></span></div>"""
         @element.appendChild messageElement
           
       span = messageElement.getElementsByTagName("span")[0]
@@ -167,10 +167,10 @@ class Dropzone extends Em
     # Called when a file is added to the queue
     # Receives `file`
     addedfile: (file) ->
-      file.previewTemplate = createElement @options.previewTemplate
+      file.previewTemplate = Dropzone.createElement @options.previewTemplate
       @previewsContainer.appendChild file.previewTemplate
       file.previewTemplate.querySelector(".filename span").textContent = file.name
-      file.previewTemplate.querySelector(".details").appendChild createElement """<div class="size">#{@filesize file.size}</div>"""
+      file.previewTemplate.querySelector(".details").appendChild Dropzone.createElement """<div class="size">#{@filesize file.size}</div>"""
 
 
     # Called whenever a file is removed.
@@ -182,7 +182,7 @@ class Dropzone extends Em
     thumbnail: (file, dataUrl) ->
       file.previewTemplate.classList.remove "file-preview"
       file.previewTemplate.classList.add "image-preview"
-      file.previewTemplate.querySelector(".details").appendChild createElement """<img alt="#{file.name}" src="#{dataUrl}"/>"""
+      file.previewTemplate.querySelector(".details").appendChild Dropzone.createElement """<img alt="#{file.name}" src="#{dataUrl}"/>"""
 
     
     # Called whenever an error occurs
@@ -294,19 +294,23 @@ class Dropzone extends Em
     @element.setAttribute("enctype", "multipart/form-data") if @element.tagName == "form"
 
     if @element.classList.contains("dropzone") and !@element.querySelector(".message")
-      @element.appendChild createElement """<div class="default message"><span>#{@options.dictDefaultMessage}</span></div>"""
+      @element.appendChild Dropzone.createElement """<div class="default message"><span>#{@options.dictDefaultMessage}</span></div>"""
 
     if @options.clickable
-      @hiddenFileInput = document.createElement "input"
-      @hiddenFileInput.setAttribute "type", "file"
-      @hiddenFileInput.setAttribute "multiple", "multiple"
-      @hiddenFileInput.style.display = "none"
-      document.body.appendChild @hiddenFileInput
-      @hiddenFileInput.addEventListener "change", =>
-        files = @hiddenFileInput.files
-        if files.length
-          @emit "selectedfiles", files
-          @handleFiles files
+      setupHiddenFileInput = =>
+        document.body.removeChild @hiddenFileInput if @hiddenFileInput
+        @hiddenFileInput = document.createElement "input"
+        @hiddenFileInput.setAttribute "type", "file"
+        @hiddenFileInput.setAttribute "multiple", "multiple"
+        @hiddenFileInput.style.display = "none"
+        document.body.appendChild @hiddenFileInput
+        @hiddenFileInput.addEventListener "change", =>
+          files = @hiddenFileInput.files
+          if files.length
+            @emit "selectedfiles", files
+            @handleFiles files
+          setupHiddenFileInput()
+      setupHiddenFileInput()
 
     @files = [] # All files
     @filesQueue = [] # The files that still have to be processed
@@ -348,7 +352,7 @@ class Dropzone extends Em
       "click": (evt) =>
         return unless @options.clickable
         # Only the actual dropzone or the message element should trigger file selection
-        if evt.target == @element or evt.target == @element.querySelector ".message"
+        if evt.target == @element or Dropzone.elementInside evt.target, @element.querySelector ".message"
           @hiddenFileInput.click() # Forward the click
 
 
@@ -367,9 +371,9 @@ class Dropzone extends Em
     fieldsString += """<p>#{@options.dictFallbackText}</p>""" if @options.dictFallbackText
     fieldsString += """<input type="file" name="#{@options.paramName}" multiple="multiple" /><button type="submit">Upload!</button></div>"""
 
-    fields = createElement fieldsString
+    fields = Dropzone.createElement fieldsString
     if @element.tagName isnt "FORM"
-      form = createElement("""<form action="#{@options.url}" enctype="multipart/form-data" method="#{@options.method}"></form>""")
+      form = Dropzone.createElement("""<form action="#{@options.url}" enctype="multipart/form-data" method="#{@options.method}"></form>""")
       form.appendChild fields
     else
       # Make sure that the enctype and method attributes are set properly
@@ -630,7 +634,7 @@ class Dropzone extends Em
 
 
 
-Dropzone.version = "2.0.10"
+Dropzone.version = "2.0.11"
 
 
 # This is a map of options for your different dropzones. Add configurations
@@ -705,10 +709,16 @@ without = (list, rejectedItem) -> item for item in list when item isnt rejectedI
 camelize = (str) -> str.replace /[\-_](\w)/g, (match) -> match[1].toUpperCase()
 
 # Creates an element from string
-createElement = (string) ->
+Dropzone.createElement = (string) ->
   div = document.createElement "div"
   div.innerHTML = string
   div.childNodes[0]
+
+# Tests if given element is inside (or simply is) the container
+Dropzone.elementInside = (element, container) ->
+  return yes if element == container # Coffeescript doesn't support do/while loops
+  return yes while element = element.parentNode when element == container
+  return no
 
 
 # Augment jQuery

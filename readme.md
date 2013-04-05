@@ -1,7 +1,6 @@
-# Dropzone.js Version 2.0.10
+# Dropzone.js
 
-![Build status](https://travis-ci.org/enyo/dropzone.png?branch=master) (Master)  
-![Build status](https://travis-ci.org/enyo/dropzone.png) (Development)
+*Version 2.0.11*
 
 Dropzone.js is a light weight JavaScript library that turns an HTML element into a dropzone.
 This means that a user can drag and drop a file onto it, and the file gets uploaded to the server via AJAX.
@@ -15,6 +14,13 @@ module that's compatible with [RequireJS](http://requirejs.org) in the downloads
 folder.
 
 ![Screenshot](http://i.imgur.com/zXyTjMp.png)
+
+
+Master  
+![Build status](https://travis-ci.org/enyo/dropzone.png?branch=master)  
+Development  
+![Build status](https://travis-ci.org/enyo/dropzone.png)
+
 
 ## Main features
 
