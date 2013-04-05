@@ -348,7 +348,7 @@ class Dropzone extends Em
       "click": (evt) =>
         return unless @options.clickable
         # Only the actual dropzone or the message element should trigger file selection
-        if evt.target == @element or evt.target == @element.querySelector ".message"
+        if evt.target == @element or Dropzone.elementInside evt.target, @element.querySelector ".message"
           @hiddenFileInput.click() # Forward the click
 
 
@@ -709,6 +709,12 @@ Dropzone.createElement = (string) ->
   div = document.createElement "div"
   div.innerHTML = string
   div.childNodes[0]
+
+# Tests if given element is inside (or simply is) the container
+Dropzone.elementInside = (element, container) ->
+  return yes if element == container # Coffeescript doesn't support do/while loops
+  return yes while element = element.parentNode when element == container
+  return no
 
 
 # Augment jQuery

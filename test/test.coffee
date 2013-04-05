@@ -18,6 +18,26 @@ describe "Dropzone", ->
         element = Dropzone.createElement """<div></div><span></span>"""
         element.tagName.should.equal "DIV"
 
+    describe "Dropzone.elementInside()", ->
+      element = Dropzone.createElement """<div id="test"><div class="child1"><div class="child2"></div></div></div>"""
+      document.body.appendChild element
+
+      child1 = element.querySelector ".child1"
+      child2 = element.querySelector ".child2"
+
+      after -> document.body.removeChild element
+
+      it "should return yes if elements are the same", ->
+        Dropzone.elementInside(element, element).should.be.ok
+      it "should return yes if element is direct child", ->
+        Dropzone.elementInside(child1, element).should.be.ok
+      it "should return yes if element is some child", ->
+        Dropzone.elementInside(child2, element).should.be.ok
+        Dropzone.elementInside(child2, document.body).should.be.ok
+      it "should return no unless element is some child", ->
+        Dropzone.elementInside(element, child1).should.not.be.ok
+        Dropzone.elementInside(document.body, child1).should.not.be.ok
+
 
   describe "constructor()", ->
 
