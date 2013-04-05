@@ -297,16 +297,20 @@ class Dropzone extends Em
       @element.appendChild Dropzone.createElement """<div class="default message"><span>#{@options.dictDefaultMessage}</span></div>"""
 
     if @options.clickable
-      @hiddenFileInput = document.createElement "input"
-      @hiddenFileInput.setAttribute "type", "file"
-      @hiddenFileInput.setAttribute "multiple", "multiple"
-      @hiddenFileInput.style.display = "none"
-      document.body.appendChild @hiddenFileInput
-      @hiddenFileInput.addEventListener "change", =>
-        files = @hiddenFileInput.files
-        if files.length
-          @emit "selectedfiles", files
-          @handleFiles files
+      setupHiddenFileInput = =>
+        document.body.removeChild @hiddenFileInput if @hiddenFileInput
+        @hiddenFileInput = document.createElement "input"
+        @hiddenFileInput.setAttribute "type", "file"
+        @hiddenFileInput.setAttribute "multiple", "multiple"
+        @hiddenFileInput.style.display = "none"
+        document.body.appendChild @hiddenFileInput
+        @hiddenFileInput.addEventListener "change", =>
+          files = @hiddenFileInput.files
+          if files.length
+            @emit "selectedfiles", files
+            @handleFiles files
+          setupHiddenFileInput()
+      setupHiddenFileInput()
 
     @files = [] # All files
     @filesQueue = [] # The files that still have to be processed

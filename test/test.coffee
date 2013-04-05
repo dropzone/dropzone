@@ -48,3 +48,24 @@ describe "Dropzone", ->
       element = document.createElement "div"
       new Dropzone element, url: "url"
       expect(-> new Dropzone element, url: "url").to.throw "Dropzone already attached."
+
+  describe "init()", ->
+    describe "clickable", ->
+      element = Dropzone.createElement """<form action="/"></form>"""
+      dropzone = new Dropzone element, clickable: yes
+      it "should create a hidden file input if clickable", ->
+        dropzone.hiddenFileInput.should.be.ok
+        dropzone.hiddenFileInput.tagName.should.equal "INPUT"
+      it "should create a new input element when something is selected to reset the input field", ->
+        for i in [0..3]
+          hiddenFileInput = dropzone.hiddenFileInput
+          event = document.createEvent "HTMLEvents"
+          event.initEvent "change", true, true
+          hiddenFileInput.dispatchEvent event
+          dropzone.hiddenFileInput.should.not.equal hiddenFileInput
+          Dropzone.elementInside(hiddenFileInput, document).should.not.be.ok
+
+
+
+
+
