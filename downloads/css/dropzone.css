@@ -16,7 +16,8 @@
 .dropzone.clickable {
   cursor: pointer;
 }
-.dropzone.clickable .message {
+.dropzone.clickable .message,
+.dropzone.clickable .message span {
   cursor: pointer;
 }
 .dropzone.clickable * {
