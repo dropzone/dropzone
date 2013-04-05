@@ -31,7 +31,6 @@
   }],
   "dependencies": { },
   "devDependencies": {
-    "nib": "*",
     "grunt": "*",
     "grunt-contrib-coffee": "*",
     "grunt-contrib-concat": "*",

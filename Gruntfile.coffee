@@ -8,7 +8,6 @@ module.exports = (grunt) ->
       options:
         compress: false
       default:
-        paths: [ "node_modules/nib/lib/" ]
         files: [
           "downloads/css/basic.css": "downloads/css/stylus/basic.styl"
           "downloads/css/dropzone.css": "downloads/css/stylus/dropzone.styl"
