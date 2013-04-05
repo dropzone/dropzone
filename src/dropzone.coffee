@@ -348,7 +348,7 @@ class Dropzone extends Em
       "click": (evt) =>
         return unless @options.clickable
         # Only the actual dropzone or the message element should trigger file selection
-        if evt.target == @element or evt.target == @element.querySelector ".message"
+        if evt.target == @element or evt.target == @element.querySelector ".message" or evt.target == @element.querySelector ".message span"
           @hiddenFileInput.click() # Forward the click
 
 
