@@ -67,6 +67,31 @@ describe "Dropzone", ->
       new Dropzone element, url: "url"
       expect(-> new Dropzone element, url: "url").to.throw "Dropzone already attached."
 
+    describe "options", ->
+      before -> Dropzone.options.testElement = url: "/some/url", parallelUploads: 10
+      after -> delete Dropzone.options.testElement
+
+      it "should take the options set in Dropzone.options", ->
+        element = document.createElement "div"
+        element.id = "test-element"
+        dropzone = new Dropzone element
+        dropzone.options.url.should.equal "/some/url"
+        dropzone.options.parallelUploads.should.equal 10
+
+      it "should prefer passed options over Dropzone.options", ->
+        element = document.createElement "div"
+        element.id = "test-element"
+        dropzone = new Dropzone element, url: "/some/other/url"
+        dropzone.options.url.should.equal "/some/other/url"
+
+      it "should take the default options if nothing set in Dropzone.options", ->
+        element = document.createElement "div"
+        element.id = "test-element2"
+        dropzone = new Dropzone element, url: "/some/url"
+        dropzone.options.parallelUploads.should.equal 2
+
+
+
   describe "init()", ->
     describe "clickable", ->
       element = Dropzone.createElement """<form action="/"></form>"""
