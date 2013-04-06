@@ -115,6 +115,9 @@ class Dropzone extends Em
     # You can add event listeners here
     init: -> noop
 
+    # Used to debug dropzone and force the fallback form.
+    forceFallback: off
+
     # Called when the browser does not support drag and drop
     fallback: ->
       # This code should pass in IE7... :(
@@ -245,14 +248,15 @@ class Dropzone extends Em
     # Not checking if instance of HTMLElement or Element since IE9 is extremely weird.
     throw new Error "Invalid dropzone element." unless @element and @element.nodeType?
 
-    throw new Error "Dropzone already attached." if Dropzone.forElement @element
+    throw new Error "Dropzone already attached." if @element.dropzone
 
     # Now add this dropzone to the instances.
     Dropzone.instances.push @
 
-    # Get the `Dropzone.options.elementId` for this element if it exists
-    elementId = @element.id
-    elementOptions = (Dropzone.options[camelize elementId] if elementId) ? { }
+    # Put the dropzone inside the element itself.
+    element.dropzone = @
+
+    elementOptions = Dropzone.optionsForElement(@element) ? { }
 
     extend = (target, objects...) ->
       for object in objects
@@ -269,7 +273,7 @@ class Dropzone extends Em
     @options.method = @options.method.toUpperCase()
 
     # If the browser failed, just call the fallback and leave
-    return @options.fallback.call this unless Dropzone.isBrowserSupported()
+    return @options.fallback.call this if @options.forceFallback or !Dropzone.isBrowserSupported()
 
     if (fallback = @getExistingFallback()) and fallback.parentNode
       # Remove the fallback
@@ -285,6 +289,15 @@ class Dropzone extends Em
       @previewsContainer = @element
 
 
+    if @options.clickable
+      if @options.clickable == yes
+        @clickableElement = @element
+      else if typeof @options.clickable == "string"
+        @clickableElement = document.querySelector @options.clickable
+      else if @options.clickable.nodeType?
+        @clickableElement = @options.clickable
+      throw new Error "Invalid `clickable` element provided. Please set it to `true`, a plain HTML element or a valid CSS selector." unless @clickableElement
+
     @init()
 
 
@@ -296,7 +309,7 @@ class Dropzone extends Em
     if @element.classList.contains("dropzone") and !@element.querySelector(".message")
       @element.appendChild Dropzone.createElement """<div class="default message"><span>#{@options.dictDefaultMessage}</span></div>"""
 
-    if @options.clickable
+    if @clickableElement
       setupHiddenFileInput = =>
         document.body.removeChild @hiddenFileInput if @hiddenFileInput
         @hiddenFileInput = document.createElement "input"
@@ -332,28 +345,37 @@ class Dropzone extends Em
         e.returnValue = false
 
     # Create the listeners
-    @listeners =
-      "dragstart": (e) =>
-        @emit "dragstart", e
-      "dragenter": (e) =>
-        noPropagation e
-        @emit "dragenter", e
-      "dragover": (e) =>
-        noPropagation e
-        @emit "dragover", e
-      "dragleave": (e) =>
-        @emit "dragleave", e
-      "drop": (e) =>
-        noPropagation e
-        @drop e
-        @emit "drop", e
-      "dragend": (e) =>
-        @emit "dragend", e
-      "click": (evt) =>
-        return unless @options.clickable
-        # Only the actual dropzone or the message element should trigger file selection
-        if evt.target == @element or Dropzone.elementInside evt.target, @element.querySelector ".message"
-          @hiddenFileInput.click() # Forward the click
+    @listeners = [
+      {
+        element: @element
+        events:
+          "dragstart": (e) =>
+            @emit "dragstart", e
+          "dragenter": (e) =>
+            noPropagation e
+            @emit "dragenter", e
+          "dragover": (e) =>
+            noPropagation e
+            @emit "dragover", e
+          "dragleave": (e) =>
+            @emit "dragleave", e
+          "drop": (e) =>
+            noPropagation e
+            @drop e
+            @emit "drop", e
+          "dragend": (e) =>
+            @emit "dragend", e
+      }
+    ]
+
+    if @clickableElement
+      @listeners.push
+        element: @clickableElement
+        events:
+          "click": (evt) =>
+            # Only the actual dropzone or the message element should trigger file selection
+            if (@clickableElement != @element) or (evt.target == @element or Dropzone.elementInside evt.target, @element.querySelector ".message")
+              @hiddenFileInput.click() # Forward the click
 
 
     @enable()
@@ -394,22 +416,24 @@ class Dropzone extends Em
 
   # Activates all listeners stored in @listeners
   setupEventListeners: ->
-    @element.addEventListener event, listener, false for event, listener of @listeners
+    for elementListeners in @listeners
+      elementListeners.element.addEventListener event, listener, false for event, listener of elementListeners.events
       
 
   # Deactivates all listeners stored in @listeners
   removeEventListeners: ->
-    @element.removeEventListener event, listener, false for event, listener of @listeners
+    for elementListeners in @listeners
+      elementListeners.element.removeEventListener event, listener, false for event, listener of elementListeners.events
 
   # Removes all event listeners and clears the arrays.
   disable: ->
-    @element.classList.remove "clickable" if @options.clickable
+    @element.classList.remove "clickable" if @clickableElement == @element
     @removeEventListeners()
     @filesProcessing = [ ]
     @filesQueue = [ ]
 
   enable: ->
-    @element.classList.add "clickable" if @options.clickable
+    @element.classList.add "clickable" if @clickableElement == @element
     @setupEventListeners()
 
   # Returns a nicely formatted filesize
@@ -634,7 +658,7 @@ class Dropzone extends Em
 
 
 
-Dropzone.version = "2.0.11"
+Dropzone.version = "2.0.12"
 
 
 # This is a map of options for your different dropzones. Add configurations
@@ -644,10 +668,20 @@ Dropzone.version = "2.0.11"
 # 
 #     Dropzone.options.myDropzoneElementId = { maxFilesize: 1 };
 # 
+# To disable autoDiscover for a specific element, you can set `false` as an option:
+# 
+#     Dropzone.options.myDisabledElementId = false;
+# 
 # And in html:
 # 
 #     <form action="/upload" id="my-dropzone-element-id" class="dropzone"></form>
 Dropzone.options = { }
+
+
+# Returns the options for an element or undefined if none available.
+Dropzone.optionsForElement = (element) ->
+  # Get the `Dropzone.options.elementId` for this element if it exists
+  if element.id then Dropzone.options[camelize element.id] else undefined
 
 
 # Holds a list of all dropzone instances
@@ -656,10 +690,30 @@ Dropzone.instances = [ ]
 # Returns the dropzone for given element if any
 Dropzone.forElement = (element) ->
   element = document.querySelector element if typeof element == "string"
-  for instance in Dropzone.instances
-    return instance if instance.element == element
-  return null
+  return element.dropzone ? null
 
+
+# Set to false if you don't want Dropzone to automatically find and attach to .dropzone elements.
+Dropzone.autoDiscover = on
+
+# Looks for all .dropzone elements and creates a dropzone for them
+Dropzone.discover = ->
+  return unless Dropzone.autoDiscover
+
+  if document.querySelectorAll
+    dropzones = document.querySelectorAll ".dropzone"
+  else
+    dropzones = [ ]
+    # IE :(
+    checkElements = (elements) ->
+      for el in elements
+        dropzones.push el if /(^| )dropzone($| )/.test el.className
+    checkElements document.getElementsByTagName "div"
+    checkElements document.getElementsByTagName "form"
+
+  for dropzone in dropzones
+    # Create a dropzone unless auto discover has been disabled for specific element
+    new Dropzone dropzone unless Dropzone.optionsForElement(dropzone) == false
 
 
 
@@ -792,17 +846,4 @@ contentLoaded = (win, fn) ->
     win[add] pre + "load", init, false
 
 
-contentLoaded window, ->
-  if false #document.querySelectorAll
-    dropzones = document.querySelectorAll ".dropzone"
-  else
-    dropzones = [ ]
-    # IE :(
-    checkElements = (elements) ->
-      for el in elements
-        dropzones.push el if /(^| )dropzone($| )/.test el.className
-    checkElements document.getElementsByTagName "div"
-    checkElements document.getElementsByTagName "form"
-
-  new Dropzone dropzone for dropzone in dropzones
-
+contentLoaded window, Dropzone.discover

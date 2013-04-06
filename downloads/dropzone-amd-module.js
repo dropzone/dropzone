@@ -234,6 +234,7 @@ Emitter.prototype.hasListeners = function(event){
       init: function() {
         return noop;
       },
+      forceFallback: false,
       fallback: function() {
         var child, messageElement, span, _i, _len, _ref;
 
@@ -323,7 +324,7 @@ Emitter.prototype.hasListeners = function(event){
     };
 
     function Dropzone(element, options) {
-      var elementId, elementOptions, extend, fallback, _ref;
+      var elementOptions, extend, fallback, _ref;
 
       this.element = element;
       this.version = Dropzone.version;
@@ -334,12 +335,12 @@ Emitter.prototype.hasListeners = function(event){
       if (!(this.element && (this.element.nodeType != null))) {
         throw new Error("Invalid dropzone element.");
       }
-      if (Dropzone.forElement(this.element)) {
+      if (this.element.dropzone) {
         throw new Error("Dropzone already attached.");
       }
       Dropzone.instances.push(this);
-      elementId = this.element.id;
-      elementOptions = (_ref = (elementId ? Dropzone.options[camelize(elementId)] : void 0)) != null ? _ref : {};
+      element.dropzone = this;
+      elementOptions = (_ref = Dropzone.optionsForElement(this.element)) != null ? _ref : {};
       extend = function() {
         var key, object, objects, target, val, _i, _len;
 
@@ -361,7 +362,7 @@ Emitter.prototype.hasListeners = function(event){
         throw new Error("No URL provided.");
       }
       this.options.method = this.options.method.toUpperCase();
-      if (!Dropzone.isBrowserSupported()) {
+      if (this.options.forceFallback || !Dropzone.isBrowserSupported()) {
         return this.options.fallback.call(this);
       }
       if ((fallback = this.getExistingFallback()) && fallback.parentNode) {
@@ -379,6 +380,18 @@ Emitter.prototype.hasListeners = function(event){
       } else {
         this.previewsContainer = this.element;
       }
+      if (this.options.clickable) {
+        if (this.options.clickable === true) {
+          this.clickableElement = this.element;
+        } else if (typeof this.options.clickable === "string") {
+          this.clickableElement = document.querySelector(this.options.clickable);
+        } else if (this.options.clickable.nodeType != null) {
+          this.clickableElement = this.options.clickable;
+        }
+        if (!this.clickableElement) {
+          throw new Error("Invalid `clickable` element provided. Please set it to `true`, a plain HTML element or a valid CSS selector.");
+        }
+      }
       this.init();
     }
 
@@ -392,7 +405,7 @@ Emitter.prototype.hasListeners = function(event){
       if (this.element.classList.contains("dropzone") && !this.element.querySelector(".message")) {
         this.element.appendChild(Dropzone.createElement("<div class=\"default message\"><span>" + this.options.dictDefaultMessage + "</span></div>"));
       }
-      if (this.options.clickable) {
+      if (this.clickableElement) {
         setupHiddenFileInput = function() {
           if (_this.hiddenFileInput) {
             document.body.removeChild(_this.hiddenFileInput);
@@ -432,38 +445,47 @@ Emitter.prototype.hasListeners = function(event){
           return e.returnValue = false;
         }
       };
-      this.listeners = {
-        "dragstart": function(e) {
-          return _this.emit("dragstart", e);
-        },
-        "dragenter": function(e) {
-          noPropagation(e);
-          return _this.emit("dragenter", e);
-        },
-        "dragover": function(e) {
-          noPropagation(e);
-          return _this.emit("dragover", e);
-        },
-        "dragleave": function(e) {
-          return _this.emit("dragleave", e);
-        },
-        "drop": function(e) {
-          noPropagation(e);
-          _this.drop(e);
-          return _this.emit("drop", e);
-        },
-        "dragend": function(e) {
-          return _this.emit("dragend", e);
-        },
-        "click": function(evt) {
-          if (!_this.options.clickable) {
-            return;
-          }
-          if (evt.target === _this.element || Dropzone.elementInside(evt.target, _this.element.querySelector(".message"))) {
-            return _this.hiddenFileInput.click();
+      this.listeners = [
+        {
+          element: this.element,
+          events: {
+            "dragstart": function(e) {
+              return _this.emit("dragstart", e);
+            },
+            "dragenter": function(e) {
+              noPropagation(e);
+              return _this.emit("dragenter", e);
+            },
+            "dragover": function(e) {
+              noPropagation(e);
+              return _this.emit("dragover", e);
+            },
+            "dragleave": function(e) {
+              return _this.emit("dragleave", e);
+            },
+            "drop": function(e) {
+              noPropagation(e);
+              _this.drop(e);
+              return _this.emit("drop", e);
+            },
+            "dragend": function(e) {
+              return _this.emit("dragend", e);
+            }
           }
         }
-      };
+      ];
+      if (this.clickableElement) {
+        this.listeners.push({
+          element: this.clickableElement,
+          events: {
+            "click": function(evt) {
+              if ((_this.clickableElement !== _this.element) || (evt.target === _this.element || Dropzone.elementInside(evt.target, _this.element.querySelector(".message")))) {
+                return _this.hiddenFileInput.click();
+              }
+            }
+          }
+        });
+      }
       this.enable();
       return this.options.init.call(this);
     };
@@ -513,31 +535,51 @@ Emitter.prototype.hasListeners = function(event){
     };
 
     Dropzone.prototype.setupEventListeners = function() {
-      var event, listener, _ref, _results;
+      var elementListeners, event, listener, _i, _len, _ref, _results;
 
       _ref = this.listeners;
       _results = [];
-      for (event in _ref) {
-        listener = _ref[event];
-        _results.push(this.element.addEventListener(event, listener, false));
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        elementListeners = _ref[_i];
+        _results.push((function() {
+          var _ref1, _results1;
+
+          _ref1 = elementListeners.events;
+          _results1 = [];
+          for (event in _ref1) {
+            listener = _ref1[event];
+            _results1.push(elementListeners.element.addEventListener(event, listener, false));
+          }
+          return _results1;
+        })());
       }
       return _results;
     };
 
     Dropzone.prototype.removeEventListeners = function() {
-      var event, listener, _ref, _results;
+      var elementListeners, event, listener, _i, _len, _ref, _results;
 
       _ref = this.listeners;
       _results = [];
-      for (event in _ref) {
-        listener = _ref[event];
-        _results.push(this.element.removeEventListener(event, listener, false));
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        elementListeners = _ref[_i];
+        _results.push((function() {
+          var _ref1, _results1;
+
+          _ref1 = elementListeners.events;
+          _results1 = [];
+          for (event in _ref1) {
+            listener = _ref1[event];
+            _results1.push(elementListeners.element.removeEventListener(event, listener, false));
+          }
+          return _results1;
+        })());
       }
       return _results;
     };
 
     Dropzone.prototype.disable = function() {
-      if (this.options.clickable) {
+      if (this.clickableElement === this.element) {
         this.element.classList.remove("clickable");
       }
       this.removeEventListeners();
@@ -546,7 +588,7 @@ Emitter.prototype.hasListeners = function(event){
     };
 
     Dropzone.prototype.enable = function() {
-      if (this.options.clickable) {
+      if (this.clickableElement === this.element) {
         this.element.classList.add("clickable");
       }
       return this.setupEventListeners();
@@ -803,26 +845,68 @@ Emitter.prototype.hasListeners = function(event){
 
   })(Em);
 
-  Dropzone.version = "2.0.11";
+  Dropzone.version = "2.0.12";
 
   Dropzone.options = {};
+
+  Dropzone.optionsForElement = function(element) {
+    if (element.id) {
+      return Dropzone.options[camelize(element.id)];
+    } else {
+      return void 0;
+    }
+  };
 
   Dropzone.instances = [];
 
   Dropzone.forElement = function(element) {
-    var instance, _i, _len, _ref;
+    var _ref;
 
     if (typeof element === "string") {
       element = document.querySelector(element);
     }
-    _ref = Dropzone.instances;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      instance = _ref[_i];
-      if (instance.element === element) {
-        return instance;
+    return (_ref = element.dropzone) != null ? _ref : null;
+  };
+
+  Dropzone.autoDiscover = true;
+
+  Dropzone.discover = function() {
+    var checkElements, dropzone, dropzones, _i, _len, _results;
+
+    if (!Dropzone.autoDiscover) {
+      return;
+    }
+    if (document.querySelectorAll) {
+      dropzones = document.querySelectorAll(".dropzone");
+    } else {
+      dropzones = [];
+      checkElements = function(elements) {
+        var el, _i, _len, _results;
+
+        _results = [];
+        for (_i = 0, _len = elements.length; _i < _len; _i++) {
+          el = elements[_i];
+          if (/(^| )dropzone($| )/.test(el.className)) {
+            _results.push(dropzones.push(el));
+          } else {
+            _results.push(void 0);
+          }
+        }
+        return _results;
+      };
+      checkElements(document.getElementsByTagName("div"));
+      checkElements(document.getElementsByTagName("form"));
+    }
+    _results = [];
+    for (_i = 0, _len = dropzones.length; _i < _len; _i++) {
+      dropzone = dropzones[_i];
+      if (Dropzone.optionsForElement(dropzone) !== false) {
+        _results.push(new Dropzone(dropzone));
+      } else {
+        _results.push(void 0);
       }
     }
-    return null;
+    return _results;
   };
 
   Dropzone.blacklistedBrowsers = [/opera.*Macintosh.*version\/12/i];
@@ -949,37 +1033,7 @@ Emitter.prototype.hasListeners = function(event){
     }
   };
 
-  contentLoaded(window, function() {
-    var checkElements, dropzone, dropzones, _i, _len, _results;
-
-    if (false) {
-      dropzones = document.querySelectorAll(".dropzone");
-    } else {
-      dropzones = [];
-      checkElements = function(elements) {
-        var el, _i, _len, _results;
-
-        _results = [];
-        for (_i = 0, _len = elements.length; _i < _len; _i++) {
-          el = elements[_i];
-          if (/(^| )dropzone($| )/.test(el.className)) {
-            _results.push(dropzones.push(el));
-          } else {
-            _results.push(void 0);
-          }
-        }
-        return _results;
-      };
-      checkElements(document.getElementsByTagName("div"));
-      checkElements(document.getElementsByTagName("form"));
-    }
-    _results = [];
-    for (_i = 0, _len = dropzones.length; _i < _len; _i++) {
-      dropzone = dropzones[_i];
-      _results.push(new Dropzone(dropzone));
-    }
-    return _results;
-  });
+  contentLoaded(window, Dropzone.discover);
 
 }).call(this);
 
