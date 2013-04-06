@@ -38,6 +38,24 @@ describe "Dropzone", ->
         Dropzone.elementInside(element, child1).should.not.be.ok
         Dropzone.elementInside(document.body, child1).should.not.be.ok
 
+    describe "Dropzone.optionsForElement()", ->
+      testOptions =
+        url: "/some/url"
+        method: "put"
+
+      before -> Dropzone.options.testElement = testOptions
+      after -> delete Dropzone.options.testElement
+
+      element = document.createElement "div"
+
+      it "should take options set in Dropzone.options from camelized id", ->
+        element.id = "test-element"
+        Dropzone.optionsForElement(element).should.equal testOptions
+
+      it "should return undefined if no options set", ->
+        element.id = "test-element2"
+        expect(Dropzone.optionsForElement(element)).to.equal undefined
+
 
   describe "constructor()", ->
 

@@ -250,9 +250,7 @@ class Dropzone extends Em
     # Now add this dropzone to the instances.
     Dropzone.instances.push @
 
-    # Get the `Dropzone.options.elementId` for this element if it exists
-    elementId = @element.id
-    elementOptions = (Dropzone.options[camelize elementId] if elementId) ? { }
+    elementOptions = Dropzone.optionsForElement(@element) ? { }
 
     extend = (target, objects...) ->
       for object in objects
@@ -648,6 +646,12 @@ Dropzone.version = "2.0.12-dev"
 # 
 #     <form action="/upload" id="my-dropzone-element-id" class="dropzone"></form>
 Dropzone.options = { }
+
+
+# Returns the options for an element or undefined if none available.
+Dropzone.optionsForElement = (element) ->
+  # Get the `Dropzone.options.elementId` for this element if it exists
+  if element.id then Dropzone.options[camelize element.id] else undefined
 
 
 # Holds a list of all dropzone instances
