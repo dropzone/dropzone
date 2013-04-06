@@ -286,6 +286,15 @@ class Dropzone extends Em
       @previewsContainer = @element
 
 
+    if @options.clickable
+      if @options.clickable == yes
+        @clickableElement = @element
+      else if typeof @options.clickable == "string"
+        @clickableElement = document.querySelector @options.clickable
+      else if @options.clickable.nodeType?
+        @clickableElement = @options.clickable
+      throw new Error "Invalid `clickable` element provided. Please set it to `true`, a plain HTML element or a valid CSS selector." unless @clickableElement
+
     @init()
 
 
@@ -297,7 +306,7 @@ class Dropzone extends Em
     if @element.classList.contains("dropzone") and !@element.querySelector(".message")
       @element.appendChild Dropzone.createElement """<div class="default message"><span>#{@options.dictDefaultMessage}</span></div>"""
 
-    if @options.clickable
+    if @clickableElement
       setupHiddenFileInput = =>
         document.body.removeChild @hiddenFileInput if @hiddenFileInput
         @hiddenFileInput = document.createElement "input"
@@ -333,28 +342,37 @@ class Dropzone extends Em
         e.returnValue = false
 
     # Create the listeners
-    @listeners =
-      "dragstart": (e) =>
-        @emit "dragstart", e
-      "dragenter": (e) =>
-        noPropagation e
-        @emit "dragenter", e
-      "dragover": (e) =>
-        noPropagation e
-        @emit "dragover", e
-      "dragleave": (e) =>
-        @emit "dragleave", e
-      "drop": (e) =>
-        noPropagation e
-        @drop e
-        @emit "drop", e
-      "dragend": (e) =>
-        @emit "dragend", e
-      "click": (evt) =>
-        return unless @options.clickable
-        # Only the actual dropzone or the message element should trigger file selection
-        if evt.target == @element or Dropzone.elementInside evt.target, @element.querySelector ".message"
-          @hiddenFileInput.click() # Forward the click
+    @listeners = [
+      {
+        element: @element
+        events:
+          "dragstart": (e) =>
+            @emit "dragstart", e
+          "dragenter": (e) =>
+            noPropagation e
+            @emit "dragenter", e
+          "dragover": (e) =>
+            noPropagation e
+            @emit "dragover", e
+          "dragleave": (e) =>
+            @emit "dragleave", e
+          "drop": (e) =>
+            noPropagation e
+            @drop e
+            @emit "drop", e
+          "dragend": (e) =>
+            @emit "dragend", e
+      }
+    ]
+
+    if @clickableElement
+      @listeners.push
+        element: @clickableElement
+        events:
+          "click": (evt) =>
+            # Only the actual dropzone or the message element should trigger file selection
+            if (@clickableElement != @element) or (evt.target == @element or Dropzone.elementInside evt.target, @element.querySelector ".message")
+              @hiddenFileInput.click() # Forward the click
 
 
     @enable()
@@ -395,22 +413,24 @@ class Dropzone extends Em
 
   # Activates all listeners stored in @listeners
   setupEventListeners: ->
-    @element.addEventListener event, listener, false for event, listener of @listeners
+    for elementListeners in @listeners
+      elementListeners.element.addEventListener event, listener, false for event, listener of elementListeners.events
       
 
   # Deactivates all listeners stored in @listeners
   removeEventListeners: ->
-    @element.removeEventListener event, listener, false for event, listener of @listeners
+    for elementListeners in @listeners
+      elementListeners.element.removeEventListener event, listener, false for event, listener of elementListeners.events
 
   # Removes all event listeners and clears the arrays.
   disable: ->
-    @element.classList.remove "clickable" if @options.clickable
+    @element.classList.remove "clickable" if @clickableElement == @element
     @removeEventListeners()
     @filesProcessing = [ ]
     @filesQueue = [ ]
 
   enable: ->
-    @element.classList.add "clickable" if @options.clickable
+    @element.classList.add "clickable" if @clickableElement == @element
     @setupEventListeners()
 
   # Returns a nicely formatted filesize

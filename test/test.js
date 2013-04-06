@@ -173,43 +173,89 @@
         return element.dropzone.should.equal(dropzone);
       });
       return describe("options", function() {
-        before(function() {
+        var element, element2;
+
+        element = null;
+        element2 = null;
+        beforeEach(function() {
+          element = document.createElement("div");
+          element.id = "test-element";
+          element2 = document.createElement("div");
+          element2.id = "test-element2";
           return Dropzone.options.testElement = {
             url: "/some/url",
             parallelUploads: 10
           };
         });
-        after(function() {
+        afterEach(function() {
           return delete Dropzone.options.testElement;
         });
         it("should take the options set in Dropzone.options", function() {
-          var dropzone, element;
+          var dropzone;
 
-          element = document.createElement("div");
-          element.id = "test-element";
           dropzone = new Dropzone(element);
           dropzone.options.url.should.equal("/some/url");
           return dropzone.options.parallelUploads.should.equal(10);
         });
         it("should prefer passed options over Dropzone.options", function() {
-          var dropzone, element;
+          var dropzone;
 
-          element = document.createElement("div");
-          element.id = "test-element";
           dropzone = new Dropzone(element, {
             url: "/some/other/url"
           });
           return dropzone.options.url.should.equal("/some/other/url");
         });
-        return it("should take the default options if nothing set in Dropzone.options", function() {
-          var dropzone, element;
+        it("should take the default options if nothing set in Dropzone.options", function() {
+          var dropzone;
 
-          element = document.createElement("div");
-          element.id = "test-element2";
-          dropzone = new Dropzone(element, {
+          dropzone = new Dropzone(element2, {
             url: "/some/url"
           });
           return dropzone.options.parallelUploads.should.equal(2);
+        });
+        return describe("options.clickable", function() {
+          var clickableElement;
+
+          clickableElement = null;
+          beforeEach(function() {
+            clickableElement = document.createElement("div");
+            clickableElement.className = "some-clickable";
+            return document.body.appendChild(clickableElement);
+          });
+          afterEach(function() {
+            return document.body.removeChild(clickableElement);
+          });
+          it("should use the default element if clickable == true", function() {
+            var dropzone;
+
+            dropzone = new Dropzone(element, {
+              clickable: true
+            });
+            return dropzone.clickableElement.should.equal(dropzone.element);
+          });
+          it("should lookup the element if clickable is a CSS selector", function() {
+            var dropzone;
+
+            dropzone = new Dropzone(element, {
+              clickable: ".some-clickable"
+            });
+            return dropzone.clickableElement.should.equal(clickableElement);
+          });
+          it("should simply use the provided element", function() {
+            var dropzone;
+
+            dropzone = new Dropzone(element, {
+              clickable: clickableElement
+            });
+            return dropzone.clickableElement.should.equal(clickableElement);
+          });
+          return it("should throw an exception if the element is invalid", function() {
+            return expect(function() {
+              return new Dropzone(element, {
+                clickable: ".some-invalid-clickable"
+              });
+            }).to["throw"]("Invalid `clickable` element provided. Please set it to `true`, a plain HTML element or a valid CSS selector.");
+          });
         });
       });
     });

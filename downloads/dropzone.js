@@ -588,6 +588,18 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       } else {
         this.previewsContainer = this.element;
       }
+      if (this.options.clickable) {
+        if (this.options.clickable === true) {
+          this.clickableElement = this.element;
+        } else if (typeof this.options.clickable === "string") {
+          this.clickableElement = document.querySelector(this.options.clickable);
+        } else if (this.options.clickable.nodeType != null) {
+          this.clickableElement = this.options.clickable;
+        }
+        if (!this.clickableElement) {
+          throw new Error("Invalid `clickable` element provided. Please set it to `true`, a plain HTML element or a valid CSS selector.");
+        }
+      }
       this.init();
     }
 
@@ -601,7 +613,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       if (this.element.classList.contains("dropzone") && !this.element.querySelector(".message")) {
         this.element.appendChild(Dropzone.createElement("<div class=\"default message\"><span>" + this.options.dictDefaultMessage + "</span></div>"));
       }
-      if (this.options.clickable) {
+      if (this.clickableElement) {
         setupHiddenFileInput = function() {
           if (_this.hiddenFileInput) {
             document.body.removeChild(_this.hiddenFileInput);
@@ -641,38 +653,47 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
           return e.returnValue = false;
         }
       };
-      this.listeners = {
-        "dragstart": function(e) {
-          return _this.emit("dragstart", e);
-        },
-        "dragenter": function(e) {
-          noPropagation(e);
-          return _this.emit("dragenter", e);
-        },
-        "dragover": function(e) {
-          noPropagation(e);
-          return _this.emit("dragover", e);
-        },
-        "dragleave": function(e) {
-          return _this.emit("dragleave", e);
-        },
-        "drop": function(e) {
-          noPropagation(e);
-          _this.drop(e);
-          return _this.emit("drop", e);
-        },
-        "dragend": function(e) {
-          return _this.emit("dragend", e);
-        },
-        "click": function(evt) {
-          if (!_this.options.clickable) {
-            return;
-          }
-          if (evt.target === _this.element || Dropzone.elementInside(evt.target, _this.element.querySelector(".message"))) {
-            return _this.hiddenFileInput.click();
+      this.listeners = [
+        {
+          element: this.element,
+          events: {
+            "dragstart": function(e) {
+              return _this.emit("dragstart", e);
+            },
+            "dragenter": function(e) {
+              noPropagation(e);
+              return _this.emit("dragenter", e);
+            },
+            "dragover": function(e) {
+              noPropagation(e);
+              return _this.emit("dragover", e);
+            },
+            "dragleave": function(e) {
+              return _this.emit("dragleave", e);
+            },
+            "drop": function(e) {
+              noPropagation(e);
+              _this.drop(e);
+              return _this.emit("drop", e);
+            },
+            "dragend": function(e) {
+              return _this.emit("dragend", e);
+            }
           }
         }
-      };
+      ];
+      if (this.clickableElement) {
+        this.listeners.push({
+          element: this.clickableElement,
+          events: {
+            "click": function(evt) {
+              if ((_this.clickableElement !== _this.element) || (evt.target === _this.element || Dropzone.elementInside(evt.target, _this.element.querySelector(".message")))) {
+                return _this.hiddenFileInput.click();
+              }
+            }
+          }
+        });
+      }
       this.enable();
       return this.options.init.call(this);
     };
@@ -722,31 +743,51 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     };
 
     Dropzone.prototype.setupEventListeners = function() {
-      var event, listener, _ref, _results;
+      var elementListeners, event, listener, _i, _len, _ref, _results;
 
       _ref = this.listeners;
       _results = [];
-      for (event in _ref) {
-        listener = _ref[event];
-        _results.push(this.element.addEventListener(event, listener, false));
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        elementListeners = _ref[_i];
+        _results.push((function() {
+          var _ref1, _results1;
+
+          _ref1 = elementListeners.events;
+          _results1 = [];
+          for (event in _ref1) {
+            listener = _ref1[event];
+            _results1.push(elementListeners.element.addEventListener(event, listener, false));
+          }
+          return _results1;
+        })());
       }
       return _results;
     };
 
     Dropzone.prototype.removeEventListeners = function() {
-      var event, listener, _ref, _results;
+      var elementListeners, event, listener, _i, _len, _ref, _results;
 
       _ref = this.listeners;
       _results = [];
-      for (event in _ref) {
-        listener = _ref[event];
-        _results.push(this.element.removeEventListener(event, listener, false));
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        elementListeners = _ref[_i];
+        _results.push((function() {
+          var _ref1, _results1;
+
+          _ref1 = elementListeners.events;
+          _results1 = [];
+          for (event in _ref1) {
+            listener = _ref1[event];
+            _results1.push(elementListeners.element.removeEventListener(event, listener, false));
+          }
+          return _results1;
+        })());
       }
       return _results;
     };
 
     Dropzone.prototype.disable = function() {
-      if (this.options.clickable) {
+      if (this.clickableElement === this.element) {
         this.element.classList.remove("clickable");
       }
       this.removeEventListeners();
@@ -755,7 +796,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     };
 
     Dropzone.prototype.enable = function() {
-      if (this.options.clickable) {
+      if (this.clickableElement === this.element) {
         this.element.classList.add("clickable");
       }
       return this.setupEventListeners();
