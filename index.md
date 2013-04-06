@@ -216,6 +216,20 @@ Dropzone.options.myAwesomeDropzone = {
 {% endhighlight %}
 
 
+If you want to disable the auto discover behaviour of Dropzone, you can either disable
+it on a per element basis, or in general:
+
+{% highlight javascript %}
+// Prevent Dropzone from auto discovering this element:
+Dropzone.options.myAwesomeDropzone = false;
+// This is useful when you want to create the
+// Dropzone programmatically later
+
+// Disable auto discover for all elements:
+Dropzone.autoDiscover = false;
+{% endhighlight %}
+
+
 The valid options are:
 
 | Option                  | Description
