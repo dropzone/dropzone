@@ -115,6 +115,9 @@ class Dropzone extends Em
     # You can add event listeners here
     init: -> noop
 
+    # Used to debug dropzone and force the fallback form.
+    forceFallback: off
+
     # Called when the browser does not support drag and drop
     fallback: ->
       # This code should pass in IE7... :(
@@ -270,7 +273,7 @@ class Dropzone extends Em
     @options.method = @options.method.toUpperCase()
 
     # If the browser failed, just call the fallback and leave
-    return @options.fallback.call this unless Dropzone.isBrowserSupported()
+    return @options.fallback.call this if @options.forceFallback or !Dropzone.isBrowserSupported()
 
     if (fallback = @getExistingFallback()) and fallback.parentNode
       # Remove the fallback

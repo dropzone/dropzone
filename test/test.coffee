@@ -176,7 +176,11 @@ describe "Dropzone", ->
         it "should throw an exception if the element is invalid", ->
           expect(-> new Dropzone element, clickable: ".some-invalid-clickable").to.throw "Invalid `clickable` element provided. Please set it to `true`, a plain HTML element or a valid CSS selector."
 
-
+      it "should call the fallback function if forceFallback == true", (done) ->
+        dropzone = new Dropzone element,
+          url: "/some/other/url"
+          forceFallback: on
+          fallback: -> done()
 
 
   describe "init()", ->

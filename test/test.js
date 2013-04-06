@@ -213,7 +213,7 @@
           });
           return dropzone.options.parallelUploads.should.equal(2);
         });
-        return describe("options.clickable", function() {
+        describe("options.clickable", function() {
           var clickableElement;
 
           clickableElement = null;
@@ -255,6 +255,17 @@
                 clickable: ".some-invalid-clickable"
               });
             }).to["throw"]("Invalid `clickable` element provided. Please set it to `true`, a plain HTML element or a valid CSS selector.");
+          });
+        });
+        return it("should call the fallback function if forceFallback == true", function(done) {
+          var dropzone;
+
+          return dropzone = new Dropzone(element, {
+            url: "/some/other/url",
+            forceFallback: true,
+            fallback: function() {
+              return done();
+            }
           });
         });
       });

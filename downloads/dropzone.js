@@ -443,6 +443,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       init: function() {
         return noop;
       },
+      forceFallback: false,
       fallback: function() {
         var child, messageElement, span, _i, _len, _ref;
 
@@ -570,7 +571,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         throw new Error("No URL provided.");
       }
       this.options.method = this.options.method.toUpperCase();
-      if (!Dropzone.isBrowserSupported()) {
+      if (this.options.forceFallback || !Dropzone.isBrowserSupported()) {
         return this.options.fallback.call(this);
       }
       if ((fallback = this.getExistingFallback()) && fallback.parentNode) {
