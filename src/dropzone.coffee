@@ -645,6 +645,10 @@ Dropzone.version = "2.0.12-dev"
 # 
 #     Dropzone.options.myDropzoneElementId = { maxFilesize: 1 };
 # 
+# To disable autoDiscover for a specific element, you can set `false` as an option:
+# 
+#     Dropzone.options.myDisabledElementId = false;
+# 
 # And in html:
 # 
 #     <form action="/upload" id="my-dropzone-element-id" class="dropzone"></form>
@@ -664,6 +668,24 @@ Dropzone.instances = [ ]
 Dropzone.forElement = (element) ->
   element = document.querySelector element if typeof element == "string"
   return element.dropzone ? null
+
+
+# Looks for all .dropzone elements and creates a dropzone for them
+Dropzone.discover = ->
+  if document.querySelectorAll
+    dropzones = document.querySelectorAll ".dropzone"
+  else
+    dropzones = [ ]
+    # IE :(
+    checkElements = (elements) ->
+      for el in elements
+        dropzones.push el if /(^| )dropzone($| )/.test el.className
+    checkElements document.getElementsByTagName "div"
+    checkElements document.getElementsByTagName "form"
+
+  for dropzone in dropzones
+    # Create a dropzone unless auto discover has been disabled for specific element
+    new Dropzone dropzone unless Dropzone.optionsForElement(dropzone) == false
 
 
 
@@ -796,17 +818,4 @@ contentLoaded = (win, fn) ->
     win[add] pre + "load", init, false
 
 
-contentLoaded window, ->
-  if false #document.querySelectorAll
-    dropzones = document.querySelectorAll ".dropzone"
-  else
-    dropzones = [ ]
-    # IE :(
-    checkElements = (elements) ->
-      for el in elements
-        dropzones.push el if /(^| )dropzone($| )/.test el.className
-    checkElements document.getElementsByTagName "div"
-    checkElements document.getElementsByTagName "form"
-
-  new Dropzone dropzone for dropzone in dropzones
-
+contentLoaded window, Dropzone.discover

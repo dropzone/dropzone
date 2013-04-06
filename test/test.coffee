@@ -57,7 +57,6 @@ describe "Dropzone", ->
         expect(Dropzone.optionsForElement(element)).to.equal undefined
 
     describe "Dropzone.forElement()", ->
-      element = null
       element = document.createElement "div"
       element.id = "some-test-element"
       dropzone = null
@@ -76,6 +75,31 @@ describe "Dropzone", ->
 
       it "should accept native elements", ->
         expect(Dropzone.forElement element).to.equal dropzone
+
+    describe "Dropzone.discover()", ->
+      element1 = document.createElement "div"
+      element1.className = "dropzone"
+      element2 = element1.cloneNode()
+
+      element1.id = "test-element-1"
+      element2.id = "test-element-2"
+
+      before ->
+        Dropzone.options.testElement1 = url: "test-url"
+        Dropzone.options.testElement2 = false # Disabled
+        document.body.appendChild element1
+        document.body.appendChild element2
+        Dropzone.discover()
+      after ->
+        document.body.removeChild element1
+        document.body.removeChild element2
+
+      it "should find elements with a .dropzone class", ->
+        element1.dropzone.should.be.ok
+
+      it "should not create dropzones with disabled options", ->
+        expect(element2.dropzone).to.not.be.ok
+
 
   describe "constructor()", ->
 
