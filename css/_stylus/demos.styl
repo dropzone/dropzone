@@ -1,0 +1,49 @@
+@import "nib"
+
+
+$system-base-font-size = 16px
+
+$font-size = 17px
+
+*
+  box-sizing border-box
+
+html
+  font-size ($font-size / $system-base-font-size)em
+  height 100%
+
+
+body
+  height 100%
+  padding 0
+  margin 0
+
+  // Font family set by typekit
+  font-size 1em
+  background-color #f4f4f4
+  background-image url("../images/background.png")
+  background-repeat repeat
+
+  line-height 160%
+  font-weight 300
+  color black
+
+  > article
+    padding 10em
+
+  &.drag-hover
+    background white
+
+@import "dropzone"
+
+
+#dropzone
+  margin 30px 0
+  box-shadow 0 0 50px rgba(0, 0, 0, 0.13)
+  padding 4px
+  border-radius 3px
+  .dropzone
+    box-shadow none
+
+
+@import "opentip"

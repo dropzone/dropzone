@@ -1,7 +1,7 @@
 {
   "name": "opentip",
   "repo": "enyo/opentip",
-  "version": "2.2.7",
+  "version": "2.4.5",
   "description": "Free opensource tooltip class.",
   "keywords": [
     "tooltip"
@@ -15,6 +15,6 @@
   "scripts": [
     "index.js",
     "lib/opentip.js",
-    "lib/adapter.component.js"
+    "lib/adapter-component.js"
   ]
 }

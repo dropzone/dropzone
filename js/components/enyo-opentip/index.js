@@ -5,7 +5,7 @@
 var Opentip = require("./lib/opentip.js");
 
 
-var Adapter = require("./lib/adapter.component.js");
+var Adapter = require("./lib/adapter-component.js");
 
 // Add the adapter to the list
 Opentip.addAdapter(new Adapter());

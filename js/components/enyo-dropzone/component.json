@@ -1,7 +1,7 @@
 {
   "name": "dropzone",
   "repo": "enyo/dropzone",
-  "version": "2.0.0",
+  "version": "2.0.12",
   "description": "Handles drag and drop of files for you.",
   "scripts": [
     "index.js",
@@ -12,5 +12,6 @@
   ],
   "dependencies": {
     "component/emitter": "*"
-  }
+  },
+  "license": "MIT"
 }

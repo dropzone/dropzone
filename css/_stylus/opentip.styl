@@ -1,8 +1,15 @@
 @import "nib"
 
+
+@keyframes otloading
+  from
+    transform rotate(0deg)
+  to
+    transform rotate(360deg)
+
+
 .opentip-container, .opentip-container *
   box-sizing border-box
-  font-family arial, sans-serif
 
 .opentip-container
   position absolute
@@ -14,10 +21,10 @@
 
 
 
-  &.fixed
-    &.hidden
-    &.going-to-show
-    &.hiding
+  &.ot-fixed
+    &.ot-hidden
+    &.ot-going-to-show
+    &.ot-hiding
       &.stem-top.stem-center
         transform translateY(-5px) 
       &.stem-top.stem-right
@@ -35,12 +42,13 @@
       &.stem-top.stem-left
         transform translateY(-5px) translateX(-5px)
 
-  &.fixed
+  &.ot-fixed
     // When it's fixed, the close button, and links inside the tooltip should
     // be clickable
-    pointer-events auto
+    .opentip
+      pointer-events auto
 
-  &.hidden
+  &.ot-hidden
     display none
 
   .opentip
@@ -55,7 +63,7 @@
       margin 0
       padding 0
 
-    .close
+    .ot-close
       pointer-events auto
       display block
       absolute top -12px left 60px
@@ -66,12 +74,22 @@
       span
         display none
 
-    .loading-indicator
+    .ot-loading-indicator
       display none
 
-  &.loading
-    .loading-indicator
+  &.ot-loading
+    .ot-loading-indicator
+      width 30px
+      height @width
+      font-size @width
+      line-height @width
+      font-weight bold
       display block
+      span
+        display block
+        animation otloading 2s linear infinite
+        text-align center
+
 
 
   // Styles
@@ -91,19 +109,19 @@
 
   // Effects
   // =======
-  &.hide-effect-fade
+  &.ot-hide-effect-fade
     transition transform 0.5s ease-in-out, opacity 1s ease-in-out
     opacity 1
-    &.hiding
+    &.ot-hiding
       opacity 0
 
-  &.show-effect-appear
-    &.going-to-show
-    &.showing
+  &.ot-show-effect-appear
+    &.ot-going-to-show
+    &.ot-showing
       transition transform 0.5s ease-in-out, opacity 1s ease-in-out
-    &.going-to-show
+    &.ot-going-to-show
       opacity 0
-    &.showing
+    &.ot-showing
       opacity 1
-    &.visible
+    &.ot-visible
       opacity 1

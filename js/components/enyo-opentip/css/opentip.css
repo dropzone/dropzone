@@ -20,82 +20,82 @@
   -ms-transform: translateX(0) translateY(0);
   transform: translateX(0) translateY(0);
 }
-.opentip-container.fixed.hidden.stem-top.stem-center,
-.opentip-container.fixed.going-to-show.stem-top.stem-center,
-.opentip-container.fixed.hiding.stem-top.stem-center {
+.opentip-container.ot-fixed.ot-hidden.stem-top.stem-center,
+.opentip-container.ot-fixed.ot-going-to-show.stem-top.stem-center,
+.opentip-container.ot-fixed.ot-hiding.stem-top.stem-center {
   -webkit-transform: translateY(-5px);
   -moz-transform: translateY(-5px);
   -o-transform: translateY(-5px);
   -ms-transform: translateY(-5px);
   transform: translateY(-5px);
 }
-.opentip-container.fixed.hidden.stem-top.stem-right,
-.opentip-container.fixed.going-to-show.stem-top.stem-right,
-.opentip-container.fixed.hiding.stem-top.stem-right {
+.opentip-container.ot-fixed.ot-hidden.stem-top.stem-right,
+.opentip-container.ot-fixed.ot-going-to-show.stem-top.stem-right,
+.opentip-container.ot-fixed.ot-hiding.stem-top.stem-right {
   -webkit-transform: translateY(-5px) translateX(5px);
   -moz-transform: translateY(-5px) translateX(5px);
   -o-transform: translateY(-5px) translateX(5px);
   -ms-transform: translateY(-5px) translateX(5px);
   transform: translateY(-5px) translateX(5px);
 }
-.opentip-container.fixed.hidden.stem-middle.stem-right,
-.opentip-container.fixed.going-to-show.stem-middle.stem-right,
-.opentip-container.fixed.hiding.stem-middle.stem-right {
+.opentip-container.ot-fixed.ot-hidden.stem-middle.stem-right,
+.opentip-container.ot-fixed.ot-going-to-show.stem-middle.stem-right,
+.opentip-container.ot-fixed.ot-hiding.stem-middle.stem-right {
   -webkit-transform: translateX(5px);
   -moz-transform: translateX(5px);
   -o-transform: translateX(5px);
   -ms-transform: translateX(5px);
   transform: translateX(5px);
 }
-.opentip-container.fixed.hidden.stem-bottom.stem-right,
-.opentip-container.fixed.going-to-show.stem-bottom.stem-right,
-.opentip-container.fixed.hiding.stem-bottom.stem-right {
+.opentip-container.ot-fixed.ot-hidden.stem-bottom.stem-right,
+.opentip-container.ot-fixed.ot-going-to-show.stem-bottom.stem-right,
+.opentip-container.ot-fixed.ot-hiding.stem-bottom.stem-right {
   -webkit-transform: translateY(5px) translateX(5px);
   -moz-transform: translateY(5px) translateX(5px);
   -o-transform: translateY(5px) translateX(5px);
   -ms-transform: translateY(5px) translateX(5px);
   transform: translateY(5px) translateX(5px);
 }
-.opentip-container.fixed.hidden.stem-bottom.stem-center,
-.opentip-container.fixed.going-to-show.stem-bottom.stem-center,
-.opentip-container.fixed.hiding.stem-bottom.stem-center {
+.opentip-container.ot-fixed.ot-hidden.stem-bottom.stem-center,
+.opentip-container.ot-fixed.ot-going-to-show.stem-bottom.stem-center,
+.opentip-container.ot-fixed.ot-hiding.stem-bottom.stem-center {
   -webkit-transform: translateY(5px);
   -moz-transform: translateY(5px);
   -o-transform: translateY(5px);
   -ms-transform: translateY(5px);
   transform: translateY(5px);
 }
-.opentip-container.fixed.hidden.stem-bottom.stem-left,
-.opentip-container.fixed.going-to-show.stem-bottom.stem-left,
-.opentip-container.fixed.hiding.stem-bottom.stem-left {
+.opentip-container.ot-fixed.ot-hidden.stem-bottom.stem-left,
+.opentip-container.ot-fixed.ot-going-to-show.stem-bottom.stem-left,
+.opentip-container.ot-fixed.ot-hiding.stem-bottom.stem-left {
   -webkit-transform: translateY(5px) translateX(-5px);
   -moz-transform: translateY(5px) translateX(-5px);
   -o-transform: translateY(5px) translateX(-5px);
   -ms-transform: translateY(5px) translateX(-5px);
   transform: translateY(5px) translateX(-5px);
 }
-.opentip-container.fixed.hidden.stem-middle.stem-left,
-.opentip-container.fixed.going-to-show.stem-middle.stem-left,
-.opentip-container.fixed.hiding.stem-middle.stem-left {
+.opentip-container.ot-fixed.ot-hidden.stem-middle.stem-left,
+.opentip-container.ot-fixed.ot-going-to-show.stem-middle.stem-left,
+.opentip-container.ot-fixed.ot-hiding.stem-middle.stem-left {
   -webkit-transform: translateX(-5px);
   -moz-transform: translateX(-5px);
   -o-transform: translateX(-5px);
   -ms-transform: translateX(-5px);
   transform: translateX(-5px);
 }
-.opentip-container.fixed.hidden.stem-top.stem-left,
-.opentip-container.fixed.going-to-show.stem-top.stem-left,
-.opentip-container.fixed.hiding.stem-top.stem-left {
+.opentip-container.ot-fixed.ot-hidden.stem-top.stem-left,
+.opentip-container.ot-fixed.ot-going-to-show.stem-top.stem-left,
+.opentip-container.ot-fixed.ot-hiding.stem-top.stem-left {
   -webkit-transform: translateY(-5px) translateX(-5px);
   -moz-transform: translateY(-5px) translateX(-5px);
   -o-transform: translateY(-5px) translateX(-5px);
   -ms-transform: translateY(-5px) translateX(-5px);
   transform: translateY(-5px) translateX(-5px);
 }
-.opentip-container.fixed .opentip {
+.opentip-container.ot-fixed .opentip {
   pointer-events: auto;
 }
-.opentip-container.hidden {
+.opentip-container.ot-hidden {
   display: none;
 }
 .opentip-container .opentip {
@@ -110,7 +110,7 @@
   margin: 0;
   padding: 0;
 }
-.opentip-container .opentip .close {
+.opentip-container .opentip .ot-close {
   pointer-events: auto;
   display: block;
   position: absolute;
@@ -120,13 +120,13 @@
   background: rgba(0,0,0,0);
   text-decoration: none;
 }
-.opentip-container .opentip .close span {
+.opentip-container .opentip .ot-close span {
   display: none;
 }
-.opentip-container .opentip .loading-indicator {
+.opentip-container .opentip .ot-loading-indicator {
   display: none;
 }
-.opentip-container.loading .loading-indicator {
+.opentip-container.ot-loading .ot-loading-indicator {
   width: 30px;
   height: 30px;
   font-size: 30px;
@@ -134,13 +134,13 @@
   font-weight: bold;
   display: block;
 }
-.opentip-container.loading .loading-indicator span {
+.opentip-container.ot-loading .ot-loading-indicator span {
   display: block;
-  -webkit-animation: loading 2s linear infinite;
-  -moz-animation: loading 2s linear infinite;
-  -o-animation: loading 2s linear infinite;
-  -ms-animation: loading 2s linear infinite;
-  animation: loading 2s linear infinite;
+  -webkit-animation: otloading 2s linear infinite;
+  -moz-animation: otloading 2s linear infinite;
+  -o-animation: otloading 2s linear infinite;
+  -ms-animation: otloading 2s linear infinite;
+  animation: otloading 2s linear infinite;
   text-align: center;
 }
 .opentip-container.style-dark .opentip,
@@ -153,7 +153,7 @@
   color: #317cc5;
   text-shadow: 1px 1px 8px rgba(0,94,153,0.3);
 }
-.opentip-container.hide-effect-fade {
+.opentip-container.ot-hide-effect-fade {
   -webkit-transition: -webkit-transform 0.5s ease-in-out, opacity 1s ease-in-out;
   -moz-transition: -moz-transform 0.5s ease-in-out, opacity 1s ease-in-out;
   -o-transition: -o-transform 0.5s ease-in-out, opacity 1s ease-in-out;
@@ -163,35 +163,35 @@
   -ms-filter: none;
   filter: none;
 }
-.opentip-container.hide-effect-fade.hiding {
+.opentip-container.ot-hide-effect-fade.ot-hiding {
   opacity: 0;
   filter: alpha(opacity=0);
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
 }
-.opentip-container.show-effect-appear.going-to-show,
-.opentip-container.show-effect-appear.showing {
+.opentip-container.ot-show-effect-appear.ot-going-to-show,
+.opentip-container.ot-show-effect-appear.ot-showing {
   -webkit-transition: -webkit-transform 0.5s ease-in-out, opacity 1s ease-in-out;
   -moz-transition: -moz-transform 0.5s ease-in-out, opacity 1s ease-in-out;
   -o-transition: -o-transform 0.5s ease-in-out, opacity 1s ease-in-out;
   -ms-transition: -ms-transform 0.5s ease-in-out, opacity 1s ease-in-out;
   transition: transform 0.5s ease-in-out, opacity 1s ease-in-out;
 }
-.opentip-container.show-effect-appear.going-to-show {
+.opentip-container.ot-show-effect-appear.ot-going-to-show {
   opacity: 0;
   filter: alpha(opacity=0);
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
 }
-.opentip-container.show-effect-appear.showing {
+.opentip-container.ot-show-effect-appear.ot-showing {
   opacity: 1;
   -ms-filter: none;
   filter: none;
 }
-.opentip-container.show-effect-appear.visible {
+.opentip-container.ot-show-effect-appear.ot-visible {
   opacity: 1;
   -ms-filter: none;
   filter: none;
 }
-@-moz-keyframes loading {
+@-moz-keyframes otloading {
   0% {
     -webkit-transform: rotate(0deg);
     -moz-transform: rotate(0deg);
@@ -208,7 +208,7 @@
     transform: rotate(360deg);
   }
 }
-@-webkit-keyframes loading {
+@-webkit-keyframes otloading {
   0% {
     -webkit-transform: rotate(0deg);
     -moz-transform: rotate(0deg);
@@ -225,7 +225,7 @@
     transform: rotate(360deg);
   }
 }
-@-o-keyframes loading {
+@-o-keyframes otloading {
   0% {
     -webkit-transform: rotate(0deg);
     -moz-transform: rotate(0deg);
@@ -242,7 +242,7 @@
     transform: rotate(360deg);
   }
 }
-@-ms-keyframes loading {
+@-ms-keyframes otloading {
   0% {
     -webkit-transform: rotate(0deg);
     -moz-transform: rotate(0deg);
@@ -259,7 +259,7 @@
     transform: rotate(360deg);
   }
 }
-@keyframes loading {
+@keyframes otloading {
   0% {
     -webkit-transform: rotate(0deg);
     -moz-transform: rotate(0deg);
