@@ -80,25 +80,40 @@ describe "Dropzone", ->
       element1 = document.createElement "div"
       element1.className = "dropzone"
       element2 = element1.cloneNode()
+      element3 = element1.cloneNode()
 
       element1.id = "test-element-1"
       element2.id = "test-element-2"
+      element3.id = "test-element-3"
 
-      before ->
-        Dropzone.options.testElement1 = url: "test-url"
-        Dropzone.options.testElement2 = false # Disabled
-        document.body.appendChild element1
-        document.body.appendChild element2
-        Dropzone.discover()
-      after ->
-        document.body.removeChild element1
-        document.body.removeChild element2
+      describe "specific options", ->
+        before ->
+          Dropzone.options.testElement1 = url: "test-url"
+          Dropzone.options.testElement2 = false # Disabled
+          document.body.appendChild element1
+          document.body.appendChild element2
+          Dropzone.discover()
+        after ->
+          document.body.removeChild element1
+          document.body.removeChild element2
 
-      it "should find elements with a .dropzone class", ->
-        element1.dropzone.should.be.ok
+        it "should find elements with a .dropzone class", ->
+          element1.dropzone.should.be.ok
 
-      it "should not create dropzones with disabled options", ->
-        expect(element2.dropzone).to.not.be.ok
+        it "should not create dropzones with disabled options", ->
+          expect(element2.dropzone).to.not.be.ok
+
+      describe "Dropzone.autoDiscover", ->
+        before ->
+          Dropzone.options.testElement3 = url: "test-url"
+          document.body.appendChild element3
+        after ->
+          document.body.removeChild element3
+
+        it "should not create dropzones if Dropzone.autoDiscover == false", ->
+          Dropzone.autoDiscover = off
+          Dropzone.discover()
+          expect(element3.dropzone).to.not.be.ok
 
 
   describe "constructor()", ->

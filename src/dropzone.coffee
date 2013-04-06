@@ -670,8 +670,13 @@ Dropzone.forElement = (element) ->
   return element.dropzone ? null
 
 
+# Set to false if you don't want Dropzone to automatically find and attach to .dropzone elements.
+Dropzone.autoDiscover = on
+
 # Looks for all .dropzone elements and creates a dropzone for them
 Dropzone.discover = ->
+  return unless Dropzone.autoDiscover
+
   if document.querySelectorAll
     dropzones = document.querySelectorAll ".dropzone"
   else

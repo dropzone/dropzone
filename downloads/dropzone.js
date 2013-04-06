@@ -1035,9 +1035,14 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     return (_ref = element.dropzone) != null ? _ref : null;
   };
 
+  Dropzone.autoDiscover = true;
+
   Dropzone.discover = function() {
     var checkElements, dropzone, dropzones, _i, _len, _results;
 
+    if (!Dropzone.autoDiscover) {
+      return;
+    }
     if (document.querySelectorAll) {
       dropzones = document.querySelectorAll(".dropzone");
     } else {

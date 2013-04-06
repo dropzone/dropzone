@@ -96,31 +96,51 @@
         });
       });
       return describe("Dropzone.discover()", function() {
-        var element1, element2;
+        var element1, element2, element3;
 
         element1 = document.createElement("div");
         element1.className = "dropzone";
         element2 = element1.cloneNode();
+        element3 = element1.cloneNode();
         element1.id = "test-element-1";
         element2.id = "test-element-2";
-        before(function() {
-          Dropzone.options.testElement1 = {
-            url: "test-url"
-          };
-          Dropzone.options.testElement2 = false;
-          document.body.appendChild(element1);
-          document.body.appendChild(element2);
-          return Dropzone.discover();
+        element3.id = "test-element-3";
+        describe("specific options", function() {
+          before(function() {
+            Dropzone.options.testElement1 = {
+              url: "test-url"
+            };
+            Dropzone.options.testElement2 = false;
+            document.body.appendChild(element1);
+            document.body.appendChild(element2);
+            return Dropzone.discover();
+          });
+          after(function() {
+            document.body.removeChild(element1);
+            return document.body.removeChild(element2);
+          });
+          it("should find elements with a .dropzone class", function() {
+            return element1.dropzone.should.be.ok;
+          });
+          return it("should not create dropzones with disabled options", function() {
+            return expect(element2.dropzone).to.not.be.ok;
+          });
         });
-        after(function() {
-          document.body.removeChild(element1);
-          return document.body.removeChild(element2);
-        });
-        it("should find elements with a .dropzone class", function() {
-          return element1.dropzone.should.be.ok;
-        });
-        return it("should not create dropzones with disabled options", function() {
-          return expect(element2.dropzone).to.not.be.ok;
+        return describe("Dropzone.autoDiscover", function() {
+          before(function() {
+            Dropzone.options.testElement3 = {
+              url: "test-url"
+            };
+            return document.body.appendChild(element3);
+          });
+          after(function() {
+            return document.body.removeChild(element3);
+          });
+          return it("should not create dropzones if Dropzone.autoDiscover == false", function() {
+            Dropzone.autoDiscover = false;
+            Dropzone.discover();
+            return expect(element3.dropzone).to.not.be.ok;
+          });
         });
       });
     });
