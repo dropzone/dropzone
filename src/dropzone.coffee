@@ -245,10 +245,13 @@ class Dropzone extends Em
     # Not checking if instance of HTMLElement or Element since IE9 is extremely weird.
     throw new Error "Invalid dropzone element." unless @element and @element.nodeType?
 
-    throw new Error "Dropzone already attached." if Dropzone.forElement @element
+    throw new Error "Dropzone already attached." if @element.dropzone
 
     # Now add this dropzone to the instances.
     Dropzone.instances.push @
+
+    # Put the dropzone inside the element itself.
+    element.dropzone = @
 
     elementOptions = Dropzone.optionsForElement(@element) ? { }
 
@@ -660,10 +663,7 @@ Dropzone.instances = [ ]
 # Returns the dropzone for given element if any
 Dropzone.forElement = (element) ->
   element = document.querySelector element if typeof element == "string"
-  for instance in Dropzone.instances
-    return instance if instance.element == element
-  return null
-
+  return element.dropzone ? null
 
 
 

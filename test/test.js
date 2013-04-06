@@ -21,7 +21,7 @@
           return element.tagName.should.equal("DIV");
         });
       });
-      return describe("Dropzone.elementInside()", function() {
+      describe("Dropzone.elementInside()", function() {
         var child1, child2, element;
 
         element = Dropzone.createElement("<div id=\"test\"><div class=\"child1\"><div class=\"child2\"></div></div></div>");
@@ -46,6 +46,56 @@
           return Dropzone.elementInside(document.body, child1).should.not.be.ok;
         });
       });
+      describe("Dropzone.optionsForElement()", function() {
+        var element, testOptions;
+
+        testOptions = {
+          url: "/some/url",
+          method: "put"
+        };
+        before(function() {
+          return Dropzone.options.testElement = testOptions;
+        });
+        after(function() {
+          return delete Dropzone.options.testElement;
+        });
+        element = document.createElement("div");
+        it("should take options set in Dropzone.options from camelized id", function() {
+          element.id = "test-element";
+          return Dropzone.optionsForElement(element).should.equal(testOptions);
+        });
+        return it("should return undefined if no options set", function() {
+          element.id = "test-element2";
+          return expect(Dropzone.optionsForElement(element)).to.equal(void 0);
+        });
+      });
+      return describe("Dropzone.forElement()", function() {
+        var dropzone, element;
+
+        element = null;
+        element = document.createElement("div");
+        element.id = "some-test-element";
+        dropzone = null;
+        before(function() {
+          document.body.appendChild(element);
+          return dropzone = new Dropzone(element, {
+            url: "/test"
+          });
+        });
+        after(function() {
+          dropzone.disable();
+          return document.body.removeChild(element);
+        });
+        it("should return null if no dropzone attached", function() {
+          return expect(Dropzone.forElement(document.createElement("div"))).to.equal(null);
+        });
+        it("should accept css selectors", function() {
+          return expect(Dropzone.forElement("#some-test-element")).to.equal(dropzone);
+        });
+        return it("should accept native elements", function() {
+          return expect(Dropzone.forElement(element)).to.equal(dropzone);
+        });
+      });
     });
     describe("constructor()", function() {
       it("should throw an exception if the element is invalid", function() {
@@ -53,7 +103,7 @@
           return new Dropzone("#invalid-element");
         }).to["throw"]("Invalid dropzone element.");
       });
-      return it("should throw an exception if assigned twice to the same element", function() {
+      it("should throw an exception if assigned twice to the same element", function() {
         var element;
 
         element = document.createElement("div");
@@ -65,6 +115,55 @@
             url: "url"
           });
         }).to["throw"]("Dropzone already attached.");
+      });
+      it("should set itself as element.dropzone", function() {
+        var dropzone, element;
+
+        element = document.createElement("div");
+        dropzone = new Dropzone(element, {
+          url: "url"
+        });
+        return element.dropzone.should.equal(dropzone);
+      });
+      return describe("options", function() {
+        before(function() {
+          return Dropzone.options.testElement = {
+            url: "/some/url",
+            parallelUploads: 10
+          };
+        });
+        after(function() {
+          return delete Dropzone.options.testElement;
+        });
+        it("should take the options set in Dropzone.options", function() {
+          var dropzone, element;
+
+          element = document.createElement("div");
+          element.id = "test-element";
+          dropzone = new Dropzone(element);
+          dropzone.options.url.should.equal("/some/url");
+          return dropzone.options.parallelUploads.should.equal(10);
+        });
+        it("should prefer passed options over Dropzone.options", function() {
+          var dropzone, element;
+
+          element = document.createElement("div");
+          element.id = "test-element";
+          dropzone = new Dropzone(element, {
+            url: "/some/other/url"
+          });
+          return dropzone.options.url.should.equal("/some/other/url");
+        });
+        return it("should take the default options if nothing set in Dropzone.options", function() {
+          var dropzone, element;
+
+          element = document.createElement("div");
+          element.id = "test-element2";
+          dropzone = new Dropzone(element, {
+            url: "/some/url"
+          });
+          return dropzone.options.parallelUploads.should.equal(2);
+        });
       });
     });
     return describe("init()", function() {

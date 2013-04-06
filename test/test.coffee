@@ -56,6 +56,26 @@ describe "Dropzone", ->
         element.id = "test-element2"
         expect(Dropzone.optionsForElement(element)).to.equal undefined
 
+    describe "Dropzone.forElement()", ->
+      element = null
+      element = document.createElement "div"
+      element.id = "some-test-element"
+      dropzone = null
+      before ->
+        document.body.appendChild element
+        dropzone = new Dropzone element, url: "/test"
+      after ->
+        dropzone.disable()
+        document.body.removeChild element
+
+      it "should return null if no dropzone attached", ->
+        expect(Dropzone.forElement document.createElement "div").to.equal null
+
+      it "should accept css selectors", ->
+        expect(Dropzone.forElement "#some-test-element").to.equal dropzone
+
+      it "should accept native elements", ->
+        expect(Dropzone.forElement element).to.equal dropzone
 
   describe "constructor()", ->
 
@@ -66,6 +86,11 @@ describe "Dropzone", ->
       element = document.createElement "div"
       new Dropzone element, url: "url"
       expect(-> new Dropzone element, url: "url").to.throw "Dropzone already attached."
+
+    it "should set itself as element.dropzone", ->
+      element = document.createElement "div"
+      dropzone = new Dropzone element, url: "url"
+      element.dropzone.should.equal dropzone
 
     describe "options", ->
       before -> Dropzone.options.testElement = url: "/some/url", parallelUploads: 10

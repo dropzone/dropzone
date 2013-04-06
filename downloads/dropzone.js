@@ -532,7 +532,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     };
 
     function Dropzone(element, options) {
-      var elementId, elementOptions, extend, fallback, _ref;
+      var elementOptions, extend, fallback, _ref;
 
       this.element = element;
       this.version = Dropzone.version;
@@ -543,12 +543,12 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       if (!(this.element && (this.element.nodeType != null))) {
         throw new Error("Invalid dropzone element.");
       }
-      if (Dropzone.forElement(this.element)) {
+      if (this.element.dropzone) {
         throw new Error("Dropzone already attached.");
       }
       Dropzone.instances.push(this);
-      elementId = this.element.id;
-      elementOptions = (_ref = (elementId ? Dropzone.options[camelize(elementId)] : void 0)) != null ? _ref : {};
+      element.dropzone = this;
+      elementOptions = (_ref = Dropzone.optionsForElement(this.element)) != null ? _ref : {};
       extend = function() {
         var key, object, objects, target, val, _i, _len;
 
@@ -1016,22 +1016,23 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
   Dropzone.options = {};
 
+  Dropzone.optionsForElement = function(element) {
+    if (element.id) {
+      return Dropzone.options[camelize(element.id)];
+    } else {
+      return void 0;
+    }
+  };
+
   Dropzone.instances = [];
 
   Dropzone.forElement = function(element) {
-    var instance, _i, _len, _ref;
+    var _ref;
 
     if (typeof element === "string") {
       element = document.querySelector(element);
     }
-    _ref = Dropzone.instances;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      instance = _ref[_i];
-      if (instance.element === element) {
-        return instance;
-      }
-    }
-    return null;
+    return (_ref = element.dropzone) != null ? _ref : null;
   };
 
   Dropzone.blacklistedBrowsers = [/opera.*Macintosh.*version\/12/i];
