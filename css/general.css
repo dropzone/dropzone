@@ -595,7 +595,7 @@ footer:after {
 footer:after {
   clear: both;
 }
-article,
+article section,
 footer > div {
   margin-left: auto;
   margin-right: auto;
@@ -607,7 +607,7 @@ viewport {
   & {
     table: tr;
   }
-  article,
+  article section,
   footer > div {
     width: auto;
     margin-left: 1em;
@@ -624,13 +624,13 @@ viewport {
   }
 }
 @media screen and (min-width: 37.5em) {
-  article,
+  article section,
   footer > div {
     width: 32.470588235294116rem;
   }
 }
 @media screen and (min-width: 57em) {
-  article,
+  article section,
   footer > div {
     width: 40.94117647058823rem;
   }

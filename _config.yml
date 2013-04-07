@@ -5,5 +5,7 @@ permalink: none
 pygments: true
 markdown: redcarpet
 
+
+exclude: [ "Gruntfile.coffee" ]
 redcarpet:
   extensions: [ "tables", "with_toc_data" ]

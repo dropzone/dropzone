@@ -35,6 +35,9 @@
   ],
   "devDependencies": {
     "stylus": "*",
-    "nib": "*"
+    "nib": "*",
+    "grunt": "*",
+    "grunt-contrib-stylus": "*",
+    "grunt-contrib-watch": "*"
   }
 }
