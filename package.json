@@ -38,6 +38,8 @@
     "nib": "*",
     "grunt": "*",
     "grunt-contrib-stylus": "*",
-    "grunt-contrib-watch": "*"
+    "grunt-contrib-watch": "*",
+    "grunt-contrib-copy": "*",
+    "grunt-component-build": "*"
   }
 }

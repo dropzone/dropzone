@@ -1,4 +1,5 @@
 ---
+id: installation
 layout: default
 title: Dropzone.js
 ---

@@ -1,0 +1,18 @@
+{
+  "name": "css",
+  "repo": "component/css",
+  "description": "DOM element css helper",
+  "version": "0.0.2",
+  "keywords": [
+    "css",
+    "style",
+    "stylesheet",
+    "utility"
+  ],
+  "dependencies": {},
+  "development": {},
+  "license": "MIT",
+  "scripts": [
+    "index.js"
+  ]
+}

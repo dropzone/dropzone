@@ -6,6 +6,6 @@ pygments: true
 markdown: redcarpet
 
 
-exclude: [ "Gruntfile.coffee" ]
+exclude: [ "Gruntfile.coffee", "node_modules", "CNAME", "package.json", "js/components" ]
 redcarpet:
   extensions: [ "tables", "with_toc_data" ]

@@ -1,4 +1,5 @@
 ---
+id: usage
 layout: default
 title: Dropzone.js
 ---

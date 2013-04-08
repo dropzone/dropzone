@@ -5,7 +5,10 @@
   "dependencies": {
     "enyo/dropzone": "*",
     "enyo/opentip": "*",
-    "component/jquery": "*"
+    "component/top": "*",
+    "component/jquery": "*",
+    "component/event": "*",
+    "jkroso/position": "*"
   },
   "scripts": [
     "index.js"

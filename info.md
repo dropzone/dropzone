@@ -1,4 +1,5 @@
 ---
+id: info
 layout: default
 title: Dropzone.js
 ---
@@ -28,6 +29,18 @@ Dropzone requires, so it's supported. It's as simple as that. (The same goes
 for earlier versions of Firefox, Opera and Safari but those browsers have a
 good conversion rate and nobody uses Firefox 3.5 anymore. Why some people still
 use IE8 is beyond me.)
+
+</section>
+
+
+<section markdown="1">
+
+
+testing
+=======
+
+Dropzone is well tested with [mocha](http://visionmedia.github.io/mocha/) and
+[chai](http://chaijs.com).
 
 </section>
 

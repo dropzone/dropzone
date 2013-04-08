@@ -28,9 +28,17 @@
   {% include vendor_headers.html %}
 
 </head>
-<body>
+<body id="site-{{page.id}}" {% if page.id != "home" %}class="fixed-menu"{% endif %}>
 
-  <article itemscope  itemtype="http://schema.org/WebApplication">
+  <article itemscope itemtype="http://schema.org/WebApplication">
+
+    {% if page.url == "/index.html" %}
+      {% include home_header.html %}
+    {% else %}
+      <div id="loading-font"><span>Loading fonts</span></div>
+    {% endif %}
+
+    {% include main_menu.html %}
 
     {{ content }}
 

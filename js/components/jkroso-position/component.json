@@ -1,0 +1,22 @@
+{
+  "name": "position",
+  "repo": "jkroso/position",
+  "description": "Utlities for working with positioned DOM elements",
+  "version": "0.1.0",
+  "keywords": [
+    "DOM",
+    "position",
+    "css",
+    "offset"
+  ],
+  "dependencies": {
+    "jkroso/computed-style": "*",
+    "component/css": "*"
+  },
+  "main": "src/index.js",
+  "scripts": [
+    "src/index.js"
+  ],
+  "styles": [],
+  "license": "MIT"
+}

@@ -54,7 +54,8 @@ body
 
   padding 4.5em 0 0 0
 
-
+  &.fixed-menu
+    padding-top 0
 
 
 
@@ -94,7 +95,9 @@ body
   width 88px
   height @width
   
-  top 450px
+  top 250px
+  #site-home &
+    top 450px
   left 50%
   margin-left -(@width/2)
   .ie &
@@ -103,12 +106,14 @@ body
     display none
 
 
+nav#main ul
 article section
   opacity 0
   transition opacity 0.4s ease-in-out
 
 .wf-active
 .wf-inactive
+  nav#main ul
   article section
     opacity 1
 
@@ -150,6 +155,63 @@ a#fork-me
   span
     display none
 
+  body.fixed-menu &
+    top 72px
+
+
+
+nav
+  ul
+    margin 0
+    padding 0
+    li
+      margin 0
+      padding 0
+      display inline-block
+
+
+nav#main
+  #site-home &
+    height 72px
+    margin 5em 0
+
+  > div
+    z-index 1000
+    border 1px solid #888
+    border-left none
+    border-right none
+    height 72px
+    background rgba(0, 0, 0, 0);
+    transition background 0.3s ease-in-out
+    ul li a
+      transition color 0.3s ease-in-out
+      color black
+
+  &.fixed
+  body.fixed-menu &
+    > div
+      background rgba(0, 0, 0, 1);
+      border-color black
+      fixed top left
+      right 0
+      ul
+        li a
+          color white
+
+
+  ul
+    height 70px
+    text-align center
+    li
+      a
+        color black
+        text-decoration none
+        font-weight 300
+        line-height 70px
+        text-transform lowercase
+        font-size 1.2em
+        margin 0 10px
+
 
 article
 
@@ -190,10 +252,11 @@ article
 
 
     #social-buttons
+      margin-top 1em
+      margin-bottom 2em
+      text-align center
       a
         background none
-      margin 1em 0 2em 0
-      text-align center
       .social-button
         display inline-block
       @media screen and (max-width: 600px)
@@ -355,6 +418,7 @@ footer
 // Grid
 
 article section
+nav#main ul
 footer > div
   margin-left auto
   margin-right auto
@@ -372,7 +436,9 @@ footer > div
 //  Zoomed out below 320 px
 @media screen and (max-width: 37.5em)
 
-  article section, footer > div
+  nav#main ul
+  article section
+  footer > div
     width auto
     margin-left 1em
     margin-right 1em
@@ -397,7 +463,9 @@ footer > div
 //  600-911 px
 //  Zoomed in above 600 px
 @media screen and (min-width: 37.5em)
-  article section, footer > div
+  nav#main ul
+  article section
+  footer > div
     column-width 8
 
 
@@ -406,7 +474,9 @@ footer > div
 //  912-1887 px
 //  Zoomed in above 912 px
 @media screen and (min-width: 57em)
-  article section, footer > div
+  nav#main ul
+  article section
+  footer > div
     column-width 10
 
   footer

@@ -1,4 +1,11 @@
 
+
+/**
+ * hasOwnProperty.
+ */
+
+var has = Object.prototype.hasOwnProperty;
+
 /**
  * Require the given path.
  *
@@ -75,10 +82,10 @@ require.resolve = function(path) {
 
   for (var i = 0; i < paths.length; i++) {
     var path = paths[i];
-    if (require.modules.hasOwnProperty(path)) return path;
+    if (has.call(require.modules, path)) return path;
   }
 
-  if (require.aliases.hasOwnProperty(index)) {
+  if (has.call(require.aliases, index)) {
     return require.aliases[index];
   }
 };
@@ -132,7 +139,7 @@ require.register = function(path, definition) {
  */
 
 require.alias = function(from, to) {
-  if (!require.modules.hasOwnProperty(from)) {
+  if (!has.call(require.modules, from)) {
     throw new Error('Failed to alias "' + from + '", it does not exist');
   }
   require.aliases[to] = from;
@@ -194,7 +201,7 @@ require.relative = function(parent) {
    */
 
   localRequire.exists = function(path) {
-    return require.modules.hasOwnProperty(localRequire.resolve(path));
+    return has.call(require.modules, localRequire.resolve(path));
   };
 
   return localRequire;
@@ -3115,6 +3122,169 @@ module.exports = Adapter = (function() {
 
 })();
 
+});
+require.register("matthewmueller-debounce/index.js", function(exports, require, module){
+/**
+ * Debounce
+ *
+ * Returns a function, that, as long as it continues to be invoked, will not
+ * be triggered. The function will be called after it stops being called for
+ * N milliseconds. If `immediate` is passed, trigger the function on the
+ * leading edge, instead of the trailing.
+ *
+ * @param {Function} func
+ * @param {Number} wait
+ * @param {Boolean} immediate
+ * @return {Function}
+ */
+
+module.exports = function(func, wait, immediate) {
+  var timeout, result;
+  return function() {
+    var context = this, args = arguments;
+    var later = function() {
+      timeout = null;
+      if (!immediate) result = func.apply(context, args);
+    };
+    var callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) result = func.apply(context, args);
+    return result;
+  };
+};
+
+});
+require.register("component-domify/index.js", function(exports, require, module){
+
+/**
+ * Expose `parse`.
+ */
+
+module.exports = parse;
+
+/**
+ * Wrap map from jquery.
+ */
+
+var map = {
+  option: [1, '<select multiple="multiple">', '</select>'],
+  optgroup: [1, '<select multiple="multiple">', '</select>'],
+  legend: [1, '<fieldset>', '</fieldset>'],
+  thead: [1, '<table>', '</table>'],
+  tbody: [1, '<table>', '</table>'],
+  tfoot: [1, '<table>', '</table>'],
+  colgroup: [1, '<table>', '</table>'],
+  caption: [1, '<table>', '</table>'],
+  tr: [2, '<table><tbody>', '</tbody></table>'],
+  td: [3, '<table><tbody><tr>', '</tr></tbody></table>'],
+  th: [3, '<table><tbody><tr>', '</tr></tbody></table>'],
+  col: [2, '<table><tbody></tbody><colgroup>', '</colgroup></table>'],
+  _default: [0, '', '']
+};
+
+/**
+ * Parse `html` and return the children.
+ *
+ * @param {String} html
+ * @return {Array}
+ * @api private
+ */
+
+function parse(html) {
+  if ('string' != typeof html) throw new TypeError('String expected');
+  
+  // tag name
+  var m = /<([\w:]+)/.exec(html);
+  if (!m) throw new Error('No elements were generated.');
+  var tag = m[1];
+  
+  // body support
+  if (tag == 'body') {
+    var el = document.createElement('html');
+    el.innerHTML = html;
+    return [el.removeChild(el.lastChild)];
+  }
+  
+  // wrap map
+  var wrap = map[tag] || map._default;
+  var depth = wrap[0];
+  var prefix = wrap[1];
+  var suffix = wrap[2];
+  var el = document.createElement('div');
+  el.innerHTML = prefix + html + suffix;
+  while (depth--) el = el.lastChild;
+
+  return orphan(el.children);
+}
+
+/**
+ * Orphan `els` and return an array.
+ *
+ * @param {NodeList} els
+ * @return {Array}
+ * @api private
+ */
+
+function orphan(els) {
+  var ret = [];
+
+  while (els.length) {
+    ret.push(els[0].parentNode.removeChild(els[0]));
+  }
+
+  return ret;
+}
+
+});
+require.register("component-top/index.js", function(exports, require, module){
+
+/**
+ * Module dependencies.
+ */
+
+var debounce = require('debounce')
+  , html = require('./template')
+  , domify = require('domify')
+  , event = require('event')
+
+/**
+ * Expose `top`.
+ */
+
+module.exports = top;
+
+/**
+ * Add back-to-top link.
+ *
+ * @api public
+ */
+
+function top() {
+  var el = domify(html)[0];
+  var height = window.innerHeight;
+
+  function onscroll() {
+    var top = document.body.scrollTop;
+    if (top < height / 2) return hide();
+    show();
+  }
+
+  function show() {
+    el.className = 'show';
+  }
+
+  function hide() {
+    el.className = '';
+  }
+
+  event.bind(window, 'scroll', debounce(onscroll, 50));
+  document.body.appendChild(el);
+}
+
+});
+require.register("component-top/template.js", function(exports, require, module){
+module.exports = '<a href="#" id="back-to-top"></a>\n';
 });
 require.register("component-jquery/index.js", function(exports, require, module){
 /*!
@@ -12720,11 +12890,255 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 })( window );
 
 });
+require.register("component-event/index.js", function(exports, require, module){
+
+/**
+ * Bind `el` event `type` to `fn`.
+ *
+ * @param {Element} el
+ * @param {String} type
+ * @param {Function} fn
+ * @param {Boolean} capture
+ * @return {Function}
+ * @api public
+ */
+
+exports.bind = function(el, type, fn, capture){
+  if (el.addEventListener) {
+    el.addEventListener(type, fn, capture || false);
+  } else {
+    el.attachEvent('on' + type, fn);
+  }
+  return fn;
+};
+
+/**
+ * Unbind `el` event `type`'s callback `fn`.
+ *
+ * @param {Element} el
+ * @param {String} type
+ * @param {Function} fn
+ * @param {Boolean} capture
+ * @return {Function}
+ * @api public
+ */
+
+exports.unbind = function(el, type, fn, capture){
+  if (el.removeEventListener) {
+    el.removeEventListener(type, fn, capture || false);
+  } else {
+    el.detachEvent('on' + type, fn);
+  }
+  return fn;
+};
+
+});
+require.register("jkroso-computed-style/index.js", function(exports, require, module){
+
+/**
+ * Get the computed style of a DOM element
+ * 
+ *   style(document.body) // => {width:'500px', ...}
+ * 
+ * @param {Element} element
+ * @return {Object}
+ */
+
+// Accessing via window for jsDOM support
+module.exports = window.getComputedStyle
+
+// Fallback to elem.currentStyle for IE < 9
+if (!module.exports) {
+	module.exports = function (elem) {
+		return elem.currentStyle
+	}
+}
+
+});
+require.register("component-css/index.js", function(exports, require, module){
+
+/**
+ * Properties to ignore appending "px".
+ */
+
+var ignore = {
+  columnCount: true,
+  fillOpacity: true,
+  fontWeight: true,
+  lineHeight: true,
+  opacity: true,
+  orphans: true,
+  widows: true,
+  zIndex: true,
+  zoom: true
+};
+
+/**
+ * Set `el` css values.
+ *
+ * @param {Element} el
+ * @param {Object} obj
+ * @return {Element}
+ * @api public
+ */
+
+module.exports = function(el, obj){
+  for (var key in obj) {
+    var val = obj[key];
+    if ('number' == typeof val && !ignore[key]) val += 'px';
+    el.style[key] = val;
+  }
+  return el;
+};
+
+});
+require.register("jkroso-position/src/index.js", function(exports, require, module){
+var style = require('computed-style')
+
+exports = module.exports = position
+exports.container = containerBox
+exports.offsetParent = offsetParent
+exports.relative = 
+exports.offset = offset 
+
+/**
+ * Get the location of the element relative to the top left of the documentElement
+ *
+ * @param {Element} element
+ * @return {Object} {top, right, bottom, left} in pixels
+ */
+
+function position (element) {
+	var box = element.getBoundingClientRect()
+	  , scrollTop = window.scrollY
+	  , scrollLeft = window.scrollX
+	// Has to be copied since ClientRects is immutable
+	return {
+		top: box.top + scrollTop,
+		right: box.right + scrollLeft,
+		left: box.left + scrollLeft,
+		bottom: box.bottom + scrollTop,
+		width: box.width,
+		height: box.height
+	}
+}
+
+/**
+ * Get the position of one element relative to another
+ *
+ *   offset(child)
+ *   offset(child, parent)
+ *   
+ * @param {Element} child the subject element
+ * @param {Element} [parent] offset will be calculated relative to this element. 
+ *   This parameter is optional and will default to the offsetparent of the 
+ *   `child` element
+ * @return {Object} {x, y} in pixels
+ */
+
+function offset (child, parent) {
+	// default to comparing with the offsetparent
+	parent || (parent = offsetParent(child))
+	if (!parent) {
+		parent = position(child)
+		return {
+			x: parent.left,
+			y: parent.top
+		}
+	}
+
+	var offset = position(child)
+	  , parentOffset = position(parent)
+	  , css = style(child)
+
+	// Subtract element margins
+	offset.top  -= parseFloat(css.marginTop)  || 0
+	offset.left -= parseFloat(css.marginLeft) || 0
+
+	// Allow for the offsetparent's border
+	offset.top  -= parent.clientTop
+	offset.left -= parent.clientLeft
+
+	return {
+		x: offset.left - parentOffset.left,
+		y:  offset.top  - parentOffset.top
+	}
+}
+
+// Alternative way of calculating offset perhaps its cheaper
+// function offset (el) {
+// 	var x = el.offsetLeft, y = el.offsetTop
+// 	while (el = el.offsetParent) {
+// 		x += el.offsetLeft + el.clientLeft
+// 		y += el.offsetTop + el.clientTop
+// 	}
+// 	return {left: x, top: y}
+// }
+
+/**
+ * Determine the perimeter of an elements containing block. This is the box that
+ * determines the childs positioning. The container cords are relative to the 
+ * document element not the viewport; so take into account scrolling.
+ *
+ * @param {Element} child
+ * @return {Object}
+ */
+
+function containerBox (child) {
+	var container = offsetParent(child)
+
+	if (!container) {
+		container = child.ownerDocument.documentElement
+		// The outer edges of the document
+		return {
+			top   : 0,
+			left  : 0,
+			right : container.offsetWidth,
+			bottom: container.offsetHeight,
+			width : container.offsetWidth,
+			height: container.offsetHeight
+		}
+	}
+
+	var offset = position(container)
+	  , css = style(container)
+
+	// Remove its border
+	offset.top    += parseFloat(css.borderTopWidth) || 0
+	offset.left   += parseFloat(css.borderLeftWidth)|| 0
+	offset.right  -= parseFloat(css.borderRightWidth) || 0
+	offset.bottom -= parseFloat(css.borderBottomWidth) || 0
+	offset.width   = offset.right - offset.left
+	offset.height  = offset.bottom - offset.top
+
+	return offset
+}
+
+/**
+ * Get the element that serves as the base for this ones positioning.
+ * If no parents are postioned it will return undefined which isn't 
+ * what you might expect if you know the offsetparent spec or have 
+ * used `jQuery.offsetParent`
+ * 
+ * @param {Element} element
+ * @return {Element} if a positioned parent exists
+ */
+
+function offsetParent (element) {
+	var parent = element.offsetParent
+	while (parent && style(parent).position === "static") parent = parent.offsetParent
+	return parent
+}
+
+});
 require.register("boot/index.js", function(exports, require, module){
 
 var Dropzone = require("dropzone"),
     Opentip = require("opentip"),
-    o = require("jquery");
+    o = require("jquery"),
+    event = require("event"),
+    position = require("position");
+
 
 Dropzone.options.demoUpload = {
   fallback: function() {
@@ -12732,6 +13146,37 @@ Dropzone.options.demoUpload = {
     o(this.element).append("<p>This is what the file uploads with Dropzone look like in modern browsers:<br /><img src=\"/images/preview.png\" alt=\"preview\" /></p>");
   }
 };
+
+o(function() {
+  require("top")();
+
+
+
+  if (!document.body.classList.contains("fixed-menu")) {
+    var navElement = document.querySelector("nav#main"),
+    navTop,
+    fixedNav = false;
+    
+    setNavTop = function() { navTop = position(navElement).top };
+
+    setNavTop()
+    setTimeout(setNavTop, 500);
+
+    event.bind(window, 'scroll', function() {
+      var top = document.body.scrollTop;
+      if (top < navTop && fixedNav) {
+        navElement.classList.remove("fixed");
+        fixedNav = false;
+        setNavTop(); // Making sure the the top position of the nav is actually correct
+      }
+      else if (top > navTop && !fixedNav) {
+        navElement.classList.add("fixed");
+        fixedNav = true;
+        setNavTop(); // Making sure the the top position of the nav is actually correct
+      }
+    });
+  }
+});
 
 
 });
@@ -12745,5 +13190,23 @@ require.alias("enyo-opentip/lib/opentip.js", "boot/deps/opentip/lib/opentip.js")
 require.alias("enyo-opentip/lib/adapter-component.js", "boot/deps/opentip/lib/adapter-component.js");
 require.alias("component-jquery/index.js", "enyo-opentip/deps/jquery/index.js");
 
+require.alias("component-top/index.js", "boot/deps/top/index.js");
+require.alias("component-top/template.js", "boot/deps/top/template.js");
+require.alias("matthewmueller-debounce/index.js", "component-top/deps/debounce/index.js");
+
+require.alias("component-event/index.js", "component-top/deps/event/index.js");
+
+require.alias("component-domify/index.js", "component-top/deps/domify/index.js");
+
 require.alias("component-jquery/index.js", "boot/deps/jquery/index.js");
+
+require.alias("component-event/index.js", "boot/deps/event/index.js");
+
+require.alias("jkroso-position/src/index.js", "boot/deps/position/src/index.js");
+require.alias("jkroso-position/src/index.js", "boot/deps/position/index.js");
+require.alias("jkroso-computed-style/index.js", "jkroso-position/deps/computed-style/index.js");
+
+require.alias("component-css/index.js", "jkroso-position/deps/css/index.js");
+
+require.alias("jkroso-position/src/index.js", "jkroso-position/index.js");
 

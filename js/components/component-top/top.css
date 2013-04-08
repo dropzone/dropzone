@@ -1,0 +1,32 @@
+
+#back-to-top {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  width: 25px;
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
+  background: rgba(0,0,0,.6);
+  color: white;
+  text-decoration: none;
+  font-size: 7px;
+  border-radius: 2px;
+  opacity: 0;
+  z-index: 100;
+  -webkit-transition: opacity 150ms;
+  -moz-transition: opacity 150ms;
+  transition: opacity 150ms;
+}
+
+#back-to-top.show {
+  opacity: 1;
+}
+
+#back-to-top:hover {
+  background: rgba(0,0,0,.75);
+}
+
+#back-to-top:before {
+  content: '▲';
+}

@@ -1,17 +1,14 @@
 ---
+id: home
 layout: default
 title: Dropzone.js
 ---
-
-
-{% include home_header.html %}
 
 <section markdown="1">
 
 Try it out:
 
-<div id="dropzone"><form action="http://www.torrentplease.com/dropzone.php" class="dropzone" id="demo-upload">
-</form></div>
+<div id="dropzone"><form action="http://www.torrentplease.com/dropzone.php" class="dropzone" id="demo-upload"></form></div>
 
 
 (This is just a demo dropzone. Uploaded files are **not** stored.)
@@ -21,6 +18,7 @@ Try it out:
 > See the section "version 2.0" at the bottom of the page for more information.
 
 </section>
+
 
 <section>
 

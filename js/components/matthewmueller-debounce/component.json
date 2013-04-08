@@ -1,0 +1,13 @@
+{
+  "name": "debounce",
+  "repo": "matthewmueller/debounce",
+  "description": "Creates and returns a new debounced version of the passed function that will postpone its execution until after wait milliseconds have elapsed since the last time it was invoked",
+  "version": "0.0.1",
+  "keywords": [],
+  "dependencies": {},
+  "development": {},
+  "license": "MIT",
+  "scripts": [
+    "index.js"
+  ]
+}

@@ -1,4 +1,5 @@
 ---
+id: documentation
 layout: default
 title: Dropzone.js
 ---

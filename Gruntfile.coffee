@@ -7,10 +7,22 @@ module.exports = (grunt) ->
     stylus:
       options:
         compress: false
+        "include css": yes
       default:
         files: [
           "css/general.css": "css/_stylus/general.styl"
         ]
+
+
+
+    component:
+      app:
+        output: "js/build/"
+        name: "build"
+        base: "./js"
+        styles: true
+        scripts: true
+
 
     # coffee:
     #   default:
@@ -28,9 +40,22 @@ module.exports = (grunt) ->
 
     watch:
       css:
-        files: "css/_stylus/*.styl"
+        files: "css/_stylus/*"
         tasks: [ "css" ]
         options: nospawn: on
+      js:
+        files: "js/index.js"
+        tasks: [ "component" ]
+        options: nospawn: on
+      componentcss:
+        files: "js/build/build.css"
+        tasks: [ "copy:buildcss" ]
+        options: nospawn: on
+
+
+    copy:
+      buildcss:
+        files: "css/_stylus/build.css": "js/build/build.css"
 
 
     # curl:
@@ -76,7 +101,8 @@ module.exports = (grunt) ->
 
   # grunt.loadNpmTasks "grunt-contrib-coffee"
   grunt.loadNpmTasks "grunt-contrib-stylus"
-  # grunt.loadNpmTasks "grunt-contrib-concat"
+  grunt.loadNpmTasks "grunt-component-build"
+  grunt.loadNpmTasks "grunt-contrib-copy"
   grunt.loadNpmTasks "grunt-contrib-watch"
   # grunt.loadNpmTasks "grunt-contrib-uglify"
   # grunt.loadNpmTasks "grunt-contrib-clean"

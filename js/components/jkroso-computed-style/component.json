@@ -1,0 +1,15 @@
+{
+  "name": "computed-style",
+  "repo": "jkroso/computed-style",
+  "description": "create an object representing the computed style values of a DOM element",
+  "version": "0.1.0",
+  "keywords": [
+    "css",
+    "style",
+    "cross-browser"
+  ],
+  "scripts": [
+    "index.js"
+  ],
+  "license": "MIT"
+}
