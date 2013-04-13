@@ -230,8 +230,8 @@ class Dropzone extends Em
                          <div class="filename"><span></span></div>
                         </div>
                         <div class="progress"><span class="upload"></span></div>
-                        <div class="success-mark"><span>✔</span></div>
-                        <div class="error-mark"><span>✘</span></div>
+                        <div class="success-mark"><span>?</span></div>
+                        <div class="error-mark"><span>?</span></div>
                         <div class="error-message"><span></span></div>
                       </div>
                       """
@@ -411,7 +411,7 @@ class Dropzone extends Em
     getFallback = (elements) -> return el for el in elements when /(^| )fallback($| )/.test el.className
 
     for tagName in [ "div", "form" ]
-      return fallback if fallback = getFallback @element.getElementsByTagName "div"
+      return fallback if fallback = getFallback @element.getElementsByTagName tagName
 
 
   # Activates all listeners stored in @listeners
