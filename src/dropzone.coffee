@@ -230,8 +230,8 @@ class Dropzone extends Em
                          <div class="filename"><span></span></div>
                         </div>
                         <div class="progress"><span class="upload"></span></div>
-                        <div class="success-mark"><span>?</span></div>
-                        <div class="error-mark"><span>?</span></div>
+                        <div class="success-mark"><span>✔</span></div>
+                        <div class="error-mark"><span>✘</span></div>
                         <div class="error-message"><span></span></div>
                       </div>
                       """
