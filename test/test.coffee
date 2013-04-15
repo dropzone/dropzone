@@ -200,6 +200,29 @@ describe "Dropzone", ->
           Dropzone.elementInside(hiddenFileInput, document).should.not.be.ok
 
 
+  describe "helper function", ->
+    describe "getExistingFallback()", ->
+      element = null
+      dropzone = null
+      beforeEach ->
+        element = Dropzone.createElement """<div></div>"""
+        dropzone = new Dropzone element, url: "url"
 
+      it "should return undefined if no fallback", ->
+        expect(dropzone.getExistingFallback()).to.equal undefined
+
+      it "should only return the fallback element if it contains exactly fallback", ->
+        element.appendChild Dropzone.createElement """<form class="fallbacks"></form>"""
+        element.appendChild Dropzone.createElement """<form class="sfallback"></form>"""
+        expect(dropzone.getExistingFallback()).to.equal undefined
+
+      it "should return divs as fallback", ->
+        fallback = Dropzone.createElement """<form class=" abc fallback test "></form>"""
+        element.appendChild fallback
+        fallback.should.equal dropzone.getExistingFallback()
+      it "should return forms as fallback", ->
+        fallback = Dropzone.createElement """<div class=" abc fallback test "></div>"""
+        element.appendChild fallback
+        fallback.should.equal dropzone.getExistingFallback()
 
 

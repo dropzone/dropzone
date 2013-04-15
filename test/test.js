@@ -270,7 +270,7 @@
         });
       });
     });
-    return describe("init()", function() {
+    describe("init()", function() {
       return describe("clickable", function() {
         var dropzone, element;
 
@@ -295,6 +295,42 @@
             _results.push(Dropzone.elementInside(hiddenFileInput, document).should.not.be.ok);
           }
           return _results;
+        });
+      });
+    });
+    return describe("helper function", function() {
+      return describe("getExistingFallback()", function() {
+        var dropzone, element;
+
+        element = null;
+        dropzone = null;
+        beforeEach(function() {
+          element = Dropzone.createElement("<div></div>");
+          return dropzone = new Dropzone(element, {
+            url: "url"
+          });
+        });
+        it("should return undefined if no fallback", function() {
+          return expect(dropzone.getExistingFallback()).to.equal(void 0);
+        });
+        it("should only return the fallback element if it contains exactly fallback", function() {
+          element.appendChild(Dropzone.createElement("<form class=\"fallbacks\"></form>"));
+          element.appendChild(Dropzone.createElement("<form class=\"sfallback\"></form>"));
+          return expect(dropzone.getExistingFallback()).to.equal(void 0);
+        });
+        it("should return divs as fallback", function() {
+          var fallback;
+
+          fallback = Dropzone.createElement("<form class=\" abc fallback test \"></form>");
+          element.appendChild(fallback);
+          return fallback.should.equal(dropzone.getExistingFallback());
+        });
+        return it("should return forms as fallback", function() {
+          var fallback;
+
+          fallback = Dropzone.createElement("<div class=\" abc fallback test \"></div>");
+          element.appendChild(fallback);
+          return fallback.should.equal(dropzone.getExistingFallback());
         });
       });
     });
