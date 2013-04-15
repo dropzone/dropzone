@@ -411,7 +411,7 @@ class Dropzone extends Em
     getFallback = (elements) -> return el for el in elements when /(^| )fallback($| )/.test el.className
 
     for tagName in [ "div", "form" ]
-      return fallback if fallback = getFallback @element.getElementsByTagName "div"
+      return fallback if fallback = getFallback @element.getElementsByTagName tagName
 
 
   # Activates all listeners stored in @listeners
