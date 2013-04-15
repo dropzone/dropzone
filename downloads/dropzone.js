@@ -737,7 +737,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       _ref = ["div", "form"];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         tagName = _ref[_i];
-        if (fallback = getFallback(this.element.getElementsByTagName("div"))) {
+        if (fallback = getFallback(this.element.getElementsByTagName(tagName))) {
           return fallback;
         }
       }
@@ -1054,7 +1054,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
   })(Em);
 
-  Dropzone.version = "2.0.12";
+  Dropzone.version = "2.0.13";
 
   Dropzone.options = {};
 
