@@ -447,6 +447,8 @@ nav#main.fixed > div,
 body.fixed-menu nav#main > div {
   background: #000;
   border-color: #000;
+  -webkit-box-shadow: 0 0px 15px #000;
+  box-shadow: 0 0px 15px #000;
   position: fixed;
   top: 0;
   left: 0;
