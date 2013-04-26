@@ -203,8 +203,9 @@ class Dropzone extends Em
     
     # Called whenever the upload progress gets updated.
     # You can be sure that this will be called with the percentage 100% when the file is finished uploading.
-    # Receives `file` and `progress` (percentage)
-    uploadprogress: (file, progress) ->
+    # Receives `file`, `progress` (percentage 0-100) and `bytesSent`.
+    # To get the total number of bytes of the file, use `file.size`
+    uploadprogress: (file, progress, bytesSent) ->
       file.previewTemplate.querySelector(".progress .upload").style.width = "#{progress}%"
 
     # Called just before the file is sent. Gets the `xhr` object as second
@@ -591,7 +592,7 @@ class Dropzone extends Em
       unless 200 <= xhr.status < 300
         handleError()
       else
-        @emit "uploadprogress", file, 100
+        @emit "uploadprogress", file, 100, file.size
         response = xhr.responseText
         if xhr.getResponseHeader("content-type") and ~xhr.getResponseHeader("content-type").indexOf "application/json" then response = JSON.parse response
         @finished file, response, e
@@ -602,7 +603,7 @@ class Dropzone extends Em
     # Some browsers do not have the .upload property
     progressObj = xhr.upload ? xhr
     progressObj.onprogress = (e) =>
-      @emit "uploadprogress", file, Math.max(0, Math.min(100, (e.loaded / e.total) * 100))
+      @emit "uploadprogress", file, Math.max(0, Math.min(100, 100 * e.loaded / e.total)), e.loaded
 
     xhr.setRequestHeader "Accept", "application/json"
     xhr.setRequestHeader "Cache-Control", "no-cache"
