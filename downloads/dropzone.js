@@ -432,6 +432,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       thumbnailHeight: 100,
       params: {},
       clickable: true,
+      acceptParameter: null,
       enqueueForUpload: true,
       previewsContainer: null,
       dictDefaultMessage: "Drop files here to upload",
@@ -622,6 +623,9 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
           _this.hiddenFileInput = document.createElement("input");
           _this.hiddenFileInput.setAttribute("type", "file");
           _this.hiddenFileInput.setAttribute("multiple", "multiple");
+          if (_this.options.acceptParameter != null) {
+            _this.hiddenFileInput.setAttribute("accept", _this.options.acceptParameter);
+          }
           _this.hiddenFileInput.style.display = "none";
           document.body.appendChild(_this.hiddenFileInput);
           return _this.hiddenFileInput.addEventListener("change", function() {

@@ -80,6 +80,12 @@ class Dropzone extends Em
     # If true, the dropzone will present a file selector when clicked.
     clickable: yes
 
+    # If the dropzone is clickable, this will be added as `accept` parameter
+    # on the hidden file input element that serves as file selector when
+    # clicking the dropzone.
+    # This should be used in addition to the accept function.
+    acceptParameter: null # eg: "audio/*|video/*|image/*"
+
     # If false, files will not be added to the process queue automatically.
     # This can be useful if you need some additional user input before sending
     # files.
@@ -316,6 +322,7 @@ class Dropzone extends Em
         @hiddenFileInput = document.createElement "input"
         @hiddenFileInput.setAttribute "type", "file"
         @hiddenFileInput.setAttribute "multiple", "multiple"
+        @hiddenFileInput.setAttribute "accept", @options.acceptParameter if @options.acceptParameter?
         @hiddenFileInput.style.display = "none"
         document.body.appendChild @hiddenFileInput
         @hiddenFileInput.addEventListener "change", =>
