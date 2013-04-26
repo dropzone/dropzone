@@ -80,6 +80,12 @@ class Dropzone extends Em
     # If true, the dropzone will present a file selector when clicked.
     clickable: yes
 
+    # If the dropzone is clickable, this will be added as `accept` parameter
+    # on the hidden file input element that serves as file selector when
+    # clicking the dropzone.
+    # This should be used in addition to the accept function.
+    acceptParameter: null # eg: "audio/*|video/*|image/*"
+
     # If false, files will not be added to the process queue automatically.
     # This can be useful if you need some additional user input before sending
     # files.
@@ -203,8 +209,9 @@ class Dropzone extends Em
     
     # Called whenever the upload progress gets updated.
     # You can be sure that this will be called with the percentage 100% when the file is finished uploading.
-    # Receives `file` and `progress` (percentage)
-    uploadprogress: (file, progress) ->
+    # Receives `file`, `progress` (percentage 0-100) and `bytesSent`.
+    # To get the total number of bytes of the file, use `file.size`
+    uploadprogress: (file, progress, bytesSent) ->
       file.previewTemplate.querySelector(".progress .upload").style.width = "#{progress}%"
 
     # Called just before the file is sent. Gets the `xhr` object as second
@@ -315,6 +322,7 @@ class Dropzone extends Em
         @hiddenFileInput = document.createElement "input"
         @hiddenFileInput.setAttribute "type", "file"
         @hiddenFileInput.setAttribute "multiple", "multiple"
+        @hiddenFileInput.setAttribute "accept", @options.acceptParameter if @options.acceptParameter?
         @hiddenFileInput.style.display = "none"
         document.body.appendChild @hiddenFileInput
         @hiddenFileInput.addEventListener "change", =>
@@ -591,7 +599,7 @@ class Dropzone extends Em
       unless 200 <= xhr.status < 300
         handleError()
       else
-        @emit "uploadprogress", file, 100
+        @emit "uploadprogress", file, 100, file.size
         response = xhr.responseText
         if xhr.getResponseHeader("content-type") and ~xhr.getResponseHeader("content-type").indexOf "application/json" then response = JSON.parse response
         @finished file, response, e
@@ -602,7 +610,7 @@ class Dropzone extends Em
     # Some browsers do not have the .upload property
     progressObj = xhr.upload ? xhr
     progressObj.onprogress = (e) =>
-      @emit "uploadprogress", file, Math.max(0, Math.min(100, (e.loaded / e.total) * 100))
+      @emit "uploadprogress", file, Math.max(0, Math.min(100, 100 * e.loaded / e.total)), e.loaded
 
     xhr.setRequestHeader "Accept", "application/json"
     xhr.setRequestHeader "Cache-Control", "no-cache"
@@ -658,7 +666,7 @@ class Dropzone extends Em
 
 
 
-Dropzone.version = "2.0.13"
+Dropzone.version = "2.0.14"
 
 
 # This is a map of options for your different dropzones. Add configurations

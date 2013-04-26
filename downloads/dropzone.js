@@ -432,6 +432,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       thumbnailHeight: 100,
       params: {},
       clickable: true,
+      acceptParameter: null,
       enqueueForUpload: true,
       previewsContainer: null,
       dictDefaultMessage: "Drop files here to upload",
@@ -521,7 +522,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       processingfile: function(file) {
         return file.previewTemplate.classList.add("processing");
       },
-      uploadprogress: function(file, progress) {
+      uploadprogress: function(file, progress, bytesSent) {
         return file.previewTemplate.querySelector(".progress .upload").style.width = "" + progress + "%";
       },
       sending: noop,
@@ -622,6 +623,9 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
           _this.hiddenFileInput = document.createElement("input");
           _this.hiddenFileInput.setAttribute("type", "file");
           _this.hiddenFileInput.setAttribute("multiple", "multiple");
+          if (_this.options.acceptParameter != null) {
+            _this.hiddenFileInput.setAttribute("accept", _this.options.acceptParameter);
+          }
           _this.hiddenFileInput.style.display = "none";
           document.body.appendChild(_this.hiddenFileInput);
           return _this.hiddenFileInput.addEventListener("change", function() {
@@ -990,7 +994,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         if (!((200 <= (_ref = xhr.status) && _ref < 300))) {
           return handleError();
         } else {
-          _this.emit("uploadprogress", file, 100);
+          _this.emit("uploadprogress", file, 100, file.size);
           response = xhr.responseText;
           if (xhr.getResponseHeader("content-type") && ~xhr.getResponseHeader("content-type").indexOf("application/json")) {
             response = JSON.parse(response);
@@ -1003,7 +1007,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       };
       progressObj = (_ref = xhr.upload) != null ? _ref : xhr;
       progressObj.onprogress = function(e) {
-        return _this.emit("uploadprogress", file, Math.max(0, Math.min(100, (e.loaded / e.total) * 100)));
+        return _this.emit("uploadprogress", file, Math.max(0, Math.min(100, 100 * e.loaded / e.total)), e.loaded);
       };
       xhr.setRequestHeader("Accept", "application/json");
       xhr.setRequestHeader("Cache-Control", "no-cache");
@@ -1054,7 +1058,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
   })(Em);
 
-  Dropzone.version = "2.0.13";
+  Dropzone.version = "2.0.14";
 
   Dropzone.options = {};
 

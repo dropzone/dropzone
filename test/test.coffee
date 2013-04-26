@@ -186,10 +186,15 @@ describe "Dropzone", ->
   describe "init()", ->
     describe "clickable", ->
       element = Dropzone.createElement """<form action="/"></form>"""
-      dropzone = new Dropzone element, clickable: yes
+      dropzone = new Dropzone element, clickable: yes, acceptParameter: "audio/*|video/*"
       it "should create a hidden file input if clickable", ->
         dropzone.hiddenFileInput.should.be.ok
         dropzone.hiddenFileInput.tagName.should.equal "INPUT"
+      it "should use the acceptParameter", ->
+        dropzone.hiddenFileInput.getAttribute("accept").should.equal "audio/*|video/*"
+      it "should not add an accept attribute if no acceptParameter", ->
+        dropzone2 = new Dropzone (Dropzone.createElement """<form action="/"></form>"""), clickable: yes, acceptParameter: null
+        dropzone2.hiddenFileInput.hasAttribute("accept").should.be.false
       it "should create a new input element when something is selected to reset the input field", ->
         for i in [0..3]
           hiddenFileInput = dropzone.hiddenFileInput
