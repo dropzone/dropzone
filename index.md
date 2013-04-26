@@ -245,6 +245,7 @@ The valid options are:
 | `dictFallbackText`      | This will be added before the file input files. If you provide a fallback element yourself, or if this option is `null` this will be ignored. Defaults to "Please use the fallback form below to upload your files like in the olden days."
 | `previewsContainer`     | defines where to display the file previews – if `null` the Dropzone element is used. Can be a plain HTMLElement or a CSS selector. The element should have the `dropzone-previews` class so the previews are displayed properly.
 | `clickable`             | If `true`, the dropzone element itself will be clickable. If a CSS selector or an HTML element the element will be used as clickable element. If `false` there won't be a click trigger.
+| `acceptParam`           | If the Dropzone is `clickable` this option will be used as [`accept`](https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-accept) parameter on the hidden file input.
 | `createImageThumbnails` |
 | `maxThumbnailFilesize`  | in MB. When the filename exceeds this limit, the thumbnail will not be generated
 | `thumbnailWidth`        |
@@ -331,7 +332,7 @@ All of these receive the [file](https://developer.mozilla.org/en-US/docs/DOM/Fil
 | `thumbnail`       | When the thumbnail has been generated. Receives the [**dataUrl**](http://en.wikipedia.org/wiki/Data_URI_scheme) as second parameter.
 | `error`           | An error occured. Receives the **errorMessage** as second parameter.
 | `processingfile`  | When a file gets processed (since there is a queue not all files are processed immediately)
-| `uploadprogress`  | Gets called periodically whenever the file upload progress changes.<br />Gets the **progress** parameter as second parameter which is a percentage (0-100).<br />When an upload finishes dropzone *ensures* that uploadprogress will be called with a percentage of 100 *at least* once.<br />Can be called with the same progress multiple times.
+| `uploadprogress`  | Gets called periodically whenever the file upload progress changes.<br />Gets the **progress** parameter as second parameter which is a percentage (0-100) and the **bytesSent** parameter as third which is the number of the bytes that have been sent to the server.<br />When an upload finishes dropzone *ensures* that uploadprogress will be called with a percentage of 100 *at least* once.<br />**Warning:** This function can potentially be called with the same progress multiple times.
 | `sending`         | Called just before the file is sent. Gets the xhr object and the [formData](https://developer.mozilla.org/en-US/docs/DOM/XMLHttpRequest/FormData) objects as second and third parameters, so you can modify them (for example to add a CSRF token) or add additional data.
 | `success`         | The file has been uploaded successfully. Gets the server response as second argument. (This event was called `finished` previously)
 | `complete`        | Called when the upload was either successful or erroneous.
