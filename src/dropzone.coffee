@@ -323,7 +323,11 @@ class Dropzone extends Em
         @hiddenFileInput.setAttribute "type", "file"
         @hiddenFileInput.setAttribute "multiple", "multiple"
         @hiddenFileInput.setAttribute "accept", @options.acceptParameter if @options.acceptParameter?
-        @hiddenFileInput.style.display = "none"
+        # Not setting `display="none"` because some browsers don't accept clicks
+        # on elements that aren't displayed.
+        @hiddenFileInput.style.visibility = "hidden"
+        @hiddenFileInput.style.height = "0"
+        @hiddenFileInput.style.width = "0"
         document.body.appendChild @hiddenFileInput
         @hiddenFileInput.addEventListener "change", =>
           files = @hiddenFileInput.files
