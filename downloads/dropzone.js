@@ -626,7 +626,9 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
           if (_this.options.acceptParameter != null) {
             _this.hiddenFileInput.setAttribute("accept", _this.options.acceptParameter);
           }
-          _this.hiddenFileInput.style.display = "none";
+          _this.hiddenFileInput.style.visibility = "hidden";
+          _this.hiddenFileInput.style.height = "0";
+          _this.hiddenFileInput.style.width = "0";
           document.body.appendChild(_this.hiddenFileInput);
           return _this.hiddenFileInput.addEventListener("change", function() {
             var files;
@@ -1058,7 +1060,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
   })(Em);
 
-  Dropzone.version = "2.0.14";
+  Dropzone.version = "2.0.15";
 
   Dropzone.options = {};
 
@@ -1199,6 +1201,21 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
   } else {
     window.Dropzone = Dropzone;
   }
+
+  /*
+  # contentloaded.js
+  #
+  # Author: Diego Perini (diego.perini at gmail.com)
+  # Summary: cross-browser wrapper for DOMContentLoaded
+  # Updated: 20101020
+  # License: MIT
+  # Version: 1.2
+  #
+  # URL:
+  # http://javascript.nwbox.com/ContentLoaded/
+  # http://javascript.nwbox.com/ContentLoaded/MIT-LICENSE
+  */
+
 
   contentLoaded = function(win, fn) {
     var add, doc, done, init, poll, pre, rem, root, top;

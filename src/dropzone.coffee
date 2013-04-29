@@ -323,7 +323,11 @@ class Dropzone extends Em
         @hiddenFileInput.setAttribute "type", "file"
         @hiddenFileInput.setAttribute "multiple", "multiple"
         @hiddenFileInput.setAttribute "accept", @options.acceptParameter if @options.acceptParameter?
-        @hiddenFileInput.style.display = "none"
+        # Not setting `display="none"` because some browsers don't accept clicks
+        # on elements that aren't displayed.
+        @hiddenFileInput.style.visibility = "hidden"
+        @hiddenFileInput.style.height = "0"
+        @hiddenFileInput.style.width = "0"
         document.body.appendChild @hiddenFileInput
         @hiddenFileInput.addEventListener "change", =>
           files = @hiddenFileInput.files
@@ -666,7 +670,7 @@ class Dropzone extends Em
 
 
 
-Dropzone.version = "2.0.14"
+Dropzone.version = "2.0.15"
 
 
 # This is a map of options for your different dropzones. Add configurations
@@ -806,20 +810,19 @@ else
 
 
 
-#!
-# * contentloaded.js
-# *
-# * Author: Diego Perini (diego.perini at gmail.com)
-# * Summary: cross-browser wrapper for DOMContentLoaded
-# * Updated: 20101020
-# * License: MIT
-# * Version: 1.2
-# *
-# * URL:
-# * http://javascript.nwbox.com/ContentLoaded/
-# * http://javascript.nwbox.com/ContentLoaded/MIT-LICENSE
-# *
-# 
+###
+# contentloaded.js
+#
+# Author: Diego Perini (diego.perini at gmail.com)
+# Summary: cross-browser wrapper for DOMContentLoaded
+# Updated: 20101020
+# License: MIT
+# Version: 1.2
+#
+# URL:
+# http://javascript.nwbox.com/ContentLoaded/
+# http://javascript.nwbox.com/ContentLoaded/MIT-LICENSE
+###
 
 # @win window reference
 # @fn function reference
