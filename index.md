@@ -27,7 +27,7 @@ time into this project and donations help to justify it.
 <img alt="" border="0" src="https://www.paypalobjects.com/de_DE/i/scr/pixel.gif" width="1" height="1">
 </form>
 
-Use the Paypal button above or my [Bitcoin](http://bitcoin.org/) address: **19k17pTRGS1ykZaL7Qeju2HgXnoPXceQme**
+Use the Paypal button above, [tiptheweb](http://tiptheweb.org/) or my [Bitcoin](http://bitcoin.org/) address: **19k17pTRGS1ykZaL7Qeju2HgXnoPXceQme**
 
 </section>
 
