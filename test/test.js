@@ -95,7 +95,7 @@
           return expect(Dropzone.forElement(element)).to.equal(dropzone);
         });
       });
-      return describe("Dropzone.discover()", function() {
+      describe("Dropzone.discover()", function() {
         var element1, element2, element3;
 
         element1 = document.createElement("div");
@@ -143,6 +143,47 @@
           });
         });
       });
+      return describe("Dropzone.isValidMimeType()", function() {
+        it("should return true if called without acceptedMimeTypes", function() {
+          return Dropzone.isValidMimeType("some/type", null).should.be.ok;
+        });
+        it("should properly validate if called with concrete mime types", function() {
+          var acceptedMimeTypes;
+
+          acceptedMimeTypes = "text/html,image/jpeg,application/json";
+          Dropzone.isValidMimeType("text/html", acceptedMimeTypes).should.be.ok;
+          Dropzone.isValidMimeType("image/jpeg", acceptedMimeTypes).should.be.ok;
+          Dropzone.isValidMimeType("application/json", acceptedMimeTypes).should.be.ok;
+          return Dropzone.isValidMimeType("image/bmp", acceptedMimeTypes).should.not.be.ok;
+        });
+        it("should properly validate if called with base mime types", function() {
+          var acceptedMimeTypes;
+
+          acceptedMimeTypes = "text/*,image/*,application/*";
+          Dropzone.isValidMimeType("text/html", acceptedMimeTypes).should.be.ok;
+          Dropzone.isValidMimeType("image/jpeg", acceptedMimeTypes).should.be.ok;
+          Dropzone.isValidMimeType("application/json", acceptedMimeTypes).should.be.ok;
+          Dropzone.isValidMimeType("image/bmp", acceptedMimeTypes).should.be.ok;
+          return Dropzone.isValidMimeType("some/type", acceptedMimeTypes).should.not.be.ok;
+        });
+        it("should properly validate if called with mixed mime types", function() {
+          var acceptedMimeTypes;
+
+          acceptedMimeTypes = "text/*,image/jpeg,application/*";
+          Dropzone.isValidMimeType("text/html", acceptedMimeTypes).should.be.ok;
+          Dropzone.isValidMimeType("image/jpeg", acceptedMimeTypes).should.be.ok;
+          Dropzone.isValidMimeType("image/bmp", acceptedMimeTypes).should.not.be.ok;
+          Dropzone.isValidMimeType("application/json", acceptedMimeTypes).should.be.ok;
+          return Dropzone.isValidMimeType("some/type", acceptedMimeTypes).should.not.be.ok;
+        });
+        return it("should properly validate even with spaces in between", function() {
+          var acceptedMimeTypes;
+
+          acceptedMimeTypes = "text/html ,   image/jpeg, application/json";
+          Dropzone.isValidMimeType("text/html", acceptedMimeTypes).should.be.ok;
+          return Dropzone.isValidMimeType("image/jpeg", acceptedMimeTypes).should.be.ok;
+        });
+      });
     });
     describe("constructor()", function() {
       it("should throw an exception if the element is invalid", function() {
@@ -162,6 +203,18 @@
             url: "url"
           });
         }).to["throw"]("Dropzone already attached.");
+      });
+      it("should throw an exception if both acceptParameter and acceptedMimeTypes are specified", function() {
+        var element;
+
+        element = document.createElement("div");
+        return expect(function() {
+          return new Dropzone(element, {
+            url: "test",
+            acceptParameter: "param",
+            acceptedMimeTypes: "types"
+          });
+        }).to["throw"]("You can't provide both 'acceptParameter' and 'acceptedMimeTypes'. 'acceptParameter' is deprecated.");
       });
       it("should set itself as element.dropzone", function() {
         var dropzone, element;
@@ -272,42 +325,94 @@
     });
     describe("init()", function() {
       return describe("clickable", function() {
-        var dropzone, element;
+        var dropzone, dropzones, name, _results;
 
-        element = Dropzone.createElement("<form action=\"/\"></form>");
-        dropzone = new Dropzone(element, {
-          clickable: true,
-          acceptParameter: "audio/*|video/*"
-        });
-        it("should create a hidden file input if clickable", function() {
-          dropzone.hiddenFileInput.should.be.ok;
-          return dropzone.hiddenFileInput.tagName.should.equal("INPUT");
-        });
-        it("should use the acceptParameter", function() {
-          return dropzone.hiddenFileInput.getAttribute("accept").should.equal("audio/*|video/*");
-        });
-        it("should not add an accept attribute if no acceptParameter", function() {
-          var dropzone2;
-
-          dropzone2 = new Dropzone(Dropzone.createElement("<form action=\"/\"></form>"), {
+        dropzones = {
+          "using acceptParameter": new Dropzone(Dropzone.createElement("<form action=\"/\"></form>"), {
             clickable: true,
-            acceptParameter: null
-          });
-          return dropzone2.hiddenFileInput.hasAttribute("accept").should.be["false"];
-        });
-        return it("should create a new input element when something is selected to reset the input field", function() {
-          var event, hiddenFileInput, i, _i, _results;
+            acceptParameter: "audio/*,video/*"
+          }),
+          "using acceptedMimeTypes": new Dropzone(Dropzone.createElement("<form action=\"/\"></form>"), {
+            clickable: true,
+            acceptedMimeTypes: "audio/*,video/*"
+          })
+        };
+        it("should not add an accept attribute if no acceptParameter", function() {
+          var dropzone;
 
-          _results = [];
-          for (i = _i = 0; _i <= 3; i = ++_i) {
-            hiddenFileInput = dropzone.hiddenFileInput;
-            event = document.createEvent("HTMLEvents");
-            event.initEvent("change", true, true);
-            hiddenFileInput.dispatchEvent(event);
-            dropzone.hiddenFileInput.should.not.equal(hiddenFileInput);
-            _results.push(Dropzone.elementInside(hiddenFileInput, document).should.not.be.ok);
-          }
-          return _results;
+          dropzone = new Dropzone(Dropzone.createElement("<form action=\"/\"></form>"), {
+            clickable: true,
+            acceptParameter: null,
+            acceptedMimeTypes: null
+          });
+          return dropzone.hiddenFileInput.hasAttribute("accept").should.be["false"];
+        });
+        _results = [];
+        for (name in dropzones) {
+          dropzone = dropzones[name];
+          _results.push(describe(name, function() {
+            return (function(dropzone) {
+              it("should create a hidden file input if clickable", function() {
+                dropzone.hiddenFileInput.should.be.ok;
+                return dropzone.hiddenFileInput.tagName.should.equal("INPUT");
+              });
+              it("should use the acceptParameter", function() {
+                return dropzone.hiddenFileInput.getAttribute("accept").should.equal("audio/*,video/*");
+              });
+              return it("should create a new input element when something is selected to reset the input field", function() {
+                var event, hiddenFileInput, i, _i, _results1;
+
+                _results1 = [];
+                for (i = _i = 0; _i <= 3; i = ++_i) {
+                  hiddenFileInput = dropzone.hiddenFileInput;
+                  event = document.createEvent("HTMLEvents");
+                  event.initEvent("change", true, true);
+                  hiddenFileInput.dispatchEvent(event);
+                  dropzone.hiddenFileInput.should.not.equal(hiddenFileInput);
+                  _results1.push(Dropzone.elementInside(hiddenFileInput, document).should.not.be.ok);
+                }
+                return _results1;
+              });
+            })(dropzone);
+          }));
+        }
+        return _results;
+      });
+    });
+    describe("default options", function() {
+      var dropzone, element;
+
+      element = null;
+      dropzone = null;
+      beforeEach(function() {
+        element = Dropzone.createElement("<div></div>");
+        return dropzone = new Dropzone(element, {
+          url: "url",
+          acceptedMimeTypes: "audio/*,image/png"
+        });
+      });
+      return describe(".accept()", function() {
+        return it("should properly accept files which mime types are listed by acceptedMimeTypes", function() {
+          dropzone.options.accept.call(dropzone, {
+            type: "audio/mp3"
+          }, function(err) {
+            return expect(err).to.be.undefined;
+          });
+          dropzone.options.accept.call(dropzone, {
+            type: "image/png"
+          }, function(err) {
+            return expect(err).to.be.undefined;
+          });
+          dropzone.options.accept.call(dropzone, {
+            type: "audio/wav"
+          }, function(err) {
+            return expect(err).to.be.undefined;
+          });
+          return dropzone.options.accept.call(dropzone, {
+            type: "image/jpeg"
+          }, function(err) {
+            return err.should.eql("You can't upload files of this type.");
+          });
         });
       });
     });

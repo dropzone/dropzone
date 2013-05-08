@@ -80,11 +80,19 @@ class Dropzone extends Em
     # If true, the dropzone will present a file selector when clicked.
     clickable: yes
 
-    # If the dropzone is clickable, this will be added as `accept` parameter
-    # on the hidden file input element that serves as file selector when
-    # clicking the dropzone.
-    # This should be used in addition to the accept function.
-    acceptParameter: null # eg: "audio/*|video/*|image/*"
+    # You can set accepted mime types here. 
+    # 
+    # The default implementation of the `accept()` function will check this 
+    # property, and if the Dropzone is clickable this will be used as
+    # `accept` attribute.
+    # 
+    # See https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-accept
+    # for a reference.
+    acceptedMimeTypes: null # eg: "audio/*,video/*,image/*"
+
+    # @deprecated
+    # Use acceptedMimeTypes instead.
+    acceptParameter: null
 
     # If false, files will not be added to the process queue automatically.
     # This can be useful if you need some additional user input before sending
@@ -110,11 +118,21 @@ class Dropzone extends Em
     # If null, no text will be added at all.
     dictFallbackText: "Please use the fallback form below to upload your files like in the olden days."
 
+    # If the file doesn't match the file type.
+    dictInvalidFileType: "You can't upload files of this type."
+
+    # If the server response was invalid.
+    dictResponseError: "Server responded with {{statusCode}} code."
 
     # If `done()` is called without argument the file is accepted
     # If you call it with an error message, the file is rejected
-    # (This allows for asynchronous validation)
-    accept: (file, done) -> done()
+    # (This allows for asynchronous validation).
+    # 
+    # The default implementation checks if the file.type passes the 
+    # `acceptedMimeTypes` check.
+    accept: (file, done) ->
+      return done @options.dictInvalidFileType unless Dropzone.isValidMimeType(file.type, @options.acceptedMimeTypes)
+      done()
 
 
     # Called when dropzone initialized
@@ -176,43 +194,45 @@ class Dropzone extends Em
     # Called when a file is added to the queue
     # Receives `file`
     addedfile: (file) ->
-      file.previewTemplate = Dropzone.createElement @options.previewTemplate
-      @previewsContainer.appendChild file.previewTemplate
-      file.previewTemplate.querySelector(".filename span").textContent = file.name
-      file.previewTemplate.querySelector(".details").appendChild Dropzone.createElement """<div class="size">#{@filesize file.size}</div>"""
+      file.previewElement = Dropzone.createElement @options.previewTemplate
+      file.previewTemplate = file.previewElement # Backwards compatibility
+
+      @previewsContainer.appendChild file.previewElement
+      file.previewElement.querySelector(".filename span").textContent = file.name
+      file.previewElement.querySelector(".details").appendChild Dropzone.createElement """<div class="size">#{@filesize file.size}</div>"""
 
 
     # Called whenever a file is removed.
     removedfile: (file) ->
-      file.previewTemplate.parentNode.removeChild file.previewTemplate
+      file.previewElement.parentNode.removeChild file.previewElement
 
     # Called when a thumbnail has been generated
     # Receives `file` and `dataUrl`
     thumbnail: (file, dataUrl) ->
-      file.previewTemplate.classList.remove "file-preview"
-      file.previewTemplate.classList.add "image-preview"
-      file.previewTemplate.querySelector(".details").appendChild Dropzone.createElement """<img alt="#{file.name}" src="#{dataUrl}"/>"""
+      file.previewElement.classList.remove "file-preview"
+      file.previewElement.classList.add "image-preview"
+      file.previewElement.querySelector(".details").appendChild Dropzone.createElement """<img alt="#{file.name}" src="#{dataUrl}"/>"""
 
     
     # Called whenever an error occurs
     # Receives `file` and `message`
     error: (file, message) ->
-      file.previewTemplate.classList.add "error"
-      file.previewTemplate.querySelector(".error-message span").textContent = message
+      file.previewElement.classList.add "error"
+      file.previewElement.querySelector(".error-message span").textContent = message
     
     
     # Called when a file gets processed. Since there is a cue, not all added
     # files are processed immediately.
     # Receives `file`
     processingfile: (file) ->
-      file.previewTemplate.classList.add "processing"
+      file.previewElement.classList.add "processing"
     
     # Called whenever the upload progress gets updated.
     # You can be sure that this will be called with the percentage 100% when the file is finished uploading.
     # Receives `file`, `progress` (percentage 0-100) and `bytesSent`.
     # To get the total number of bytes of the file, use `file.size`
     uploadprogress: (file, progress, bytesSent) ->
-      file.previewTemplate.querySelector(".progress .upload").style.width = "#{progress}%"
+      file.previewElement.querySelector(".progress .upload").style.width = "#{progress}%"
 
     # Called just before the file is sent. Gets the `xhr` object as second
     # parameter, so you can modify it (for example to add a CSRF token) and a
@@ -222,7 +242,7 @@ class Dropzone extends Em
     # When the complete upload is finished and successfull
     # Receives `file`
     success: (file) ->
-      file.previewTemplate.classList.add "success"
+      file.previewElement.classList.add "success"
 
     # When the upload is finished, either with success or an error.
     # Receives `file`
@@ -277,6 +297,8 @@ class Dropzone extends Em
 
     throw new Error "No URL provided." unless @options.url
 
+    throw new Error "You can't provide both 'acceptParameter' and 'acceptedMimeTypes'. 'acceptParameter' is deprecated." if @options.acceptParameter and @options.acceptedMimeTypes
+
     @options.method = @options.method.toUpperCase()
 
     # If the browser failed, just call the fallback and leave
@@ -322,7 +344,12 @@ class Dropzone extends Em
         @hiddenFileInput = document.createElement "input"
         @hiddenFileInput.setAttribute "type", "file"
         @hiddenFileInput.setAttribute "multiple", "multiple"
+
+        @hiddenFileInput.setAttribute "accept", @options.acceptedMimeTypes if @options.acceptedMimeTypes?
+
+        # Backwards compatibility
         @hiddenFileInput.setAttribute "accept", @options.acceptParameter if @options.acceptParameter?
+
         # Not setting `display="none"` because some browsers don't accept clicks
         # on elements that aren't displayed.
         @hiddenFileInput.style.visibility = "hidden"
@@ -484,7 +511,6 @@ class Dropzone extends Em
     if file.size > @options.maxFilesize * 1024 * 1024
       done "File is too big (" + (Math.round(file.size / 1024 / 10.24) / 100) + "MB). Max filesize: " + @options.maxFilesize + "MB"
     else
-      # Add file size check here.
       @options.accept.call this, file, done
 
   addFile: (file) ->
@@ -597,7 +623,7 @@ class Dropzone extends Em
     xhr.open @options.method, @options.url, true
 
     handleError = =>
-      @errorProcessing file, xhr.responseText || "Server responded with #{xhr.status} code."
+      @errorProcessing file, xhr.responseText || @options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr
 
     xhr.onload = (e) =>
       unless 200 <= xhr.status < 300
@@ -661,16 +687,16 @@ class Dropzone extends Em
 
   # Called internally when processing is finished.
   # Individual callbacks have to be called in the appropriate sections.
-  errorProcessing: (file, message) ->
+  errorProcessing: (file, message, xhr) ->
     @filesProcessing = without(@filesProcessing, file)
     file.processing = no
     @processQueue()
-    @emit "error", file, message
+    @emit "error", file, message, xhr
     @emit "complete", file
 
 
 
-Dropzone.version = "2.0.15"
+Dropzone.version = "2.0.16"
 
 
 # This is a map of options for your different dropzones. Add configurations
@@ -784,6 +810,25 @@ Dropzone.createElement = (string) ->
 Dropzone.elementInside = (element, container) ->
   return yes if element == container # Coffeescript doesn't support do/while loops
   return yes while element = element.parentNode when element == container
+  return no
+
+# Validates the mime type like this:
+# 
+# https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-accept
+Dropzone.isValidMimeType = (mimeType, acceptedMimeTypes) ->
+  return yes unless acceptedMimeTypes # If there are no accepted mime types, it's OK
+  acceptedMimeTypes = acceptedMimeTypes.split ","
+
+  baseMimeType = mimeType.replace /\/.*$/, ""
+
+  for validMimeType in acceptedMimeTypes
+    validMimeType = validMimeType.trim()
+    if /\/\*$/.test validMimeType
+      # This is something like a image/* mime type
+      return yes if baseMimeType == validMimeType.replace /\/.*$/, ""
+    else
+      return yes if mimeType == validMimeType
+
   return no
 
 

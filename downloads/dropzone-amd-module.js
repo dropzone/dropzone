@@ -223,13 +223,19 @@ Emitter.prototype.hasListeners = function(event){
       thumbnailHeight: 100,
       params: {},
       clickable: true,
+      acceptedMimeTypes: null,
       acceptParameter: null,
       enqueueForUpload: true,
       previewsContainer: null,
       dictDefaultMessage: "Drop files here to upload",
       dictFallbackMessage: "Your browser does not support drag'n'drop file uploads.",
       dictFallbackText: "Please use the fallback form below to upload your files like in the olden days.",
+      dictInvalidFileType: "You can't upload files of this type.",
+      dictResponseError: "Server responded with {{statusCode}} code.",
       accept: function(file, done) {
+        if (!Dropzone.isValidMimeType(file.type, this.options.acceptedMimeTypes)) {
+          return done(this.options.dictInvalidFileType);
+        }
         return done();
       },
       init: function() {
@@ -293,32 +299,33 @@ Emitter.prototype.hasListeners = function(event){
         return this.element.classList.remove("started");
       },
       addedfile: function(file) {
-        file.previewTemplate = Dropzone.createElement(this.options.previewTemplate);
-        this.previewsContainer.appendChild(file.previewTemplate);
-        file.previewTemplate.querySelector(".filename span").textContent = file.name;
-        return file.previewTemplate.querySelector(".details").appendChild(Dropzone.createElement("<div class=\"size\">" + (this.filesize(file.size)) + "</div>"));
+        file.previewElement = Dropzone.createElement(this.options.previewTemplate);
+        file.previewTemplate = file.previewElement;
+        this.previewsContainer.appendChild(file.previewElement);
+        file.previewElement.querySelector(".filename span").textContent = file.name;
+        return file.previewElement.querySelector(".details").appendChild(Dropzone.createElement("<div class=\"size\">" + (this.filesize(file.size)) + "</div>"));
       },
       removedfile: function(file) {
-        return file.previewTemplate.parentNode.removeChild(file.previewTemplate);
+        return file.previewElement.parentNode.removeChild(file.previewElement);
       },
       thumbnail: function(file, dataUrl) {
-        file.previewTemplate.classList.remove("file-preview");
-        file.previewTemplate.classList.add("image-preview");
-        return file.previewTemplate.querySelector(".details").appendChild(Dropzone.createElement("<img alt=\"" + file.name + "\" src=\"" + dataUrl + "\"/>"));
+        file.previewElement.classList.remove("file-preview");
+        file.previewElement.classList.add("image-preview");
+        return file.previewElement.querySelector(".details").appendChild(Dropzone.createElement("<img alt=\"" + file.name + "\" src=\"" + dataUrl + "\"/>"));
       },
       error: function(file, message) {
-        file.previewTemplate.classList.add("error");
-        return file.previewTemplate.querySelector(".error-message span").textContent = message;
+        file.previewElement.classList.add("error");
+        return file.previewElement.querySelector(".error-message span").textContent = message;
       },
       processingfile: function(file) {
-        return file.previewTemplate.classList.add("processing");
+        return file.previewElement.classList.add("processing");
       },
       uploadprogress: function(file, progress, bytesSent) {
-        return file.previewTemplate.querySelector(".progress .upload").style.width = "" + progress + "%";
+        return file.previewElement.querySelector(".progress .upload").style.width = "" + progress + "%";
       },
       sending: noop,
       success: function(file) {
-        return file.previewTemplate.classList.add("success");
+        return file.previewElement.classList.add("success");
       },
       complete: noop,
       previewTemplate: "<div class=\"preview file-preview\">\n  <div class=\"details\">\n   <div class=\"filename\"><span></span></div>\n  </div>\n  <div class=\"progress\"><span class=\"upload\"></span></div>\n  <div class=\"success-mark\"><span>✔</span></div>\n  <div class=\"error-mark\"><span>✘</span></div>\n  <div class=\"error-message\"><span></span></div>\n</div>"
@@ -361,6 +368,9 @@ Emitter.prototype.hasListeners = function(event){
       }
       if (!this.options.url) {
         throw new Error("No URL provided.");
+      }
+      if (this.options.acceptParameter && this.options.acceptedMimeTypes) {
+        throw new Error("You can't provide both 'acceptParameter' and 'acceptedMimeTypes'. 'acceptParameter' is deprecated.");
       }
       this.options.method = this.options.method.toUpperCase();
       if (this.options.forceFallback || !Dropzone.isBrowserSupported()) {
@@ -414,6 +424,9 @@ Emitter.prototype.hasListeners = function(event){
           _this.hiddenFileInput = document.createElement("input");
           _this.hiddenFileInput.setAttribute("type", "file");
           _this.hiddenFileInput.setAttribute("multiple", "multiple");
+          if (_this.options.acceptedMimeTypes != null) {
+            _this.hiddenFileInput.setAttribute("accept", _this.options.acceptedMimeTypes);
+          }
           if (_this.options.acceptParameter != null) {
             _this.hiddenFileInput.setAttribute("accept", _this.options.acceptParameter);
           }
@@ -779,7 +792,7 @@ Emitter.prototype.hasListeners = function(event){
       xhr = new XMLHttpRequest();
       xhr.open(this.options.method, this.options.url, true);
       handleError = function() {
-        return _this.errorProcessing(file, xhr.responseText || ("Server responded with " + xhr.status + " code."));
+        return _this.errorProcessing(file, xhr.responseText || _this.options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr);
       };
       xhr.onload = function(e) {
         var response, _ref;
@@ -839,11 +852,11 @@ Emitter.prototype.hasListeners = function(event){
       return this.emit("complete", file);
     };
 
-    Dropzone.prototype.errorProcessing = function(file, message) {
+    Dropzone.prototype.errorProcessing = function(file, message, xhr) {
       this.filesProcessing = without(this.filesProcessing, file);
       file.processing = false;
       this.processQueue();
-      this.emit("error", file, message);
+      this.emit("error", file, message, xhr);
       return this.emit("complete", file);
     };
 
@@ -851,7 +864,7 @@ Emitter.prototype.hasListeners = function(event){
 
   })(Em);
 
-  Dropzone.version = "2.0.15";
+  Dropzone.version = "2.0.16";
 
   Dropzone.options = {};
 
@@ -974,6 +987,30 @@ Emitter.prototype.hasListeners = function(event){
     while (element = element.parentNode) {
       if (element === container) {
         return true;
+      }
+    }
+    return false;
+  };
+
+  Dropzone.isValidMimeType = function(mimeType, acceptedMimeTypes) {
+    var baseMimeType, validMimeType, _i, _len;
+
+    if (!acceptedMimeTypes) {
+      return true;
+    }
+    acceptedMimeTypes = acceptedMimeTypes.split(",");
+    baseMimeType = mimeType.replace(/\/.*$/, "");
+    for (_i = 0, _len = acceptedMimeTypes.length; _i < _len; _i++) {
+      validMimeType = acceptedMimeTypes[_i];
+      validMimeType = validMimeType.trim();
+      if (/\/\*$/.test(validMimeType)) {
+        if (baseMimeType === validMimeType.replace(/\/.*$/, "")) {
+          return true;
+        }
+      } else {
+        if (mimeType === validMimeType) {
+          return true;
+        }
       }
     }
     return false;
