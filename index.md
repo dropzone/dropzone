@@ -342,7 +342,7 @@ All of these receive the [file](https://developer.mozilla.org/en-US/docs/DOM/Fil
 | `removedfile`     | Called whenever a file is removed from the list. You can listen to this and delete the file from your server if you want to.
 | `selectedfiles`   | Receives an array of files and gets called whenever files are dropped or selected.
 | `thumbnail`       | When the thumbnail has been generated. Receives the [**dataUrl**](http://en.wikipedia.org/wiki/Data_URI_scheme) as second parameter.
-| `error`           | An error occured. Receives the **errorMessage** as second parameter.
+| `error`           | An error occured. Receives the **errorMessage** as second parameter and if the error was due to the XMLHttpRequest the xhr object as third.
 | `processingfile`  | When a file gets processed (since there is a queue not all files are processed immediately)
 | `uploadprogress`  | Gets called periodically whenever the file upload progress changes.<br />Gets the **progress** parameter as second parameter which is a percentage (0-100) and the **bytesSent** parameter as third which is the number of the bytes that have been sent to the server.<br />When an upload finishes dropzone *ensures* that uploadprogress will be called with a percentage of 100 *at least* once.<br />**Warning:** This function can potentially be called with the same progress multiple times.
 | `sending`         | Called just before the file is sent. Gets the xhr object and the [formData](https://developer.mozilla.org/en-US/docs/DOM/XMLHttpRequest/FormData) objects as second and third parameters, so you can modify them (for example to add a CSRF token) or add additional data.
