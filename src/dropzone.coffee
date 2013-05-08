@@ -121,6 +121,8 @@ class Dropzone extends Em
     # If the file doesn't match the file type.
     dictInvalidFileType: "You can't upload files of this type."
 
+    # If the server response was invalid.
+    dictResponseError: "Server responded with {{statusCode}} code."
 
     # If `done()` is called without argument the file is accepted
     # If you call it with an error message, the file is rejected
@@ -507,7 +509,6 @@ class Dropzone extends Em
     if file.size > @options.maxFilesize * 1024 * 1024
       done "File is too big (" + (Math.round(file.size / 1024 / 10.24) / 100) + "MB). Max filesize: " + @options.maxFilesize + "MB"
     else
-      # Add file size check here.
       @options.accept.call this, file, done
 
   addFile: (file) ->
@@ -620,7 +621,7 @@ class Dropzone extends Em
     xhr.open @options.method, @options.url, true
 
     handleError = =>
-      @errorProcessing file, xhr.responseText || "Server responded with #{xhr.status} code."
+      @errorProcessing file, xhr.responseText || @options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr
 
     xhr.onload = (e) =>
       unless 200 <= xhr.status < 300
@@ -684,11 +685,11 @@ class Dropzone extends Em
 
   # Called internally when processing is finished.
   # Individual callbacks have to be called in the appropriate sections.
-  errorProcessing: (file, message) ->
+  errorProcessing: (file, message, xhr) ->
     @filesProcessing = without(@filesProcessing, file)
     file.processing = no
     @processQueue()
-    @emit "error", file, message
+    @emit "error", file, message, xhr
     @emit "complete", file
 
 
