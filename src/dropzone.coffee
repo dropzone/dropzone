@@ -194,43 +194,45 @@ class Dropzone extends Em
     # Called when a file is added to the queue
     # Receives `file`
     addedfile: (file) ->
-      file.previewTemplate = Dropzone.createElement @options.previewTemplate
-      @previewsContainer.appendChild file.previewTemplate
-      file.previewTemplate.querySelector(".filename span").textContent = file.name
-      file.previewTemplate.querySelector(".details").appendChild Dropzone.createElement """<div class="size">#{@filesize file.size}</div>"""
+      file.previewElement = Dropzone.createElement @options.previewTemplate
+      file.previewTemplate = file.previewElement # Backwards compatibility
+
+      @previewsContainer.appendChild file.previewElement
+      file.previewElement.querySelector(".filename span").textContent = file.name
+      file.previewElement.querySelector(".details").appendChild Dropzone.createElement """<div class="size">#{@filesize file.size}</div>"""
 
 
     # Called whenever a file is removed.
     removedfile: (file) ->
-      file.previewTemplate.parentNode.removeChild file.previewTemplate
+      file.previewElement.parentNode.removeChild file.previewElement
 
     # Called when a thumbnail has been generated
     # Receives `file` and `dataUrl`
     thumbnail: (file, dataUrl) ->
-      file.previewTemplate.classList.remove "file-preview"
-      file.previewTemplate.classList.add "image-preview"
-      file.previewTemplate.querySelector(".details").appendChild Dropzone.createElement """<img alt="#{file.name}" src="#{dataUrl}"/>"""
+      file.previewElement.classList.remove "file-preview"
+      file.previewElement.classList.add "image-preview"
+      file.previewElement.querySelector(".details").appendChild Dropzone.createElement """<img alt="#{file.name}" src="#{dataUrl}"/>"""
 
     
     # Called whenever an error occurs
     # Receives `file` and `message`
     error: (file, message) ->
-      file.previewTemplate.classList.add "error"
-      file.previewTemplate.querySelector(".error-message span").textContent = message
+      file.previewElement.classList.add "error"
+      file.previewElement.querySelector(".error-message span").textContent = message
     
     
     # Called when a file gets processed. Since there is a cue, not all added
     # files are processed immediately.
     # Receives `file`
     processingfile: (file) ->
-      file.previewTemplate.classList.add "processing"
+      file.previewElement.classList.add "processing"
     
     # Called whenever the upload progress gets updated.
     # You can be sure that this will be called with the percentage 100% when the file is finished uploading.
     # Receives `file`, `progress` (percentage 0-100) and `bytesSent`.
     # To get the total number of bytes of the file, use `file.size`
     uploadprogress: (file, progress, bytesSent) ->
-      file.previewTemplate.querySelector(".progress .upload").style.width = "#{progress}%"
+      file.previewElement.querySelector(".progress .upload").style.width = "#{progress}%"
 
     # Called just before the file is sent. Gets the `xhr` object as second
     # parameter, so you can modify it (for example to add a CSRF token) and a
@@ -240,7 +242,7 @@ class Dropzone extends Em
     # When the complete upload is finished and successfull
     # Receives `file`
     success: (file) ->
-      file.previewTemplate.classList.add "success"
+      file.previewElement.classList.add "success"
 
     # When the upload is finished, either with success or an error.
     # Receives `file`
