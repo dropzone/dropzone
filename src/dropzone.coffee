@@ -80,11 +80,19 @@ class Dropzone extends Em
     # If true, the dropzone will present a file selector when clicked.
     clickable: yes
 
-    # If the dropzone is clickable, this will be added as `accept` parameter
-    # on the hidden file input element that serves as file selector when
-    # clicking the dropzone.
-    # This should be used in addition to the accept function.
-    acceptParameter: null # eg: "audio/*|video/*|image/*"
+    # You can set accepted mime types here. 
+    # 
+    # The default implementation of the `accept()` function will check this 
+    # property, and if the Dropzone is clickable this will be used as
+    # `accept` attribute.
+    # 
+    # See https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-accept
+    # for a reference.
+    acceptedMimeTypes: null # eg: "audio/*,video/*,image/*"
+
+    # @deprecated
+    # Use acceptedMimeTypes instead.
+    acceptParameter: null
 
     # If false, files will not be added to the process queue automatically.
     # This can be useful if you need some additional user input before sending
@@ -110,11 +118,19 @@ class Dropzone extends Em
     # If null, no text will be added at all.
     dictFallbackText: "Please use the fallback form below to upload your files like in the olden days."
 
+    # If the file doesn't match the file type.
+    dictInvalidFileType: "You can't upload files of this type."
+
 
     # If `done()` is called without argument the file is accepted
     # If you call it with an error message, the file is rejected
-    # (This allows for asynchronous validation)
-    accept: (file, done) -> done()
+    # (This allows for asynchronous validation).
+    # 
+    # The default implementation checks if the file.type passes the 
+    # `acceptedMimeTypes` check.
+    accept: (file, done) ->
+      return done @options.dictInvalidFileType unless Dropzone.isValidMimeType(file.type, @options.acceptedMimeTypes)
+      done()
 
 
     # Called when dropzone initialized
@@ -277,6 +293,8 @@ class Dropzone extends Em
 
     throw new Error "No URL provided." unless @options.url
 
+    throw new Error "You can't provide both 'acceptParameter' and 'acceptedMimeTypes'. 'acceptParameter' is deprecated." if @options.acceptParameter and @options.acceptedMimeTypes
+
     @options.method = @options.method.toUpperCase()
 
     # If the browser failed, just call the fallback and leave
@@ -322,7 +340,12 @@ class Dropzone extends Em
         @hiddenFileInput = document.createElement "input"
         @hiddenFileInput.setAttribute "type", "file"
         @hiddenFileInput.setAttribute "multiple", "multiple"
+
+        @hiddenFileInput.setAttribute "accept", @options.acceptedMimeTypes if @options.acceptedMimeTypes?
+
+        # Backwards compatibility
         @hiddenFileInput.setAttribute "accept", @options.acceptParameter if @options.acceptParameter?
+
         # Not setting `display="none"` because some browsers don't accept clicks
         # on elements that aren't displayed.
         @hiddenFileInput.style.visibility = "hidden"
@@ -784,6 +807,25 @@ Dropzone.createElement = (string) ->
 Dropzone.elementInside = (element, container) ->
   return yes if element == container # Coffeescript doesn't support do/while loops
   return yes while element = element.parentNode when element == container
+  return no
+
+# Validates the mime type like this:
+# 
+# https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-accept
+Dropzone.isValidMimeType = (mimeType, acceptedMimeTypes) ->
+  return yes unless acceptedMimeTypes # If there are no accepted mime types, it's OK
+  acceptedMimeTypes = acceptedMimeTypes.split ","
+
+  baseMimeType = mimeType.replace /\/.*$/, ""
+
+  for validMimeType in acceptedMimeTypes
+    validMimeType = validMimeType.trim()
+    if /\/\*$/.test validMimeType
+      # This is something like a image/* mime type
+      return yes if baseMimeType == validMimeType.replace /\/.*$/, ""
+    else
+      return yes if mimeType == validMimeType
+
   return no
 
 
