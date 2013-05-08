@@ -415,12 +415,12 @@ myDropzone.on("sending", function(file, xhr, formData) {
 });
 {% endhighlight %}
 
-To access the preview html of a file, you can access `file.previewTemplate`. For
+To access the preview html of a file, you can access `file.previewElement`. For
 example:
 
 {% highlight js %}
 myDropzone.on("addedfile", function(file) {
-  file.previewTemplate.click(function() { myDropzone.removeFile(file); });
+  file.previewElement.click(function() { myDropzone.removeFile(file); });
 });
 {% endhighlight %}
 
