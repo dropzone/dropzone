@@ -30,6 +30,7 @@ Development
 - Multiple files and synchronous uploads
 - Progress updates
 - Support for large files
+- Well tested
 
 ## Documentation
 
