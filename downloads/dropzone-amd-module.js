@@ -218,7 +218,7 @@ Emitter.prototype.hasListeners = function(event){
       maxFilesize: 256,
       paramName: "file",
       createImageThumbnails: true,
-      maxThumbnailFilesize: 2,
+      maxThumbnailFilesize: 10,
       thumbnailWidth: 100,
       thumbnailHeight: 100,
       params: {},
@@ -230,12 +230,10 @@ Emitter.prototype.hasListeners = function(event){
       dictDefaultMessage: "Drop files here to upload",
       dictFallbackMessage: "Your browser does not support drag'n'drop file uploads.",
       dictFallbackText: "Please use the fallback form below to upload your files like in the olden days.",
+      dictFileTooBig: "File is too big ({{filesize}}MB). Max filesize: {{maxFilesize}}MB.",
       dictInvalidFileType: "You can't upload files of this type.",
       dictResponseError: "Server responded with {{statusCode}} code.",
       accept: function(file, done) {
-        if (!Dropzone.isValidMimeType(file.type, this.options.acceptedMimeTypes)) {
-          return done(this.options.dictInvalidFileType);
-        }
         return done();
       },
       init: function() {
@@ -245,18 +243,18 @@ Emitter.prototype.hasListeners = function(event){
       fallback: function() {
         var child, messageElement, span, _i, _len, _ref;
 
-        this.element.className = "" + this.element.className + " browser-not-supported";
+        this.element.className = "" + this.element.className + " dz-browser-not-supported";
         _ref = this.element.getElementsByTagName("div");
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           child = _ref[_i];
           if (/(^| )message($| )/.test(child.className)) {
             messageElement = child;
-            child.className = "message";
+            child.className = "dz-message";
             continue;
           }
         }
         if (!messageElement) {
-          messageElement = Dropzone.createElement("<div class=\"message\"><span></span></div>");
+          messageElement = Dropzone.createElement("<div class=\"dz-message\"><span></span></div>");
           this.element.appendChild(messageElement);
         }
         span = messageElement.getElementsByTagName("span")[0];
@@ -275,60 +273,64 @@ Emitter.prototype.hasListeners = function(event){
       */
 
       drop: function(e) {
-        return this.element.classList.remove("drag-hover");
+        return this.element.classList.remove("dz-drag-hover");
       },
       dragstart: noop,
       dragend: function(e) {
-        return this.element.classList.remove("drag-hover");
+        return this.element.classList.remove("dz-drag-hover");
       },
       dragenter: function(e) {
-        return this.element.classList.add("drag-hover");
+        return this.element.classList.add("dz-drag-hover");
       },
       dragover: function(e) {
-        return this.element.classList.add("drag-hover");
+        return this.element.classList.add("dz-drag-hover");
       },
       dragleave: function(e) {
-        return this.element.classList.remove("drag-hover");
+        return this.element.classList.remove("dz-drag-hover");
       },
       selectedfiles: function(files) {
         if (this.element === this.previewsContainer) {
-          return this.element.classList.add("started");
+          return this.element.classList.add("dz-started");
         }
       },
       reset: function() {
-        return this.element.classList.remove("started");
+        return this.element.classList.remove("dz-started");
       },
       addedfile: function(file) {
         file.previewElement = Dropzone.createElement(this.options.previewTemplate);
         file.previewTemplate = file.previewElement;
         this.previewsContainer.appendChild(file.previewElement);
-        file.previewElement.querySelector(".filename span").textContent = file.name;
-        return file.previewElement.querySelector(".details").appendChild(Dropzone.createElement("<div class=\"size\">" + (this.filesize(file.size)) + "</div>"));
+        file.previewElement.querySelector("[data-dz-name]").textContent = file.name;
+        return file.previewElement.querySelector("[data-dz-size]").innerHTML = this.filesize(file.size);
       },
       removedfile: function(file) {
         return file.previewElement.parentNode.removeChild(file.previewElement);
       },
       thumbnail: function(file, dataUrl) {
-        file.previewElement.classList.remove("file-preview");
-        file.previewElement.classList.add("image-preview");
-        return file.previewElement.querySelector(".details").appendChild(Dropzone.createElement("<img alt=\"" + file.name + "\" src=\"" + dataUrl + "\"/>"));
+        var thumbnailElement;
+
+        file.previewElement.classList.remove("dz-file-preview");
+        file.previewElement.classList.add("dz-image-preview");
+        thumbnailElement = file.previewElement.querySelector("[data-dz-thumbnail]");
+        thumbnailElement.alt = file.name;
+        return thumbnailElement.src = dataUrl;
       },
       error: function(file, message) {
-        file.previewElement.classList.add("error");
-        return file.previewElement.querySelector(".error-message span").textContent = message;
+        file.previewElement.classList.add("dz-error");
+        return file.previewElement.querySelector("[data-dz-errormessage]").textContent = message;
       },
       processingfile: function(file) {
-        return file.previewElement.classList.add("processing");
+        return file.previewElement.classList.add("dz-processing");
       },
       uploadprogress: function(file, progress, bytesSent) {
-        return file.previewElement.querySelector(".progress .upload").style.width = "" + progress + "%";
+        return file.previewElement.querySelector("[data-dz-uploadprogress]").style.width = "" + progress + "%";
       },
       sending: noop,
       success: function(file) {
-        return file.previewElement.classList.add("success");
+        return file.previewElement.classList.add("dz-success");
       },
       complete: noop,
-      previewTemplate: "<div class=\"preview file-preview\">\n  <div class=\"details\">\n   <div class=\"filename\"><span></span></div>\n  </div>\n  <div class=\"progress\"><span class=\"upload\"></span></div>\n  <div class=\"success-mark\"><span>✔</span></div>\n  <div class=\"error-mark\"><span>✘</span></div>\n  <div class=\"error-message\"><span></span></div>\n</div>"
+      previewTemplate: "<div class=\"dz-preview dz-file-preview\">\n  <div class=\"dz-details\">\n    <div class=\"dz-filename\"><span data-dz-name></span></div>\n    <div class=\"dz-size\" data-dz-size></div>\n    <img data-dz-thumbnail />\n  </div>\n  <div class=\"dz-progress\"><span class=\"dz-upload\" data-dz-uploadprogress></span></div>\n  <div class=\"dz-success-mark\"><span>✔</span></div>\n  <div class=\"dz-error-mark\"><span>✘</span></div>\n  <div class=\"dz-error-message\"><span data-dz-errormessage></span></div>\n</div>"
     };
 
     function Dropzone(element, options) {
@@ -413,8 +415,8 @@ Emitter.prototype.hasListeners = function(event){
       if (this.element.tagName === "form") {
         this.element.setAttribute("enctype", "multipart/form-data");
       }
-      if (this.element.classList.contains("dropzone") && !this.element.querySelector(".message")) {
-        this.element.appendChild(Dropzone.createElement("<div class=\"default message\"><span>" + this.options.dictDefaultMessage + "</span></div>"));
+      if (this.element.classList.contains("dropzone") && !this.element.querySelector("[data-dz-message]")) {
+        this.element.appendChild(Dropzone.createElement("<div class=\"dz-default dz-message\" data-dz-message><span>" + this.options.dictDefaultMessage + "</span></div>"));
       }
       if (this.clickableElement) {
         setupHiddenFileInput = function() {
@@ -431,6 +433,7 @@ Emitter.prototype.hasListeners = function(event){
             _this.hiddenFileInput.setAttribute("accept", _this.options.acceptParameter);
           }
           _this.hiddenFileInput.style.visibility = "hidden";
+          _this.hiddenFileInput.style.position = "absolute";
           _this.hiddenFileInput.style.height = "0";
           _this.hiddenFileInput.style.width = "0";
           document.body.appendChild(_this.hiddenFileInput);
@@ -498,7 +501,7 @@ Emitter.prototype.hasListeners = function(event){
           element: this.clickableElement,
           events: {
             "click": function(evt) {
-              if ((_this.clickableElement !== _this.element) || (evt.target === _this.element || Dropzone.elementInside(evt.target, _this.element.querySelector(".message")))) {
+              if ((_this.clickableElement !== _this.element) || (evt.target === _this.element || Dropzone.elementInside(evt.target, _this.element.querySelector(".dz-message")))) {
                 return _this.hiddenFileInput.click();
               }
             }
@@ -515,7 +518,7 @@ Emitter.prototype.hasListeners = function(event){
       if (existingFallback = this.getExistingFallback()) {
         return existingFallback;
       }
-      fieldsString = "<div class=\"fallback\">";
+      fieldsString = "<div class=\"dz-fallback\">";
       if (this.options.dictFallbackText) {
         fieldsString += "<p>" + this.options.dictFallbackText + "</p>";
       }
@@ -599,7 +602,7 @@ Emitter.prototype.hasListeners = function(event){
 
     Dropzone.prototype.disable = function() {
       if (this.clickableElement === this.element) {
-        this.element.classList.remove("clickable");
+        this.element.classList.remove("dz-clickable");
       }
       this.removeEventListeners();
       this.filesProcessing = [];
@@ -608,7 +611,7 @@ Emitter.prototype.hasListeners = function(event){
 
     Dropzone.prototype.enable = function() {
       if (this.clickableElement === this.element) {
-        this.element.classList.add("clickable");
+        this.element.classList.add("dz-clickable");
       }
       return this.setupEventListeners();
     };
@@ -661,7 +664,9 @@ Emitter.prototype.hasListeners = function(event){
 
     Dropzone.prototype.accept = function(file, done) {
       if (file.size > this.options.maxFilesize * 1024 * 1024) {
-        return done("File is too big (" + (Math.round(file.size / 1024 / 10.24) / 100) + "MB). Max filesize: " + this.options.maxFilesize + "MB");
+        return done(this.options.dictFileTooBig.replace("{{filesize}}", Math.round(file.size / 1024 / 10.24) / 100).replace("{{maxFilesize}}", this.options.maxFilesize));
+      } else if (!Dropzone.isValidMimeType(file.type, this.options.acceptedMimeTypes)) {
+        return done(this.options.dictInvalidFileType);
       } else {
         return this.options.accept.call(this, file, done);
       }
@@ -786,25 +791,31 @@ Emitter.prototype.hasListeners = function(event){
     };
 
     Dropzone.prototype.uploadFile = function(file) {
-      var formData, handleError, input, inputName, inputType, key, progressObj, value, xhr, _i, _len, _ref, _ref1, _ref2,
+      var formData, handleError, input, inputName, inputType, key, progressObj, response, value, xhr, _i, _len, _ref, _ref1, _ref2,
         _this = this;
 
       xhr = new XMLHttpRequest();
       xhr.open(this.options.method, this.options.url, true);
+      response = null;
       handleError = function() {
-        return _this.errorProcessing(file, xhr.responseText || _this.options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr);
+        return _this.errorProcessing(file, response || _this.options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr);
       };
       xhr.onload = function(e) {
-        var response, _ref;
+        var _ref;
 
+        response = xhr.responseText;
+        if (xhr.getResponseHeader("content-type") && ~xhr.getResponseHeader("content-type").indexOf("application/json")) {
+          try {
+            response = JSON.parse(response);
+          } catch (_error) {
+            e = _error;
+            response = "Invalid JSON response from server.";
+          }
+        }
         if (!((200 <= (_ref = xhr.status) && _ref < 300))) {
           return handleError();
         } else {
           _this.emit("uploadprogress", file, 100, file.size);
-          response = xhr.responseText;
-          if (xhr.getResponseHeader("content-type") && ~xhr.getResponseHeader("content-type").indexOf("application/json")) {
-            response = JSON.parse(response);
-          }
           return _this.finished(file, response, e);
         }
       };

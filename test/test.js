@@ -324,7 +324,7 @@
       });
     });
     describe("init()", function() {
-      return describe("clickable", function() {
+      describe("clickable", function() {
         var dropzone, dropzones, name, _results;
 
         dropzones = {
@@ -378,8 +378,19 @@
         }
         return _results;
       });
+      return it("should create a data-dz-message element", function() {
+        var dropzone, element;
+
+        element = Dropzone.createElement("<form class=\"dropzone\" action=\"/\"></form>");
+        dropzone = new Dropzone(element, {
+          clickable: true,
+          acceptParameter: null,
+          acceptedMimeTypes: null
+        });
+        return element.querySelector("[data-dz-message]").should.be["instanceof"](Element);
+      });
     });
-    describe("default options", function() {
+    describe("options", function() {
       var dropzone, element;
 
       element = null;
@@ -387,32 +398,121 @@
       beforeEach(function() {
         element = Dropzone.createElement("<div></div>");
         return dropzone = new Dropzone(element, {
+          maxFilesize: 4,
           url: "url",
           acceptedMimeTypes: "audio/*,image/png"
         });
       });
-      return describe(".accept()", function() {
-        return it("should properly accept files which mime types are listed by acceptedMimeTypes", function() {
-          dropzone.options.accept.call(dropzone, {
+      return describe("file specific", function() {
+        var file;
+
+        file = null;
+        beforeEach(function() {
+          file = {
+            name: "test name",
+            size: 2 * 1000 * 1000
+          };
+          return dropzone.options.addedfile.call(dropzone, file);
+        });
+        describe(".addedFile()", function() {
+          return it("should properly create the previewElement", function() {
+            file.previewElement.should.be["instanceof"](Element);
+            file.previewElement.querySelector("[data-dz-name]").innerHTML.should.eql("test name");
+            return file.previewElement.querySelector("[data-dz-size]").innerHTML.should.eql("<strong>2</strong> MB");
+          });
+        });
+        describe(".error()", function() {
+          return it("should properly insert the error", function() {
+            dropzone.options.error.call(dropzone, file, "test message");
+            return file.previewElement.querySelector("[data-dz-errormessage]").innerHTML.should.eql("test message");
+          });
+        });
+        describe(".thumbnail()", function() {
+          return it("should properly insert the error", function() {
+            var thumbnail, transparentGif;
+
+            transparentGif = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+            dropzone.options.thumbnail.call(dropzone, file, transparentGif);
+            thumbnail = file.previewElement.querySelector("[data-dz-thumbnail]");
+            thumbnail.src.should.eql(transparentGif);
+            return thumbnail.alt.should.eql("test name");
+          });
+        });
+        return describe(".uploadprogress()", function() {
+          return it("should properly set the width", function() {
+            dropzone.options.uploadprogress.call(dropzone, file, 0);
+            file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql("0%");
+            dropzone.options.uploadprogress.call(dropzone, file, 80);
+            file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql("80%");
+            dropzone.options.uploadprogress.call(dropzone, file, 90);
+            file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql("90%");
+            dropzone.options.uploadprogress.call(dropzone, file, 100);
+            return file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql("100%");
+          });
+        });
+      });
+    });
+    describe("instance", function() {
+      var dropzone, element;
+
+      element = null;
+      dropzone = null;
+      beforeEach(function() {
+        element = Dropzone.createElement("<div></div>");
+        return dropzone = new Dropzone(element, {
+          maxFilesize: 4,
+          url: "url",
+          acceptedMimeTypes: "audio/*,image/png"
+        });
+      });
+      describe(".accept()", function() {
+        it("should pass if the filesize is OK", function() {
+          return dropzone.accept({
+            size: 2 * 1024 * 1024,
             type: "audio/mp3"
           }, function(err) {
             return expect(err).to.be.undefined;
           });
-          dropzone.options.accept.call(dropzone, {
+        });
+        it("shouldn't pass if the filesize is too big", function() {
+          return dropzone.accept({
+            size: 10 * 1024 * 1024,
+            type: "audio/mp3"
+          }, function(err) {
+            return err.should.eql("File is too big (10MB). Max filesize: 4MB.");
+          });
+        });
+        it("should properly accept files which mime types are listed in acceptedMimeTypes", function() {
+          dropzone.accept({
+            type: "audio/mp3"
+          }, function(err) {
+            return expect(err).to.be.undefined;
+          });
+          dropzone.accept({
             type: "image/png"
           }, function(err) {
             return expect(err).to.be.undefined;
           });
-          dropzone.options.accept.call(dropzone, {
+          return dropzone.accept({
             type: "audio/wav"
           }, function(err) {
             return expect(err).to.be.undefined;
           });
-          return dropzone.options.accept.call(dropzone, {
+        });
+        return it("should properly reject files when the mime type isn't listed in acceptedMimeTypes", function() {
+          return dropzone.accept({
             type: "image/jpeg"
           }, function(err) {
             return err.should.eql("You can't upload files of this type.");
           });
+        });
+      });
+      return describe(".filesize()", function() {
+        return it("should convert to KiloBytes, etc.. not KibiBytes", function() {
+          dropzone.filesize(2 * 1024 * 1024).should.eql("<strong>2.1</strong> MB");
+          dropzone.filesize(2 * 1000 * 1000).should.eql("<strong>2</strong> MB");
+          dropzone.filesize(2 * 1024 * 1024 * 1024).should.eql("<strong>2.1</strong> GB");
+          return dropzone.filesize(2 * 1000 * 1000 * 1000).should.eql("<strong>2</strong> GB");
         });
       });
     });
