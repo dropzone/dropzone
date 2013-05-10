@@ -356,6 +356,8 @@ class Dropzone extends Em
         # on elements that aren't displayed.
         @hiddenFileInput.style.visibility = "hidden"
         @hiddenFileInput.style.position = "absolute"
+        @hiddenFileInput.style.top = "0"
+        @hiddenFileInput.style.left = "0"
         @hiddenFileInput.style.height = "0"
         @hiddenFileInput.style.width = "0"
         document.body.appendChild @hiddenFileInput
@@ -713,7 +715,7 @@ class Dropzone extends Em
 
 
 
-Dropzone.version = "3.0.0"
+Dropzone.version = "3.0.1"
 
 
 # This is a map of options for your different dropzones. Add configurations
