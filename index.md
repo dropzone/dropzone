@@ -17,6 +17,9 @@ Try it out:
 > Starting with Version 2.0 Dropzone no longer depends on jQuery!
 > See the section "version 2.0" at the bottom of the page for more information.
 
+I just released Version 3.0 which has a few backwards incompatibilities. Please
+see the section **version 3.0** at the bottom of the page for more information.
+
 Please consider donating if you like this project. I've put a lot of my free
 time into this project and donations help to justify it.
 
