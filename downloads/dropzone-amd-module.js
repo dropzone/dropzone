@@ -434,6 +434,8 @@ Emitter.prototype.hasListeners = function(event){
           }
           _this.hiddenFileInput.style.visibility = "hidden";
           _this.hiddenFileInput.style.position = "absolute";
+          _this.hiddenFileInput.style.top = "0";
+          _this.hiddenFileInput.style.left = "0";
           _this.hiddenFileInput.style.height = "0";
           _this.hiddenFileInput.style.width = "0";
           document.body.appendChild(_this.hiddenFileInput);
