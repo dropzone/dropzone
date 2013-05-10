@@ -118,6 +118,9 @@ class Dropzone extends Em
     # If null, no text will be added at all.
     dictFallbackText: "Please use the fallback form below to upload your files like in the olden days."
 
+    # If the filesize is too big.
+    dictFileTooBig: "File is too big ({{filesize}}MB). Max filesize: {{maxFilesize}}MB."
+
     # If the file doesn't match the file type.
     dictInvalidFileType: "You can't upload files of this type."
 
@@ -507,7 +510,7 @@ class Dropzone extends Em
   # `acceptedMimeTypes` check.
   accept: (file, done) ->
     if file.size > @options.maxFilesize * 1024 * 1024
-      done "File is too big (" + (Math.round(file.size / 1024 / 10.24) / 100) + "MB). Max filesize: " + @options.maxFilesize + "MB"
+      done @options.dictFileTooBig.replace("{{filesize}}", Math.round(file.size / 1024 / 10.24) / 100).replace("{{maxFilesize}}", @options.maxFilesize)
     else unless Dropzone.isValidMimeType file.type, @options.acceptedMimeTypes
       done @options.dictInvalidFileType
     else

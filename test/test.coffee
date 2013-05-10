@@ -260,15 +260,24 @@ describe "Dropzone", ->
     dropzone = null
     beforeEach ->
       element = Dropzone.createElement """<div></div>"""
-      dropzone = new Dropzone element, url: "url", acceptedMimeTypes: "audio/*,image/png"
+      dropzone = new Dropzone element, maxFilesize: 4, url: "url", acceptedMimeTypes: "audio/*,image/png"
 
     describe ".accept()", ->
 
-      it "should properly accept files which mime types are listed by acceptedMimeTypes", ->
+      it "should pass if the filesize is OK", ->
+        dropzone.accept { size: 2 * 1024 * 1024, type: "audio/mp3" }, (err) -> expect(err).to.be.undefined
+
+      it "shouldn't pass if the filesize is too big", ->
+        dropzone.accept { size: 10 * 1024 * 1024, type: "audio/mp3" }, (err) -> err.should.eql "File is too big (10MB). Max filesize: 4MB."
+
+      it "should properly accept files which mime types are listed in acceptedMimeTypes", ->
 
         dropzone.accept { type: "audio/mp3" }, (err) -> expect(err).to.be.undefined
         dropzone.accept { type: "image/png" }, (err) -> expect(err).to.be.undefined
         dropzone.accept { type: "audio/wav" }, (err) -> expect(err).to.be.undefined
+
+      it "should properly reject files when the mime type isn't listed in acceptedMimeTypes", ->
+
         dropzone.accept { type: "image/jpeg" }, (err) -> err.should.eql "You can't upload files of this type."
 
 
