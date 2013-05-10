@@ -196,8 +196,8 @@ class Dropzone extends Em
       file.previewTemplate = file.previewElement # Backwards compatibility
 
       @previewsContainer.appendChild file.previewElement
-      file.previewElement.querySelector(".filename span").textContent = file.name
-      file.previewElement.querySelector(".details").appendChild Dropzone.createElement """<div class="size">#{@filesize file.size}</div>"""
+      file.previewElement.querySelector("[data-dz-name]").textContent = file.name
+      file.previewElement.querySelector("[data-dz-size]").innerHTML = @filesize file.size
 
 
     # Called whenever a file is removed.
@@ -209,14 +209,16 @@ class Dropzone extends Em
     thumbnail: (file, dataUrl) ->
       file.previewElement.classList.remove "file-preview"
       file.previewElement.classList.add "image-preview"
-      file.previewElement.querySelector(".details").appendChild Dropzone.createElement """<img alt="#{file.name}" src="#{dataUrl}"/>"""
+      thumbnailElement = file.previewElement.querySelector("[data-dz-thumbnail]")
+      thumbnailElement.alt = file.name
+      thumbnailElement.src = dataUrl
 
     
     # Called whenever an error occurs
     # Receives `file` and `message`
     error: (file, message) ->
       file.previewElement.classList.add "error"
-      file.previewElement.querySelector(".error-message span").textContent = message
+      file.previewElement.querySelector("[data-dz-errormessage]").textContent = message
     
     
     # Called when a file gets processed. Since there is a cue, not all added
@@ -230,7 +232,7 @@ class Dropzone extends Em
     # Receives `file`, `progress` (percentage 0-100) and `bytesSent`.
     # To get the total number of bytes of the file, use `file.size`
     uploadprogress: (file, progress, bytesSent) ->
-      file.previewElement.querySelector(".progress .upload").style.width = "#{progress}%"
+      file.previewElement.querySelector("[data-dz-uploadprogress]").style.width = "#{progress}%"
 
     # Called just before the file is sent. Gets the `xhr` object as second
     # parameter, so you can modify it (for example to add a CSRF token) and a
@@ -249,15 +251,17 @@ class Dropzone extends Em
 
 
     # This template will be chosen when a new file is dropped.
-    previewTemplate: """
+    previewTemplate:  """
                       <div class="preview file-preview">
                         <div class="details">
-                         <div class="filename"><span></span></div>
+                          <div class="filename"><span data-dz-name></span></div>
+                          <div class="size" data-dz-size></div>
+                          <img data-dz-thumbnail />
                         </div>
-                        <div class="progress"><span class="upload"></span></div>
+                        <div class="progress"><span class="upload" data-dz-uploadprogress></span></div>
                         <div class="success-mark"><span>✔</span></div>
                         <div class="error-mark"><span>✘</span></div>
-                        <div class="error-message"><span></span></div>
+                        <div class="error-message"><span data-dz-errormessage></span></div>
                       </div>
                       """
 

@@ -254,6 +254,56 @@ describe "Dropzone", ->
                 Dropzone.elementInside(hiddenFileInput, document).should.not.be.ok
 
 
+  describe "options", ->
+
+    element = null
+    dropzone = null
+
+    beforeEach ->
+      element = Dropzone.createElement """<div></div>"""
+      dropzone = new Dropzone element, maxFilesize: 4, url: "url", acceptedMimeTypes: "audio/*,image/png"
+
+    describe "file specific", ->
+      file = null
+      beforeEach ->
+        file =
+          name: "test name"
+          size: 2 * 1000 * 1000
+        dropzone.options.addedfile.call dropzone, file
+
+      describe ".addedFile()", ->
+        it "should properly create the previewElement", ->
+          file.previewElement.should.be.instanceof Element
+
+          file.previewElement.querySelector("[data-dz-name]").innerHTML.should.eql "test name"
+          file.previewElement.querySelector("[data-dz-size]").innerHTML.should.eql "<strong>2</strong> MB"
+
+      describe ".error()", ->
+        it "should properly insert the error", ->
+          dropzone.options.error.call dropzone, file, "test message"
+
+          file.previewElement.querySelector("[data-dz-errormessage]").innerHTML.should.eql "test message"
+
+      describe ".thumbnail()", ->
+        it "should properly insert the error", ->
+          transparentGif = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
+          dropzone.options.thumbnail.call dropzone, file, transparentGif
+          thumbnail = file.previewElement.querySelector("[data-dz-thumbnail]")
+          thumbnail.src.should.eql transparentGif
+          thumbnail.alt.should.eql "test name"
+
+      describe ".uploadprogress()", ->
+        it "should properly set the width", ->
+          dropzone.options.uploadprogress.call dropzone, file, 0
+          file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql "0%"
+          dropzone.options.uploadprogress.call dropzone, file, 80
+          file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql "80%"
+          dropzone.options.uploadprogress.call dropzone, file, 90
+          file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql "90%"
+          dropzone.options.uploadprogress.call dropzone, file, 100
+          file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql "100%"
+
+
   describe "instance", ->
 
     element = null
@@ -280,6 +330,15 @@ describe "Dropzone", ->
 
         dropzone.accept { type: "image/jpeg" }, (err) -> err.should.eql "You can't upload files of this type."
 
+
+    describe ".filesize()", ->
+
+      it "should convert to KiloBytes, etc.. not KibiBytes", ->
+
+        dropzone.filesize(2 * 1024 * 1024).should.eql "<strong>2.1</strong> MB"
+        dropzone.filesize(2 * 1000 * 1000).should.eql "<strong>2</strong> MB"
+        dropzone.filesize(2 * 1024 * 1024 * 1024).should.eql "<strong>2.1</strong> GB"
+        dropzone.filesize(2 * 1000 * 1000 * 1000).should.eql "<strong>2</strong> GB"
 
 
   describe "helper function", ->
