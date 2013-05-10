@@ -253,24 +253,98 @@ describe "Dropzone", ->
                 dropzone.hiddenFileInput.should.not.equal hiddenFileInput
                 Dropzone.elementInside(hiddenFileInput, document).should.not.be.ok
 
+    it "should create a data-dz-message element", ->
+      element = Dropzone.createElement """<form class="dropzone" action="/"></form>"""
+      dropzone = new Dropzone element, clickable: yes, acceptParameter: null, acceptedMimeTypes: null
+      element.querySelector("[data-dz-message]").should.be.instanceof Element
 
-  describe "default options", ->
+
+
+  describe "options", ->
+
+    element = null
+    dropzone = null
+
+    beforeEach ->
+      element = Dropzone.createElement """<div></div>"""
+      dropzone = new Dropzone element, maxFilesize: 4, url: "url", acceptedMimeTypes: "audio/*,image/png"
+
+    describe "file specific", ->
+      file = null
+      beforeEach ->
+        file =
+          name: "test name"
+          size: 2 * 1000 * 1000
+        dropzone.options.addedfile.call dropzone, file
+
+      describe ".addedFile()", ->
+        it "should properly create the previewElement", ->
+          file.previewElement.should.be.instanceof Element
+
+          file.previewElement.querySelector("[data-dz-name]").innerHTML.should.eql "test name"
+          file.previewElement.querySelector("[data-dz-size]").innerHTML.should.eql "<strong>2</strong> MB"
+
+      describe ".error()", ->
+        it "should properly insert the error", ->
+          dropzone.options.error.call dropzone, file, "test message"
+
+          file.previewElement.querySelector("[data-dz-errormessage]").innerHTML.should.eql "test message"
+
+      describe ".thumbnail()", ->
+        it "should properly insert the error", ->
+          transparentGif = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
+          dropzone.options.thumbnail.call dropzone, file, transparentGif
+          thumbnail = file.previewElement.querySelector("[data-dz-thumbnail]")
+          thumbnail.src.should.eql transparentGif
+          thumbnail.alt.should.eql "test name"
+
+      describe ".uploadprogress()", ->
+        it "should properly set the width", ->
+          dropzone.options.uploadprogress.call dropzone, file, 0
+          file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql "0%"
+          dropzone.options.uploadprogress.call dropzone, file, 80
+          file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql "80%"
+          dropzone.options.uploadprogress.call dropzone, file, 90
+          file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql "90%"
+          dropzone.options.uploadprogress.call dropzone, file, 100
+          file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql "100%"
+
+
+  describe "instance", ->
 
     element = null
     dropzone = null
     beforeEach ->
       element = Dropzone.createElement """<div></div>"""
-      dropzone = new Dropzone element, url: "url", acceptedMimeTypes: "audio/*,image/png"
+      dropzone = new Dropzone element, maxFilesize: 4, url: "url", acceptedMimeTypes: "audio/*,image/png"
 
     describe ".accept()", ->
 
-      it "should properly accept files which mime types are listed by acceptedMimeTypes", ->
+      it "should pass if the filesize is OK", ->
+        dropzone.accept { size: 2 * 1024 * 1024, type: "audio/mp3" }, (err) -> expect(err).to.be.undefined
 
-        dropzone.options.accept.call dropzone, { type: "audio/mp3" }, (err) -> expect(err).to.be.undefined
-        dropzone.options.accept.call dropzone, { type: "image/png" }, (err) -> expect(err).to.be.undefined
-        dropzone.options.accept.call dropzone, { type: "audio/wav" }, (err) -> expect(err).to.be.undefined
-        dropzone.options.accept.call dropzone, { type: "image/jpeg" }, (err) -> err.should.eql "You can't upload files of this type."
+      it "shouldn't pass if the filesize is too big", ->
+        dropzone.accept { size: 10 * 1024 * 1024, type: "audio/mp3" }, (err) -> err.should.eql "File is too big (10MB). Max filesize: 4MB."
 
+      it "should properly accept files which mime types are listed in acceptedMimeTypes", ->
+
+        dropzone.accept { type: "audio/mp3" }, (err) -> expect(err).to.be.undefined
+        dropzone.accept { type: "image/png" }, (err) -> expect(err).to.be.undefined
+        dropzone.accept { type: "audio/wav" }, (err) -> expect(err).to.be.undefined
+
+      it "should properly reject files when the mime type isn't listed in acceptedMimeTypes", ->
+
+        dropzone.accept { type: "image/jpeg" }, (err) -> err.should.eql "You can't upload files of this type."
+
+
+    describe ".filesize()", ->
+
+      it "should convert to KiloBytes, etc.. not KibiBytes", ->
+
+        dropzone.filesize(2 * 1024 * 1024).should.eql "<strong>2.1</strong> MB"
+        dropzone.filesize(2 * 1000 * 1000).should.eql "<strong>2</strong> MB"
+        dropzone.filesize(2 * 1024 * 1024 * 1024).should.eql "<strong>2.1</strong> GB"
+        dropzone.filesize(2 * 1000 * 1000 * 1000).should.eql "<strong>2</strong> GB"
 
 
   describe "helper function", ->

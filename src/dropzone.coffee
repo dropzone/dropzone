@@ -69,7 +69,7 @@ class Dropzone extends Em
     maxFilesize: 256 # in MB
     paramName: "file" # The name of the file param that gets transferred.
     createImageThumbnails: true
-    maxThumbnailFilesize: 2 # in MB. When the filename exceeds this limit, the thumbnail will not be generated.
+    maxThumbnailFilesize: 10 # in MB. When the filename exceeds this limit, the thumbnail will not be generated.
     thumbnailWidth: 100
     thumbnailHeight: 100
 
@@ -118,6 +118,9 @@ class Dropzone extends Em
     # If null, no text will be added at all.
     dictFallbackText: "Please use the fallback form below to upload your files like in the olden days."
 
+    # If the filesize is too big.
+    dictFileTooBig: "File is too big ({{filesize}}MB). Max filesize: {{maxFilesize}}MB."
+
     # If the file doesn't match the file type.
     dictInvalidFileType: "You can't upload files of this type."
 
@@ -127,12 +130,7 @@ class Dropzone extends Em
     # If `done()` is called without argument the file is accepted
     # If you call it with an error message, the file is rejected
     # (This allows for asynchronous validation).
-    # 
-    # The default implementation checks if the file.type passes the 
-    # `acceptedMimeTypes` check.
-    accept: (file, done) ->
-      return done @options.dictInvalidFileType unless Dropzone.isValidMimeType(file.type, @options.acceptedMimeTypes)
-      done()
+    accept: (file, done) -> done()
 
 
     # Called when dropzone initialized
@@ -145,15 +143,15 @@ class Dropzone extends Em
     # Called when the browser does not support drag and drop
     fallback: ->
       # This code should pass in IE7... :(
-      @element.className = "#{@element.className} browser-not-supported"
+      @element.className = "#{@element.className} dz-browser-not-supported"
 
       for child in @element.getElementsByTagName "div"
         if /(^| )message($| )/.test child.className
           messageElement = child
-          child.className = "message" # Removes the 'default' class
+          child.className = "dz-message" # Removes the 'default' class
           continue
       unless messageElement
-        messageElement = Dropzone.createElement """<div class="message"><span></span></div>"""
+        messageElement = Dropzone.createElement """<div class="dz-message"><span></span></div>"""
         @element.appendChild messageElement
           
       span = messageElement.getElementsByTagName("span")[0]
@@ -175,21 +173,21 @@ class Dropzone extends Em
 
 
     # Those are self explanatory and simply concern the DragnDrop.
-    drop: (e) -> @element.classList.remove "drag-hover"
+    drop: (e) -> @element.classList.remove "dz-drag-hover"
     dragstart: noop
-    dragend: (e) -> @element.classList.remove "drag-hover"
-    dragenter: (e) -> @element.classList.add "drag-hover"
-    dragover: (e) -> @element.classList.add "drag-hover"
-    dragleave: (e) -> @element.classList.remove "drag-hover"
+    dragend: (e) -> @element.classList.remove "dz-drag-hover"
+    dragenter: (e) -> @element.classList.add "dz-drag-hover"
+    dragover: (e) -> @element.classList.add "dz-drag-hover"
+    dragleave: (e) -> @element.classList.remove "dz-drag-hover"
     
     # Called whenever files are dropped or selected
     selectedfiles: (files) ->
-      @element.classList.add "started" if @element == @previewsContainer
+      @element.classList.add "dz-started" if @element == @previewsContainer
 
     # Called whenever there are no files left in the dropzone anymore, and the
     # dropzone should be displayed as if in the initial state.
     reset: ->
-      @element.classList.remove "started"
+      @element.classList.remove "dz-started"
 
     # Called when a file is added to the queue
     # Receives `file`
@@ -198,8 +196,8 @@ class Dropzone extends Em
       file.previewTemplate = file.previewElement # Backwards compatibility
 
       @previewsContainer.appendChild file.previewElement
-      file.previewElement.querySelector(".filename span").textContent = file.name
-      file.previewElement.querySelector(".details").appendChild Dropzone.createElement """<div class="size">#{@filesize file.size}</div>"""
+      file.previewElement.querySelector("[data-dz-name]").textContent = file.name
+      file.previewElement.querySelector("[data-dz-size]").innerHTML = @filesize file.size
 
 
     # Called whenever a file is removed.
@@ -209,30 +207,32 @@ class Dropzone extends Em
     # Called when a thumbnail has been generated
     # Receives `file` and `dataUrl`
     thumbnail: (file, dataUrl) ->
-      file.previewElement.classList.remove "file-preview"
-      file.previewElement.classList.add "image-preview"
-      file.previewElement.querySelector(".details").appendChild Dropzone.createElement """<img alt="#{file.name}" src="#{dataUrl}"/>"""
+      file.previewElement.classList.remove "dz-file-preview"
+      file.previewElement.classList.add "dz-image-preview"
+      thumbnailElement = file.previewElement.querySelector("[data-dz-thumbnail]")
+      thumbnailElement.alt = file.name
+      thumbnailElement.src = dataUrl
 
     
     # Called whenever an error occurs
     # Receives `file` and `message`
     error: (file, message) ->
-      file.previewElement.classList.add "error"
-      file.previewElement.querySelector(".error-message span").textContent = message
+      file.previewElement.classList.add "dz-error"
+      file.previewElement.querySelector("[data-dz-errormessage]").textContent = message
     
     
     # Called when a file gets processed. Since there is a cue, not all added
     # files are processed immediately.
     # Receives `file`
     processingfile: (file) ->
-      file.previewElement.classList.add "processing"
+      file.previewElement.classList.add "dz-processing"
     
     # Called whenever the upload progress gets updated.
     # You can be sure that this will be called with the percentage 100% when the file is finished uploading.
     # Receives `file`, `progress` (percentage 0-100) and `bytesSent`.
     # To get the total number of bytes of the file, use `file.size`
     uploadprogress: (file, progress, bytesSent) ->
-      file.previewElement.querySelector(".progress .upload").style.width = "#{progress}%"
+      file.previewElement.querySelector("[data-dz-uploadprogress]").style.width = "#{progress}%"
 
     # Called just before the file is sent. Gets the `xhr` object as second
     # parameter, so you can modify it (for example to add a CSRF token) and a
@@ -242,7 +242,7 @@ class Dropzone extends Em
     # When the complete upload is finished and successfull
     # Receives `file`
     success: (file) ->
-      file.previewElement.classList.add "success"
+      file.previewElement.classList.add "dz-success"
 
     # When the upload is finished, either with success or an error.
     # Receives `file`
@@ -251,15 +251,17 @@ class Dropzone extends Em
 
 
     # This template will be chosen when a new file is dropped.
-    previewTemplate: """
-                      <div class="preview file-preview">
-                        <div class="details">
-                         <div class="filename"><span></span></div>
+    previewTemplate:  """
+                      <div class="dz-preview dz-file-preview">
+                        <div class="dz-details">
+                          <div class="dz-filename"><span data-dz-name></span></div>
+                          <div class="dz-size" data-dz-size></div>
+                          <img data-dz-thumbnail />
                         </div>
-                        <div class="progress"><span class="upload"></span></div>
-                        <div class="success-mark"><span>✔</span></div>
-                        <div class="error-mark"><span>✘</span></div>
-                        <div class="error-message"><span></span></div>
+                        <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
+                        <div class="dz-success-mark"><span>✔</span></div>
+                        <div class="dz-error-mark"><span>✘</span></div>
+                        <div class="dz-error-message"><span data-dz-errormessage></span></div>
                       </div>
                       """
 
@@ -335,8 +337,8 @@ class Dropzone extends Em
     # In case it isn't set already
     @element.setAttribute("enctype", "multipart/form-data") if @element.tagName == "form"
 
-    if @element.classList.contains("dropzone") and !@element.querySelector(".message")
-      @element.appendChild Dropzone.createElement """<div class="default message"><span>#{@options.dictDefaultMessage}</span></div>"""
+    if @element.classList.contains("dropzone") and !@element.querySelector("[data-dz-message]")
+      @element.appendChild Dropzone.createElement """<div class="dz-default dz-message" data-dz-message><span>#{@options.dictDefaultMessage}</span></div>"""
 
     if @clickableElement
       setupHiddenFileInput = =>
@@ -353,6 +355,7 @@ class Dropzone extends Em
         # Not setting `display="none"` because some browsers don't accept clicks
         # on elements that aren't displayed.
         @hiddenFileInput.style.visibility = "hidden"
+        @hiddenFileInput.style.position = "absolute"
         @hiddenFileInput.style.height = "0"
         @hiddenFileInput.style.width = "0"
         document.body.appendChild @hiddenFileInput
@@ -413,7 +416,7 @@ class Dropzone extends Em
         events:
           "click": (evt) =>
             # Only the actual dropzone or the message element should trigger file selection
-            if (@clickableElement != @element) or (evt.target == @element or Dropzone.elementInside evt.target, @element.querySelector ".message")
+            if (@clickableElement != @element) or (evt.target == @element or Dropzone.elementInside evt.target, @element.querySelector ".dz-message")
               @hiddenFileInput.click() # Forward the click
 
 
@@ -428,7 +431,7 @@ class Dropzone extends Em
   getFallbackForm: ->
     return existingFallback if existingFallback = @getExistingFallback()
 
-    fieldsString = """<div class="fallback">"""
+    fieldsString = """<div class="dz-fallback">"""
     fieldsString += """<p>#{@options.dictFallbackText}</p>""" if @options.dictFallbackText
     fieldsString += """<input type="file" name="#{@options.paramName}" multiple="multiple" /><button type="submit">Upload!</button></div>"""
 
@@ -466,13 +469,13 @@ class Dropzone extends Em
 
   # Removes all event listeners and clears the arrays.
   disable: ->
-    @element.classList.remove "clickable" if @clickableElement == @element
+    @element.classList.remove "dz-clickable" if @clickableElement == @element
     @removeEventListeners()
     @filesProcessing = [ ]
     @filesQueue = [ ]
 
   enable: ->
-    @element.classList.add "clickable" if @clickableElement == @element
+    @element.classList.add "dz-clickable" if @clickableElement == @element
     @setupEventListeners()
 
   # Returns a nicely formatted filesize
@@ -507,9 +510,14 @@ class Dropzone extends Em
   # If `done()` is called without argument the file is accepted
   # If you call it with an error message, the file is rejected
   # (This allows for asynchronous validation)
+  # 
+  # This function checks the filesize, and if the file.type passes the 
+  # `acceptedMimeTypes` check.
   accept: (file, done) ->
     if file.size > @options.maxFilesize * 1024 * 1024
-      done "File is too big (" + (Math.round(file.size / 1024 / 10.24) / 100) + "MB). Max filesize: " + @options.maxFilesize + "MB"
+      done @options.dictFileTooBig.replace("{{filesize}}", Math.round(file.size / 1024 / 10.24) / 100).replace("{{maxFilesize}}", @options.maxFilesize)
+    else unless Dropzone.isValidMimeType file.type, @options.acceptedMimeTypes
+      done @options.dictInvalidFileType
     else
       @options.accept.call this, file, done
 
@@ -622,16 +630,25 @@ class Dropzone extends Em
 
     xhr.open @options.method, @options.url, true
 
+
+    response = null
+
     handleError = =>
-      @errorProcessing file, xhr.responseText || @options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr
+      @errorProcessing file, response || @options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr
 
     xhr.onload = (e) =>
+      response = xhr.responseText
+
+      if xhr.getResponseHeader("content-type") and ~xhr.getResponseHeader("content-type").indexOf "application/json"
+        try
+          response = JSON.parse response 
+        catch e
+          response = "Invalid JSON response from server."
+
       unless 200 <= xhr.status < 300
         handleError()
       else
         @emit "uploadprogress", file, 100, file.size
-        response = xhr.responseText
-        if xhr.getResponseHeader("content-type") and ~xhr.getResponseHeader("content-type").indexOf "application/json" then response = JSON.parse response
         @finished file, response, e
 
     xhr.onerror = =>
@@ -696,7 +713,7 @@ class Dropzone extends Em
 
 
 
-Dropzone.version = "2.0.16"
+Dropzone.version = "3.0.0"
 
 
 # This is a map of options for your different dropzones. Add configurations

@@ -11,6 +11,10 @@ The latest development version is in the **[develop](https://github.com/enyo/dro
 Please do also **send pull requests to the `develop` branch**.
 I will **not** merge pull requests to the `master` branch.
 
+
+> Please provide a test for any new feature (see the [testing section](#testing) below).
+
+
 Communicate
 -----------
 
@@ -29,6 +33,7 @@ $ npm install
 
 This will install all the tools you need to compile the source files and to test
 the library.
+
 
 Coffeescript & Stylus (-> Javascript & CSS)
 ------------------------------------------
@@ -54,6 +59,7 @@ $ grunt watch # watches for changes and builds on the fly
 
 > I recommend using `grunt watch` when you begin developing. This way you can't
 > forget to compile the source files and will avoid headaches.
+
 
 Testing
 -------
