@@ -630,16 +630,25 @@ class Dropzone extends Em
 
     xhr.open @options.method, @options.url, true
 
+
+    response = null
+
     handleError = =>
-      @errorProcessing file, xhr.responseText || @options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr
+      @errorProcessing file, response || @options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr
 
     xhr.onload = (e) =>
+      response = xhr.responseText
+
+      if xhr.getResponseHeader("content-type") and ~xhr.getResponseHeader("content-type").indexOf "application/json"
+        try
+          response = JSON.parse response 
+        catch e
+          response = "Invalid JSON response from server."
+
       unless 200 <= xhr.status < 300
         handleError()
       else
         @emit "uploadprogress", file, 100, file.size
-        response = xhr.responseText
-        if xhr.getResponseHeader("content-type") and ~xhr.getResponseHeader("content-type").indexOf "application/json" then response = JSON.parse response
         @finished file, response, e
 
     xhr.onerror = =>
