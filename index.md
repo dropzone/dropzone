@@ -256,6 +256,7 @@ The valid options are:
 | `dictFallbackMessage`   | If the browser is not supported, the default message will be replaced with this text. Defaults to "Your browser does not support drag'n'drop file uploads."
 | `dictFallbackText`      | This will be added before the file input files. If you provide a fallback element yourself, or if this option is `null` this will be ignored. Defaults to "Please use the fallback form below to upload your files like in the olden days."
 | `dictInvalidFileType`   | Shown as error message if the file doesn't match the file type.
+| `dictFileTooBig`        | Shown when the file is too big. {{filesize}} and {{maxFilesize}} will be replaced.
 | `dictResponseError`     | Shown as error message if the server response was invalid. `{{statusCode}}` will be replaced with the servers status code.
 | `previewsContainer`     | defines where to display the file previews – if `null` the Dropzone element is used. Can be a plain HTMLElement or a CSS selector. The element should have the `dropzone-previews` class so the previews are displayed properly.
 | `clickable`             | If `true`, the dropzone element itself will be clickable. If a CSS selector or an HTML element the element will be used as clickable element. If `false` there won't be a click trigger.
@@ -265,7 +266,7 @@ The valid options are:
 | `thumbnailHeight`       |
 | `init`                  | is a function that gets called when Dropzone is initialized. You can setup event listeners inside this function.
 | `acceptedMimeTypes`     | The default implementation of `accept` checks the file's mime type against this list. If the Dropzone is `clickable` this option will be used as [`accept`](https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-accept) parameter on the hidden file input as well.
-| `accept`                | is a function that gets a [file](https://developer.mozilla.org/en-US/docs/DOM/File) and a `done` function as parameter. If the done function is invoked without a parameter, the file will be processed. If you pass an error message it will be displayed and the file will not be uploaded.
+| `accept`                | is a function that gets a [file](https://developer.mozilla.org/en-US/docs/DOM/File) and a `done` function as parameter. If the done function is invoked without a parameter, the file will be processed. If you pass an error message it will be displayed and the file will not be uploaded. This function will not be called if the file is too big or doesn't match the mime types.
 | `enqueueForUpload`      | When false, dropped files aren't uploaded automatically. See below for more info on enqueuing file uploads.
 | `previewTemplate`       | is a string that contains the template used for each dropped image. Change it to fulfill your needs but make sure to properly provide all elements.
 | `forceFallback`         | defaults to `false`. If `true` the fallback will be forced. This is very useful to test your server implementations first and make sure that everything works as expected without dropzone if you experience problems, and to test how your fallbacks will look.
@@ -306,6 +307,7 @@ Example:
 
 {% highlight javascript %}
 // Already instantiated dropzones are accessible with `Dropzone.forElement(element)`
+// or myDomElement.element
 var myDropzone = Dropzone.forElement("#my-dropzone");
 
 myDropzone.on("addedfile", function(file) {
@@ -355,21 +357,40 @@ All of these receive the [file](https://developer.mozilla.org/en-US/docs/DOM/Fil
 
 ## layout
 
-The HTML that is generated for each file by dropzone looks like this (although you can change it with the `previewTemplate` option):
+The HTML that is generated for each file by dropzone is defined with the option `previewTemplate` which defaults to this:
 
 {% highlight html %}
-<div class="preview file-preview">
-  <div class="details">
-    <div class="filename"><span></span></div>    
+<div class="dz-preview dz-file-preview">
+  <div class="dz-details">
+    <div class="dz-filename"><span data-dz-name></span></div>
+    <div class="dz-size" data-dz-size></div>
+    <img data-dz-thumbnail />
   </div>
-  <div class="progress"><span class="upload"></span></div>
-  <div class="success-mark"><span>Success</span></div>
-  <div class="error-mark"><span>Error</span></div>
-  <div class="error-message"><span></span></div>
+  <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
+  <div class="dz-success-mark"><span>✔</span></div>
+  <div class="dz-error-mark"><span>✘</span></div>
+  <div class="dz-error-message"><span data-dz-errormessage></span></div>
 </div>
 {% endhighlight %}
 
-`div.preview` gets the `processing` class when the file gets processed, `success` when the file got uploaded and `error` in case the file couldn't be uploaded. In the latter case, `div.error-message` will contain the text returned by the server.
+The container (`dz-preview`) gets the `dz-processing` class when the file gets processed, `dz-success` when the file got uploaded and `dz-error` in case the file couldn't be uploaded.
+In the latter case, `[data-dz-errormessage]` will contain the text returned by the server.
+
+You can access the HTML of the file preview in any of the events with `file.previewElement`.
+
+If you decide to rewrite the `previewTemplate` from scratch, you should put elements with the `data-dz-*` attributes inside:
+
+- `data-dz-name`
+- `data-dz-size`
+- `data-dz-thumbnail` (This has to be an `<img />` element and the `alt` and `src` attributes will be changed by Dropzone)
+- `data-dz-uploadprogress` (Dropzone will change the `style.width` property from `0%` to `100%` whenever there's a `uploadprogress` event)
+- `data-dz-errormessage`
+
+The default options for Dropzone will look for those element and update the content for it.
+
+You are not forced to use those conventions though. If you override all the default event listeners
+you can completely rebuild your layout from scratch.
+
 
 See the installation section on how to add the stylesheet and spritemaps if you want your dropzone to look like the one on this page.
 
@@ -500,6 +521,15 @@ out there but the reasons I decided to write my own are the following:
 - I wanted a callback for image previews, that don't kill the browser if too many too big images are viewed.
 - I want to use the latest API of browsers. I don't care if it falls back to the normal upload form if the browser is too old.
 
+
+version 3.0
+===========
+
+- All classes are prefixed with `dz-` now to prevent clashing with other CSS definitions
+- The way `previewTemplate` is defined has changed. You have to provide `data-dz-*` elements now
+- If the server returns JSON, it will be parsed for error messages as well
+- There's a `dict*` option for all of the visible messages
+- Lots of minor fixes and changes
 
 version 2.0
 ===========
