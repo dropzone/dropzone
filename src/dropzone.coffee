@@ -355,6 +355,7 @@ class Dropzone extends Em
         # Not setting `display="none"` because some browsers don't accept clicks
         # on elements that aren't displayed.
         @hiddenFileInput.style.visibility = "hidden"
+        @hiddenFileInput.style.position = "absolute"
         @hiddenFileInput.style.height = "0"
         @hiddenFileInput.style.width = "0"
         document.body.appendChild @hiddenFileInput
