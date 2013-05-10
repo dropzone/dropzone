@@ -33,28 +33,28 @@
   background rgba(0, 0, 0, 0.02)
   padding 1em
 
-  &.clickable
+  &.dz-clickable
     cursor pointer
-    .message
-    .message span
+    .dz-message
+    .dz-message span
       cursor pointer
     *
       cursor default
 
-  .message
+  .dz-message
     opacity 1
 
-  &.drag-hover
+  &.dz-drag-hover
     border-color rgba(0, 0, 0, 0.15)
     background rgba(0, 0, 0, 0.04)
 
-  &.started
-    .message
+  &.dz-started
+    .dz-message
       display none
 
 .dropzone
 .dropzone-previews
-  .preview
+  .dz-preview
     background rgba(255, 255, 255, 0.8)
     position relative
     display inline-block
@@ -66,11 +66,11 @@
 
     padding 6px 6px 6px 6px
 
-    &.file-preview
+    &.dz-file-preview
       [data-dz-thumbnail]
         display none
 
-    .details
+    .dz-details
       width 100px
       height @width
       position relative
@@ -78,7 +78,7 @@
       padding 5px
       margin-bottom 22px
 
-      .filename
+      .dz-filename
         overflow hidden
         height 100%
 
@@ -88,31 +88,31 @@
         width @width
         height @width
 
-      .size
+      .dz-size
         absolute bottom -28px left 3px
         height 28px
         line-height @height
 
 
-    &.error
-      .error-mark
+    &.dz-error
+      .dz-error-mark
         display block
-    &.success
-      .success-mark
+    &.dz-success
+      .dz-success-mark
         display block
 
 
     &:hover
-      .details
+      .dz-details
         img
           display none
-      .success-mark
-      .error-mark
+      .dz-success-mark
+      .dz-error-mark
         display none
 
 
-    .success-mark
-    .error-mark
+    .dz-success-mark
+    .dz-error-mark
       display none
       position absolute
 
@@ -124,13 +124,13 @@
       right -10px
       top -10px
 
-    .success-mark
+    .dz-success-mark
       color #8CC657
-    .error-mark
+    .dz-error-mark
       color #EE162D
 
 
-    .progress
+    .dz-progress
       position absolute
       top 100px
       left 6px
@@ -139,7 +139,7 @@
       background #d7d7d7
       display none
 
-      .upload
+      .dz-upload
         position absolute
         top 0
         bottom 0
@@ -148,12 +148,12 @@
         background-color #8CC657
 
 
-    &.processing
-      .progress
+    &.dz-processing
+      .dz-progress
         display block
 
 
-    .error-message
+    .dz-error-message
       display none
       absolute top -5px left -20px
       background rgba(245, 245, 245, 0.8)
@@ -162,6 +162,6 @@
       min-width 140px
       max-width 500px
       z-index 500
-    &:hover.error
-      .error-message
+    &:hover.dz-error
+      .dz-error-message
         display block

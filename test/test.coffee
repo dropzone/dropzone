@@ -253,6 +253,12 @@ describe "Dropzone", ->
                 dropzone.hiddenFileInput.should.not.equal hiddenFileInput
                 Dropzone.elementInside(hiddenFileInput, document).should.not.be.ok
 
+    it "should create a data-dz-message element", ->
+      element = Dropzone.createElement """<form class="dropzone" action="/"></form>"""
+      dropzone = new Dropzone element, clickable: yes, acceptParameter: null, acceptedMimeTypes: null
+      element.querySelector("[data-dz-message]").should.be.instanceof Element
+
+
 
   describe "options", ->
 
