@@ -127,12 +127,7 @@ class Dropzone extends Em
     # If `done()` is called without argument the file is accepted
     # If you call it with an error message, the file is rejected
     # (This allows for asynchronous validation).
-    # 
-    # The default implementation checks if the file.type passes the 
-    # `acceptedMimeTypes` check.
-    accept: (file, done) ->
-      return done @options.dictInvalidFileType unless Dropzone.isValidMimeType(file.type, @options.acceptedMimeTypes)
-      done()
+    accept: (file, done) -> done()
 
 
     # Called when dropzone initialized
@@ -507,9 +502,14 @@ class Dropzone extends Em
   # If `done()` is called without argument the file is accepted
   # If you call it with an error message, the file is rejected
   # (This allows for asynchronous validation)
+  # 
+  # This function checks the filesize, and if the file.type passes the 
+  # `acceptedMimeTypes` check.
   accept: (file, done) ->
     if file.size > @options.maxFilesize * 1024 * 1024
       done "File is too big (" + (Math.round(file.size / 1024 / 10.24) / 100) + "MB). Max filesize: " + @options.maxFilesize + "MB"
+    else unless Dropzone.isValidMimeType file.type, @options.acceptedMimeTypes
+      done @options.dictInvalidFileType
     else
       @options.accept.call this, file, done
 

@@ -254,7 +254,7 @@ describe "Dropzone", ->
                 Dropzone.elementInside(hiddenFileInput, document).should.not.be.ok
 
 
-  describe "default options", ->
+  describe "instance", ->
 
     element = null
     dropzone = null
@@ -266,10 +266,10 @@ describe "Dropzone", ->
 
       it "should properly accept files which mime types are listed by acceptedMimeTypes", ->
 
-        dropzone.options.accept.call dropzone, { type: "audio/mp3" }, (err) -> expect(err).to.be.undefined
-        dropzone.options.accept.call dropzone, { type: "image/png" }, (err) -> expect(err).to.be.undefined
-        dropzone.options.accept.call dropzone, { type: "audio/wav" }, (err) -> expect(err).to.be.undefined
-        dropzone.options.accept.call dropzone, { type: "image/jpeg" }, (err) -> err.should.eql "You can't upload files of this type."
+        dropzone.accept { type: "audio/mp3" }, (err) -> expect(err).to.be.undefined
+        dropzone.accept { type: "image/png" }, (err) -> expect(err).to.be.undefined
+        dropzone.accept { type: "audio/wav" }, (err) -> expect(err).to.be.undefined
+        dropzone.accept { type: "image/jpeg" }, (err) -> err.should.eql "You can't upload files of this type."
 
 
 
