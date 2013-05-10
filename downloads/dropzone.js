@@ -1084,7 +1084,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
   })(Em);
 
-  Dropzone.version = "3.0.0";
+  Dropzone.version = "3.0.1-dev";
 
   Dropzone.options = {};
 
