@@ -913,7 +913,7 @@ Emitter.prototype.hasListeners = function(event){
 
   })(Em);
 
-  Dropzone.version = "3.0.2-dev";
+  Dropzone.version = "3.1.0";
 
   Dropzone.options = {};
 
