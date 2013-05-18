@@ -459,11 +459,16 @@
       dropzone = null;
       beforeEach(function() {
         element = Dropzone.createElement("<div></div>");
+        document.body.appendChild(element);
         return dropzone = new Dropzone(element, {
           maxFilesize: 4,
           url: "url",
-          acceptedMimeTypes: "audio/*,image/png"
+          acceptedMimeTypes: "audio/*,image/png",
+          uploadprogress: function() {}
         });
+      });
+      afterEach(function() {
+        return document.body.removeChild(element);
       });
       describe(".accept()", function() {
         it("should pass if the filesize is OK", function() {
@@ -507,12 +512,56 @@
           });
         });
       });
-      return describe(".filesize()", function() {
+      describe(".filesize()", function() {
         return it("should convert to KiloBytes, etc.. not KibiBytes", function() {
           dropzone.filesize(2 * 1024 * 1024).should.eql("<strong>2.1</strong> MB");
           dropzone.filesize(2 * 1000 * 1000).should.eql("<strong>2</strong> MB");
           dropzone.filesize(2 * 1024 * 1024 * 1024).should.eql("<strong>2.1</strong> GB");
           return dropzone.filesize(2 * 1000 * 1000 * 1000).should.eql("<strong>2</strong> GB");
+        });
+      });
+      return describe("events", function() {
+        return describe("progress updates", function() {
+          return it("should properly emit a totaluploadprogress event", function() {
+            var totalProgressExpectation;
+
+            dropzone.files = [
+              {
+                size: 1990,
+                upload: {
+                  progress: 20,
+                  total: 2000,
+                  bytesSent: 400
+                }
+              }, {
+                size: 1990,
+                upload: {
+                  progress: 10,
+                  total: 2000,
+                  bytesSent: 200
+                }
+              }
+            ];
+            totalProgressExpectation = 15;
+            dropzone.on("totaluploadprogress", function(progress) {
+              return progress.should.eql(totalProgressExpectation);
+            });
+            dropzone.emit("uploadprogress", {});
+            totalProgressExpectation = 97.5;
+            dropzone.files[0].upload.bytesSent = 2000;
+            dropzone.files[1].upload.bytesSent = 1900;
+            dropzone.on("totaluploadprogress", function(progress) {
+              return progress.should.eql(totalProgressExpectation);
+            });
+            dropzone.emit("uploadprogress", {});
+            totalProgressExpectation = 100;
+            dropzone.files[0].upload.bytesSent = 2000;
+            dropzone.files[1].upload.bytesSent = 2000;
+            dropzone.on("totaluploadprogress", function(progress) {
+              return progress.should.eql(totalProgressExpectation);
+            });
+            return dropzone.emit("uploadprogress", {});
+          });
         });
       });
     });
