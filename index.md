@@ -269,6 +269,7 @@ The valid options are:
 | `maxThumbnailFilesize`  | in MB. When the filename exceeds this limit, the thumbnail will not be generated
 | `thumbnailWidth`        |
 | `thumbnailHeight`       |
+| `resize`                | is the function that gets called to create the resize information. It gets the `file` as first parameter and must return an object with `srcX`, `srcY`, `srcWidth` and `srcHeight` and the same for `trg*`. Those values are going to be used by `ctx.drawImage()`.
 | `init`                  | is a function that gets called when Dropzone is initialized. You can setup event listeners inside this function.
 | `acceptedMimeTypes`     | The default implementation of `accept` checks the file's mime type against this list. If the Dropzone is `clickable` this option will be used as [`accept`](https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-accept) parameter on the hidden file input as well.
 | `accept`                | is a function that gets a [file](https://developer.mozilla.org/en-US/docs/DOM/File) and a `done` function as parameter. If the done function is invoked without a parameter, the file will be processed. If you pass an error message it will be displayed and the file will not be uploaded. This function will not be called if the file is too big or doesn't match the mime types.
@@ -345,19 +346,25 @@ All of these receive the [event](https://developer.mozilla.org/en-US/docs/DOM/ev
 
 All of these receive the [file](https://developer.mozilla.org/en-US/docs/DOM/File) as the first parameter:
 
-| Parameter         | Description
-|-------------------|-------------
-| `addedfile`       | 
-| `removedfile`     | Called whenever a file is removed from the list. You can listen to this and delete the file from your server if you want to.
-| `selectedfiles`   | Receives an array of files and gets called whenever files are dropped or selected.
-| `thumbnail`       | When the thumbnail has been generated. Receives the [**dataUrl**](http://en.wikipedia.org/wiki/Data_URI_scheme) as second parameter.
-| `error`           | An error occured. Receives the **errorMessage** as second parameter and if the error was due to the XMLHttpRequest the xhr object as third.
-| `processingfile`  | When a file gets processed (since there is a queue not all files are processed immediately)
-| `uploadprogress`  | Gets called periodically whenever the file upload progress changes.<br />Gets the **progress** parameter as second parameter which is a percentage (0-100) and the **bytesSent** parameter as third which is the number of the bytes that have been sent to the server.<br />When an upload finishes dropzone *ensures* that uploadprogress will be called with a percentage of 100 *at least* once.<br />**Warning:** This function can potentially be called with the same progress multiple times.
-| `sending`         | Called just before the file is sent. Gets the xhr object and the [formData](https://developer.mozilla.org/en-US/docs/DOM/XMLHttpRequest/FormData) objects as second and third parameters, so you can modify them (for example to add a CSRF token) or add additional data.
-| `success`         | The file has been uploaded successfully. Gets the server response as second argument. (This event was called `finished` previously)
-| `complete`        | Called when the upload was either successful or erroneous.
-| `reset`           | Called when all files in the list are removed and the dropzone is reset to initial state.
+| Parameter             | Description
+|-----------------------|-------------
+| `addedfile`           | 
+| `removedfile`         | Called whenever a file is removed from the list. You can listen to this and delete the file from your server if you want to.
+| `selectedfiles`       | Receives an array of files and gets called whenever files are dropped or selected.
+| `thumbnail`           | When the thumbnail has been generated. Receives the [**dataUrl**](http://en.wikipedia.org/wiki/Data_URI_scheme) as second parameter.
+| `error`               | An error occured. Receives the **errorMessage** as second parameter and if the error was due to the XMLHttpRequest the xhr object as third.
+| `processingfile`      | When a file gets processed (since there is a queue not all files are processed immediately)
+| `uploadprogress`      | Gets called periodically whenever the file upload progress changes.<br />Gets the **progress** parameter as second parameter which is a percentage (0-100) and the **bytesSent** parameter as third which is the number of the bytes that have been sent to the server.<br />When an upload finishes dropzone *ensures* that uploadprogress will be called with a percentage of 100 *at least* once.<br />**Warning:** This function can potentially be called with the same progress multiple times.
+| `sending`             | Called just before the file is sent. Gets the xhr object and the [formData](https://developer.mozilla.org/en-US/docs/DOM/XMLHttpRequest/FormData) objects as second and third parameters, so you can modify them (for example to add a CSRF token) or add additional data.
+| `success`             | The file has been uploaded successfully. Gets the server response as second argument. (This event was called `finished` previously)
+| `complete`            | Called when the upload was either successful or erroneous.
+| `reset`               | Called when all files in the list are removed and the dropzone is reset to initial state.
+
+Special event:
+
+| Parameter             | Description
+|-----------------------|-------------
+| `totaluploadprogress` | Called with the total upload progress (0-100), the totalBytes and the totalBytesSent. This event can be used to show the overall upload progress of all files.
 
 
 ## layout
@@ -433,6 +440,11 @@ will not create the message for you.
 
 Dropzone will submit any hidden fields you have in your dropzone form. So this
 is an easy way to submit additional data. You can also use the `params` option.
+
+Dropzone adds data to the `file` object you can use when events fire. You can access
+`file.width` and `file.height` if it's an image, as well as `file.upload` which
+is an object containing: `progress` (0-100), `total` (the total bytes) and
+`bytesSent`.
 
 If you want to add additional data to the file upload that has to be specific for
 each file, you can register for the `sending` event:
