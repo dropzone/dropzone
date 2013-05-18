@@ -316,7 +316,10 @@ describe "Dropzone", ->
     dropzone = null
     beforeEach ->
       element = Dropzone.createElement """<div></div>"""
-      dropzone = new Dropzone element, maxFilesize: 4, url: "url", acceptedMimeTypes: "audio/*,image/png"
+      document.body.appendChild element
+      dropzone = new Dropzone element, maxFilesize: 4, url: "url", acceptedMimeTypes: "audio/*,image/png", uploadprogress: ->
+    afterEach ->
+      document.body.removeChild element
 
     describe ".accept()", ->
 
@@ -345,6 +348,48 @@ describe "Dropzone", ->
         dropzone.filesize(2 * 1000 * 1000).should.eql "<strong>2</strong> MB"
         dropzone.filesize(2 * 1024 * 1024 * 1024).should.eql "<strong>2.1</strong> GB"
         dropzone.filesize(2 * 1000 * 1000 * 1000).should.eql "<strong>2</strong> GB"
+
+    describe "events", ->
+
+      describe "progress updates", ->
+
+        it "should properly emit a totaluploadprogress event", ->
+          dropzone.files = [
+            {
+              size: 1990
+              upload:
+                progress: 20
+                total: 2000 # The bytes to upload are higher than the file size
+                bytesSent: 400
+            }
+            {
+              size: 1990
+              upload:
+                progress: 10
+                total: 2000 # The bytes to upload are higher than the file size
+                bytesSent: 200
+            }
+          ]
+
+          totalProgressExpectation = 15
+          dropzone.on "totaluploadprogress", (progress) -> progress.should.eql totalProgressExpectation
+          dropzone.emit "uploadprogress", { }
+
+          totalProgressExpectation = 97.5
+          dropzone.files[0].upload.bytesSent = 2000
+          dropzone.files[1].upload.bytesSent = 1900
+          # It shouldn't matter that progress is not properly updated since the total size
+          # should be calculated from the bytes
+          dropzone.on "totaluploadprogress", (progress) -> progress.should.eql totalProgressExpectation
+          dropzone.emit "uploadprogress", { }
+
+          totalProgressExpectation = 100
+          dropzone.files[0].upload.bytesSent = 2000
+          dropzone.files[1].upload.bytesSent = 2000
+          # It shouldn't matter that progress is not properly updated since the total size
+          # should be calculated from the bytes
+          dropzone.on "totaluploadprogress", (progress) -> progress.should.eql totalProgressExpectation
+          dropzone.emit "uploadprogress", { }
 
 
   describe "helper function", ->

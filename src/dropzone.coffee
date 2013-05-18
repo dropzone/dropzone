@@ -422,6 +422,15 @@ class Dropzone extends Em
     # again when the dropzone gets disabled.
     @on eventName, @options[eventName] for eventName in @events
 
+    @on "uploadprogress", (file) =>
+      totalBytesSent = 0;
+      totalBytes = 0;
+      for file in @files
+        totalBytesSent += file.upload.bytesSent
+        totalBytes += file.upload.total
+      totalUploadProgress = 100 * totalBytesSent / totalBytes
+      @emit "totaluploadprogress", totalUploadProgress, totalBytes, totalBytesSent
+
 
     noPropagation = (e) ->
       e.stopPropagation()
@@ -566,6 +575,12 @@ class Dropzone extends Em
       @options.accept.call this, file, done
 
   addFile: (file) ->
+    file.upload =
+      progress: 0
+      # Setting the total upload size to file.size for the beginning
+      # It's actual different than the size to be transmitted.
+      total: file.size
+      bytesSent: 0
     @files.push file
 
     @emit "addedfile", file
@@ -671,7 +686,7 @@ class Dropzone extends Em
       unless 200 <= xhr.status < 300
         handleError()
       else
-        @emit "uploadprogress", file, 100, file.size
+        # Just to be sure: forcing the progress fo 100
         @finished file, response, e
 
     xhr.onerror = =>
@@ -680,7 +695,12 @@ class Dropzone extends Em
     # Some browsers do not have the .upload property
     progressObj = xhr.upload ? xhr
     progressObj.onprogress = (e) =>
-      @emit "uploadprogress", file, Math.max(0, Math.min(100, 100 * e.loaded / e.total)), e.loaded
+      file.upload =
+        progress: progress
+        total: e.total
+        bytesSent: e.loaded
+      progress = 100 * e.loaded / e.total
+      @emit "uploadprogress", file, progress, e.loaded
 
     xhr.setRequestHeader "Accept", "application/json"
     xhr.setRequestHeader "Cache-Control", "no-cache"

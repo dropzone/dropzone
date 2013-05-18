@@ -697,6 +697,20 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         eventName = _ref1[_i];
         this.on(eventName, this.options[eventName]);
       }
+      this.on("uploadprogress", function(file) {
+        var totalBytes, totalBytesSent, totalUploadProgress, _j, _len1, _ref2;
+
+        totalBytesSent = 0;
+        totalBytes = 0;
+        _ref2 = _this.files;
+        for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+          file = _ref2[_j];
+          totalBytesSent += file.upload.bytesSent;
+          totalBytes += file.upload.total;
+        }
+        totalUploadProgress = 100 * totalBytesSent / totalBytes;
+        return _this.emit("totaluploadprogress", totalUploadProgress, totalBytes, totalBytesSent);
+      });
       noPropagation = function(e) {
         e.stopPropagation();
         if (e.preventDefault) {
@@ -913,6 +927,11 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     Dropzone.prototype.addFile = function(file) {
       var _this = this;
 
+      file.upload = {
+        progress: 0,
+        total: file.size,
+        bytesSent: 0
+      };
       this.files.push(file);
       this.emit("addedfile", file);
       if (this.options.createImageThumbnails && file.type.match(/image.*/) && file.size <= this.options.maxThumbnailFilesize * 1024 * 1024) {
@@ -1036,7 +1055,6 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         if (!((200 <= (_ref = xhr.status) && _ref < 300))) {
           return handleError();
         } else {
-          _this.emit("uploadprogress", file, 100, file.size);
           return _this.finished(file, response, e);
         }
       };
@@ -1045,7 +1063,15 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       };
       progressObj = (_ref = xhr.upload) != null ? _ref : xhr;
       progressObj.onprogress = function(e) {
-        return _this.emit("uploadprogress", file, Math.max(0, Math.min(100, 100 * e.loaded / e.total)), e.loaded);
+        var progress;
+
+        file.upload = {
+          progress: progress,
+          total: e.total,
+          bytesSent: e.loaded
+        };
+        progress = 100 * e.loaded / e.total;
+        return _this.emit("uploadprogress", file, progress, e.loaded);
       };
       xhr.setRequestHeader("Accept", "application/json");
       xhr.setRequestHeader("Cache-Control", "no-cache");
