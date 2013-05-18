@@ -160,6 +160,48 @@ class Dropzone extends Em
       @element.appendChild @getFallbackForm()
     
 
+
+    # Gets called to calculate the thumbnail dimensions.
+    # 
+    # You can use file.width, file.height, options.thumbnailWidth and
+    # options.thumbnailHeight to calculate the dimensions.
+    # 
+    # The dimensions are going to be used like this:
+    #   
+    #     var info = @options.resize.call(this, file);
+    #     ctx.drawImage(img, info.srcX, info.srcY, info.srcWidth, info.srcHeight, info.trgX, info.trgY, info.trgWidth, info.trgHeight);
+    #     
+    #  srcX, srcy, trgX and trgY can be omitted (in which case 0 is assumed).
+    #  trgWidth and trgHeight can be omitted (in which case the options.thumbnailWidth / options.thumbnailHeight are used)
+    resize: (file) ->
+      info =
+        srcX: 0
+        srcY: 0
+        srcWidth: file.width
+        srcHeight: file.height
+
+      srcRatio = file.width / file.height
+      trgRatio = @options.thumbnailWidth / @options.thumbnailHeight
+      
+      if file.height < @options.thumbnailHeight or file.width < @options.thumbnailWidth
+        # This image is smaller than the canvas
+        info.trgHeight = info.srcHeight
+        info.trgWidth = info.srcWidth
+      else
+        # Image is bigger and needs rescaling
+        if srcRatio > trgRatio
+          info.srcHeight = file.height
+          info.srcWidth = info.srcHeight * trgRatio
+        else
+          info.srcWidth = file.width
+          info.srcHeight = info.srcWidth / trgRatio
+
+      info.srcX = (file.width - info.srcWidth) / 2
+      info.srcY = (file.height - info.srcHeight) / 2
+
+      return info
+
+
     ###
     Those functions register themselves to the events on init and handle all
     the user interface specific stuff. Overwriting them won't break the upload
@@ -565,41 +607,17 @@ class Dropzone extends Em
         file.width = img.width
         file.height = img.height
 
-        canvas = document.createElement("canvas")
-        ctx = canvas.getContext("2d")
-        srcX = 0
-        srcY = 0
-        srcWidth = img.width
-        srcHeight = img.height
-        canvas.width = @options.thumbnailWidth
-        canvas.height = @options.thumbnailHeight
-        trgX = 0
-        trgY = 0
-        trgWidth = canvas.width
-        trgHeight = canvas.height
-        srcRatio = img.width / img.height
-        trgRatio = canvas.width / canvas.height
-        
-        if img.height < canvas.height or img.width < canvas.width
-          # This image is smaller than the canvas
-          trgHeight = srcHeight
-          trgWidth = srcWidth
-        else
-          # Image is bigger and needs rescaling
-          if srcRatio > trgRatio
-            srcHeight = img.height
-            srcWidth = srcHeight * trgRatio
-          else
-            srcWidth = img.width
-            srcHeight = srcWidth / trgRatio
+        resizeInfo = @options.resize.call @, file
 
+        resizeInfo.trgWidth ?= @options.thumbnailWidth
+        resizeInfo.trgHeight ?= @options.thumbnailHeight
 
-        srcX = (img.width - srcWidth) / 2
-        srcY = (img.height - srcHeight) / 2
-        trgY = (canvas.height - trgHeight) / 2
-        trgX = (canvas.width - trgWidth) / 2
-        ctx.drawImage img, srcX, srcY, srcWidth, srcHeight, trgX, trgY, trgWidth, trgHeight
-        thumbnail = canvas.toDataURL("image/png")
+        canvas = document.createElement "canvas"
+        ctx = canvas.getContext "2d"
+        canvas.width = resizeInfo.trgWidth
+        canvas.height = resizeInfo.trgHeight
+        ctx.drawImage img, resizeInfo.srcX ? 0, resizeInfo.srcY ? 0, resizeInfo.srcWidth, resizeInfo.srcHeight, resizeInfo.trgX ? 0, resizeInfo.trgY ? 0, resizeInfo.trgWidth, resizeInfo.trgHeight
+        thumbnail = canvas.toDataURL "image/png"
 
         @emit "thumbnail", file, thumbnail
 
