@@ -562,6 +562,9 @@ class Dropzone extends Em
       img = new Image
 
       img.onload = =>
+        file.width = img.width
+        file.height = img.height
+
         canvas = document.createElement("canvas")
         ctx = canvas.getContext("2d")
         srcX = 0

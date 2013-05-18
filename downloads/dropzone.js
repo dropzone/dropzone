@@ -940,6 +940,8 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         img.onload = function() {
           var canvas, ctx, srcHeight, srcRatio, srcWidth, srcX, srcY, thumbnail, trgHeight, trgRatio, trgWidth, trgX, trgY;
 
+          file.width = img.width;
+          file.height = img.height;
           canvas = document.createElement("canvas");
           ctx = canvas.getContext("2d");
           srcX = 0;
