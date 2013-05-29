@@ -486,7 +486,7 @@ class Dropzone extends Em
 
     fieldsString = """<div class="dz-fallback">"""
     fieldsString += """<p>#{@options.dictFallbackText}</p>""" if @options.dictFallbackText
-    fieldsString += """<input type="file" name="#{@options.paramName}" multiple="multiple" /><button type="submit">Upload!</button></div>"""
+    fieldsString += """<input type="file" name="#{@options.paramName}[]" multiple="multiple" /><button type="submit">Upload!</button></div>"""
 
     fields = Dropzone.createElement fieldsString
     if @element.tagName isnt "FORM"
