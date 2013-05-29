@@ -370,6 +370,7 @@ describe "Dropzone", ->
                 bytesSent: 200
             }
           ]
+          dropzone.acceptedFiles = dropzone.files
 
           totalProgressExpectation = 15
           dropzone.on "totaluploadprogress", (progress) -> progress.should.eql totalProgressExpectation

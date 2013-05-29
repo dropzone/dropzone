@@ -542,6 +542,7 @@
                 }
               }
             ];
+            dropzone.acceptedFiles = dropzone.files;
             totalProgressExpectation = 15;
             dropzone.on("totaluploadprogress", function(progress) {
               return progress.should.eql(totalProgressExpectation);

@@ -418,7 +418,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     */
 
 
-    Dropzone.prototype.events = ["drop", "dragstart", "dragend", "dragenter", "dragover", "dragleave", "selectedfiles", "addedfile", "removedfile", "thumbnail", "error", "processingfile", "uploadprogress", "sending", "success", "complete", "reset"];
+    Dropzone.prototype.events = ["drop", "dragstart", "dragend", "dragenter", "dragover", "dragleave", "selectedfiles", "addedfile", "removedfile", "thumbnail", "error", "processingfile", "uploadprogress", "totaluploadprogress", "sending", "success", "complete", "reset"];
 
     Dropzone.prototype.defaultOptions = {
       url: null,
@@ -561,6 +561,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       uploadprogress: function(file, progress, bytesSent) {
         return file.previewElement.querySelector("[data-dz-uploadprogress]").style.width = "" + progress + "%";
       },
+      totaluploadprogress: noop,
       sending: noop,
       success: function(file) {
         return file.previewElement.classList.add("dz-success");
@@ -689,6 +690,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         setupHiddenFileInput();
       }
       this.files = [];
+      this.acceptedFiles = [];
       this.filesQueue = [];
       this.filesProcessing = [];
       this.URL = (_ref = window.URL) != null ? _ref : window.webkitURL;
@@ -702,7 +704,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
         totalBytesSent = 0;
         totalBytes = 0;
-        _ref2 = _this.files;
+        _ref2 = _this.acceptedFiles;
         for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
           file = _ref2[_j];
           totalBytesSent += file.upload.bytesSent;
@@ -939,8 +941,11 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       }
       return this.accept(file, function(error) {
         if (error) {
+          file.accepted = false;
           return _this.errorProcessing(file, error);
         } else {
+          file.accepted = true;
+          _this.acceptedFiles.push(file);
           if (_this.options.enqueueForUpload) {
             _this.filesQueue.push(file);
             return _this.processQueue();

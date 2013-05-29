@@ -54,6 +54,7 @@ class Dropzone extends Em
     "error"
     "processingfile"
     "uploadprogress"
+    "totaluploadprogress"
     "sending"
     "success"
     "complete"
@@ -270,11 +271,14 @@ class Dropzone extends Em
       file.previewElement.classList.add "dz-processing"
     
     # Called whenever the upload progress gets updated.
-    # You can be sure that this will be called with the percentage 100% when the file is finished uploading.
     # Receives `file`, `progress` (percentage 0-100) and `bytesSent`.
     # To get the total number of bytes of the file, use `file.size`
     uploadprogress: (file, progress, bytesSent) ->
       file.previewElement.querySelector("[data-dz-uploadprogress]").style.width = "#{progress}%"
+
+    # Called whenever the total upload progress gets updated.
+    # Called with totalUploadProgress (0-100), totalBytes and totalBytesSent
+    totaluploadprogress: noop
 
     # Called just before the file is sent. Gets the `xhr` object as second
     # parameter, so you can modify it (for example to add a CSRF token) and a
@@ -412,6 +416,7 @@ class Dropzone extends Em
       setupHiddenFileInput()
 
     @files = [] # All files
+    @acceptedFiles = [] # All files that are actually accepted
     @filesQueue = [] # The files that still have to be processed
     @filesProcessing = [] # The files currently processed
     @URL = window.URL ? window.webkitURL
@@ -425,7 +430,7 @@ class Dropzone extends Em
     @on "uploadprogress", (file) =>
       totalBytesSent = 0;
       totalBytes = 0;
-      for file in @files
+      for file in @acceptedFiles
         totalBytesSent += file.upload.bytesSent
         totalBytes += file.upload.total
       totalUploadProgress = 100 * totalBytesSent / totalBytes
@@ -589,8 +594,11 @@ class Dropzone extends Em
 
     @accept file, (error) =>
       if error
+        file.accepted = false
         @errorProcessing file, error
       else
+        file.accepted = true
+        @acceptedFiles.push file
         if @options.enqueueForUpload
           @filesQueue.push file
           @processQueue()
