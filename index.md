@@ -264,7 +264,7 @@ The valid options are:
 | `dictFileTooBig`        | Shown when the file is too big. {{filesize}} and {{maxFilesize}} will be replaced.
 | `dictResponseError`     | Shown as error message if the server response was invalid. `{{statusCode}}` will be replaced with the servers status code.
 | `previewsContainer`     | defines where to display the file previews – if `null` the Dropzone element is used. Can be a plain HTMLElement or a CSS selector. The element should have the `dropzone-previews` class so the previews are displayed properly.
-| `clickable`             | If `true`, the dropzone element itself will be clickable. If a CSS selector or an HTML element the element will be used as clickable element. If `false` there won't be a click trigger.
+| `clickable`             | If `true`, the dropzone element itself will be clickable, if `false` nothing will be clickable. Otherwise you can pass an HTML element, a CSS selector (for multiple elements) or an array of those.
 | `createImageThumbnails` |
 | `maxThumbnailFilesize`  | in MB. When the filename exceeds this limit, the thumbnail will not be generated
 | `thumbnailWidth`        |
