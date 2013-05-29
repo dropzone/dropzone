@@ -40,7 +40,7 @@
     "grunt-contrib-copy": "*",
     "grunt-contrib-watch": "*",
     "mocha-phantomjs": "*",
-    "mocha": "*",
+    "mocha": "1.9",
     "chai": "*"
   }
 
