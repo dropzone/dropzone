@@ -357,25 +357,21 @@ class Dropzone extends Em
       fallback.parentNode.removeChild fallback
 
     if @options.previewsContainer
-      if typeof @options.previewsContainer == "string"
-        @previewsContainer = document.querySelector @options.previewsContainer
-      else if @options.previewsContainer.nodeType?
-        @previewsContainer = @options.previewsContainer
-      throw new Error "Invalid `previewsContainer` option provided. Please provide a CSS selector or a plain HTML element." unless @previewsContainer?
+      @previewsContainer = Dropzone.getElement @options.previewsContainer, "previewsContainer"
     else
       @previewsContainer = @element
 
 
     if @options.clickable
       if @options.clickable == yes
-        @clickableElement = @element
-      else if typeof @options.clickable == "string"
-        @clickableElement = document.querySelector @options.clickable
-      else if @options.clickable.nodeType?
-        @clickableElement = @options.clickable
-      throw new Error "Invalid `clickable` element provided. Please set it to `true`, a plain HTML element or a valid CSS selector." unless @clickableElement
+        @clickableElements = [ @element ]
+      else
+        @clickableElements = Dropzone.getElements @options.clickable, "clickable"
+    else
+      @clickableElements = [ ]
 
     @init()
+
 
 
 
@@ -386,7 +382,7 @@ class Dropzone extends Em
     if @element.classList.contains("dropzone") and !@element.querySelector("[data-dz-message]")
       @element.appendChild Dropzone.createElement """<div class="dz-default dz-message" data-dz-message><span>#{@options.dictDefaultMessage}</span></div>"""
 
-    if @clickableElement
+    if @clickableElements.length
       setupHiddenFileInput = =>
         document.body.removeChild @hiddenFileInput if @hiddenFileInput
         @hiddenFileInput = document.createElement "input"
@@ -468,13 +464,13 @@ class Dropzone extends Em
       }
     ]
 
-    if @clickableElement
+    @clickableElements.forEach (clickableElement) =>
       @listeners.push
-        element: @clickableElement
+        element: clickableElement
         events:
           "click": (evt) =>
             # Only the actual dropzone or the message element should trigger file selection
-            if (@clickableElement != @element) or (evt.target == @element or Dropzone.elementInside evt.target, @element.querySelector ".dz-message")
+            if (clickableElement != @element) or (evt.target == @element or Dropzone.elementInside evt.target, @element.querySelector ".dz-message")
               @hiddenFileInput.click() # Forward the click
 
 
@@ -527,13 +523,13 @@ class Dropzone extends Em
 
   # Removes all event listeners and clears the arrays.
   disable: ->
-    @element.classList.remove "dz-clickable" if @clickableElement == @element
+    @clickableElements.forEach (element) -> element.classList.remove "dz-clickable"
     @removeEventListeners()
     @filesProcessing = [ ]
     @filesQueue = [ ]
 
   enable: ->
-    @element.classList.add "dz-clickable" if @clickableElement == @element
+    @clickableElements.forEach (element) -> element.classList.add "dz-clickable"
     @setupEventListeners()
 
   # Returns a nicely formatted filesize
@@ -879,6 +875,36 @@ Dropzone.elementInside = (element, container) ->
   return yes if element == container # Coffeescript doesn't support do/while loops
   return yes while element = element.parentNode when element == container
   return no
+
+
+
+Dropzone.getElement = (el, name) ->
+  if typeof el == "string"
+    element = document.querySelector el
+  else if el.nodeType?
+    element = el
+  throw new Error "Invalid `#{name}` option provided. Please provide a CSS selector or a plain HTML element." unless element?
+  return element
+
+
+Dropzone.getElements = (els, name) ->
+  if els instanceof Array
+    elements = [ ]
+    try
+      elements.push @getElement el, name for el in els
+    catch e
+      elements = null
+  else if typeof els == "string"
+    elements = [ ]
+    elements.push el for el in document.querySelectorAll els
+  else if els.nodeType?
+    elements = [ els ]
+
+  throw new Error "Invalid `#{name}` option provided. Please provide a CSS selector, a plain HTML element or a list of those." unless elements? and elements.length
+
+  return elements
+
+
 
 # Validates the mime type like this:
 # 
