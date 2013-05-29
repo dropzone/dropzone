@@ -75,7 +75,7 @@ module.exports = (grunt) ->
 
 
   grunt.loadNpmTasks "grunt-contrib-coffee"
-  grunt.loadNpmTasks "grunt-component-build"
+  grunt.loadNpmTasks "grunt-component"
   grunt.loadNpmTasks "grunt-contrib-stylus"
   grunt.loadNpmTasks "grunt-contrib-copy"
   grunt.loadNpmTasks "grunt-contrib-concat"
