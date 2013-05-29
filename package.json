@@ -1,6 +1,6 @@
 {
   "name": "dropzone",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "Handles drag and drop of files for you.",
   "keywords": [ "dragndrop", "drag and drop", "file upload", "upload" ],
   "homepage": "http://www.dropzonejs.com",
@@ -40,7 +40,7 @@
     "grunt-contrib-copy": "*",
     "grunt-contrib-watch": "*",
     "mocha-phantomjs": "*",
-    "mocha": "*",
+    "mocha": "1.9",
     "chai": "*"
   }
 

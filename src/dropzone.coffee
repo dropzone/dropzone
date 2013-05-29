@@ -54,6 +54,7 @@ class Dropzone extends Em
     "error"
     "processingfile"
     "uploadprogress"
+    "totaluploadprogress"
     "sending"
     "success"
     "complete"
@@ -270,11 +271,14 @@ class Dropzone extends Em
       file.previewElement.classList.add "dz-processing"
     
     # Called whenever the upload progress gets updated.
-    # You can be sure that this will be called with the percentage 100% when the file is finished uploading.
     # Receives `file`, `progress` (percentage 0-100) and `bytesSent`.
     # To get the total number of bytes of the file, use `file.size`
     uploadprogress: (file, progress, bytesSent) ->
       file.previewElement.querySelector("[data-dz-uploadprogress]").style.width = "#{progress}%"
+
+    # Called whenever the total upload progress gets updated.
+    # Called with totalUploadProgress (0-100), totalBytes and totalBytesSent
+    totaluploadprogress: noop
 
     # Called just before the file is sent. Gets the `xhr` object as second
     # parameter, so you can modify it (for example to add a CSRF token) and a
@@ -353,25 +357,21 @@ class Dropzone extends Em
       fallback.parentNode.removeChild fallback
 
     if @options.previewsContainer
-      if typeof @options.previewsContainer == "string"
-        @previewsContainer = document.querySelector @options.previewsContainer
-      else if @options.previewsContainer.nodeType?
-        @previewsContainer = @options.previewsContainer
-      throw new Error "Invalid `previewsContainer` option provided. Please provide a CSS selector or a plain HTML element." unless @previewsContainer?
+      @previewsContainer = Dropzone.getElement @options.previewsContainer, "previewsContainer"
     else
       @previewsContainer = @element
 
 
     if @options.clickable
       if @options.clickable == yes
-        @clickableElement = @element
-      else if typeof @options.clickable == "string"
-        @clickableElement = document.querySelector @options.clickable
-      else if @options.clickable.nodeType?
-        @clickableElement = @options.clickable
-      throw new Error "Invalid `clickable` element provided. Please set it to `true`, a plain HTML element or a valid CSS selector." unless @clickableElement
+        @clickableElements = [ @element ]
+      else
+        @clickableElements = Dropzone.getElements @options.clickable, "clickable"
+    else
+      @clickableElements = [ ]
 
     @init()
+
 
 
 
@@ -382,7 +382,7 @@ class Dropzone extends Em
     if @element.classList.contains("dropzone") and !@element.querySelector("[data-dz-message]")
       @element.appendChild Dropzone.createElement """<div class="dz-default dz-message" data-dz-message><span>#{@options.dictDefaultMessage}</span></div>"""
 
-    if @clickableElement
+    if @clickableElements.length
       setupHiddenFileInput = =>
         document.body.removeChild @hiddenFileInput if @hiddenFileInput
         @hiddenFileInput = document.createElement "input"
@@ -412,6 +412,7 @@ class Dropzone extends Em
       setupHiddenFileInput()
 
     @files = [] # All files
+    @acceptedFiles = [] # All files that are actually accepted
     @filesQueue = [] # The files that still have to be processed
     @filesProcessing = [] # The files currently processed
     @URL = window.URL ? window.webkitURL
@@ -425,7 +426,7 @@ class Dropzone extends Em
     @on "uploadprogress", (file) =>
       totalBytesSent = 0;
       totalBytes = 0;
-      for file in @files
+      for file in @acceptedFiles
         totalBytesSent += file.upload.bytesSent
         totalBytes += file.upload.total
       totalUploadProgress = 100 * totalBytesSent / totalBytes
@@ -463,13 +464,13 @@ class Dropzone extends Em
       }
     ]
 
-    if @clickableElement
+    @clickableElements.forEach (clickableElement) =>
       @listeners.push
-        element: @clickableElement
+        element: clickableElement
         events:
           "click": (evt) =>
             # Only the actual dropzone or the message element should trigger file selection
-            if (@clickableElement != @element) or (evt.target == @element or Dropzone.elementInside evt.target, @element.querySelector ".dz-message")
+            if (clickableElement != @element) or (evt.target == @element or Dropzone.elementInside evt.target, @element.querySelector ".dz-message")
               @hiddenFileInput.click() # Forward the click
 
 
@@ -486,7 +487,7 @@ class Dropzone extends Em
 
     fieldsString = """<div class="dz-fallback">"""
     fieldsString += """<p>#{@options.dictFallbackText}</p>""" if @options.dictFallbackText
-    fieldsString += """<input type="file" name="#{@options.paramName}" multiple="multiple" /><button type="submit">Upload!</button></div>"""
+    fieldsString += """<input type="file" name="#{@options.paramName}[]" multiple="multiple" /><button type="submit">Upload!</button></div>"""
 
     fields = Dropzone.createElement fieldsString
     if @element.tagName isnt "FORM"
@@ -522,13 +523,13 @@ class Dropzone extends Em
 
   # Removes all event listeners and clears the arrays.
   disable: ->
-    @element.classList.remove "dz-clickable" if @clickableElement == @element
+    @clickableElements.forEach (element) -> element.classList.remove "dz-clickable"
     @removeEventListeners()
     @filesProcessing = [ ]
     @filesQueue = [ ]
 
   enable: ->
-    @element.classList.add "dz-clickable" if @clickableElement == @element
+    @clickableElements.forEach (element) -> element.classList.add "dz-clickable"
     @setupEventListeners()
 
   # Returns a nicely formatted filesize
@@ -589,8 +590,11 @@ class Dropzone extends Em
 
     @accept file, (error) =>
       if error
+        file.accepted = false
         @errorProcessing file, error
       else
+        file.accepted = true
+        @acceptedFiles.push file
         if @options.enqueueForUpload
           @filesQueue.push file
           @processQueue()
@@ -756,7 +760,7 @@ class Dropzone extends Em
 
 
 
-Dropzone.version = "3.1.0"
+Dropzone.version = "3.2.0"
 
 
 # This is a map of options for your different dropzones. Add configurations
@@ -871,6 +875,36 @@ Dropzone.elementInside = (element, container) ->
   return yes if element == container # Coffeescript doesn't support do/while loops
   return yes while element = element.parentNode when element == container
   return no
+
+
+
+Dropzone.getElement = (el, name) ->
+  if typeof el == "string"
+    element = document.querySelector el
+  else if el.nodeType?
+    element = el
+  throw new Error "Invalid `#{name}` option provided. Please provide a CSS selector or a plain HTML element." unless element?
+  return element
+
+
+Dropzone.getElements = (els, name) ->
+  if els instanceof Array
+    elements = [ ]
+    try
+      elements.push @getElement el, name for el in els
+    catch e
+      elements = null
+  else if typeof els == "string"
+    elements = [ ]
+    elements.push el for el in document.querySelectorAll els
+  else if els.nodeType?
+    elements = [ els ]
+
+  throw new Error "Invalid `#{name}` option provided. Please provide a CSS selector, a plain HTML element or a list of those." unless elements? and elements.length
+
+  return elements
+
+
 
 # Validates the mime type like this:
 # 

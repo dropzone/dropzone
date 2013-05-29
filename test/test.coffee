@@ -151,6 +151,55 @@ describe "Dropzone", ->
         Dropzone.isValidMimeType("text/html", acceptedMimeTypes).should.be.ok
         Dropzone.isValidMimeType("image/jpeg", acceptedMimeTypes).should.be.ok
 
+  describe "Dropzone.getElement() / getElements()", ->
+    tmpElements = [ ]
+
+    beforeEach ->
+      tmpElements = [ ]
+      tmpElements.push Dropzone.createElement """<div class="tmptest"></div>"""
+      tmpElements.push Dropzone.createElement """<div id="tmptest1" class="random"></div>"""
+      tmpElements.push Dropzone.createElement """<div class="random div"></div>"""
+      tmpElements.forEach (el) -> document.body.appendChild el
+
+    afterEach ->
+      tmpElements.forEach (el) -> document.body.removeChild el
+
+    describe ".getElement()", ->
+      it "should accept a string", ->
+        el = Dropzone.getElement ".tmptest"
+        el.should.equal tmpElements[0]
+        el = Dropzone.getElement "#tmptest1"
+        el.should.equal tmpElements[1]
+      it "should accept a node", ->
+        el = Dropzone.getElement tmpElements[2]
+        el.should.equal tmpElements[2]
+      it "should fail if invalid selector", ->
+        errorMessage = "Invalid `clickable` option provided. Please provide a CSS selector or a plain HTML element."
+        expect(-> Dropzone.getElement "lblasdlfsfl", "clickable").to.throw errorMessage
+        expect(-> Dropzone.getElement { "lblasdlfsfl" }, "clickable").to.throw errorMessage
+        expect(-> Dropzone.getElement [ "lblasdlfsfl" ], "clickable").to.throw errorMessage
+
+    describe ".getElements()", ->
+      it "should accept a list of strings", ->
+        els = Dropzone.getElements [ ".tmptest", "#tmptest1" ]
+        els.should.eql [ tmpElements[0], tmpElements[1] ]
+      it "should accept a list of nodes", ->
+        els = Dropzone.getElements [ tmpElements[0], tmpElements[2] ]
+        els.should.eql [ tmpElements[0], tmpElements[2] ]
+      it "should accept a mixed list", ->
+        els = Dropzone.getElements [ "#tmptest1", tmpElements[2] ]
+        els.should.eql [ tmpElements[1], tmpElements[2] ]
+      it "should accept a string selector", ->
+        els = Dropzone.getElements ".random"
+        els.should.eql [ tmpElements[1], tmpElements[2] ]
+      it "should accept a single node", ->
+        els = Dropzone.getElements tmpElements[1]
+        els.should.eql [ tmpElements[1] ]
+      it "should fail if invalid selector", ->
+        errorMessage = "Invalid `clickable` option provided. Please provide a CSS selector, a plain HTML element or a list of those."
+        expect(-> Dropzone.getElements "lblasdlfsfl", "clickable").to.throw errorMessage
+        expect(-> Dropzone.getElements [ "lblasdlfsfl" ], "clickable").to.throw errorMessage
+
   describe "constructor()", ->
 
     it "should throw an exception if the element is invalid", ->
@@ -205,15 +254,18 @@ describe "Dropzone", ->
 
         it "should use the default element if clickable == true", ->
           dropzone = new Dropzone element, clickable: yes
-          dropzone.clickableElement.should.equal dropzone.element
+          dropzone.clickableElements.should.eql [ dropzone.element ]
         it "should lookup the element if clickable is a CSS selector", ->
           dropzone = new Dropzone element, clickable: ".some-clickable"
-          dropzone.clickableElement.should.equal clickableElement
+          dropzone.clickableElements.should.eql [ clickableElement ]
         it "should simply use the provided element", ->
           dropzone = new Dropzone element, clickable: clickableElement
-          dropzone.clickableElement.should.equal clickableElement
+          dropzone.clickableElements.should.eql [ clickableElement ]
+        it "should accept multiple clickable elements", ->
+          dropzone = new Dropzone element, clickable: [ document.body, ".some-clickable" ]
+          dropzone.clickableElements.should.eql [ document.body, clickableElement ]
         it "should throw an exception if the element is invalid", ->
-          expect(-> new Dropzone element, clickable: ".some-invalid-clickable").to.throw "Invalid `clickable` element provided. Please set it to `true`, a plain HTML element or a valid CSS selector."
+          expect(-> new Dropzone element, clickable: ".some-invalid-clickable").to.throw "Invalid `clickable` option provided. Please provide a CSS selector, a plain HTML element or a list of those."
 
       it "should call the fallback function if forceFallback == true", (done) ->
         dropzone = new Dropzone element,
@@ -370,6 +422,7 @@ describe "Dropzone", ->
                 bytesSent: 200
             }
           ]
+          dropzone.acceptedFiles = dropzone.files
 
           totalProgressExpectation = 15
           dropzone.on "totaluploadprogress", (progress) -> progress.should.eql totalProgressExpectation

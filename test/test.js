@@ -185,6 +185,100 @@
         });
       });
     });
+    describe("Dropzone.getElement() / getElements()", function() {
+      var tmpElements;
+
+      tmpElements = [];
+      beforeEach(function() {
+        tmpElements = [];
+        tmpElements.push(Dropzone.createElement("<div class=\"tmptest\"></div>"));
+        tmpElements.push(Dropzone.createElement("<div id=\"tmptest1\" class=\"random\"></div>"));
+        tmpElements.push(Dropzone.createElement("<div class=\"random div\"></div>"));
+        return tmpElements.forEach(function(el) {
+          return document.body.appendChild(el);
+        });
+      });
+      afterEach(function() {
+        return tmpElements.forEach(function(el) {
+          return document.body.removeChild(el);
+        });
+      });
+      describe(".getElement()", function() {
+        it("should accept a string", function() {
+          var el;
+
+          el = Dropzone.getElement(".tmptest");
+          el.should.equal(tmpElements[0]);
+          el = Dropzone.getElement("#tmptest1");
+          return el.should.equal(tmpElements[1]);
+        });
+        it("should accept a node", function() {
+          var el;
+
+          el = Dropzone.getElement(tmpElements[2]);
+          return el.should.equal(tmpElements[2]);
+        });
+        return it("should fail if invalid selector", function() {
+          var errorMessage;
+
+          errorMessage = "Invalid `clickable` option provided. Please provide a CSS selector or a plain HTML element.";
+          expect(function() {
+            return Dropzone.getElement("lblasdlfsfl", "clickable");
+          }).to["throw"](errorMessage);
+          expect(function() {
+            return Dropzone.getElement({
+              "lblasdlfsfl": "lblasdlfsfl"
+            }, "clickable");
+          }).to["throw"](errorMessage);
+          return expect(function() {
+            return Dropzone.getElement(["lblasdlfsfl"], "clickable");
+          }).to["throw"](errorMessage);
+        });
+      });
+      return describe(".getElements()", function() {
+        it("should accept a list of strings", function() {
+          var els;
+
+          els = Dropzone.getElements([".tmptest", "#tmptest1"]);
+          return els.should.eql([tmpElements[0], tmpElements[1]]);
+        });
+        it("should accept a list of nodes", function() {
+          var els;
+
+          els = Dropzone.getElements([tmpElements[0], tmpElements[2]]);
+          return els.should.eql([tmpElements[0], tmpElements[2]]);
+        });
+        it("should accept a mixed list", function() {
+          var els;
+
+          els = Dropzone.getElements(["#tmptest1", tmpElements[2]]);
+          return els.should.eql([tmpElements[1], tmpElements[2]]);
+        });
+        it("should accept a string selector", function() {
+          var els;
+
+          els = Dropzone.getElements(".random");
+          return els.should.eql([tmpElements[1], tmpElements[2]]);
+        });
+        it("should accept a single node", function() {
+          var els;
+
+          els = Dropzone.getElements(tmpElements[1]);
+          return els.should.eql([tmpElements[1]]);
+        });
+        return it("should fail if invalid selector", function() {
+          var errorMessage;
+
+          errorMessage = "Invalid `clickable` option provided. Please provide a CSS selector, a plain HTML element or a list of those.";
+          expect(function() {
+            return Dropzone.getElements("lblasdlfsfl", "clickable");
+          }).to["throw"](errorMessage);
+          return expect(function() {
+            return Dropzone.getElements(["lblasdlfsfl"], "clickable");
+          }).to["throw"](errorMessage);
+        });
+      });
+    });
     describe("constructor()", function() {
       it("should throw an exception if the element is invalid", function() {
         return expect(function() {
@@ -284,7 +378,7 @@
             dropzone = new Dropzone(element, {
               clickable: true
             });
-            return dropzone.clickableElement.should.equal(dropzone.element);
+            return dropzone.clickableElements.should.eql([dropzone.element]);
           });
           it("should lookup the element if clickable is a CSS selector", function() {
             var dropzone;
@@ -292,7 +386,7 @@
             dropzone = new Dropzone(element, {
               clickable: ".some-clickable"
             });
-            return dropzone.clickableElement.should.equal(clickableElement);
+            return dropzone.clickableElements.should.eql([clickableElement]);
           });
           it("should simply use the provided element", function() {
             var dropzone;
@@ -300,14 +394,22 @@
             dropzone = new Dropzone(element, {
               clickable: clickableElement
             });
-            return dropzone.clickableElement.should.equal(clickableElement);
+            return dropzone.clickableElements.should.eql([clickableElement]);
+          });
+          it("should accept multiple clickable elements", function() {
+            var dropzone;
+
+            dropzone = new Dropzone(element, {
+              clickable: [document.body, ".some-clickable"]
+            });
+            return dropzone.clickableElements.should.eql([document.body, clickableElement]);
           });
           return it("should throw an exception if the element is invalid", function() {
             return expect(function() {
               return new Dropzone(element, {
                 clickable: ".some-invalid-clickable"
               });
-            }).to["throw"]("Invalid `clickable` element provided. Please set it to `true`, a plain HTML element or a valid CSS selector.");
+            }).to["throw"]("Invalid `clickable` option provided. Please provide a CSS selector, a plain HTML element or a list of those.");
           });
         });
         return it("should call the fallback function if forceFallback == true", function(done) {
@@ -542,6 +644,7 @@
                 }
               }
             ];
+            dropzone.acceptedFiles = dropzone.files;
             totalProgressExpectation = 15;
             dropzone.on("totaluploadprogress", function(progress) {
               return progress.should.eql(totalProgressExpectation);
