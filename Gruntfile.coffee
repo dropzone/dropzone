@@ -21,7 +21,7 @@ module.exports = (grunt) ->
         files:
           "test/test.js": "test/*.coffee"
 
-    component:
+    component_build:
       app:
         output: "build/"
         name: "build"
@@ -75,7 +75,7 @@ module.exports = (grunt) ->
 
 
   grunt.loadNpmTasks "grunt-contrib-coffee"
-  grunt.loadNpmTasks "grunt-component"
+  grunt.loadNpmTasks "grunt-component-build"
   grunt.loadNpmTasks "grunt-contrib-stylus"
   grunt.loadNpmTasks "grunt-contrib-copy"
   grunt.loadNpmTasks "grunt-contrib-concat"
@@ -87,6 +87,6 @@ module.exports = (grunt) ->
 
   grunt.registerTask "css", "Compile the stylus files to css", [ "stylus" ]
 
-  grunt.registerTask "js", "Compile coffeescript and create all download files", [ "coffee", "component", "copy", "concat" ]
+  grunt.registerTask "js", "Compile coffeescript and create all download files", [ "coffee", "component_build", "copy", "concat" ]
 
   grunt.registerTask "downloads", [ "js", "css", "uglify" ]

@@ -36,7 +36,7 @@
     "grunt-contrib-concat": "*",
     "grunt-contrib-stylus": "*",
     "grunt-contrib-uglify": "*",
-    "grunt-component": "*",
+    "grunt-component-build": "*",
     "grunt-contrib-copy": "*",
     "grunt-contrib-watch": "*",
     "mocha-phantomjs": "*",
