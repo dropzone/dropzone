@@ -66,6 +66,7 @@ class Dropzone extends Em
   defaultOptions:
     url: null
     method: "post"
+    withCredentials: no
     parallelUploads: 2
     maxFilesize: 256 # in MB
     paramName: "file" # The name of the file param that gets transferred.
@@ -478,6 +479,11 @@ class Dropzone extends Em
 
     @options.init.call @
 
+  # Not fully tested yet
+  destroy: ->
+    @disable()
+
+
   # Returns a form that can be used as fallback if the browser does not support DragnDrop
   #
   # If the dropzone is already a form, only the input field and button are returned. Otherwise a complete form element is provided.
@@ -670,8 +676,7 @@ class Dropzone extends Em
   uploadFile: (file) ->
     xhr = new XMLHttpRequest()
 
-    if @options.withCredentials
-      xhr.withCredentials = true
+    xhr.withCredentials = !!@options.withCredentials
 
     xhr.open @options.method, @options.url, true
 

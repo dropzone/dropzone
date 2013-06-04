@@ -416,6 +416,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     Dropzone.prototype.defaultOptions = {
       url: null,
       method: "post",
+      withCredentials: false,
       parallelUploads: 2,
       maxFilesize: 256,
       paramName: "file",
@@ -749,6 +750,10 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       return this.options.init.call(this);
     };
 
+    Dropzone.prototype.destroy = function() {
+      return this.disable();
+    };
+
     Dropzone.prototype.getFallbackForm = function() {
       var existingFallback, fields, fieldsString, form;
 
@@ -1023,6 +1028,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         _this = this;
 
       xhr = new XMLHttpRequest();
+      xhr.withCredentials = !!this.options.withCredentials;
       xhr.open(this.options.method, this.options.url, true);
       response = null;
       handleError = function() {

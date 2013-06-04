@@ -471,3 +471,36 @@ describe "Dropzone", ->
         fallback.should.equal dropzone.getExistingFallback()
 
 
+  describe "uploadFile()", ->
+    xhr = null
+    dropzone = null
+    requests = null
+
+    mockFile =
+      name: "test file name"
+      size: 123456
+
+
+    beforeEach ->
+      xhr = sinon.useFakeXMLHttpRequest()
+      requests = [ ]
+
+      xhr.onCreate = (xhr) -> requests.push xhr
+
+      element = Dropzone.createElement """<div></div>"""
+      dropzone = new Dropzone element, url: "/the/url"
+    afterEach ->
+      xhr.restore()
+      dropzone.destroy()
+
+    describe "settings()", ->
+      it "should correctly set `withCredentials` on the xhr object", ->
+        dropzone.uploadFile mockFile
+        requests.length.should.eql 1
+        requests[0].withCredentials.should.eql no
+        dropzone.options.withCredentials = yes
+        dropzone.uploadFile mockFile
+        requests.length.should.eql 2
+        requests[1].withCredentials.should.eql yes
+
+

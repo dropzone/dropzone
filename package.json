@@ -41,6 +41,7 @@
     "grunt-contrib-watch": "*",
     "mocha-phantomjs": "*",
     "mocha": "1.9",
+    "sinon": "*",
     "chai": "*"
   }
 

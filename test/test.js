@@ -668,7 +668,7 @@
         });
       });
     });
-    return describe("helper function", function() {
+    describe("helper function", function() {
       return describe("getExistingFallback()", function() {
         var dropzone, element;
 
@@ -701,6 +701,45 @@
           fallback = Dropzone.createElement("<div class=\" abc fallback test \"></div>");
           element.appendChild(fallback);
           return fallback.should.equal(dropzone.getExistingFallback());
+        });
+      });
+    });
+    return describe("uploadFile()", function() {
+      var dropzone, mockFile, requests, xhr;
+
+      xhr = null;
+      dropzone = null;
+      requests = null;
+      mockFile = {
+        name: "test file name",
+        size: 123456
+      };
+      beforeEach(function() {
+        var element;
+
+        xhr = sinon.useFakeXMLHttpRequest();
+        requests = [];
+        xhr.onCreate = function(xhr) {
+          return requests.push(xhr);
+        };
+        element = Dropzone.createElement("<div></div>");
+        return dropzone = new Dropzone(element, {
+          url: "/the/url"
+        });
+      });
+      afterEach(function() {
+        xhr.restore();
+        return dropzone.destroy();
+      });
+      return describe("settings()", function() {
+        return it("should correctly set `withCredentials` on the xhr object", function() {
+          dropzone.uploadFile(mockFile);
+          requests.length.should.eql(1);
+          requests[0].withCredentials.should.eql(false);
+          dropzone.options.withCredentials = true;
+          dropzone.uploadFile(mockFile);
+          requests.length.should.eql(2);
+          return requests[1].withCredentials.should.eql(true);
         });
       });
     });
