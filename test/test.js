@@ -2,6 +2,15 @@
   chai.should();
 
   describe("Dropzone", function() {
+    var getMockFile;
+
+    getMockFile = function() {
+      return {
+        name: "test file name",
+        size: 123456,
+        type: "text/html"
+      };
+    };
     describe("static functions", function() {
       describe("Dropzone.createElement()", function() {
         var element;
@@ -555,11 +564,18 @@
       });
     });
     describe("instance", function() {
-      var dropzone, element;
+      var dropzone, element, requests, xhr;
 
       element = null;
       dropzone = null;
+      xhr = null;
+      requests = null;
       beforeEach(function() {
+        xhr = sinon.useFakeXMLHttpRequest();
+        requests = [];
+        xhr.onCreate = function(xhr) {
+          return requests.push(xhr);
+        };
         element = Dropzone.createElement("<div></div>");
         document.body.appendChild(element);
         return dropzone = new Dropzone(element, {
@@ -570,7 +586,9 @@
         });
       });
       afterEach(function() {
-        return document.body.removeChild(element);
+        document.body.removeChild(element);
+        dropzone.destroy();
+        return xhr.restore();
       });
       describe(".accept()", function() {
         it("should pass if the filesize is OK", function() {
@@ -612,6 +630,57 @@
           }, function(err) {
             return err.should.eql("You can't upload files of this type.");
           });
+        });
+      });
+      describe(".removeFile()", function() {
+        return it("should abort uploading if file is currently being uploaded", function() {
+          var mockFile;
+
+          mockFile = getMockFile();
+          dropzone.uploadFile = function(file) {};
+          dropzone.accept = function(file, done) {
+            return done();
+          };
+          sinon.stub(dropzone, "cancelUpload");
+          dropzone.addFile(mockFile);
+          mockFile.status.should.equal(Dropzone.UPLOADING);
+          dropzone.filesProcessing[0].should.equal(mockFile);
+          dropzone.cancelUpload.callCount.should.equal(0);
+          dropzone.removeFile(mockFile);
+          return dropzone.cancelUpload.callCount.should.equal(1);
+        });
+      });
+      describe(".cancelUpload()", function() {
+        it("should properly cancel upload if file currently uploading", function() {
+          var mockFile;
+
+          mockFile = getMockFile();
+          dropzone.accept = function(file, done) {
+            return done();
+          };
+          dropzone.addFile(mockFile);
+          mockFile.status.should.equal(Dropzone.UPLOADING);
+          dropzone.filesProcessing[0].should.equal(mockFile);
+          dropzone.cancelUpload(mockFile);
+          mockFile.status.should.equal(Dropzone.CANCELED);
+          dropzone.filesProcessing.length.should.equal(0);
+          return dropzone.filesQueue.length.should.equal(0);
+        });
+        return it("should properly cancel the upload if file is not yet uploading", function() {
+          var mockFile;
+
+          mockFile = getMockFile();
+          dropzone.accept = function(file, done) {
+            return done();
+          };
+          dropzone.options.parallelUploads = 0;
+          dropzone.addFile(mockFile);
+          mockFile.status.should.equal(Dropzone.ACCEPTED);
+          dropzone.filesQueue[0].should.equal(mockFile);
+          dropzone.cancelUpload(mockFile);
+          mockFile.status.should.equal(Dropzone.CANCELED);
+          dropzone.filesQueue.length.should.equal(0);
+          return dropzone.filesProcessing.length.should.equal(0);
         });
       });
       describe(".filesize()", function() {
@@ -704,42 +773,86 @@
         });
       });
     });
-    return describe("uploadFile()", function() {
-      var dropzone, mockFile, requests, xhr;
+    return describe("file handling", function() {
+      var dropzone, mockFile;
 
-      xhr = null;
+      mockFile = null;
       dropzone = null;
-      requests = null;
-      mockFile = {
-        name: "test file name",
-        size: 123456
-      };
       beforeEach(function() {
         var element;
 
-        xhr = sinon.useFakeXMLHttpRequest();
-        requests = [];
-        xhr.onCreate = function(xhr) {
-          return requests.push(xhr);
-        };
+        mockFile = getMockFile();
         element = Dropzone.createElement("<div></div>");
         return dropzone = new Dropzone(element, {
           url: "/the/url"
         });
       });
       afterEach(function() {
-        xhr.restore();
         return dropzone.destroy();
       });
-      return describe("settings()", function() {
-        return it("should correctly set `withCredentials` on the xhr object", function() {
-          dropzone.uploadFile(mockFile);
-          requests.length.should.eql(1);
-          requests[0].withCredentials.should.eql(false);
-          dropzone.options.withCredentials = true;
-          dropzone.uploadFile(mockFile);
-          requests.length.should.eql(2);
-          return requests[1].withCredentials.should.eql(true);
+      describe("addFile()", function() {
+        return it("should properly set the status of the file", function() {
+          var doneFunction;
+
+          doneFunction = null;
+          dropzone.accept = function(file, done) {
+            return doneFunction = done;
+          };
+          dropzone.processFile = function() {};
+          dropzone.uploadFile = function() {};
+          dropzone.addFile(mockFile);
+          mockFile.status.should.eql(Dropzone.ADDED);
+          doneFunction();
+          mockFile.status.should.eql(Dropzone.ACCEPTED);
+          mockFile = getMockFile();
+          dropzone.addFile(mockFile);
+          mockFile.status.should.eql(Dropzone.ADDED);
+          doneFunction("error");
+          return mockFile.status.should.eql(Dropzone.ERROR);
+        });
+      });
+      return describe("uploadFile()", function() {
+        var requests, xhr;
+
+        xhr = null;
+        requests = null;
+        beforeEach(function() {
+          xhr = sinon.useFakeXMLHttpRequest();
+          requests = [];
+          return xhr.onCreate = function(xhr) {
+            return requests.push(xhr);
+          };
+        });
+        afterEach(function() {
+          return xhr.restore();
+        });
+        describe("settings()", function() {
+          return it("should correctly set `withCredentials` on the xhr object", function() {
+            dropzone.uploadFile(mockFile);
+            requests.length.should.eql(1);
+            requests[0].withCredentials.should.eql(false);
+            dropzone.options.withCredentials = true;
+            dropzone.uploadFile(mockFile);
+            requests.length.should.eql(2);
+            return requests[1].withCredentials.should.eql(true);
+          });
+        });
+        return describe("should properly set status of file", function() {
+          return it("should correctly set `withCredentials` on the xhr object", function() {
+            dropzone.addFile(mockFile);
+            mockFile.status.should.eql(Dropzone.UPLOADING);
+            requests.length.should.equal(1);
+            requests[0].status = 400;
+            requests[0].onload();
+            mockFile.status.should.eql(Dropzone.ERROR);
+            mockFile = getMockFile();
+            dropzone.addFile(mockFile);
+            mockFile.status.should.eql(Dropzone.UPLOADING);
+            requests.length.should.equal(2);
+            requests[1].status = 200;
+            requests[1].onload();
+            return mockFile.status.should.eql(Dropzone.SUCCESS);
+          });
         });
       });
     });

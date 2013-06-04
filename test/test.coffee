@@ -2,6 +2,13 @@ chai.should()
 
 describe "Dropzone", ->
 
+
+  getMockFile = ->
+    name: "test file name"
+    size: 123456
+    type: "text/html"
+
+
   describe "static functions", ->
 
     describe "Dropzone.createElement()", ->
@@ -366,12 +373,20 @@ describe "Dropzone", ->
 
     element = null
     dropzone = null
+    xhr = null
+    requests = null
     beforeEach ->
+      xhr = sinon.useFakeXMLHttpRequest()
+      requests = [ ]
+      xhr.onCreate = (xhr) -> requests.push xhr
+
       element = Dropzone.createElement """<div></div>"""
       document.body.appendChild element
       dropzone = new Dropzone element, maxFilesize: 4, url: "url", acceptedMimeTypes: "audio/*,image/png", uploadprogress: ->
     afterEach ->
       document.body.removeChild element
+      dropzone.destroy()
+      xhr.restore()
 
     describe ".accept()", ->
 
@@ -391,6 +406,53 @@ describe "Dropzone", ->
 
         dropzone.accept { type: "image/jpeg" }, (err) -> err.should.eql "You can't upload files of this type."
 
+
+    describe ".removeFile()", ->
+      it "should abort uploading if file is currently being uploaded", ->
+        mockFile = getMockFile()
+        dropzone.uploadFile = (file) ->
+        dropzone.accept = (file, done) -> done()
+
+        sinon.stub dropzone, "cancelUpload"
+
+        dropzone.addFile mockFile
+        mockFile.status.should.equal Dropzone.UPLOADING
+        dropzone.filesProcessing[0].should.equal mockFile
+
+        dropzone.cancelUpload.callCount.should.equal 0
+        dropzone.removeFile mockFile
+        dropzone.cancelUpload.callCount.should.equal 1
+
+    describe ".cancelUpload()", ->
+      it "should properly cancel upload if file currently uploading", ->
+          mockFile = getMockFile()
+
+          dropzone.accept = (file, done) -> done()
+
+          dropzone.addFile mockFile
+          mockFile.status.should.equal Dropzone.UPLOADING
+          dropzone.filesProcessing[0].should.equal mockFile
+          dropzone.cancelUpload mockFile
+          mockFile.status.should.equal Dropzone.CANCELED
+          dropzone.filesProcessing.length.should.equal 0
+          dropzone.filesQueue.length.should.equal 0
+
+      it "should properly cancel the upload if file is not yet uploading", ->
+          mockFile = getMockFile()
+
+          dropzone.accept = (file, done) -> done()
+
+          # Making sure the file stays in the queue.
+          dropzone.options.parallelUploads = 0
+
+          dropzone.addFile mockFile
+          mockFile.status.should.equal Dropzone.ACCEPTED
+          dropzone.filesQueue[0].should.equal mockFile
+
+          dropzone.cancelUpload mockFile
+          mockFile.status.should.equal Dropzone.CANCELED
+          dropzone.filesQueue.length.should.equal 0
+          dropzone.filesProcessing.length.should.equal 0
 
     describe ".filesize()", ->
 
@@ -471,36 +533,93 @@ describe "Dropzone", ->
         fallback.should.equal dropzone.getExistingFallback()
 
 
-  describe "uploadFile()", ->
-    xhr = null
+  describe "file handling", ->
+    mockFile = null
     dropzone = null
-    requests = null
-
-    mockFile =
-      name: "test file name"
-      size: 123456
 
 
     beforeEach ->
-      xhr = sinon.useFakeXMLHttpRequest()
-      requests = [ ]
-
-      xhr.onCreate = (xhr) -> requests.push xhr
+      mockFile = getMockFile()
 
       element = Dropzone.createElement """<div></div>"""
       dropzone = new Dropzone element, url: "/the/url"
+
     afterEach ->
-      xhr.restore()
       dropzone.destroy()
 
-    describe "settings()", ->
-      it "should correctly set `withCredentials` on the xhr object", ->
-        dropzone.uploadFile mockFile
-        requests.length.should.eql 1
-        requests[0].withCredentials.should.eql no
-        dropzone.options.withCredentials = yes
-        dropzone.uploadFile mockFile
-        requests.length.should.eql 2
-        requests[1].withCredentials.should.eql yes
 
+    describe "addFile()", ->
+      it "should properly set the status of the file", ->
+        doneFunction = null
+
+        dropzone.accept = (file, done) -> doneFunction = done
+        dropzone.processFile = ->
+        dropzone.uploadFile = ->
+
+        dropzone.addFile mockFile
+
+        mockFile.status.should.eql Dropzone.ADDED
+        doneFunction()
+        mockFile.status.should.eql Dropzone.ACCEPTED
+
+        mockFile = getMockFile()
+        dropzone.addFile mockFile
+
+        mockFile.status.should.eql Dropzone.ADDED
+        doneFunction("error")
+        mockFile.status.should.eql Dropzone.ERROR
+
+
+
+    describe "uploadFile()", ->
+      xhr = null
+      requests = null
+
+
+
+      beforeEach ->
+        xhr = sinon.useFakeXMLHttpRequest()
+        requests = [ ]
+
+        xhr.onCreate = (xhr) -> requests.push xhr
+
+      afterEach ->
+        xhr.restore()
+
+      describe "settings()", ->
+        it "should correctly set `withCredentials` on the xhr object", ->
+          dropzone.uploadFile mockFile
+          requests.length.should.eql 1
+          requests[0].withCredentials.should.eql no
+          dropzone.options.withCredentials = yes
+          dropzone.uploadFile mockFile
+          requests.length.should.eql 2
+          requests[1].withCredentials.should.eql yes
+
+
+      describe "should properly set status of file", ->
+        it "should correctly set `withCredentials` on the xhr object", ->
+          dropzone.addFile mockFile
+
+          mockFile.status.should.eql Dropzone.UPLOADING
+
+          requests.length.should.equal 1
+          requests[0].status = 400
+
+          requests[0].onload()
+
+          mockFile.status.should.eql Dropzone.ERROR
+
+
+          mockFile = getMockFile()
+          dropzone.addFile mockFile
+
+          mockFile.status.should.eql Dropzone.UPLOADING
+
+          requests.length.should.equal 2
+          requests[1].status = 200
+
+          requests[1].onload()
+
+          mockFile.status.should.eql Dropzone.SUCCESS
 

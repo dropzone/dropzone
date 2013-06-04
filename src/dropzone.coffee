@@ -590,16 +590,20 @@ class Dropzone extends Em
       bytesSent: 0
     @files.push file
 
+    file.status = Dropzone.ADDED
+
     @emit "addedfile", file
 
     @createThumbnail file  if @options.createImageThumbnails and file.type.match(/image.*/) and file.size <= @options.maxThumbnailFilesize * 1024 * 1024
 
     @accept file, (error) =>
       if error
-        file.accepted = false
-        @errorProcessing file, error
+        file.accepted = false # Backwards compatibility
+        @errorProcessing file, error # Will set the file.status
       else
-        file.accepted = true
+        file.status = Dropzone.ACCEPTED
+        file.accepted = true # Backwards compatibility
+
         @acceptedFiles.push file
         if @options.enqueueForUpload
           @filesQueue.push file
@@ -607,7 +611,7 @@ class Dropzone extends Em
 
   # Can be called by the user to remove a file
   removeFile: (file) ->
-    throw new Error "Can't remove file currently processing" if file.processing
+    @cancelUpload file if file.status == Dropzone.UPLOADING
     @files = without @files, file
     @filesQueue = without @filesQueue, file
 
@@ -666,15 +670,33 @@ class Dropzone extends Em
   # Loads the file, then calls finishedLoading()
   processFile: (file) ->
     @filesProcessing.push file
-    file.processing = yes
+    file.processing = yes # Backwards compatibility
+    file.status = Dropzone.UPLOADING
 
     @emit "processingfile", file
 
     @uploadFile file
 
 
+
+  # Cancels the file upload and sets the status to CANCELED
+  # **if** the file is actually being uploaded.
+  # If it's still in the queue, the file is being removed from it and the status
+  # set to CANCELED.
+  cancelUpload: (file) ->
+    if file.status == Dropzone.UPLOADING
+      file.status = Dropzone.CANCELED
+      file.xhr.abort()
+      @filesProcessing = without(@filesProcessing, file)
+    else if file.status in [ Dropzone.ADDED, Dropzone.ACCEPTED ]
+      file.status = Dropzone.CANCELED
+      @filesQueue = without(@filesQueue, file)
+
   uploadFile: (file) ->
     xhr = new XMLHttpRequest()
+
+    # Put the xhr object in the file object to be able to reference it later.
+    file.xhr = xhr
 
     xhr.withCredentials = !!@options.withCredentials
 
@@ -687,6 +709,8 @@ class Dropzone extends Em
       @errorProcessing file, response || @options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr
 
     xhr.onload = (e) =>
+      return if file.status == Dropzone.CANCELED
+
       response = xhr.responseText
 
       if xhr.getResponseHeader("content-type") and ~xhr.getResponseHeader("content-type").indexOf "application/json"
@@ -698,10 +722,10 @@ class Dropzone extends Em
       unless 200 <= xhr.status < 300
         handleError()
       else
-        # Just to be sure: forcing the progress fo 100
         @finished file, response, e
 
     xhr.onerror = =>
+      return if file.status == Dropzone.CANCELED
       handleError()
 
     # Some browsers do not have the .upload property
@@ -750,7 +774,8 @@ class Dropzone extends Em
   # Individual callbacks have to be called in the appropriate sections.
   finished: (file, responseText, e) ->
     @filesProcessing = without(@filesProcessing, file)
-    file.processing = no
+    file.processing = no # Backwards compatibility
+    file.status = Dropzone.SUCCESS
     @processQueue()
     @emit "success", file, responseText, e
     @emit "finished", file, responseText, e # For backwards compatibility
@@ -761,7 +786,8 @@ class Dropzone extends Em
   # Individual callbacks have to be called in the appropriate sections.
   errorProcessing: (file, message, xhr) ->
     @filesProcessing = without(@filesProcessing, file)
-    file.processing = no
+    file.processing = no # Backwards compatibility
+    file.status = Dropzone.ERROR
     @processQueue()
     @emit "error", file, message, xhr
     @emit "complete", file
@@ -950,6 +976,13 @@ else
 
 
 
+
+Dropzone.ADDED = "added";
+Dropzone.ACCEPTED = "accepted";
+Dropzone.UPLOADING = "uploading";
+Dropzone.CANCELED = "canceled";
+Dropzone.ERROR = "error";
+Dropzone.SUCCESS = "success";
 
 
 

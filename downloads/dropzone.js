@@ -923,6 +923,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         bytesSent: 0
       };
       this.files.push(file);
+      file.status = Dropzone.ADDED;
       this.emit("addedfile", file);
       if (this.options.createImageThumbnails && file.type.match(/image.*/) && file.size <= this.options.maxThumbnailFilesize * 1024 * 1024) {
         this.createThumbnail(file);
@@ -932,6 +933,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
           file.accepted = false;
           return _this.errorProcessing(file, error);
         } else {
+          file.status = Dropzone.ACCEPTED;
           file.accepted = true;
           _this.acceptedFiles.push(file);
           if (_this.options.enqueueForUpload) {
@@ -943,8 +945,8 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     };
 
     Dropzone.prototype.removeFile = function(file) {
-      if (file.processing) {
-        throw new Error("Can't remove file currently processing");
+      if (file.status === Dropzone.UPLOADING) {
+        this.cancelUpload(file);
       }
       this.files = without(this.files, file);
       this.filesQueue = without(this.filesQueue, file);
@@ -1019,8 +1021,22 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     Dropzone.prototype.processFile = function(file) {
       this.filesProcessing.push(file);
       file.processing = true;
+      file.status = Dropzone.UPLOADING;
       this.emit("processingfile", file);
       return this.uploadFile(file);
+    };
+
+    Dropzone.prototype.cancelUpload = function(file) {
+      var _ref;
+
+      if (file.status === Dropzone.UPLOADING) {
+        file.status = Dropzone.CANCELED;
+        file.xhr.abort();
+        return this.filesProcessing = without(this.filesProcessing, file);
+      } else if ((_ref = file.status) === Dropzone.ADDED || _ref === Dropzone.ACCEPTED) {
+        file.status = Dropzone.CANCELED;
+        return this.filesQueue = without(this.filesQueue, file);
+      }
     };
 
     Dropzone.prototype.uploadFile = function(file) {
@@ -1028,6 +1044,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         _this = this;
 
       xhr = new XMLHttpRequest();
+      file.xhr = xhr;
       xhr.withCredentials = !!this.options.withCredentials;
       xhr.open(this.options.method, this.options.url, true);
       response = null;
@@ -1037,6 +1054,9 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       xhr.onload = function(e) {
         var _ref;
 
+        if (file.status === Dropzone.CANCELED) {
+          return;
+        }
         response = xhr.responseText;
         if (xhr.getResponseHeader("content-type") && ~xhr.getResponseHeader("content-type").indexOf("application/json")) {
           try {
@@ -1053,6 +1073,9 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         }
       };
       xhr.onerror = function() {
+        if (file.status === Dropzone.CANCELED) {
+          return;
+        }
         return handleError();
       };
       progressObj = (_ref = xhr.upload) != null ? _ref : xhr;
@@ -1098,6 +1121,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     Dropzone.prototype.finished = function(file, responseText, e) {
       this.filesProcessing = without(this.filesProcessing, file);
       file.processing = false;
+      file.status = Dropzone.SUCCESS;
       this.processQueue();
       this.emit("success", file, responseText, e);
       this.emit("finished", file, responseText, e);
@@ -1107,6 +1131,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     Dropzone.prototype.errorProcessing = function(file, message, xhr) {
       this.filesProcessing = without(this.filesProcessing, file);
       file.processing = false;
+      file.status = Dropzone.ERROR;
       this.processQueue();
       this.emit("error", file, message, xhr);
       return this.emit("complete", file);
@@ -1325,6 +1350,18 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
   } else {
     window.Dropzone = Dropzone;
   }
+
+  Dropzone.ADDED = "added";
+
+  Dropzone.ACCEPTED = "accepted";
+
+  Dropzone.UPLOADING = "uploading";
+
+  Dropzone.CANCELED = "canceled";
+
+  Dropzone.ERROR = "error";
+
+  Dropzone.SUCCESS = "success";
 
   /*
   # contentloaded.js
