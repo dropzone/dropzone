@@ -670,6 +670,9 @@ class Dropzone extends Em
   uploadFile: (file) ->
     xhr = new XMLHttpRequest()
 
+    if @options.withCredentials
+      xhr.withCredentials = true
+
     xhr.open @options.method, @options.url, true
 
 
