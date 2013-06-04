@@ -209,17 +209,21 @@ describe "Dropzone", ->
 
   describe "constructor()", ->
 
+    dropzone = null
+
+    afterEach -> dropzone.destroy() if dropzone?
+
     it "should throw an exception if the element is invalid", ->
-      expect(-> new Dropzone "#invalid-element").to.throw "Invalid dropzone element."
+      expect(-> dropzone = new Dropzone "#invalid-element").to.throw "Invalid dropzone element."
 
     it "should throw an exception if assigned twice to the same element", ->
       element = document.createElement "div"
-      new Dropzone element, url: "url"
+      dropzone = new Dropzone element, url: "url"
       expect(-> new Dropzone element, url: "url").to.throw "Dropzone already attached."
 
     it "should throw an exception if both acceptParameter and acceptedMimeTypes are specified", ->
       element = document.createElement "div"
-      expect(-> new Dropzone element, url: "test", acceptParameter: "param", acceptedMimeTypes: "types").to.throw "You can't provide both 'acceptParameter' and 'acceptedMimeTypes'. 'acceptParameter' is deprecated."
+      expect(-> dropzone = new Dropzone element, url: "test", acceptParameter: "param", acceptedMimeTypes: "types").to.throw "You can't provide both 'acceptParameter' and 'acceptedMimeTypes'. 'acceptParameter' is deprecated."
 
     it "should set itself as element.dropzone", ->
       element = document.createElement "div"
@@ -250,14 +254,22 @@ describe "Dropzone", ->
         dropzone = new Dropzone element2, url: "/some/url"
         dropzone.options.parallelUploads.should.equal 2
 
+      it "should call the fallback function if forceFallback == true", (done) ->
+        dropzone = new Dropzone element,
+          url: "/some/other/url"
+          forceFallback: on
+          fallback: -> done()
+
       describe "options.clickable", ->
         clickableElement = null
+        dropzone = null
         beforeEach ->
           clickableElement = document.createElement "div"
           clickableElement.className = "some-clickable"
           document.body.appendChild clickableElement
         afterEach ->
           document.body.removeChild clickableElement
+          dropzone.destroy if dropzone?
 
         it "should use the default element if clickable == true", ->
           dropzone = new Dropzone element, clickable: yes
@@ -272,13 +284,9 @@ describe "Dropzone", ->
           dropzone = new Dropzone element, clickable: [ document.body, ".some-clickable" ]
           dropzone.clickableElements.should.eql [ document.body, clickableElement ]
         it "should throw an exception if the element is invalid", ->
-          expect(-> new Dropzone element, clickable: ".some-invalid-clickable").to.throw "Invalid `clickable` option provided. Please provide a CSS selector, a plain HTML element or a list of those."
+          expect(-> dropzone = new Dropzone element, clickable: ".some-invalid-clickable").to.throw "Invalid `clickable` option provided. Please provide a CSS selector, a plain HTML element or a list of those."
 
-      it "should call the fallback function if forceFallback == true", (done) ->
-        dropzone = new Dropzone element,
-          url: "/some/other/url"
-          forceFallback: on
-          fallback: -> done()
+
 
 
   describe "init()", ->
@@ -481,6 +489,25 @@ describe "Dropzone", ->
 
           dropzone.files[0].status.should.equal Dropzone.CANCELED
           dropzone.files[1].status.should.equal Dropzone.CANCELED
+
+    describe ".destroy()", ->
+      it "should properly cancel all pending uploads and remove all file references", ->
+          dropzone.accept = (file, done) -> done()
+
+          dropzone.options.parallelUploads = 1
+
+          dropzone.addFile getMockFile()
+          dropzone.addFile getMockFile()
+
+          dropzone.filesProcessing.length.should.equal 1
+          dropzone.filesQueue.length.should.equal 1
+          dropzone.files.length.should.equal 2
+
+          sinon.spy dropzone, "disable"
+
+          dropzone.destroy()
+
+          dropzone.disable.callCount.should.equal 1
 
 
 

@@ -246,7 +246,7 @@ class Dropzone extends Em
 
     # Called whenever a file is removed.
     removedfile: (file) ->
-      file.previewElement.parentNode.removeChild file.previewElement
+      file.previewElement?.parentNode.removeChild file.previewElement
 
     # Called when a thumbnail has been generated
     # Receives `file` and `dataUrl`
@@ -318,6 +318,12 @@ class Dropzone extends Em
 
     @defaultOptions.previewTemplate = @defaultOptions.previewTemplate.replace /\n*/g, ""
 
+    @clickableElements = [ ]
+    @listeners = [ ]
+    @files = [] # All files
+    @acceptedFiles = [] # All files that are actually accepted
+    @filesQueue = [] # The files that still have to be processed
+    @filesProcessing = [] # The files currently processed
 
     @element = document.querySelector @element if typeof @element == "string"
 
@@ -362,14 +368,12 @@ class Dropzone extends Em
     else
       @previewsContainer = @element
 
-
     if @options.clickable
       if @options.clickable == yes
         @clickableElements = [ @element ]
       else
         @clickableElements = Dropzone.getElements @options.clickable, "clickable"
-    else
-      @clickableElements = [ ]
+      
 
     @init()
 
@@ -412,10 +416,6 @@ class Dropzone extends Em
           setupHiddenFileInput()
       setupHiddenFileInput()
 
-    @files = [] # All files
-    @acceptedFiles = [] # All files that are actually accepted
-    @filesQueue = [] # The files that still have to be processed
-    @filesProcessing = [] # The files currently processed
     @URL = window.URL ? window.webkitURL
 
 
@@ -482,6 +482,10 @@ class Dropzone extends Em
   # Not fully tested yet
   destroy: ->
     @disable()
+    @removeAllFiles()
+    if @hiddenFileInput?.parentNode
+      @hiddenFileInput.parentNode.removeChild @hiddenFileInput 
+      @hiddenFileInput = null
 
 
   # Returns a form that can be used as fallback if the browser does not support DragnDrop
