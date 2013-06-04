@@ -670,6 +670,9 @@ class Dropzone extends Em
   uploadFile: (file) ->
     xhr = new XMLHttpRequest()
 
+    if @options.withCredentials
+      xhr.withCredentials = true
+
     xhr.open @options.method, @options.url, true
 
 
@@ -760,7 +763,7 @@ class Dropzone extends Em
 
 
 
-Dropzone.version = "3.2.0"
+Dropzone.version = "3.2.1-dev"
 
 
 # This is a map of options for your different dropzones. Add configurations
