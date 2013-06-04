@@ -527,12 +527,13 @@ class Dropzone extends Em
     for elementListeners in @listeners
       elementListeners.element.removeEventListener event, listener, false for event, listener of elementListeners.events
 
-  # Removes all event listeners and clears the arrays.
+  # Removes all event listeners and cancels all files in the queue or being processed.
   disable: ->
     @clickableElements.forEach (element) -> element.classList.remove "dz-clickable"
     @removeEventListeners()
-    @filesProcessing = [ ]
-    @filesQueue = [ ]
+
+    @cancelUpload file for file in @filesProcessing
+    @cancelUpload file for file in @filesQueue
 
   enable: ->
     @clickableElements.forEach (element) -> element.classList.add "dz-clickable"

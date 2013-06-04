@@ -454,6 +454,36 @@ describe "Dropzone", ->
           dropzone.filesQueue.length.should.equal 0
           dropzone.filesProcessing.length.should.equal 0
 
+    describe ".disable()", ->
+      it "should properly cancel all pending uploads", ->
+          dropzone.accept = (file, done) -> done()
+
+          dropzone.options.parallelUploads = 1
+
+          dropzone.addFile getMockFile()
+          dropzone.addFile getMockFile()
+
+          dropzone.filesProcessing.length.should.equal 1
+          dropzone.filesQueue.length.should.equal 1
+          dropzone.files.length.should.equal 2
+
+          sinon.spy requests[0], "abort"
+
+          requests[0].abort.callCount.should.equal 0
+
+          dropzone.disable()
+
+          requests[0].abort.callCount.should.equal 1
+
+          dropzone.filesProcessing.length.should.equal 0
+          dropzone.filesQueue.length.should.equal 0
+          dropzone.files.length.should.equal 2
+
+          dropzone.files[0].status.should.equal Dropzone.CANCELED
+          dropzone.files[1].status.should.equal Dropzone.CANCELED
+
+
+
     describe ".filesize()", ->
 
       it "should convert to KiloBytes, etc.. not KibiBytes", ->
