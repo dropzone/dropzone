@@ -534,7 +534,9 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         return file.previewElement.querySelector("[data-dz-size]").innerHTML = this.filesize(file.size);
       },
       removedfile: function(file) {
-        return file.previewElement.parentNode.removeChild(file.previewElement);
+        var _ref;
+
+        return (_ref = file.previewElement) != null ? _ref.parentNode.removeChild(file.previewElement) : void 0;
       },
       thumbnail: function(file, dataUrl) {
         var thumbnailElement;
@@ -570,6 +572,12 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       this.element = element;
       this.version = Dropzone.version;
       this.defaultOptions.previewTemplate = this.defaultOptions.previewTemplate.replace(/\n*/g, "");
+      this.clickableElements = [];
+      this.listeners = [];
+      this.files = [];
+      this.acceptedFiles = [];
+      this.filesQueue = [];
+      this.filesProcessing = [];
       if (typeof this.element === "string") {
         this.element = document.querySelector(this.element);
       }
@@ -623,8 +631,6 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         } else {
           this.clickableElements = Dropzone.getElements(this.options.clickable, "clickable");
         }
-      } else {
-        this.clickableElements = [];
       }
       this.init();
     }
@@ -673,10 +679,6 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         };
         setupHiddenFileInput();
       }
-      this.files = [];
-      this.acceptedFiles = [];
-      this.filesQueue = [];
-      this.filesProcessing = [];
       this.URL = (_ref = window.URL) != null ? _ref : window.webkitURL;
       _ref1 = this.events;
       for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
@@ -751,7 +753,14 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     };
 
     Dropzone.prototype.destroy = function() {
-      return this.disable();
+      var _ref;
+
+      this.disable();
+      this.removeAllFiles();
+      if ((_ref = this.hiddenFileInput) != null ? _ref.parentNode : void 0) {
+        this.hiddenFileInput.parentNode.removeChild(this.hiddenFileInput);
+        return this.hiddenFileInput = null;
+      }
     };
 
     Dropzone.prototype.getFallbackForm = function() {
@@ -843,12 +852,24 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     };
 
     Dropzone.prototype.disable = function() {
+      var file, _i, _j, _len, _len1, _ref, _ref1, _results;
+
       this.clickableElements.forEach(function(element) {
         return element.classList.remove("dz-clickable");
       });
       this.removeEventListeners();
-      this.filesProcessing = [];
-      return this.filesQueue = [];
+      _ref = this.filesProcessing;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        file = _ref[_i];
+        this.cancelUpload(file);
+      }
+      _ref1 = this.filesQueue;
+      _results = [];
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        file = _ref1[_j];
+        _results.push(this.cancelUpload(file));
+      }
+      return _results;
     };
 
     Dropzone.prototype.enable = function() {

@@ -289,16 +289,24 @@
       });
     });
     describe("constructor()", function() {
+      var dropzone;
+
+      dropzone = null;
+      afterEach(function() {
+        if (dropzone != null) {
+          return dropzone.destroy();
+        }
+      });
       it("should throw an exception if the element is invalid", function() {
         return expect(function() {
-          return new Dropzone("#invalid-element");
+          return dropzone = new Dropzone("#invalid-element");
         }).to["throw"]("Invalid dropzone element.");
       });
       it("should throw an exception if assigned twice to the same element", function() {
         var element;
 
         element = document.createElement("div");
-        new Dropzone(element, {
+        dropzone = new Dropzone(element, {
           url: "url"
         });
         return expect(function() {
@@ -312,7 +320,7 @@
 
         element = document.createElement("div");
         return expect(function() {
-          return new Dropzone(element, {
+          return dropzone = new Dropzone(element, {
             url: "test",
             acceptParameter: "param",
             acceptedMimeTypes: "types"
@@ -320,7 +328,7 @@
         }).to["throw"]("You can't provide both 'acceptParameter' and 'acceptedMimeTypes'. 'acceptParameter' is deprecated.");
       });
       it("should set itself as element.dropzone", function() {
-        var dropzone, element;
+        var element;
 
         element = document.createElement("div");
         dropzone = new Dropzone(element, {
@@ -347,67 +355,66 @@
           return delete Dropzone.options.testElement;
         });
         it("should take the options set in Dropzone.options", function() {
-          var dropzone;
-
           dropzone = new Dropzone(element);
           dropzone.options.url.should.equal("/some/url");
           return dropzone.options.parallelUploads.should.equal(10);
         });
         it("should prefer passed options over Dropzone.options", function() {
-          var dropzone;
-
           dropzone = new Dropzone(element, {
             url: "/some/other/url"
           });
           return dropzone.options.url.should.equal("/some/other/url");
         });
         it("should take the default options if nothing set in Dropzone.options", function() {
-          var dropzone;
-
           dropzone = new Dropzone(element2, {
             url: "/some/url"
           });
           return dropzone.options.parallelUploads.should.equal(2);
         });
-        describe("options.clickable", function() {
+        it("should call the fallback function if forceFallback == true", function(done) {
+          return dropzone = new Dropzone(element, {
+            url: "/some/other/url",
+            forceFallback: true,
+            fallback: function() {
+              return done();
+            }
+          });
+        });
+        return describe("options.clickable", function() {
           var clickableElement;
 
           clickableElement = null;
+          dropzone = null;
           beforeEach(function() {
             clickableElement = document.createElement("div");
             clickableElement.className = "some-clickable";
             return document.body.appendChild(clickableElement);
           });
           afterEach(function() {
-            return document.body.removeChild(clickableElement);
+            document.body.removeChild(clickableElement);
+            if (dropzone != null) {
+              return dropzone.destroy;
+            }
           });
           it("should use the default element if clickable == true", function() {
-            var dropzone;
-
             dropzone = new Dropzone(element, {
               clickable: true
             });
             return dropzone.clickableElements.should.eql([dropzone.element]);
           });
           it("should lookup the element if clickable is a CSS selector", function() {
-            var dropzone;
-
             dropzone = new Dropzone(element, {
               clickable: ".some-clickable"
             });
             return dropzone.clickableElements.should.eql([clickableElement]);
           });
           it("should simply use the provided element", function() {
-            var dropzone;
-
             dropzone = new Dropzone(element, {
               clickable: clickableElement
             });
             return dropzone.clickableElements.should.eql([clickableElement]);
           });
           it("should accept multiple clickable elements", function() {
-            var dropzone;
-
             dropzone = new Dropzone(element, {
               clickable: [document.body, ".some-clickable"]
             });
@@ -415,21 +422,10 @@
           });
           return it("should throw an exception if the element is invalid", function() {
             return expect(function() {
-              return new Dropzone(element, {
+              return dropzone = new Dropzone(element, {
                 clickable: ".some-invalid-clickable"
               });
             }).to["throw"]("Invalid `clickable` option provided. Please provide a CSS selector, a plain HTML element or a list of those.");
-          });
-        });
-        return it("should call the fallback function if forceFallback == true", function(done) {
-          var dropzone;
-
-          return dropzone = new Dropzone(element, {
-            url: "/some/other/url",
-            forceFallback: true,
-            fallback: function() {
-              return done();
-            }
           });
         });
       });
@@ -681,6 +677,44 @@
           mockFile.status.should.equal(Dropzone.CANCELED);
           dropzone.filesQueue.length.should.equal(0);
           return dropzone.filesProcessing.length.should.equal(0);
+        });
+      });
+      describe(".disable()", function() {
+        return it("should properly cancel all pending uploads", function() {
+          dropzone.accept = function(file, done) {
+            return done();
+          };
+          dropzone.options.parallelUploads = 1;
+          dropzone.addFile(getMockFile());
+          dropzone.addFile(getMockFile());
+          dropzone.filesProcessing.length.should.equal(1);
+          dropzone.filesQueue.length.should.equal(1);
+          dropzone.files.length.should.equal(2);
+          sinon.spy(requests[0], "abort");
+          requests[0].abort.callCount.should.equal(0);
+          dropzone.disable();
+          requests[0].abort.callCount.should.equal(1);
+          dropzone.filesProcessing.length.should.equal(0);
+          dropzone.filesQueue.length.should.equal(0);
+          dropzone.files.length.should.equal(2);
+          dropzone.files[0].status.should.equal(Dropzone.CANCELED);
+          return dropzone.files[1].status.should.equal(Dropzone.CANCELED);
+        });
+      });
+      describe(".destroy()", function() {
+        return it("should properly cancel all pending uploads and remove all file references", function() {
+          dropzone.accept = function(file, done) {
+            return done();
+          };
+          dropzone.options.parallelUploads = 1;
+          dropzone.addFile(getMockFile());
+          dropzone.addFile(getMockFile());
+          dropzone.filesProcessing.length.should.equal(1);
+          dropzone.filesQueue.length.should.equal(1);
+          dropzone.files.length.should.equal(2);
+          sinon.spy(dropzone, "disable");
+          dropzone.destroy();
+          return dropzone.disable.callCount.should.equal(1);
         });
       });
       describe(".filesize()", function() {
