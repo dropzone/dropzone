@@ -653,6 +653,11 @@ describe "Dropzone", ->
           requests.length.should.eql 2
           requests[1].withCredentials.should.eql yes
 
+        it "should correctly override headers on the xhr object", ->
+          dropzone.options.headers = {"Foo-Header": "foobar"}
+          dropzone.uploadFile mockFile
+          requests[0].requestHeaders["Foo-Header"].should.eql 'foobar'
+
 
       describe "should properly set status of file", ->
         it "should correctly set `withCredentials` on the xhr object", ->
