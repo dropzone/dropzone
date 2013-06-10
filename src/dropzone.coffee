@@ -312,6 +312,12 @@ class Dropzone extends Em
                       </div>
                       """
 
+  # global utility
+  extend = (target, objects...) ->
+    for object in objects
+      target[key] = val for key, val of object
+    target
+
   constructor: (@element, options) ->
     # For backwards compatibility since the version was in the prototype previously
     @version = Dropzone.version
@@ -340,13 +346,7 @@ class Dropzone extends Em
 
     elementOptions = Dropzone.optionsForElement(@element) ? { }
 
-    extend = (target, objects...) ->
-      for object in objects
-        target[key] = val for key, val of object
-      target
-
     @options = extend { }, @defaultOptions, elementOptions, options ? { }
-
 
     @options.url = @element.action unless @options.url?
 
@@ -743,11 +743,17 @@ class Dropzone extends Em
       progress = 100 * e.loaded / e.total
       @emit "uploadprogress", file, progress, e.loaded
 
-    xhr.setRequestHeader "Accept", "application/json"
-    xhr.setRequestHeader "Cache-Control", "no-cache"
-    xhr.setRequestHeader "X-Requested-With", "XMLHttpRequest"
-    xhr.setRequestHeader "X-File-Name", file.name
+    headers =
+      "Accept":"application/json",
+      "Cache-Control": "no-cache",
+      "X-Requested-With": "XMLHttpRequest",
+      "X-File-Name": file.name
 
+    if this.options.headers
+      extend headers, this.options.headers
+
+    for header, name of headers
+      xhr.setRequestHeader header, name
 
     formData = new FormData()
 
