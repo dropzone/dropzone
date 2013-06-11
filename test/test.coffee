@@ -643,6 +643,11 @@ describe "Dropzone", ->
       afterEach ->
         xhr.restore()
 
+      it "should properly urlencode the filename for the headers", ->
+        dropzone.uploadFile mockFile
+        requests[0].requestHeaders["X-File-Name"].should.eql 'test%20file%20name'
+
+
       describe "settings()", ->
         it "should correctly set `withCredentials` on the xhr object", ->
           dropzone.uploadFile mockFile
@@ -657,8 +662,7 @@ describe "Dropzone", ->
           dropzone.options.headers = {"Foo-Header": "foobar"}
           dropzone.uploadFile mockFile
           requests[0].requestHeaders["Foo-Header"].should.eql 'foobar'
-          requests[0].requestHeaders["X-File-Name"].should.eql 'test file name'
-
+          requests[0].requestHeaders["X-File-Name"].should.eql 'test%20file%20name'
 
       describe "should properly set status of file", ->
         it "should correctly set `withCredentials` on the xhr object", ->

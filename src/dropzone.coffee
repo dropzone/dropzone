@@ -747,7 +747,7 @@ class Dropzone extends Em
       "Accept": "application/json",
       "Cache-Control": "no-cache",
       "X-Requested-With": "XMLHttpRequest",
-      "X-File-Name": file.name
+      "X-File-Name": encodeURIComponent file.name
 
     extend headers, @options.headers if @options.headers
       
