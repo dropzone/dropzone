@@ -2,6 +2,13 @@ chai.should()
 
 describe "Dropzone", ->
 
+
+  getMockFile = ->
+    name: "test file name"
+    size: 123456
+    type: "text/html"
+
+
   describe "static functions", ->
 
     describe "Dropzone.createElement()", ->
@@ -202,17 +209,21 @@ describe "Dropzone", ->
 
   describe "constructor()", ->
 
+    dropzone = null
+
+    afterEach -> dropzone.destroy() if dropzone?
+
     it "should throw an exception if the element is invalid", ->
-      expect(-> new Dropzone "#invalid-element").to.throw "Invalid dropzone element."
+      expect(-> dropzone = new Dropzone "#invalid-element").to.throw "Invalid dropzone element."
 
     it "should throw an exception if assigned twice to the same element", ->
       element = document.createElement "div"
-      new Dropzone element, url: "url"
+      dropzone = new Dropzone element, url: "url"
       expect(-> new Dropzone element, url: "url").to.throw "Dropzone already attached."
 
     it "should throw an exception if both acceptParameter and acceptedMimeTypes are specified", ->
       element = document.createElement "div"
-      expect(-> new Dropzone element, url: "test", acceptParameter: "param", acceptedMimeTypes: "types").to.throw "You can't provide both 'acceptParameter' and 'acceptedMimeTypes'. 'acceptParameter' is deprecated."
+      expect(-> dropzone = new Dropzone element, url: "test", acceptParameter: "param", acceptedMimeTypes: "types").to.throw "You can't provide both 'acceptParameter' and 'acceptedMimeTypes'. 'acceptParameter' is deprecated."
 
     it "should set itself as element.dropzone", ->
       element = document.createElement "div"
@@ -243,14 +254,22 @@ describe "Dropzone", ->
         dropzone = new Dropzone element2, url: "/some/url"
         dropzone.options.parallelUploads.should.equal 2
 
+      it "should call the fallback function if forceFallback == true", (done) ->
+        dropzone = new Dropzone element,
+          url: "/some/other/url"
+          forceFallback: on
+          fallback: -> done()
+
       describe "options.clickable", ->
         clickableElement = null
+        dropzone = null
         beforeEach ->
           clickableElement = document.createElement "div"
           clickableElement.className = "some-clickable"
           document.body.appendChild clickableElement
         afterEach ->
           document.body.removeChild clickableElement
+          dropzone.destroy if dropzone?
 
         it "should use the default element if clickable == true", ->
           dropzone = new Dropzone element, clickable: yes
@@ -265,13 +284,9 @@ describe "Dropzone", ->
           dropzone = new Dropzone element, clickable: [ document.body, ".some-clickable" ]
           dropzone.clickableElements.should.eql [ document.body, clickableElement ]
         it "should throw an exception if the element is invalid", ->
-          expect(-> new Dropzone element, clickable: ".some-invalid-clickable").to.throw "Invalid `clickable` option provided. Please provide a CSS selector, a plain HTML element or a list of those."
+          expect(-> dropzone = new Dropzone element, clickable: ".some-invalid-clickable").to.throw "Invalid `clickable` option provided. Please provide a CSS selector, a plain HTML element or a list of those."
 
-      it "should call the fallback function if forceFallback == true", (done) ->
-        dropzone = new Dropzone element,
-          url: "/some/other/url"
-          forceFallback: on
-          fallback: -> done()
+
 
 
   describe "init()", ->
@@ -366,12 +381,20 @@ describe "Dropzone", ->
 
     element = null
     dropzone = null
+    xhr = null
+    requests = null
     beforeEach ->
+      xhr = sinon.useFakeXMLHttpRequest()
+      requests = [ ]
+      xhr.onCreate = (xhr) -> requests.push xhr
+
       element = Dropzone.createElement """<div></div>"""
       document.body.appendChild element
       dropzone = new Dropzone element, maxFilesize: 4, url: "url", acceptedMimeTypes: "audio/*,image/png", uploadprogress: ->
     afterEach ->
       document.body.removeChild element
+      dropzone.destroy()
+      xhr.restore()
 
     describe ".accept()", ->
 
@@ -390,6 +413,102 @@ describe "Dropzone", ->
       it "should properly reject files when the mime type isn't listed in acceptedMimeTypes", ->
 
         dropzone.accept { type: "image/jpeg" }, (err) -> err.should.eql "You can't upload files of this type."
+
+
+    describe ".removeFile()", ->
+      it "should abort uploading if file is currently being uploaded", ->
+        mockFile = getMockFile()
+        dropzone.uploadFile = (file) ->
+        dropzone.accept = (file, done) -> done()
+
+        sinon.stub dropzone, "cancelUpload"
+
+        dropzone.addFile mockFile
+        mockFile.status.should.equal Dropzone.UPLOADING
+        dropzone.filesProcessing[0].should.equal mockFile
+
+        dropzone.cancelUpload.callCount.should.equal 0
+        dropzone.removeFile mockFile
+        dropzone.cancelUpload.callCount.should.equal 1
+
+    describe ".cancelUpload()", ->
+      it "should properly cancel upload if file currently uploading", ->
+          mockFile = getMockFile()
+
+          dropzone.accept = (file, done) -> done()
+
+          dropzone.addFile mockFile
+          mockFile.status.should.equal Dropzone.UPLOADING
+          dropzone.filesProcessing[0].should.equal mockFile
+          dropzone.cancelUpload mockFile
+          mockFile.status.should.equal Dropzone.CANCELED
+          dropzone.filesProcessing.length.should.equal 0
+          dropzone.filesQueue.length.should.equal 0
+
+      it "should properly cancel the upload if file is not yet uploading", ->
+          mockFile = getMockFile()
+
+          dropzone.accept = (file, done) -> done()
+
+          # Making sure the file stays in the queue.
+          dropzone.options.parallelUploads = 0
+
+          dropzone.addFile mockFile
+          mockFile.status.should.equal Dropzone.ACCEPTED
+          dropzone.filesQueue[0].should.equal mockFile
+
+          dropzone.cancelUpload mockFile
+          mockFile.status.should.equal Dropzone.CANCELED
+          dropzone.filesQueue.length.should.equal 0
+          dropzone.filesProcessing.length.should.equal 0
+
+    describe ".disable()", ->
+      it "should properly cancel all pending uploads", ->
+          dropzone.accept = (file, done) -> done()
+
+          dropzone.options.parallelUploads = 1
+
+          dropzone.addFile getMockFile()
+          dropzone.addFile getMockFile()
+
+          dropzone.filesProcessing.length.should.equal 1
+          dropzone.filesQueue.length.should.equal 1
+          dropzone.files.length.should.equal 2
+
+          sinon.spy requests[0], "abort"
+
+          requests[0].abort.callCount.should.equal 0
+
+          dropzone.disable()
+
+          requests[0].abort.callCount.should.equal 1
+
+          dropzone.filesProcessing.length.should.equal 0
+          dropzone.filesQueue.length.should.equal 0
+          dropzone.files.length.should.equal 2
+
+          dropzone.files[0].status.should.equal Dropzone.CANCELED
+          dropzone.files[1].status.should.equal Dropzone.CANCELED
+
+    describe ".destroy()", ->
+      it "should properly cancel all pending uploads and remove all file references", ->
+          dropzone.accept = (file, done) -> done()
+
+          dropzone.options.parallelUploads = 1
+
+          dropzone.addFile getMockFile()
+          dropzone.addFile getMockFile()
+
+          dropzone.filesProcessing.length.should.equal 1
+          dropzone.filesQueue.length.should.equal 1
+          dropzone.files.length.should.equal 2
+
+          sinon.spy dropzone, "disable"
+
+          dropzone.destroy()
+
+          dropzone.disable.callCount.should.equal 1
+
 
 
     describe ".filesize()", ->
@@ -470,4 +589,104 @@ describe "Dropzone", ->
         element.appendChild fallback
         fallback.should.equal dropzone.getExistingFallback()
 
+
+  describe "file handling", ->
+    mockFile = null
+    dropzone = null
+
+
+    beforeEach ->
+      mockFile = getMockFile()
+
+      element = Dropzone.createElement """<div></div>"""
+      dropzone = new Dropzone element, url: "/the/url"
+
+    afterEach ->
+      dropzone.destroy()
+
+
+    describe "addFile()", ->
+      it "should properly set the status of the file", ->
+        doneFunction = null
+
+        dropzone.accept = (file, done) -> doneFunction = done
+        dropzone.processFile = ->
+        dropzone.uploadFile = ->
+
+        dropzone.addFile mockFile
+
+        mockFile.status.should.eql Dropzone.ADDED
+        doneFunction()
+        mockFile.status.should.eql Dropzone.ACCEPTED
+
+        mockFile = getMockFile()
+        dropzone.addFile mockFile
+
+        mockFile.status.should.eql Dropzone.ADDED
+        doneFunction("error")
+        mockFile.status.should.eql Dropzone.ERROR
+
+
+
+    describe "uploadFile()", ->
+      xhr = null
+      requests = null
+
+
+
+      beforeEach ->
+        xhr = sinon.useFakeXMLHttpRequest()
+        requests = [ ]
+
+        xhr.onCreate = (xhr) -> requests.push xhr
+
+      afterEach ->
+        xhr.restore()
+
+      it "should properly urlencode the filename for the headers", ->
+        dropzone.uploadFile mockFile
+        requests[0].requestHeaders["X-File-Name"].should.eql 'test%20file%20name'
+
+
+      describe "settings()", ->
+        it "should correctly set `withCredentials` on the xhr object", ->
+          dropzone.uploadFile mockFile
+          requests.length.should.eql 1
+          requests[0].withCredentials.should.eql no
+          dropzone.options.withCredentials = yes
+          dropzone.uploadFile mockFile
+          requests.length.should.eql 2
+          requests[1].withCredentials.should.eql yes
+
+        it "should correctly override headers on the xhr object", ->
+          dropzone.options.headers = {"Foo-Header": "foobar"}
+          dropzone.uploadFile mockFile
+          requests[0].requestHeaders["Foo-Header"].should.eql 'foobar'
+          requests[0].requestHeaders["X-File-Name"].should.eql 'test%20file%20name'
+
+      describe "should properly set status of file", ->
+        it "should correctly set `withCredentials` on the xhr object", ->
+          dropzone.addFile mockFile
+
+          mockFile.status.should.eql Dropzone.UPLOADING
+
+          requests.length.should.equal 1
+          requests[0].status = 400
+
+          requests[0].onload()
+
+          mockFile.status.should.eql Dropzone.ERROR
+
+
+          mockFile = getMockFile()
+          dropzone.addFile mockFile
+
+          mockFile.status.should.eql Dropzone.UPLOADING
+
+          requests.length.should.equal 2
+          requests[1].status = 200
+
+          requests[1].onload()
+
+          mockFile.status.should.eql Dropzone.SUCCESS
 

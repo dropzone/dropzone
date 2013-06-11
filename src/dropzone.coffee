@@ -66,6 +66,7 @@ class Dropzone extends Em
   defaultOptions:
     url: null
     method: "post"
+    withCredentials: no
     parallelUploads: 2
     maxFilesize: 256 # in MB
     paramName: "file" # The name of the file param that gets transferred.
@@ -245,7 +246,7 @@ class Dropzone extends Em
 
     # Called whenever a file is removed.
     removedfile: (file) ->
-      file.previewElement.parentNode.removeChild file.previewElement
+      file.previewElement?.parentNode.removeChild file.previewElement
 
     # Called when a thumbnail has been generated
     # Receives `file` and `dataUrl`
@@ -311,12 +312,24 @@ class Dropzone extends Em
                       </div>
                       """
 
+  # global utility
+  extend = (target, objects...) ->
+    for object in objects
+      target[key] = val for key, val of object
+    target
+
   constructor: (@element, options) ->
     # For backwards compatibility since the version was in the prototype previously
     @version = Dropzone.version
 
     @defaultOptions.previewTemplate = @defaultOptions.previewTemplate.replace /\n*/g, ""
 
+    @clickableElements = [ ]
+    @listeners = [ ]
+    @files = [] # All files
+    @acceptedFiles = [] # All files that are actually accepted
+    @filesQueue = [] # The files that still have to be processed
+    @filesProcessing = [] # The files currently processed
 
     @element = document.querySelector @element if typeof @element == "string"
 
@@ -333,13 +346,7 @@ class Dropzone extends Em
 
     elementOptions = Dropzone.optionsForElement(@element) ? { }
 
-    extend = (target, objects...) ->
-      for object in objects
-        target[key] = val for key, val of object
-      target
-
     @options = extend { }, @defaultOptions, elementOptions, options ? { }
-
 
     @options.url = @element.action unless @options.url?
 
@@ -361,14 +368,12 @@ class Dropzone extends Em
     else
       @previewsContainer = @element
 
-
     if @options.clickable
       if @options.clickable == yes
         @clickableElements = [ @element ]
       else
         @clickableElements = Dropzone.getElements @options.clickable, "clickable"
-    else
-      @clickableElements = [ ]
+      
 
     @init()
 
@@ -411,10 +416,6 @@ class Dropzone extends Em
           setupHiddenFileInput()
       setupHiddenFileInput()
 
-    @files = [] # All files
-    @acceptedFiles = [] # All files that are actually accepted
-    @filesQueue = [] # The files that still have to be processed
-    @filesProcessing = [] # The files currently processed
     @URL = window.URL ? window.webkitURL
 
 
@@ -478,6 +479,15 @@ class Dropzone extends Em
 
     @options.init.call @
 
+  # Not fully tested yet
+  destroy: ->
+    @disable()
+    @removeAllFiles()
+    if @hiddenFileInput?.parentNode
+      @hiddenFileInput.parentNode.removeChild @hiddenFileInput 
+      @hiddenFileInput = null
+
+
   # Returns a form that can be used as fallback if the browser does not support DragnDrop
   #
   # If the dropzone is already a form, only the input field and button are returned. Otherwise a complete form element is provided.
@@ -521,12 +531,13 @@ class Dropzone extends Em
     for elementListeners in @listeners
       elementListeners.element.removeEventListener event, listener, false for event, listener of elementListeners.events
 
-  # Removes all event listeners and clears the arrays.
+  # Removes all event listeners and cancels all files in the queue or being processed.
   disable: ->
     @clickableElements.forEach (element) -> element.classList.remove "dz-clickable"
     @removeEventListeners()
-    @filesProcessing = [ ]
-    @filesQueue = [ ]
+
+    @cancelUpload file for file in @filesProcessing
+    @cancelUpload file for file in @filesQueue
 
   enable: ->
     @clickableElements.forEach (element) -> element.classList.add "dz-clickable"
@@ -584,16 +595,20 @@ class Dropzone extends Em
       bytesSent: 0
     @files.push file
 
+    file.status = Dropzone.ADDED
+
     @emit "addedfile", file
 
     @createThumbnail file  if @options.createImageThumbnails and file.type.match(/image.*/) and file.size <= @options.maxThumbnailFilesize * 1024 * 1024
 
     @accept file, (error) =>
       if error
-        file.accepted = false
-        @errorProcessing file, error
+        file.accepted = false # Backwards compatibility
+        @errorProcessing file, error # Will set the file.status
       else
-        file.accepted = true
+        file.status = Dropzone.ACCEPTED
+        file.accepted = true # Backwards compatibility
+
         @acceptedFiles.push file
         if @options.enqueueForUpload
           @filesQueue.push file
@@ -601,7 +616,7 @@ class Dropzone extends Em
 
   # Can be called by the user to remove a file
   removeFile: (file) ->
-    throw new Error "Can't remove file currently processing" if file.processing
+    @cancelUpload file if file.status == Dropzone.UPLOADING
     @files = without @files, file
     @filesQueue = without @filesQueue, file
 
@@ -660,15 +675,35 @@ class Dropzone extends Em
   # Loads the file, then calls finishedLoading()
   processFile: (file) ->
     @filesProcessing.push file
-    file.processing = yes
+    file.processing = yes # Backwards compatibility
+    file.status = Dropzone.UPLOADING
 
     @emit "processingfile", file
 
     @uploadFile file
 
 
+
+  # Cancels the file upload and sets the status to CANCELED
+  # **if** the file is actually being uploaded.
+  # If it's still in the queue, the file is being removed from it and the status
+  # set to CANCELED.
+  cancelUpload: (file) ->
+    if file.status == Dropzone.UPLOADING
+      file.status = Dropzone.CANCELED
+      file.xhr.abort()
+      @filesProcessing = without(@filesProcessing, file)
+    else if file.status in [ Dropzone.ADDED, Dropzone.ACCEPTED ]
+      file.status = Dropzone.CANCELED
+      @filesQueue = without(@filesQueue, file)
+
   uploadFile: (file) ->
     xhr = new XMLHttpRequest()
+
+    # Put the xhr object in the file object to be able to reference it later.
+    file.xhr = xhr
+
+    xhr.withCredentials = !!@options.withCredentials
 
     xhr.open @options.method, @options.url, true
 
@@ -679,6 +714,8 @@ class Dropzone extends Em
       @errorProcessing file, response || @options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr
 
     xhr.onload = (e) =>
+      return if file.status == Dropzone.CANCELED
+
       response = xhr.responseText
 
       if xhr.getResponseHeader("content-type") and ~xhr.getResponseHeader("content-type").indexOf "application/json"
@@ -690,10 +727,10 @@ class Dropzone extends Em
       unless 200 <= xhr.status < 300
         handleError()
       else
-        # Just to be sure: forcing the progress fo 100
         @finished file, response, e
 
     xhr.onerror = =>
+      return if file.status == Dropzone.CANCELED
       handleError()
 
     # Some browsers do not have the .upload property
@@ -706,11 +743,15 @@ class Dropzone extends Em
       progress = 100 * e.loaded / e.total
       @emit "uploadprogress", file, progress, e.loaded
 
-    xhr.setRequestHeader "Accept", "application/json"
-    xhr.setRequestHeader "Cache-Control", "no-cache"
-    xhr.setRequestHeader "X-Requested-With", "XMLHttpRequest"
-    xhr.setRequestHeader "X-File-Name", file.name
+    headers =
+      "Accept": "application/json",
+      "Cache-Control": "no-cache",
+      "X-Requested-With": "XMLHttpRequest",
+      "X-File-Name": encodeURIComponent file.name
 
+    extend headers, @options.headers if @options.headers
+      
+    xhr.setRequestHeader header, name for header, name of headers
 
     formData = new FormData()
 
@@ -742,7 +783,8 @@ class Dropzone extends Em
   # Individual callbacks have to be called in the appropriate sections.
   finished: (file, responseText, e) ->
     @filesProcessing = without(@filesProcessing, file)
-    file.processing = no
+    file.processing = no # Backwards compatibility
+    file.status = Dropzone.SUCCESS
     @processQueue()
     @emit "success", file, responseText, e
     @emit "finished", file, responseText, e # For backwards compatibility
@@ -753,14 +795,15 @@ class Dropzone extends Em
   # Individual callbacks have to be called in the appropriate sections.
   errorProcessing: (file, message, xhr) ->
     @filesProcessing = without(@filesProcessing, file)
-    file.processing = no
+    file.processing = no # Backwards compatibility
+    file.status = Dropzone.ERROR
     @processQueue()
     @emit "error", file, message, xhr
     @emit "complete", file
 
 
 
-Dropzone.version = "3.2.0"
+Dropzone.version = "3.3.0"
 
 
 # This is a map of options for your different dropzones. Add configurations
@@ -942,6 +985,13 @@ else
 
 
 
+
+Dropzone.ADDED = "added";
+Dropzone.ACCEPTED = "accepted";
+Dropzone.UPLOADING = "uploading";
+Dropzone.CANCELED = "canceled";
+Dropzone.ERROR = "error";
+Dropzone.SUCCESS = "success";
 
 
 
