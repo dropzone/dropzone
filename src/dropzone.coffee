@@ -744,16 +744,14 @@ class Dropzone extends Em
       @emit "uploadprogress", file, progress, e.loaded
 
     headers =
-      "Accept":"application/json",
+      "Accept": "application/json",
       "Cache-Control": "no-cache",
       "X-Requested-With": "XMLHttpRequest",
       "X-File-Name": file.name
 
-    if this.options.headers
-      extend headers, this.options.headers
-
-    for header, name of headers
-      xhr.setRequestHeader header, name
+    extend headers, @options.headers if @options.headers
+      
+    xhr.setRequestHeader header, name for header, name of headers
 
     formData = new FormData()
 

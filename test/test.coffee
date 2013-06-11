@@ -657,6 +657,7 @@ describe "Dropzone", ->
           dropzone.options.headers = {"Foo-Header": "foobar"}
           dropzone.uploadFile mockFile
           requests[0].requestHeaders["Foo-Header"].should.eql 'foobar'
+          requests[0].requestHeaders["X-File-Name"].should.eql 'test file name'
 
 
       describe "should properly set status of file", ->
