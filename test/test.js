@@ -860,8 +860,12 @@
         afterEach(function() {
           return xhr.restore();
         });
+        it("should properly urlencode the filename for the headers", function() {
+          dropzone.uploadFile(mockFile);
+          return requests[0].requestHeaders["X-File-Name"].should.eql('test%20file%20name');
+        });
         describe("settings()", function() {
-          return it("should correctly set `withCredentials` on the xhr object", function() {
+          it("should correctly set `withCredentials` on the xhr object", function() {
             dropzone.uploadFile(mockFile);
             requests.length.should.eql(1);
             requests[0].withCredentials.should.eql(false);
@@ -869,6 +873,14 @@
             dropzone.uploadFile(mockFile);
             requests.length.should.eql(2);
             return requests[1].withCredentials.should.eql(true);
+          });
+          return it("should correctly override headers on the xhr object", function() {
+            dropzone.options.headers = {
+              "Foo-Header": "foobar"
+            };
+            dropzone.uploadFile(mockFile);
+            requests[0].requestHeaders["Foo-Header"].should.eql('foobar');
+            return requests[0].requestHeaders["X-File-Name"].should.eql('test%20file%20name');
           });
         });
         return describe("should properly set status of file", function() {

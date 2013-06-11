@@ -400,6 +400,8 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
   noop = function() {};
 
   Dropzone = (function(_super) {
+    var extend;
+
     __extends(Dropzone, _super);
 
     /*
@@ -566,8 +568,22 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       previewTemplate: "<div class=\"dz-preview dz-file-preview\">\n  <div class=\"dz-details\">\n    <div class=\"dz-filename\"><span data-dz-name></span></div>\n    <div class=\"dz-size\" data-dz-size></div>\n    <img data-dz-thumbnail />\n  </div>\n  <div class=\"dz-progress\"><span class=\"dz-upload\" data-dz-uploadprogress></span></div>\n  <div class=\"dz-success-mark\"><span>✔</span></div>\n  <div class=\"dz-error-mark\"><span>✘</span></div>\n  <div class=\"dz-error-message\"><span data-dz-errormessage></span></div>\n</div>"
     };
 
+    extend = function() {
+      var key, object, objects, target, val, _i, _len;
+
+      target = arguments[0], objects = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      for (_i = 0, _len = objects.length; _i < _len; _i++) {
+        object = objects[_i];
+        for (key in object) {
+          val = object[key];
+          target[key] = val;
+        }
+      }
+      return target;
+    };
+
     function Dropzone(element, options) {
-      var elementOptions, extend, fallback, _ref;
+      var elementOptions, fallback, _ref;
 
       this.element = element;
       this.version = Dropzone.version;
@@ -590,19 +606,6 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       Dropzone.instances.push(this);
       element.dropzone = this;
       elementOptions = (_ref = Dropzone.optionsForElement(this.element)) != null ? _ref : {};
-      extend = function() {
-        var key, object, objects, target, val, _i, _len;
-
-        target = arguments[0], objects = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-        for (_i = 0, _len = objects.length; _i < _len; _i++) {
-          object = objects[_i];
-          for (key in object) {
-            val = object[key];
-            target[key] = val;
-          }
-        }
-        return target;
-      };
       this.options = extend({}, this.defaultOptions, elementOptions, options != null ? options : {});
       if (this.options.url == null) {
         this.options.url = this.element.action;
@@ -1061,7 +1064,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     };
 
     Dropzone.prototype.uploadFile = function(file) {
-      var formData, handleError, input, inputName, inputType, key, progressObj, response, value, xhr, _i, _len, _ref, _ref1, _ref2,
+      var formData, handleError, header, headers, input, inputName, inputType, key, name, progressObj, response, value, xhr, _i, _len, _ref, _ref1, _ref2,
         _this = this;
 
       xhr = new XMLHttpRequest();
@@ -1111,10 +1114,19 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         progress = 100 * e.loaded / e.total;
         return _this.emit("uploadprogress", file, progress, e.loaded);
       };
-      xhr.setRequestHeader("Accept", "application/json");
-      xhr.setRequestHeader("Cache-Control", "no-cache");
-      xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-      xhr.setRequestHeader("X-File-Name", file.name);
+      headers = {
+        "Accept": "application/json",
+        "Cache-Control": "no-cache",
+        "X-Requested-With": "XMLHttpRequest",
+        "X-File-Name": encodeURIComponent(file.name)
+      };
+      if (this.options.headers) {
+        extend(headers, this.options.headers);
+      }
+      for (header in headers) {
+        name = headers[header];
+        xhr.setRequestHeader(header, name);
+      }
       formData = new FormData();
       if (this.options.params) {
         _ref1 = this.options.params;
