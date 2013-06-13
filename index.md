@@ -197,6 +197,11 @@ please contact me.
 - [Tutorial for Dropzone and Lavarel (PHP)](http://maxoffsky.com/code-blog/howto-ajax-multiple-file-upload-in-laravel/) written by Maksim Surguy
 
 
+
+Please look at the [Dropzone FAQ](https://github.com/enyo/dropzone/wiki/FAQ) if
+you need more information.
+
+
 </section>
 
 
@@ -405,6 +410,11 @@ you can completely rebuild your layout from scratch.
 
 
 See the installation section on how to add the stylesheet and spritemaps if you want your dropzone to look like the one on this page.
+
+
+Again, please look at the [Dropzone FAQ](https://github.com/enyo/dropzone/wiki/FAQ) if
+you're still unclear about some features.
+
 
 
 ## dropzone methods
