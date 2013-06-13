@@ -955,7 +955,7 @@ Emitter.prototype.hasListeners = function(event){
 
   })(Em);
 
-  Dropzone.version = "3.4.1";
+  Dropzone.version = "3.4.2-dev";
 
   Dropzone.options = {};
 
