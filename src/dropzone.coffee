@@ -716,6 +716,8 @@ class Dropzone extends Em
     xhr.onload = (e) =>
       return if file.status == Dropzone.CANCELED
 
+      return unless xhr.readyState is 4
+
       response = xhr.responseText
 
       if xhr.getResponseHeader("content-type") and ~xhr.getResponseHeader("content-type").indexOf "application/json"

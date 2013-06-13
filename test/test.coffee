@@ -647,6 +647,23 @@ describe "Dropzone", ->
         dropzone.uploadFile mockFile
         requests[0].requestHeaders["X-File-Name"].should.eql 'test%20file%20name'
 
+      it "should ignore the onreadystate callback if readyState != 4", ->
+        dropzone.addFile mockFile
+
+        mockFile.status.should.eql Dropzone.UPLOADING
+
+        requests[0].status = 200
+        requests[0].readyState = 3
+        requests[0].onload()
+
+        mockFile.status.should.eql Dropzone.UPLOADING
+      
+        requests[0].readyState = 4
+        requests[0].onload()
+
+        mockFile.status.should.eql Dropzone.SUCCESS
+      
+
 
       describe "settings()", ->
         it "should correctly set `withCredentials` on the xhr object", ->
@@ -672,6 +689,7 @@ describe "Dropzone", ->
 
           requests.length.should.equal 1
           requests[0].status = 400
+          requests[0].readyState = 4
 
           requests[0].onload()
 
@@ -685,6 +703,7 @@ describe "Dropzone", ->
 
           requests.length.should.equal 2
           requests[1].status = 200
+          requests[1].readyState = 4
 
           requests[1].onload()
 
