@@ -803,7 +803,7 @@ class Dropzone extends Em
 
 
 
-Dropzone.version = "3.4.0"
+Dropzone.version = "3.4.1-dev"
 
 
 # This is a map of options for your different dropzones. Add configurations
