@@ -1,4 +1,4 @@
-# Dropzone.js
+# ![Dropzone.js](http://www.dropzonejs.com/images/logo.png)
 
 *Version 3.3.1-dev*
 
