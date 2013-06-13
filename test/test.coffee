@@ -524,7 +524,7 @@ describe "Dropzone", ->
 
       describe "progress updates", ->
 
-        it "should properly emit a totaluploadprogress event", ->
+        it "should properly emit a totaluploadprogress event", (done) ->
           dropzone.files = [
             {
               size: 1990
@@ -541,10 +541,15 @@ describe "Dropzone", ->
                 bytesSent: 200
             }
           ]
+
+
+          _called = 0
           dropzone.acceptedFiles = dropzone.files
+          dropzone.on "totaluploadprogress", (progress) ->
+            progress.should.equal totalProgressExpectation
+            done() if ++_called == 3
 
           totalProgressExpectation = 15
-          dropzone.on "totaluploadprogress", (progress) -> progress.should.eql totalProgressExpectation
           dropzone.emit "uploadprogress", { }
 
           totalProgressExpectation = 97.5
@@ -552,7 +557,6 @@ describe "Dropzone", ->
           dropzone.files[1].upload.bytesSent = 1900
           # It shouldn't matter that progress is not properly updated since the total size
           # should be calculated from the bytes
-          dropzone.on "totaluploadprogress", (progress) -> progress.should.eql totalProgressExpectation
           dropzone.emit "uploadprogress", { }
 
           totalProgressExpectation = 100
@@ -560,8 +564,8 @@ describe "Dropzone", ->
           dropzone.files[1].upload.bytesSent = 2000
           # It shouldn't matter that progress is not properly updated since the total size
           # should be calculated from the bytes
-          dropzone.on "totaluploadprogress", (progress) -> progress.should.eql totalProgressExpectation
           dropzone.emit "uploadprogress", { }
+
 
 
   describe "helper function", ->

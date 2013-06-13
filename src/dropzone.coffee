@@ -431,6 +431,7 @@ class Dropzone extends Em
         totalBytesSent += file.upload.bytesSent
         totalBytes += file.upload.total
       totalUploadProgress = 100 * totalBytesSent / totalBytes
+
       @emit "totaluploadprogress", totalUploadProgress, totalBytes, totalBytesSent
 
 
@@ -713,6 +714,29 @@ class Dropzone extends Em
     handleError = =>
       @errorProcessing file, response || @options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr
 
+
+    updateProgress = (e) =>
+      if e?
+        progress = 100 * e.loaded / e.total
+
+        file.upload =
+          progress: progress
+          total: e.total
+          bytesSent: e.loaded
+      else
+        # Called when the file finished uploading
+
+        # Nothing to do, already at 100%
+        return if file.upload.progress == 100 and file.upload.bytesSent == file.upload.total
+
+        progress = 100
+        file.upload.progress = progress
+        file.upload.bytesSent = file.upload.total
+
+
+      @emit "uploadprogress", file, progress, file.upload.bytesSent
+
+
     xhr.onload = (e) =>
       return if file.status == Dropzone.CANCELED
 
@@ -726,6 +750,8 @@ class Dropzone extends Em
         catch e
           response = "Invalid JSON response from server."
 
+      updateProgress()
+
       unless 200 <= xhr.status < 300
         handleError()
       else
@@ -737,13 +763,7 @@ class Dropzone extends Em
 
     # Some browsers do not have the .upload property
     progressObj = xhr.upload ? xhr
-    progressObj.onprogress = (e) =>
-      file.upload =
-        progress: progress
-        total: e.total
-        bytesSent: e.loaded
-      progress = 100 * e.loaded / e.total
-      @emit "uploadprogress", file, progress, e.loaded
+    progressObj.onprogress = updateProgress
 
     headers =
       "Accept": "application/json",
