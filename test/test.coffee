@@ -524,7 +524,7 @@ describe "Dropzone", ->
 
       describe "progress updates", ->
 
-        it "should properly emit a totaluploadprogress event", ->
+        it "should properly emit a totaluploadprogress event", (done) ->
           dropzone.files = [
             {
               size: 1990
@@ -541,10 +541,15 @@ describe "Dropzone", ->
                 bytesSent: 200
             }
           ]
+
+
+          _called = 0
           dropzone.acceptedFiles = dropzone.files
+          dropzone.on "totaluploadprogress", (progress) ->
+            progress.should.equal totalProgressExpectation
+            done() if ++_called == 3
 
           totalProgressExpectation = 15
-          dropzone.on "totaluploadprogress", (progress) -> progress.should.eql totalProgressExpectation
           dropzone.emit "uploadprogress", { }
 
           totalProgressExpectation = 97.5
@@ -552,7 +557,6 @@ describe "Dropzone", ->
           dropzone.files[1].upload.bytesSent = 1900
           # It shouldn't matter that progress is not properly updated since the total size
           # should be calculated from the bytes
-          dropzone.on "totaluploadprogress", (progress) -> progress.should.eql totalProgressExpectation
           dropzone.emit "uploadprogress", { }
 
           totalProgressExpectation = 100
@@ -560,8 +564,8 @@ describe "Dropzone", ->
           dropzone.files[1].upload.bytesSent = 2000
           # It shouldn't matter that progress is not properly updated since the total size
           # should be calculated from the bytes
-          dropzone.on "totaluploadprogress", (progress) -> progress.should.eql totalProgressExpectation
           dropzone.emit "uploadprogress", { }
+
 
 
   describe "helper function", ->
@@ -647,6 +651,23 @@ describe "Dropzone", ->
         dropzone.uploadFile mockFile
         requests[0].requestHeaders["X-File-Name"].should.eql 'test%20file%20name'
 
+      it "should ignore the onreadystate callback if readyState != 4", ->
+        dropzone.addFile mockFile
+
+        mockFile.status.should.eql Dropzone.UPLOADING
+
+        requests[0].status = 200
+        requests[0].readyState = 3
+        requests[0].onload()
+
+        mockFile.status.should.eql Dropzone.UPLOADING
+      
+        requests[0].readyState = 4
+        requests[0].onload()
+
+        mockFile.status.should.eql Dropzone.SUCCESS
+      
+
 
       describe "settings()", ->
         it "should correctly set `withCredentials` on the xhr object", ->
@@ -672,6 +693,7 @@ describe "Dropzone", ->
 
           requests.length.should.equal 1
           requests[0].status = 400
+          requests[0].readyState = 4
 
           requests[0].onload()
 
@@ -685,6 +707,7 @@ describe "Dropzone", ->
 
           requests.length.should.equal 2
           requests[1].status = 200
+          requests[1].readyState = 4
 
           requests[1].onload()
 

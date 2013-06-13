@@ -3,7 +3,6 @@
 
   describe("Dropzone", function() {
     var getMockFile;
-
     getMockFile = function() {
       return {
         name: "test file name",
@@ -14,7 +13,6 @@
     describe("static functions", function() {
       describe("Dropzone.createElement()", function() {
         var element;
-
         element = Dropzone.createElement("<div class=\"test\"><span>Hallo</span></div>");
         it("should properly create an element from a string", function() {
           return element.tagName.should.equal("DIV");
@@ -32,7 +30,6 @@
       });
       describe("Dropzone.elementInside()", function() {
         var child1, child2, element;
-
         element = Dropzone.createElement("<div id=\"test\"><div class=\"child1\"><div class=\"child2\"></div></div></div>");
         document.body.appendChild(element);
         child1 = element.querySelector(".child1");
@@ -57,7 +54,6 @@
       });
       describe("Dropzone.optionsForElement()", function() {
         var element, testOptions;
-
         testOptions = {
           url: "/some/url",
           method: "put"
@@ -80,7 +76,6 @@
       });
       describe("Dropzone.forElement()", function() {
         var dropzone, element;
-
         element = document.createElement("div");
         element.id = "some-test-element";
         dropzone = null;
@@ -108,7 +103,6 @@
       });
       describe("Dropzone.discover()", function() {
         var element1, element2, element3;
-
         element1 = document.createElement("div");
         element1.className = "dropzone";
         element2 = element1.cloneNode();
@@ -160,7 +154,6 @@
         });
         it("should properly validate if called with concrete mime types", function() {
           var acceptedMimeTypes;
-
           acceptedMimeTypes = "text/html,image/jpeg,application/json";
           Dropzone.isValidMimeType("text/html", acceptedMimeTypes).should.be.ok;
           Dropzone.isValidMimeType("image/jpeg", acceptedMimeTypes).should.be.ok;
@@ -169,7 +162,6 @@
         });
         it("should properly validate if called with base mime types", function() {
           var acceptedMimeTypes;
-
           acceptedMimeTypes = "text/*,image/*,application/*";
           Dropzone.isValidMimeType("text/html", acceptedMimeTypes).should.be.ok;
           Dropzone.isValidMimeType("image/jpeg", acceptedMimeTypes).should.be.ok;
@@ -179,7 +171,6 @@
         });
         it("should properly validate if called with mixed mime types", function() {
           var acceptedMimeTypes;
-
           acceptedMimeTypes = "text/*,image/jpeg,application/*";
           Dropzone.isValidMimeType("text/html", acceptedMimeTypes).should.be.ok;
           Dropzone.isValidMimeType("image/jpeg", acceptedMimeTypes).should.be.ok;
@@ -189,7 +180,6 @@
         });
         return it("should properly validate even with spaces in between", function() {
           var acceptedMimeTypes;
-
           acceptedMimeTypes = "text/html ,   image/jpeg, application/json";
           Dropzone.isValidMimeType("text/html", acceptedMimeTypes).should.be.ok;
           return Dropzone.isValidMimeType("image/jpeg", acceptedMimeTypes).should.be.ok;
@@ -198,7 +188,6 @@
     });
     describe("Dropzone.getElement() / getElements()", function() {
       var tmpElements;
-
       tmpElements = [];
       beforeEach(function() {
         tmpElements = [];
@@ -217,7 +206,6 @@
       describe(".getElement()", function() {
         it("should accept a string", function() {
           var el;
-
           el = Dropzone.getElement(".tmptest");
           el.should.equal(tmpElements[0]);
           el = Dropzone.getElement("#tmptest1");
@@ -225,13 +213,11 @@
         });
         it("should accept a node", function() {
           var el;
-
           el = Dropzone.getElement(tmpElements[2]);
           return el.should.equal(tmpElements[2]);
         });
         return it("should fail if invalid selector", function() {
           var errorMessage;
-
           errorMessage = "Invalid `clickable` option provided. Please provide a CSS selector or a plain HTML element.";
           expect(function() {
             return Dropzone.getElement("lblasdlfsfl", "clickable");
@@ -249,37 +235,31 @@
       return describe(".getElements()", function() {
         it("should accept a list of strings", function() {
           var els;
-
           els = Dropzone.getElements([".tmptest", "#tmptest1"]);
           return els.should.eql([tmpElements[0], tmpElements[1]]);
         });
         it("should accept a list of nodes", function() {
           var els;
-
           els = Dropzone.getElements([tmpElements[0], tmpElements[2]]);
           return els.should.eql([tmpElements[0], tmpElements[2]]);
         });
         it("should accept a mixed list", function() {
           var els;
-
           els = Dropzone.getElements(["#tmptest1", tmpElements[2]]);
           return els.should.eql([tmpElements[1], tmpElements[2]]);
         });
         it("should accept a string selector", function() {
           var els;
-
           els = Dropzone.getElements(".random");
           return els.should.eql([tmpElements[1], tmpElements[2]]);
         });
         it("should accept a single node", function() {
           var els;
-
           els = Dropzone.getElements(tmpElements[1]);
           return els.should.eql([tmpElements[1]]);
         });
         return it("should fail if invalid selector", function() {
           var errorMessage;
-
           errorMessage = "Invalid `clickable` option provided. Please provide a CSS selector, a plain HTML element or a list of those.";
           expect(function() {
             return Dropzone.getElements("lblasdlfsfl", "clickable");
@@ -292,7 +272,6 @@
     });
     describe("constructor()", function() {
       var dropzone;
-
       dropzone = null;
       afterEach(function() {
         if (dropzone != null) {
@@ -306,7 +285,6 @@
       });
       it("should throw an exception if assigned twice to the same element", function() {
         var element;
-
         element = document.createElement("div");
         dropzone = new Dropzone(element, {
           url: "url"
@@ -319,7 +297,6 @@
       });
       it("should throw an exception if both acceptParameter and acceptedMimeTypes are specified", function() {
         var element;
-
         element = document.createElement("div");
         return expect(function() {
           return dropzone = new Dropzone(element, {
@@ -331,7 +308,6 @@
       });
       it("should set itself as element.dropzone", function() {
         var element;
-
         element = document.createElement("div");
         dropzone = new Dropzone(element, {
           url: "url"
@@ -340,7 +316,6 @@
       });
       return describe("options", function() {
         var element, element2;
-
         element = null;
         element2 = null;
         beforeEach(function() {
@@ -384,7 +359,6 @@
         });
         return describe("options.clickable", function() {
           var clickableElement;
-
           clickableElement = null;
           dropzone = null;
           beforeEach(function() {
@@ -435,7 +409,6 @@
     describe("init()", function() {
       describe("clickable", function() {
         var dropzone, dropzones, name, _results;
-
         dropzones = {
           "using acceptParameter": new Dropzone(Dropzone.createElement("<form action=\"/\"></form>"), {
             clickable: true,
@@ -448,7 +421,6 @@
         };
         it("should not add an accept attribute if no acceptParameter", function() {
           var dropzone;
-
           dropzone = new Dropzone(Dropzone.createElement("<form action=\"/\"></form>"), {
             clickable: true,
             acceptParameter: null,
@@ -470,7 +442,6 @@
               });
               return it("should create a new input element when something is selected to reset the input field", function() {
                 var event, hiddenFileInput, i, _i, _results1;
-
                 _results1 = [];
                 for (i = _i = 0; _i <= 3; i = ++_i) {
                   hiddenFileInput = dropzone.hiddenFileInput;
@@ -489,7 +460,6 @@
       });
       return it("should create a data-dz-message element", function() {
         var dropzone, element;
-
         element = Dropzone.createElement("<form class=\"dropzone\" action=\"/\"></form>");
         dropzone = new Dropzone(element, {
           clickable: true,
@@ -501,7 +471,6 @@
     });
     describe("options", function() {
       var dropzone, element;
-
       element = null;
       dropzone = null;
       beforeEach(function() {
@@ -514,7 +483,6 @@
       });
       return describe("file specific", function() {
         var file;
-
         file = null;
         beforeEach(function() {
           file = {
@@ -539,7 +507,6 @@
         describe(".thumbnail()", function() {
           return it("should properly insert the error", function() {
             var thumbnail, transparentGif;
-
             transparentGif = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
             dropzone.options.thumbnail.call(dropzone, file, transparentGif);
             thumbnail = file.previewElement.querySelector("[data-dz-thumbnail]");
@@ -563,7 +530,6 @@
     });
     describe("instance", function() {
       var dropzone, element, requests, xhr;
-
       element = null;
       dropzone = null;
       xhr = null;
@@ -633,7 +599,6 @@
       describe(".removeFile()", function() {
         return it("should abort uploading if file is currently being uploaded", function() {
           var mockFile;
-
           mockFile = getMockFile();
           dropzone.uploadFile = function(file) {};
           dropzone.accept = function(file, done) {
@@ -651,7 +616,6 @@
       describe(".cancelUpload()", function() {
         it("should properly cancel upload if file currently uploading", function() {
           var mockFile;
-
           mockFile = getMockFile();
           dropzone.accept = function(file, done) {
             return done();
@@ -666,7 +630,6 @@
         });
         return it("should properly cancel the upload if file is not yet uploading", function() {
           var mockFile;
-
           mockFile = getMockFile();
           dropzone.accept = function(file, done) {
             return done();
@@ -729,9 +692,8 @@
       });
       return describe("events", function() {
         return describe("progress updates", function() {
-          return it("should properly emit a totaluploadprogress event", function() {
-            var totalProgressExpectation;
-
+          return it("should properly emit a totaluploadprogress event", function(done) {
+            var totalProgressExpectation, _called;
             dropzone.files = [
               {
                 size: 1990,
@@ -749,25 +711,23 @@
                 }
               }
             ];
+            _called = 0;
             dropzone.acceptedFiles = dropzone.files;
-            totalProgressExpectation = 15;
             dropzone.on("totaluploadprogress", function(progress) {
-              return progress.should.eql(totalProgressExpectation);
+              progress.should.equal(totalProgressExpectation);
+              if (++_called === 3) {
+                return done();
+              }
             });
+            totalProgressExpectation = 15;
             dropzone.emit("uploadprogress", {});
             totalProgressExpectation = 97.5;
             dropzone.files[0].upload.bytesSent = 2000;
             dropzone.files[1].upload.bytesSent = 1900;
-            dropzone.on("totaluploadprogress", function(progress) {
-              return progress.should.eql(totalProgressExpectation);
-            });
             dropzone.emit("uploadprogress", {});
             totalProgressExpectation = 100;
             dropzone.files[0].upload.bytesSent = 2000;
             dropzone.files[1].upload.bytesSent = 2000;
-            dropzone.on("totaluploadprogress", function(progress) {
-              return progress.should.eql(totalProgressExpectation);
-            });
             return dropzone.emit("uploadprogress", {});
           });
         });
@@ -776,7 +736,6 @@
     describe("helper function", function() {
       return describe("getExistingFallback()", function() {
         var dropzone, element;
-
         element = null;
         dropzone = null;
         beforeEach(function() {
@@ -795,14 +754,12 @@
         });
         it("should return divs as fallback", function() {
           var fallback;
-
           fallback = Dropzone.createElement("<form class=\" abc fallback test \"></form>");
           element.appendChild(fallback);
           return fallback.should.equal(dropzone.getExistingFallback());
         });
         return it("should return forms as fallback", function() {
           var fallback;
-
           fallback = Dropzone.createElement("<div class=\" abc fallback test \"></div>");
           element.appendChild(fallback);
           return fallback.should.equal(dropzone.getExistingFallback());
@@ -811,12 +768,10 @@
     });
     return describe("file handling", function() {
       var dropzone, mockFile;
-
       mockFile = null;
       dropzone = null;
       beforeEach(function() {
         var element;
-
         mockFile = getMockFile();
         element = Dropzone.createElement("<div></div>");
         return dropzone = new Dropzone(element, {
@@ -829,7 +784,6 @@
       describe("addFile()", function() {
         return it("should properly set the status of the file", function() {
           var doneFunction;
-
           doneFunction = null;
           dropzone.accept = function(file, done) {
             return doneFunction = done;
@@ -849,7 +803,6 @@
       });
       return describe("uploadFile()", function() {
         var requests, xhr;
-
         xhr = null;
         requests = null;
         beforeEach(function() {
@@ -865,6 +818,17 @@
         it("should properly urlencode the filename for the headers", function() {
           dropzone.uploadFile(mockFile);
           return requests[0].requestHeaders["X-File-Name"].should.eql('test%20file%20name');
+        });
+        it("should ignore the onreadystate callback if readyState != 4", function() {
+          dropzone.addFile(mockFile);
+          mockFile.status.should.eql(Dropzone.UPLOADING);
+          requests[0].status = 200;
+          requests[0].readyState = 3;
+          requests[0].onload();
+          mockFile.status.should.eql(Dropzone.UPLOADING);
+          requests[0].readyState = 4;
+          requests[0].onload();
+          return mockFile.status.should.eql(Dropzone.SUCCESS);
         });
         describe("settings()", function() {
           it("should correctly set `withCredentials` on the xhr object", function() {
@@ -891,6 +855,7 @@
             mockFile.status.should.eql(Dropzone.UPLOADING);
             requests.length.should.equal(1);
             requests[0].status = 400;
+            requests[0].readyState = 4;
             requests[0].onload();
             mockFile.status.should.eql(Dropzone.ERROR);
             mockFile = getMockFile();
@@ -898,6 +863,7 @@
             mockFile.status.should.eql(Dropzone.UPLOADING);
             requests.length.should.equal(2);
             requests[1].status = 200;
+            requests[1].readyState = 4;
             requests[1].onload();
             return mockFile.status.should.eql(Dropzone.SUCCESS);
           });
