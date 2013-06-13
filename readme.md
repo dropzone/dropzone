@@ -38,9 +38,11 @@ Development
 
 For the full documentation and installation please visit www.dropzonejs.com
 
+Please also refer to the [FAQ](wiki/FAQ).
+
 ## Examples
 
-For examples, please see the [GitHub wiki](https://github.com/enyo/dropzone/wiki).
+For examples, please see the [GitHub wiki](wiki).
 
 ## Usage
 
@@ -85,7 +87,7 @@ myDropzone.on("error", function(file, message) { alert(message); });
 
 For a list of all events, please look at the chapter 
 [»listen to events«](http://www.dropzonejs.com/#listen_to_events) in the documentation
-or at the [source](https://github.com/enyo/dropzone/blob/master/src/dropzone.coffee#L47).
+or at the [source](src/dropzone.coffee#L43).
 
 
 ## Browser support
