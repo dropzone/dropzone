@@ -94,8 +94,10 @@
           dropzone.disable();
           return document.body.removeChild(element);
         });
-        it("should return null if no dropzone attached", function() {
-          return expect(Dropzone.forElement(document.createElement("div"))).to.equal(null);
+        it("should throw an exception if no dropzone attached", function() {
+          return expect(function() {
+            return Dropzone.forElement(document.createElement("div"));
+          }).to["throw"]("No Dropzone found for given element. This is probably because you're trying to access it before Dropzone had the time to initialize. Use the `init` option to setup any additional observers on your Dropzone.");
         });
         it("should accept css selectors", function() {
           return expect(Dropzone.forElement("#some-test-element")).to.equal(dropzone);
