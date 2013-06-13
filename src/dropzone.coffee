@@ -803,7 +803,7 @@ class Dropzone extends Em
 
 
 
-Dropzone.version = "3.3.0"
+Dropzone.version = "3.4.0"
 
 
 # This is a map of options for your different dropzones. Add configurations
@@ -835,7 +835,8 @@ Dropzone.instances = [ ]
 # Returns the dropzone for given element if any
 Dropzone.forElement = (element) ->
   element = document.querySelector element if typeof element == "string"
-  return element.dropzone ? null
+  throw new Error "No Dropzone found for given element. This is probably because you're trying to access it before Dropzone had the time to initialize. Use the `init` option to setup any additional observers on your Dropzone." unless element?.dropzone?
+  return element.dropzone
 
 
 # Set to false if you don't want Dropzone to automatically find and attach to .dropzone elements.
