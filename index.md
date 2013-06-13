@@ -317,20 +317,36 @@ Dropzone triggers events when processing files, to which you can register easily
 Example:
 
 {% highlight javascript %}
-// Already instantiated dropzones are accessible with `Dropzone.forElement(element)`
-// or myDomElement.element
-var myDropzone = Dropzone.forElement("#my-dropzone");
-
-myDropzone.on("addedfile", function(file) {
-  /* Maybe display some more file information on your page */
-});
-
-// Or from within a configuration:
+// The recommended way from within the init configuration:
 Dropzone.options.myAwesomeDropzone = {
   init: function() {
     this.on("addedfile", function(file) { alert("Added file."); });
   }
 };
+
+// Or programmatically, when creating a Dropzone.
+// This is more complex and should only be used if you need to create your
+// Dropzones on demand.
+// 
+// This example uses jQuery so it creates the Dropzone, only when the DOM has
+// loaded.
+
+// Disabling autoDiscover, otherwise Dropzone will try to attach twice.
+Dropzone.autoDiscover = false;
+// or disable for specific dropzone:
+// Dropzone.options.myDropzone = false;
+
+$(function() {
+  // Now that the DOM is fully loaded, create the dropzone, and setup the 
+  // event listeners
+
+  var myDropzone = new Dropzone("#my-dropzone");
+
+  myDropzone.on("addedfile", function(file) {
+    /* Maybe display some more file information on your page */
+  });
+
+})
 {% endhighlight %}
 
 
