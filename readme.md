@@ -1,4 +1,6 @@
-# ![Dropzone.js](http://www.dropzonejs.com/images/logo.png)
+<h1 align="center">
+  <img alt="Dropzone.js" src="http://www.dropzonejs.com/images/logo.png" />
+</h1>
 
 *Version 3.3.1-dev*
 
