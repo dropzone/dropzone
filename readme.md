@@ -38,11 +38,11 @@ Development
 
 For the full documentation and installation please visit www.dropzonejs.com
 
-Please also refer to the [FAQ](wiki/FAQ).
+Please also refer to the [FAQ](/enyo/dropzone/wiki/FAQ).
 
 ## Examples
 
-For examples, please see the [GitHub wiki](wiki).
+For examples, please see the [GitHub wiki](/enyo/dropzone/wiki).
 
 ## Usage
 
