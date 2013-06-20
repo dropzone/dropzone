@@ -670,10 +670,10 @@ class Dropzone extends Em
     @emit "reset" if @files.length == 0
 
   # Removes all files that aren't currently processed from the list
-  removeAllFiles: ->
+  removeAllFiles: (cancelIfNecessary = off) ->
     # Create a copy of files since removeFile() changes the @files array.
     for file in @files.slice()
-      @removeFile file unless file.status == Dropzone.UPLOADING
+      @removeFile file if file.status != Dropzone.UPLOADING || cancelIfNecessary
     return null
 
   createThumbnail: (file) ->
