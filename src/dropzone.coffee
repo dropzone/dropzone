@@ -163,9 +163,9 @@ class Dropzone extends Em
       @element.className = "#{@element.className} dz-browser-not-supported"
 
       for child in @element.getElementsByTagName "div"
-        if /(^| )message($| )/.test child.className
+        if /(^| )dz-message($| )/.test child.className
           messageElement = child
-          child.className = "dz-message" # Removes the 'default' class
+          child.className = "dz-message" # Removes the 'dz-default' class
           continue
       unless messageElement
         messageElement = Dropzone.createElement """<div class="dz-message"><span></span></div>"""
@@ -421,8 +421,8 @@ class Dropzone extends Em
     # In case it isn't set already
     @element.setAttribute("enctype", "multipart/form-data") if @element.tagName == "form"
 
-    if @element.classList.contains("dropzone") and !@element.querySelector("[data-dz-message]")
-      @element.appendChild Dropzone.createElement """<div class="dz-default dz-message" data-dz-message><span>#{@options.dictDefaultMessage}</span></div>"""
+    if @element.classList.contains("dropzone") and !@element.querySelector(".dz-message")
+      @element.appendChild Dropzone.createElement """<div class="dz-default dz-message"><span>#{@options.dictDefaultMessage}</span></div>"""
 
     if @clickableElements.length
       setupHiddenFileInput = =>
