@@ -537,8 +537,7 @@ class Dropzone extends Em
     @clickableElements.forEach (element) -> element.classList.remove "dz-clickable"
     @removeEventListeners()
 
-    @cancelUpload file for file in @filesProcessing
-    @cancelUpload file for file in @filesQueue
+    @cancelUpload file for file in @files
 
   enable: ->
     @clickableElements.forEach (element) -> element.classList.add "dz-clickable"
