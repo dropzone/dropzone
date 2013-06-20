@@ -263,12 +263,6 @@ The valid options are:
 | `maxFilesize`           | in MB
 | `paramName`             | The name of the file param that gets transferred. Defaults to `file`.
 | `headers`               | An object to send additional headers to the server. Eg: `headers: { "My-Awesome-Header": "header value" }`
-| `dictDefaultMessage`    | The message that gets displayed before any files are dropped. This is normally replaced by an image but defaults to "Drop files here to upload"
-| `dictFallbackMessage`   | If the browser is not supported, the default message will be replaced with this text. Defaults to "Your browser does not support drag'n'drop file uploads."
-| `dictFallbackText`      | This will be added before the file input files. If you provide a fallback element yourself, or if this option is `null` this will be ignored. Defaults to "Please use the fallback form below to upload your files like in the olden days."
-| `dictInvalidFileType`   | Shown as error message if the file doesn't match the file type.
-| `dictFileTooBig`        | Shown when the file is too big. {{filesize}} and {{maxFilesize}} will be replaced.
-| `dictResponseError`     | Shown as error message if the server response was invalid. `{{statusCode}}` will be replaced with the servers status code.
 | `previewsContainer`     | defines where to display the file previews – if `null` the Dropzone element is used. Can be a plain HTMLElement or a CSS selector. The element should have the `dropzone-previews` class so the previews are displayed properly.
 | `clickable`             | If `true`, the dropzone element itself will be clickable, if `false` nothing will be clickable. Otherwise you can pass an HTML element, a CSS selector (for multiple elements) or an array of those.
 | `createImageThumbnails` |
@@ -283,6 +277,21 @@ The valid options are:
 | `previewTemplate`       | is a string that contains the template used for each dropped image. Change it to fulfill your needs but make sure to properly provide all elements.
 | `forceFallback`         | defaults to `false`. If `true` the fallback will be forced. This is very useful to test your server implementations first and make sure that everything works as expected without dropzone if you experience problems, and to test how your fallbacks will look.
 | `fallback`              | is a function that gets called when the browser is not supported. The default implementation shows the fallback input field and adds a text.
+
+to translate dropzone, you can also provide these options:
+
+| Option                         | Description
+|--------------------------------|-------------
+| `dictDefaultMessage`           | The message that gets displayed before any files are dropped. This is normally replaced by an image but defaults to "Drop files here to upload"
+| `dictFallbackMessage`          | If the browser is not supported, the default message will be replaced with this text. Defaults to "Your browser does not support drag'n'drop file uploads."
+| `dictFallbackText`             | This will be added before the file input files. If you provide a fallback element yourself, or if this option is `null` this will be ignored. Defaults to "Please use the fallback form below to upload your files like in the olden days."
+| `dictInvalidFileType`          | Shown as error message if the file doesn't match the file type.
+| `dictFileTooBig`               | Shown when the file is too big. {{filesize}} and {{maxFilesize}} will be replaced.
+| `dictResponseError`            | Shown as error message if the server response was invalid. `{{statusCode}}` will be replaced with the servers status code.
+| `dictCancelUpload`             | If `addRemoveLinks` is true, the text to be used for the cancel upload link.
+| `dictCancelUploadConfirmation` | If `addRemoveLinks` is true, the text to be used for confirmation when cancelling upload.
+| `dictRemoveFile`               | If `addRemoveLinks` is true, the text to be used to remove a file.
+
 
 > You can also overwrite all default event actions in the options. So if you provide the option `drop` you can overwrite the default `drop` event handler.
 > *You should be familiar with the code if you do that because you can easily break the upload like this.*
