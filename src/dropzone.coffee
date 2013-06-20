@@ -523,10 +523,15 @@ class Dropzone extends Em
     totalBytesSent = 0
     totalBytes = 0
 
-    for file in @getAcceptedFiles()
-      totalBytesSent += file.upload.bytesSent
-      totalBytes += file.upload.total
-    totalUploadProgress = 100 * totalBytesSent / totalBytes
+    acceptedFiles = @getAcceptedFiles()
+
+    if acceptedFiles.length
+      for file in @getAcceptedFiles()
+        totalBytesSent += file.upload.bytesSent
+        totalBytes += file.upload.total
+      totalUploadProgress = 100 * totalBytesSent / totalBytes
+    else
+      totalUploadProgress = 100
 
     @emit "totaluploadprogress", totalUploadProgress, totalBytes, totalBytesSent
 
@@ -733,7 +738,7 @@ class Dropzone extends Em
     if file.status == Dropzone.UPLOADING
       file.status = Dropzone.CANCELED
       file.xhr.abort()
-    else if file.status in [ Dropzone.ADDED, Dropzone.ACCEPTED ]
+    else if file.status in [ Dropzone.ADDED, Dropzone.ACCEPTED, Dropzone.QUEUED ]
       file.status = Dropzone.CANCELED
 
     @emit "complete", file
