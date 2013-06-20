@@ -462,7 +462,7 @@ If your dropzone is rather square than a wide horizontal bar, you can add the cl
 so it's not that wide.
 
 If you do not want the default message at all (»Drop files to upload (or click)«), you can
-put an element inside your dropzone element with the class `message` and dropzone
+put an element inside your dropzone element with the class `dz-message` and dropzone
 will not create the message for you.
 
 Dropzone will submit any hidden fields you have in your dropzone form. So this
