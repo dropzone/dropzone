@@ -521,7 +521,7 @@ class Dropzone extends Em
   # Not fully tested yet
   destroy: ->
     @disable()
-    @removeAllFiles()
+    @removeAllFiles true
     if @hiddenFileInput?.parentNode
       @hiddenFileInput.parentNode.removeChild @hiddenFileInput 
       @hiddenFileInput = null

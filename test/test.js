@@ -458,7 +458,7 @@
         }
         return _results;
       });
-      return it("should create a data-dz-message element", function() {
+      it("should create a .dz-message element", function() {
         var dropzone, element;
         element = Dropzone.createElement("<form class=\"dropzone\" action=\"/\"></form>");
         dropzone = new Dropzone(element, {
@@ -466,7 +466,20 @@
           acceptParameter: null,
           acceptedMimeTypes: null
         });
-        return element.querySelector("[data-dz-message]").should.be["instanceof"](Element);
+        return element.querySelector(".dz-message").should.be["instanceof"](Element);
+      });
+      return it("should not create a .dz-message element if there already is one", function() {
+        var dropzone, element, msg;
+        element = Dropzone.createElement("<form class=\"dropzone\" action=\"/\"></form>");
+        msg = Dropzone.createElement("<div class=\"dz-message\">TEST</div>");
+        element.appendChild(msg);
+        dropzone = new Dropzone(element, {
+          clickable: true,
+          acceptParameter: null,
+          acceptedMimeTypes: null
+        });
+        element.querySelector(".dz-message").should.equal(msg);
+        return element.querySelectorAll(".dz-message").length.should.equal(1);
       });
     });
     describe("options", function() {
@@ -827,6 +840,34 @@
           mockFile.status.should.eql(Dropzone.ADDED);
           doneFunction();
           return mockFile.status.should.eql(Dropzone.ACCEPTED);
+        });
+      });
+      describe("enqueueFile()", function() {
+        it("should fail if the file has already been processed", function() {
+          mockFile.status = Dropzone.ERROR;
+          expect((function() {
+            return dropzone.enqueueFile(mockFile);
+          })).to["throw"]("This file can't be queued because it has already been processed or was rejected.");
+          mockFile.status = Dropzone.COMPLETE;
+          expect((function() {
+            return dropzone.enqueueFile(mockFile);
+          })).to["throw"]("This file can't be queued because it has already been processed or was rejected.");
+          mockFile.status = Dropzone.UPLOADING;
+          expect((function() {
+            return dropzone.enqueueFile(mockFile);
+          })).to["throw"]("This file can't be queued because it has already been processed or was rejected.");
+          mockFile.status = Dropzone.ADDED;
+          return expect((function() {
+            return dropzone.enqueueFile(mockFile);
+          })).to["throw"]("This file can't be queued because it has already been processed or was rejected.");
+        });
+        return it("should set the status to QUEUED and call processQueue if everything's ok", function() {
+          mockFile.status = Dropzone.ACCEPTED;
+          sinon.stub(dropzone, "processQueue");
+          dropzone.processQueue.callCount.should.equal(0);
+          dropzone.enqueueFile(mockFile);
+          mockFile.status.should.equal(Dropzone.QUEUED);
+          return dropzone.processQueue.callCount.should.equal(1);
         });
       });
       return describe("uploadFile()", function() {
