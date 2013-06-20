@@ -697,6 +697,7 @@ class Dropzone extends Em
     else if file.status in [ Dropzone.ADDED, Dropzone.ACCEPTED ]
       file.status = Dropzone.CANCELED
       @filesQueue = without(@filesQueue, file)
+    @processQueue()
 
   uploadFile: (file) ->
     xhr = new XMLHttpRequest()
