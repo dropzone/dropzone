@@ -263,6 +263,7 @@ The valid options are:
 | `maxFilesize`           | in MB
 | `paramName`             | The name of the file param that gets transferred. Defaults to `file`.
 | `headers`               | An object to send additional headers to the server. Eg: `headers: { "My-Awesome-Header": "header value" }`
+| `addRemoveLinks`        | This will add a link to every file preview to remove or cancel (if already uploading) the file. The `dictCancelUpload`, `dictCancelUploadConfirmation` and `dictRemoveFile` options are used for the wording.
 | `previewsContainer`     | defines where to display the file previews – if `null` the Dropzone element is used. Can be a plain HTMLElement or a CSS selector. The element should have the `dropzone-previews` class so the previews are displayed properly.
 | `clickable`             | If `true`, the dropzone element itself will be clickable, if `false` nothing will be clickable. Otherwise you can pass an HTML element, a CSS selector (for multiple elements) or an array of those.
 | `createImageThumbnails` |
