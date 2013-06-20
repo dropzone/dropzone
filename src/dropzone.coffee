@@ -103,6 +103,12 @@ class Dropzone extends Em
     # processQueue()
     enqueueForUpload: yes
 
+
+    # If true, Dropzone will add a link to each file preview to cancel/remove
+    # the upload.
+    # See dictCancelUpload and dictRemoveFile to use different words.
+    addRemoveLinks: no
+
     # A CSS selector or HTML element for the file previews container.
     # If null, the dropzone element itself will be used
     previewsContainer: null
@@ -128,6 +134,15 @@ class Dropzone extends Em
 
     # If the server response was invalid.
     dictResponseError: "Server responded with {{statusCode}} code."
+
+    # If used, the text to be used for the cancel upload link.
+    dictCancelUpload: "Cancel upload"
+
+    # If used, the text to be used for confirmation when cancelling upload.
+    dictCancelUploadConfirmation: "Are you sure you want to cancel this upload?"
+
+    # If used, the text to be used to remove a file.
+    dictRemoveFile: "Remove file"
 
     # If `done()` is called without argument the file is accepted
     # If you call it with an error message, the file is rejected
@@ -243,6 +258,17 @@ class Dropzone extends Em
       file.previewElement.querySelector("[data-dz-name]").textContent = file.name
       file.previewElement.querySelector("[data-dz-size]").innerHTML = @filesize file.size
 
+      if @options.addRemoveLinks
+        file._removeLink = Dropzone.createElement """<a class="dz-remove" href="javascript:undefined;">#{@options.dictRemoveFile}</a>"""
+        file._removeLink.addEventListener "click", (e) =>
+          e.preventDefault()
+          e.stopPropagation()
+          if file.status == Dropzone.UPLOADING
+            @removeFile file if window.confirm @options.dictCancelUploadConfirmation
+          else
+            @removeFile file
+
+        file.previewElement.appendChild file._removeLink
 
     # Called whenever a file is removed.
     removedfile: (file) ->
@@ -270,6 +296,7 @@ class Dropzone extends Em
     # Receives `file`
     processingfile: (file) ->
       file.previewElement.classList.add "dz-processing"
+      file._removeLink.textContent = @options.dictCancelUpload if file._removeLink
     
     # Called whenever the upload progress gets updated.
     # Receives `file`, `progress` (percentage 0-100) and `bytesSent`.
@@ -293,7 +320,9 @@ class Dropzone extends Em
 
     # When the upload is finished, either with success or an error.
     # Receives `file`
-    complete: noop
+    complete: (file) ->
+      file._removeLink.textContent = @options.dictRemoveFile if file._removeLink
+
 
 
 
