@@ -417,6 +417,14 @@ class Dropzone extends Em
   getUploadingFiles: -> file for file in @files when file.status == Dropzone.UPLOADING
 
 
+  enqueueFile: (file) ->
+    if file.status == Dropzone.ACCEPTED
+      file.status = Dropzone.QUEUED
+      @processQueue()
+    else
+      throw new Error "This file can't be queued because it has already been processed or was rejected."
+
+
   init: ->
     # In case it isn't set already
     @element.setAttribute("enctype", "multipart/form-data") if @element.tagName == "form"

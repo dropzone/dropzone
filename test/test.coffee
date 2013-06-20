@@ -674,6 +674,25 @@ describe "Dropzone", ->
 
 
 
+    describe "enqueueFile()", ->
+      it "should fail if the file has already been processed", ->
+        mockFile.status = Dropzone.ERROR
+        expect((-> dropzone.enqueueFile(mockFile))).to.throw "This file can't be queued because it has already been processed or was rejected."
+        mockFile.status = Dropzone.COMPLETE
+        expect((-> dropzone.enqueueFile(mockFile))).to.throw "This file can't be queued because it has already been processed or was rejected."
+        mockFile.status = Dropzone.UPLOADING
+        expect((-> dropzone.enqueueFile(mockFile))).to.throw "This file can't be queued because it has already been processed or was rejected."
+        mockFile.status = Dropzone.ADDED
+        expect((-> dropzone.enqueueFile(mockFile))).to.throw "This file can't be queued because it has already been processed or was rejected."
+
+      it "should set the status to QUEUED and call processQueue if everything's ok", ->
+        mockFile.status = Dropzone.ACCEPTED
+        sinon.stub dropzone, "processQueue"
+        dropzone.processQueue.callCount.should.equal 0
+        dropzone.enqueueFile mockFile
+        mockFile.status.should.equal Dropzone.QUEUED
+        dropzone.processQueue.callCount.should.equal 1
+
     describe "uploadFile()", ->
       xhr = null
       requests = null
