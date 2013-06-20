@@ -35,7 +35,7 @@
 
   padding 23px
 
-  .default.message
+  .dz-default.dz-message
     opacity 1
     transition opacity 0.3s ease-in-out
     
@@ -53,20 +53,20 @@
     span
       display none
 
-  &.square
-    .default.message
+  &.dz-square
+    .dz-default.dz-message
       background-position 0 -123px
       width 268px
       margin-left -(@width / 2)
       height 174px
       margin-top -(@height / 2)
 
-  &.drag-hover
-    .message
+  &.dz-drag-hover
+    .dz-message
       opacity 0.15
 
-  &.started
-    .message
+  &.dz-started
+    .dz-message
       display block
       opacity 0 // Rather fade out nicely
 
@@ -74,15 +74,12 @@
 .dropzone
 .dropzone-previews
 
-  .preview
+  .dz-preview
     box-shadow 1px 1px 4px rgba(0, 0, 0, 0.16)
     font-size 14px
 
 
-    .details
-      img
-        width 100px
-        height 100px
+    .dz-details
 
       // Not implemented yet. This is the CSS definition of the file
       // content as text.
@@ -99,24 +96,24 @@
       //   cursor default
       //   word-wrap break-word
 
-    &.image-preview
+    &.dz-image-preview
       &:hover
-        .details
+        .dz-details
           img
             display block
             opacity 0.1
 
-    &.success
-      .success-mark
+    &.dz-success
+      .dz-success-mark
         opacity 1
-    &.error
-      .error-mark
+    &.dz-error
+      .dz-error-mark
         opacity 1
-      .progress .upload
+      .dz-progress .dz-upload
         background #EE1E2D
 
-    .error-mark
-    .success-mark
+    .dz-error-mark
+    .dz-success-mark
       display block
       opacity 0 // Fade in / out
       transition opacity 0.4s ease-in-out
@@ -125,15 +122,15 @@
 
       span
         display none
-    .error-mark
+    .dz-error-mark
       background-position -268px -123px
-    .success-mark
+    .dz-success-mark
       background-position -268px -163px
 
 
 
-    .progress
-      .upload
+    .dz-progress
+      .dz-upload
         animation loading 0.4s linear infinite
         transition width 0.3s ease-in-out
         border-radius 2px
@@ -148,8 +145,8 @@
         background-position 0px -400px
 
 
-    &.success
-      .progress
+    &.dz-success
+      .dz-progress
         display block
         opacity 0
         transition opacity 0.4s ease-in-out
@@ -160,14 +157,25 @@
     //   span
     //     overflow ellipsis
 
-    .error-message
+    .dz-error-message
       display block
       opacity 0 // Rather fade in / out
       transition opacity 0.3s ease-in-out
 
-    &:hover.error
-      .error-message
+    &:hover.dz-error
+      .dz-error-message
         opacity 1
 
-
+  a.dz-remove
+    background-image linear-gradient(top, #fafafa, #eee)
+    border-radius 2px
+    border 1px solid #eee
+    text-decoration none
+    display block
+    padding 4px 5px
+    text-align center
+    color #aaa
+    margin-top 26px
+    &:hover
+      color #666
 
