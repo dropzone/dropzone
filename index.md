@@ -291,12 +291,15 @@ The valid options are:
 
 ### Enqueuing file uploads
 
-When a file gets added to the dropzone, it gets pushed to the `.filesQueue` Array.
+When a file gets added to the dropzone, it's `status` gets set to `Dropzone.QUEUED`.
 Whenever this happens or a file upload has finished `.processQueue()` is called
 which checks how many files are currently uploading, and if it's less than
 `options.parallelUploads` `.processFile(file)` is called.
 
-So if you set `enqueueForUpload` to false, can either call
+If you set `enqueueForUpload` to `false`, the `status` property of the file will
+be set to `Dropzone.ACCEPTED` and it won't be on the queue for uploads automatically.
+
+Now, to programmatically let Dropzone process a file you can either call:
 
 ```js
 myDropzone.processFile(file);
@@ -304,11 +307,11 @@ myDropzone.processFile(file);
 if you want it to be processed immediately, or
 
 ```js
-myDropzone.filesQueue.push(file);
-myDropzone.processQueue();
+myDropzone.enqueueFile(file);
 ```
 
-if you want to use a queue.
+if you want to use a queue. (This will set `file.status` to `Dropzone.QUEUED` and
+call `.processFile(file)` for you)
 
 
 ## listen to events
@@ -448,8 +451,32 @@ myDropzone.on("complete", function(file) {
 {% endhighlight %}
 
 If you want to remove all files, simply use `.removeAllFiles()`. Files that are
-in the process of being uploaded won't be removed.
+in the process of being uploaded won't be removed. If you want files that are
+currently uploading to be canceled, call `.removeAllFiles(true)` which will
+cancel the uploads.
 
+* * *
+
+If you have `enqueueForUpload` disabled, you'll need to manage the uploading
+yourself.
+
+You can either call `.uploadFile(file)` or `.enqueueFile(file)` to handle a file.
+
+This can be useful if you want to display the files and let the user click an
+accept button to actually upload the file.
+
+* * *
+
+To access all files in the dropzone, use `myDropzone.files`.
+
+To get
+
+- all accepted files: `.getAcceptedFiles()`
+- all rejected files: `.getRejectedFiles()`
+- all queued files: `.getQueuedFiles()`
+- all uploading files: `.getUploadingFiles()`
+
+* * *
 
 If you do not need a dropzone anymore, just call `.disable()` on the object. This
 will remove all event listeners on the element, and clear all file arrays. To
