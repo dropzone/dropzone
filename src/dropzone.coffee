@@ -99,8 +99,8 @@ class Dropzone extends Em
     # If false, files will not be added to the process queue automatically.
     # This can be useful if you need some additional user input before sending
     # files.
-    # If you're ready to send the file, add it to the `filesQueue` and call
-    # processQueue()
+    # If you're ready to send the file, set the file.status to Dropzone.QUEUED
+    # and call processQueue()
     enqueueForUpload: yes
 
 
@@ -356,9 +356,6 @@ class Dropzone extends Em
     @clickableElements = [ ]
     @listeners = [ ]
     @files = [] # All files
-    @acceptedFiles = [] # All files that are actually accepted
-    @filesQueue = [] # The files that still have to be processed
-    @filesProcessing = [] # The files currently processed
 
     @element = document.querySelector @element if typeof @element == "string"
 
@@ -407,6 +404,17 @@ class Dropzone extends Em
     @init()
 
 
+  # Returns all files that have been accepted
+  getAcceptedFiles: -> file for file in @files when file.accepted
+
+  # Returns all files that have been rejected
+  # Not sure when that's going to be useful, but added for completeness.
+  getRejectedFiles: -> file for file in @files unless file.accepted
+
+  # Returns all files that are in the queue
+  getQueuedFiles: -> file for file in @files when file.status == Dropzone.QUEUED
+
+  getUploadingFiles: -> file for file in @files when file.status == Dropzone.UPLOADING
 
 
   init: ->
@@ -453,16 +461,9 @@ class Dropzone extends Em
     # again when the dropzone gets disabled.
     @on eventName, @options[eventName] for eventName in @events
 
-    @on "uploadprogress", (file) =>
-      totalBytesSent = 0;
-      totalBytes = 0;
-      for file in @acceptedFiles
-        totalBytesSent += file.upload.bytesSent
-        totalBytes += file.upload.total
-      totalUploadProgress = 100 * totalBytesSent / totalBytes
+    @on "uploadprogress", => @updateTotalUploadProgress()
 
-      @emit "totaluploadprogress", totalUploadProgress, totalBytes, totalBytesSent
-
+    @on "removedfile", => @updateTotalUploadProgress()
 
     noPropagation = (e) ->
       e.stopPropagation()
@@ -516,6 +517,19 @@ class Dropzone extends Em
     if @hiddenFileInput?.parentNode
       @hiddenFileInput.parentNode.removeChild @hiddenFileInput 
       @hiddenFileInput = null
+
+
+  updateTotalUploadProgress: ->
+    totalBytesSent = 0
+    totalBytes = 0
+
+    for file in @getAcceptedFiles()
+      totalBytesSent += file.upload.bytesSent
+      totalBytes += file.upload.total
+    totalUploadProgress = 100 * totalBytesSent / totalBytes
+
+    @emit "totaluploadprogress", totalUploadProgress, totalBytes, totalBytesSent
+
 
 
   # Returns a form that can be used as fallback if the browser does not support DragnDrop
@@ -638,16 +652,14 @@ class Dropzone extends Em
         file.status = Dropzone.ACCEPTED
         file.accepted = true # Backwards compatibility
 
-        @acceptedFiles.push file
         if @options.enqueueForUpload
-          @filesQueue.push file
+          file.status = Dropzone.QUEUED
           @processQueue()
 
   # Can be called by the user to remove a file
   removeFile: (file) ->
     @cancelUpload file if file.status == Dropzone.UPLOADING
     @files = without @files, file
-    @filesQueue = without @filesQueue, file
 
     @emit "removedfile", file
     @emit "reset" if @files.length == 0
@@ -656,7 +668,7 @@ class Dropzone extends Em
   removeAllFiles: ->
     # Create a copy of files since removeFile() changes the @files array.
     for file in @files.slice()
-      @removeFile file unless file in @filesProcessing
+      @removeFile file unless file.status == Dropzone.UPLOADING
     return null
 
   createThumbnail: (file) ->
@@ -692,18 +704,18 @@ class Dropzone extends Em
   # Goes through the queue and processes files if there aren't too many already.
   processQueue: ->
     parallelUploads = @options.parallelUploads
-    processingLength = @filesProcessing.length
+    processingLength = @getUploadingFiles().length
     i = processingLength
 
+    queuedFiles = @getQueuedFiles()
     while i < parallelUploads
-      return unless @filesQueue.length # Nothing left to process
-      @processFile @filesQueue.shift()
+      return unless queuedFiles.length # Nothing left to process
+      @processFile queuedFiles.shift()
       i++
 
 
   # Loads the file, then calls finishedLoading()
   processFile: (file) ->
-    @filesProcessing.push file
     file.processing = yes # Backwards compatibility
     file.status = Dropzone.UPLOADING
 
@@ -721,10 +733,11 @@ class Dropzone extends Em
     if file.status == Dropzone.UPLOADING
       file.status = Dropzone.CANCELED
       file.xhr.abort()
-      @filesProcessing = without(@filesProcessing, file)
     else if file.status in [ Dropzone.ADDED, Dropzone.ACCEPTED ]
       file.status = Dropzone.CANCELED
-      @filesQueue = without(@filesQueue, file)
+
+    @emit "complete", file
+
     @processQueue()
 
   uploadFile: (file) ->
@@ -833,8 +846,6 @@ class Dropzone extends Em
   # Called internally when processing is finished.
   # Individual callbacks have to be called in the appropriate sections.
   finished: (file, responseText, e) ->
-    @filesProcessing = without(@filesProcessing, file)
-    file.processing = no # Backwards compatibility
     file.status = Dropzone.SUCCESS
     @processQueue()
     @emit "success", file, responseText, e
@@ -845,8 +856,6 @@ class Dropzone extends Em
   # Called internally when processing is finished.
   # Individual callbacks have to be called in the appropriate sections.
   errorProcessing: (file, message, xhr) ->
-    @filesProcessing = without(@filesProcessing, file)
-    file.processing = no # Backwards compatibility
     file.status = Dropzone.ERROR
     @processQueue()
     @emit "error", file, message, xhr
@@ -1038,12 +1047,20 @@ else
 
 
 
-Dropzone.ADDED = "added";
-Dropzone.ACCEPTED = "accepted";
-Dropzone.UPLOADING = "uploading";
-Dropzone.CANCELED = "canceled";
-Dropzone.ERROR = "error";
-Dropzone.SUCCESS = "success";
+# Dropzone file status codes
+Dropzone.ADDED = "added"
+
+# Accepted does not necessarely mean queued.
+Dropzone.ACCEPTED = "accepted"
+
+Dropzone.QUEUED = "queued"
+
+Dropzone.UPLOADING = "uploading"
+Dropzone.PROCESSING = Dropzone.UPLOADING # alias
+
+Dropzone.CANCELED = "canceled"
+Dropzone.ERROR = "error"
+Dropzone.SUCCESS = "success"
 
 
 
