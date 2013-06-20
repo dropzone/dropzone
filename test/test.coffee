@@ -425,7 +425,7 @@ describe "Dropzone", ->
 
         dropzone.addFile mockFile
         mockFile.status.should.equal Dropzone.UPLOADING
-        dropzone.filesProcessing[0].should.equal mockFile
+        dropzone.getUploadingFiles()[0].should.equal mockFile
 
         dropzone.cancelUpload.callCount.should.equal 0
         dropzone.removeFile mockFile
@@ -439,11 +439,11 @@ describe "Dropzone", ->
 
           dropzone.addFile mockFile
           mockFile.status.should.equal Dropzone.UPLOADING
-          dropzone.filesProcessing[0].should.equal mockFile
+          dropzone.getUploadingFiles()[0].should.equal mockFile
           dropzone.cancelUpload mockFile
           mockFile.status.should.equal Dropzone.CANCELED
-          dropzone.filesProcessing.length.should.equal 0
-          dropzone.filesQueue.length.should.equal 0
+          dropzone.getUploadingFiles().length.should.equal 0
+          dropzone.getQueuedFiles().length.should.equal 0
 
       it "should properly cancel the upload if file is not yet uploading", ->
           mockFile = getMockFile()
@@ -454,13 +454,31 @@ describe "Dropzone", ->
           dropzone.options.parallelUploads = 0
 
           dropzone.addFile mockFile
-          mockFile.status.should.equal Dropzone.ACCEPTED
-          dropzone.filesQueue[0].should.equal mockFile
+          mockFile.status.should.equal Dropzone.QUEUED
+          dropzone.getQueuedFiles()[0].should.equal mockFile
 
           dropzone.cancelUpload mockFile
           mockFile.status.should.equal Dropzone.CANCELED
-          dropzone.filesQueue.length.should.equal 0
-          dropzone.filesProcessing.length.should.equal 0
+          dropzone.getQueuedFiles().length.should.equal 0
+          dropzone.getUploadingFiles().length.should.equal 0
+
+      it "should call processQueue()", ->
+          mockFile = getMockFile()
+
+          dropzone.accept = (file, done) -> done()
+
+          # Making sure the file stays in the queue.
+          dropzone.options.parallelUploads = 0
+
+          sinon.spy dropzone, "processQueue"
+
+          dropzone.addFile mockFile
+          dropzone.processQueue.callCount.should.equal 1
+
+          dropzone.cancelUpload mockFile
+
+          dropzone.processQueue.callCount.should.equal 2
+
 
     describe ".disable()", ->
       it "should properly cancel all pending uploads", ->
@@ -471,8 +489,8 @@ describe "Dropzone", ->
           dropzone.addFile getMockFile()
           dropzone.addFile getMockFile()
 
-          dropzone.filesProcessing.length.should.equal 1
-          dropzone.filesQueue.length.should.equal 1
+          dropzone.getUploadingFiles().length.should.equal 1
+          dropzone.getQueuedFiles().length.should.equal 1
           dropzone.files.length.should.equal 2
 
           sinon.spy requests[0], "abort"
@@ -483,8 +501,8 @@ describe "Dropzone", ->
 
           requests[0].abort.callCount.should.equal 1
 
-          dropzone.filesProcessing.length.should.equal 0
-          dropzone.filesQueue.length.should.equal 0
+          dropzone.getUploadingFiles().length.should.equal 0
+          dropzone.getQueuedFiles().length.should.equal 0
           dropzone.files.length.should.equal 2
 
           dropzone.files[0].status.should.equal Dropzone.CANCELED
@@ -499,8 +517,8 @@ describe "Dropzone", ->
           dropzone.addFile getMockFile()
           dropzone.addFile getMockFile()
 
-          dropzone.filesProcessing.length.should.equal 1
-          dropzone.filesQueue.length.should.equal 1
+          dropzone.getUploadingFiles().length.should.equal 1
+          dropzone.getQueuedFiles().length.should.equal 1
           dropzone.files.length.should.equal 2
 
           sinon.spy dropzone, "disable"
@@ -528,6 +546,7 @@ describe "Dropzone", ->
           dropzone.files = [
             {
               size: 1990
+              accepted: true
               upload:
                 progress: 20
                 total: 2000 # The bytes to upload are higher than the file size
@@ -535,6 +554,7 @@ describe "Dropzone", ->
             }
             {
               size: 1990
+              accepted: true
               upload:
                 progress: 10
                 total: 2000 # The bytes to upload are higher than the file size
@@ -542,9 +562,8 @@ describe "Dropzone", ->
             }
           ]
 
-
           _called = 0
-          dropzone.acceptedFiles = dropzone.files
+
           dropzone.on "totaluploadprogress", (progress) ->
             progress.should.equal totalProgressExpectation
             done() if ++_called == 3
@@ -621,7 +640,7 @@ describe "Dropzone", ->
 
         mockFile.status.should.eql Dropzone.ADDED
         doneFunction()
-        mockFile.status.should.eql Dropzone.ACCEPTED
+        mockFile.status.should.eql Dropzone.QUEUED
 
         mockFile = getMockFile()
         dropzone.addFile mockFile
@@ -629,6 +648,19 @@ describe "Dropzone", ->
         mockFile.status.should.eql Dropzone.ADDED
         doneFunction("error")
         mockFile.status.should.eql Dropzone.ERROR
+
+      it "should properly set the status of the file if enqueueForUpload is false", ->
+        doneFunction = null
+        dropzone.options.enqueueForUpload = false
+        dropzone.accept = (file, done) -> doneFunction = done
+        dropzone.processFile = ->
+        dropzone.uploadFile = ->
+
+        dropzone.addFile mockFile
+
+        mockFile.status.should.eql Dropzone.ADDED
+        doneFunction()
+        mockFile.status.should.eql Dropzone.ACCEPTED
 
 
 

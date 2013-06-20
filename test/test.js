@@ -607,7 +607,7 @@
           sinon.stub(dropzone, "cancelUpload");
           dropzone.addFile(mockFile);
           mockFile.status.should.equal(Dropzone.UPLOADING);
-          dropzone.filesProcessing[0].should.equal(mockFile);
+          dropzone.getUploadingFiles()[0].should.equal(mockFile);
           dropzone.cancelUpload.callCount.should.equal(0);
           dropzone.removeFile(mockFile);
           return dropzone.cancelUpload.callCount.should.equal(1);
@@ -622,13 +622,13 @@
           };
           dropzone.addFile(mockFile);
           mockFile.status.should.equal(Dropzone.UPLOADING);
-          dropzone.filesProcessing[0].should.equal(mockFile);
+          dropzone.getUploadingFiles()[0].should.equal(mockFile);
           dropzone.cancelUpload(mockFile);
           mockFile.status.should.equal(Dropzone.CANCELED);
-          dropzone.filesProcessing.length.should.equal(0);
-          return dropzone.filesQueue.length.should.equal(0);
+          dropzone.getUploadingFiles().length.should.equal(0);
+          return dropzone.getQueuedFiles().length.should.equal(0);
         });
-        return it("should properly cancel the upload if file is not yet uploading", function() {
+        it("should properly cancel the upload if file is not yet uploading", function() {
           var mockFile;
           mockFile = getMockFile();
           dropzone.accept = function(file, done) {
@@ -636,12 +636,25 @@
           };
           dropzone.options.parallelUploads = 0;
           dropzone.addFile(mockFile);
-          mockFile.status.should.equal(Dropzone.ACCEPTED);
-          dropzone.filesQueue[0].should.equal(mockFile);
+          mockFile.status.should.equal(Dropzone.QUEUED);
+          dropzone.getQueuedFiles()[0].should.equal(mockFile);
           dropzone.cancelUpload(mockFile);
           mockFile.status.should.equal(Dropzone.CANCELED);
-          dropzone.filesQueue.length.should.equal(0);
-          return dropzone.filesProcessing.length.should.equal(0);
+          dropzone.getQueuedFiles().length.should.equal(0);
+          return dropzone.getUploadingFiles().length.should.equal(0);
+        });
+        return it("should call processQueue()", function() {
+          var mockFile;
+          mockFile = getMockFile();
+          dropzone.accept = function(file, done) {
+            return done();
+          };
+          dropzone.options.parallelUploads = 0;
+          sinon.spy(dropzone, "processQueue");
+          dropzone.addFile(mockFile);
+          dropzone.processQueue.callCount.should.equal(1);
+          dropzone.cancelUpload(mockFile);
+          return dropzone.processQueue.callCount.should.equal(2);
         });
       });
       describe(".disable()", function() {
@@ -652,15 +665,15 @@
           dropzone.options.parallelUploads = 1;
           dropzone.addFile(getMockFile());
           dropzone.addFile(getMockFile());
-          dropzone.filesProcessing.length.should.equal(1);
-          dropzone.filesQueue.length.should.equal(1);
+          dropzone.getUploadingFiles().length.should.equal(1);
+          dropzone.getQueuedFiles().length.should.equal(1);
           dropzone.files.length.should.equal(2);
           sinon.spy(requests[0], "abort");
           requests[0].abort.callCount.should.equal(0);
           dropzone.disable();
           requests[0].abort.callCount.should.equal(1);
-          dropzone.filesProcessing.length.should.equal(0);
-          dropzone.filesQueue.length.should.equal(0);
+          dropzone.getUploadingFiles().length.should.equal(0);
+          dropzone.getQueuedFiles().length.should.equal(0);
           dropzone.files.length.should.equal(2);
           dropzone.files[0].status.should.equal(Dropzone.CANCELED);
           return dropzone.files[1].status.should.equal(Dropzone.CANCELED);
@@ -674,8 +687,8 @@
           dropzone.options.parallelUploads = 1;
           dropzone.addFile(getMockFile());
           dropzone.addFile(getMockFile());
-          dropzone.filesProcessing.length.should.equal(1);
-          dropzone.filesQueue.length.should.equal(1);
+          dropzone.getUploadingFiles().length.should.equal(1);
+          dropzone.getQueuedFiles().length.should.equal(1);
           dropzone.files.length.should.equal(2);
           sinon.spy(dropzone, "disable");
           dropzone.destroy();
@@ -697,6 +710,7 @@
             dropzone.files = [
               {
                 size: 1990,
+                accepted: true,
                 upload: {
                   progress: 20,
                   total: 2000,
@@ -704,6 +718,7 @@
                 }
               }, {
                 size: 1990,
+                accepted: true,
                 upload: {
                   progress: 10,
                   total: 2000,
@@ -712,7 +727,6 @@
               }
             ];
             _called = 0;
-            dropzone.acceptedFiles = dropzone.files;
             dropzone.on("totaluploadprogress", function(progress) {
               progress.should.equal(totalProgressExpectation);
               if (++_called === 3) {
@@ -782,7 +796,7 @@
         return dropzone.destroy();
       });
       describe("addFile()", function() {
-        return it("should properly set the status of the file", function() {
+        it("should properly set the status of the file", function() {
           var doneFunction;
           doneFunction = null;
           dropzone.accept = function(file, done) {
@@ -793,12 +807,26 @@
           dropzone.addFile(mockFile);
           mockFile.status.should.eql(Dropzone.ADDED);
           doneFunction();
-          mockFile.status.should.eql(Dropzone.ACCEPTED);
+          mockFile.status.should.eql(Dropzone.QUEUED);
           mockFile = getMockFile();
           dropzone.addFile(mockFile);
           mockFile.status.should.eql(Dropzone.ADDED);
           doneFunction("error");
           return mockFile.status.should.eql(Dropzone.ERROR);
+        });
+        return it("should properly set the status of the file if enqueueForUpload is false", function() {
+          var doneFunction;
+          doneFunction = null;
+          dropzone.options.enqueueForUpload = false;
+          dropzone.accept = function(file, done) {
+            return doneFunction = done;
+          };
+          dropzone.processFile = function() {};
+          dropzone.uploadFile = function() {};
+          dropzone.addFile(mockFile);
+          mockFile.status.should.eql(Dropzone.ADDED);
+          doneFunction();
+          return mockFile.status.should.eql(Dropzone.ACCEPTED);
         });
       });
       return describe("uploadFile()", function() {
