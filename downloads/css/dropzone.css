@@ -341,6 +341,28 @@
   -ms-filter: none;
   filter: none;
 }
+.dropzone a.dz-remove,
+.dropzone-previews a.dz-remove {
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #fafafa), color-stop(1, #eee));
+  background-image: -webkit-linear-gradient(top, #fafafa 0%, #eee 100%);
+  background-image: -moz-linear-gradient(top, #fafafa 0%, #eee 100%);
+  background-image: -o-linear-gradient(top, #fafafa 0%, #eee 100%);
+  background-image: -ms-linear-gradient(top, #fafafa 0%, #eee 100%);
+  background-image: linear-gradient(top, #fafafa 0%, #eee 100%);
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  border: 1px solid #eee;
+  text-decoration: none;
+  display: block;
+  padding: 4px 5px;
+  text-align: center;
+  color: #aaa;
+  margin-top: 26px;
+}
+.dropzone a.dz-remove:hover,
+.dropzone-previews a.dz-remove:hover {
+  color: #666;
+}
 @-moz-keyframes loading {
   0% {
     background-position: 0 -400px;
