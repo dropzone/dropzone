@@ -643,7 +643,7 @@ class Dropzone extends Em
         else if entry.isDirectory
           @addDirectory entry, entry.name
       else
-        @addFile item.getAsEntry()
+        @addFile item.getAsFile()
     return
 
   # If `done()` is called without argument the file is accepted
