@@ -525,6 +525,7 @@ class Dropzone extends Em
     if @hiddenFileInput?.parentNode
       @hiddenFileInput.parentNode.removeChild @hiddenFileInput 
       @hiddenFileInput = null
+    delete @element.dropzone
 
 
   updateTotalUploadProgress: ->

@@ -536,7 +536,11 @@ describe "Dropzone", ->
           dropzone.destroy()
 
           dropzone.disable.callCount.should.equal 1
+          element.should.not.have.property "dropzone"
 
+      it "should be able to create instance of dropzone on the same element after destroy", ->
+          dropzone.destroy()
+          ( -> new Dropzone element, maxFilesize: 4, url: "url", acceptedMimeTypes: "audio/*,image/png", uploadprogress: -> ).should.not.throw( Error )
 
 
     describe ".filesize()", ->
