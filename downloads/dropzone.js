@@ -825,8 +825,9 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       this.removeAllFiles(true);
       if ((_ref = this.hiddenFileInput) != null ? _ref.parentNode : void 0) {
         this.hiddenFileInput.parentNode.removeChild(this.hiddenFileInput);
-        return this.hiddenFileInput = null;
+        this.hiddenFileInput = null;
       }
+      return delete this.element.dropzone;
     };
 
     Dropzone.prototype.updateTotalUploadProgress = function() {
@@ -1128,8 +1129,8 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         _this = this;
       xhr = new XMLHttpRequest();
       file.xhr = xhr;
-      xhr.withCredentials = !!this.options.withCredentials;
       xhr.open(this.options.method, this.options.url, true);
+      xhr.withCredentials = !!this.options.withCredentials;
       response = null;
       handleError = function() {
         return _this.errorProcessing(file, response || _this.options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr);
