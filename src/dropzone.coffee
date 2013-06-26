@@ -525,6 +525,7 @@ class Dropzone extends Em
     if @hiddenFileInput?.parentNode
       @hiddenFileInput.parentNode.removeChild @hiddenFileInput 
       @hiddenFileInput = null
+    delete @element.dropzone
 
 
   updateTotalUploadProgress: ->
@@ -759,9 +760,10 @@ class Dropzone extends Em
     # Put the xhr object in the file object to be able to reference it later.
     file.xhr = xhr
 
-    xhr.withCredentials = !!@options.withCredentials
-
     xhr.open @options.method, @options.url, true
+
+    # Has to be after `.open()`. See https://github.com/enyo/dropzone/issues/179
+    xhr.withCredentials = !!@options.withCredentials
 
 
     response = null
@@ -876,7 +878,7 @@ class Dropzone extends Em
 
 
 
-Dropzone.version = "3.5.1"
+Dropzone.version = "3.5.2"
 
 
 # This is a map of options for your different dropzones. Add configurations

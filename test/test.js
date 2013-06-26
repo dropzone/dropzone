@@ -693,7 +693,7 @@
         });
       });
       describe(".destroy()", function() {
-        return it("should properly cancel all pending uploads and remove all file references", function() {
+        it("should properly cancel all pending uploads and remove all file references", function() {
           dropzone.accept = function(file, done) {
             return done();
           };
@@ -705,7 +705,19 @@
           dropzone.files.length.should.equal(2);
           sinon.spy(dropzone, "disable");
           dropzone.destroy();
-          return dropzone.disable.callCount.should.equal(1);
+          dropzone.disable.callCount.should.equal(1);
+          return element.should.not.have.property("dropzone");
+        });
+        return it("should be able to create instance of dropzone on the same element after destroy", function() {
+          dropzone.destroy();
+          return (function() {
+            return new Dropzone(element, {
+              maxFilesize: 4,
+              url: "url",
+              acceptedMimeTypes: "audio/*,image/png",
+              uploadprogress: function() {}
+            });
+          }).should.not["throw"](Error);
         });
       });
       describe(".filesize()", function() {
