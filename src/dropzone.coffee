@@ -623,11 +623,29 @@ class Dropzone extends Em
     return unless e.dataTransfer
     files = e.dataTransfer.files
     @emit "selectedfiles", files
-    @handleFiles files if files.length
+    if files.length
+      items = e.dataTransfer.items
+      if items and items.length and (items[0].webkitGetAsEntry or items[0].getAsEntry)
+        @handleItems items
+      else
+        @handleFiles files
+    return
 
 
   handleFiles: (files) ->
     @addFile file for file in files
+
+  handleItems: (items) ->
+    for item in items
+      if item.webkitGetAsEntry
+        entry = item.webkitGetAsEntry()
+        if entry.isFile
+          @addFile item.getAsFile()
+        else if entry.isDirectory
+          @addDirectory entry, entry.name
+      else
+        @addFile item.getAsFile()
+    return
 
   # If `done()` is called without argument the file is accepted
   # If you call it with an error message, the file is rejected
@@ -669,6 +687,26 @@ class Dropzone extends Em
         if @options.enqueueForUpload
           file.status = Dropzone.QUEUED
           @processQueue()
+
+  addDirectory: (entry, path) ->
+    dirReader = entry.createReader()
+    dirReader.readEntries \
+      (entries) =>
+        for entry in entries
+          if entry.isFile
+            entry.file (file) =>
+              return if file.name.substring(0, 1) is '.'
+              file.fullPath = path + '/' + file.name;
+              @addFile file
+              return
+          else if entry.isDirectory
+            @addDirectory entry, path + '/' + entry.name
+        return
+      ,
+      (error) ->
+        console.log error 
+        return
+    return
 
   # Can be called by the user to remove a file
   removeFile: (file) ->
