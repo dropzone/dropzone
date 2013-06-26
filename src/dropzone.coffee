@@ -91,13 +91,17 @@ class Dropzone extends Em
     # property, and if the Dropzone is clickable this will be used as
     # `accept` attribute.
     # 
+    # This is a comma separated list of mime types or extensions. E.g.:
+    # 
+    #     audio/*,video/*,image/png,.pdf
+    # 
     # See https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-accept
     # for a reference.
-    acceptedMimeTypes: null # eg: "audio/*,video/*,image/*"
+    acceptedFiles: null
 
     # @deprecated
-    # Use acceptedMimeTypes instead.
-    acceptParameter: null
+    # Use acceptedFiles instead.
+    acceptedMimeTypes: null
 
     # If false, files will not be added to the process queue automatically.
     # This can be useful if you need some additional user input before sending
@@ -381,7 +385,12 @@ class Dropzone extends Em
 
     throw new Error "No URL provided." unless @options.url
 
-    throw new Error "You can't provide both 'acceptParameter' and 'acceptedMimeTypes'. 'acceptParameter' is deprecated." if @options.acceptParameter and @options.acceptedMimeTypes
+    throw new Error "You can't provide both 'acceptedFiles' and 'acceptedMimeTypes'. 'acceptedMimeTypes' is deprecated." if @options.acceptedFiles and @options.acceptedMimeTypes
+
+    # Backwards compatibility
+    if @options.acceptedMimeTypes
+      @options.acceptedFiles = @options.acceptedMimeTypes 
+      delete @options.acceptedMimeTypes
 
     @options.method = @options.method.toUpperCase()
 
@@ -442,10 +451,7 @@ class Dropzone extends Em
         @hiddenFileInput.setAttribute "type", "file"
         @hiddenFileInput.setAttribute "multiple", "multiple"
 
-        @hiddenFileInput.setAttribute "accept", @options.acceptedMimeTypes if @options.acceptedMimeTypes?
-
-        # Backwards compatibility
-        @hiddenFileInput.setAttribute "accept", @options.acceptParameter if @options.acceptParameter?
+        @hiddenFileInput.setAttribute "accept", @options.acceptedFiles if @options.acceptedFiles?
 
         # Not setting `display="none"` because some browsers don't accept clicks
         # on elements that aren't displayed.
@@ -659,11 +665,11 @@ class Dropzone extends Em
   # (This allows for asynchronous validation)
   # 
   # This function checks the filesize, and if the file.type passes the 
-  # `acceptedMimeTypes` check.
+  # `acceptedFiles` check.
   accept: (file, done) ->
     if file.size > @options.maxFilesize * 1024 * 1024
       done @options.dictFileTooBig.replace("{{filesize}}", Math.round(file.size / 1024 / 10.24) / 100).replace("{{maxFilesize}}", @options.maxFilesize)
-    else unless Dropzone.isValidMimeType file.type, @options.acceptedMimeTypes
+    else unless Dropzone.isValidFile file, @options.acceptedFiles
       done @options.dictInvalidFileType
     else
       @options.accept.call this, file, done
@@ -897,7 +903,7 @@ class Dropzone extends Em
     # Finally add the file
     # Has to be last because some servers (eg: S3) expect the file to be the
     # last parameter
-    formData.append @options.paramName, file
+    formData.append "#{@options.paramName}", file
 
     xhr.send formData
 
@@ -1072,19 +1078,22 @@ Dropzone.getElements = (els, name) ->
 # Validates the mime type like this:
 # 
 # https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-accept
-Dropzone.isValidMimeType = (mimeType, acceptedMimeTypes) ->
-  return yes unless acceptedMimeTypes # If there are no accepted mime types, it's OK
-  acceptedMimeTypes = acceptedMimeTypes.split ","
+Dropzone.isValidFile = (file, acceptedFiles) ->
+  return yes unless acceptedFiles # If there are no accepted mime types, it's OK
+  acceptedFiles = acceptedFiles.split ","
 
+  mimeType = file.type
   baseMimeType = mimeType.replace /\/.*$/, ""
 
-  for validMimeType in acceptedMimeTypes
-    validMimeType = validMimeType.trim()
-    if /\/\*$/.test validMimeType
+  for validType in acceptedFiles
+    validType = validType.trim()
+    if validType.charAt(0) == "."
+      return yes if file.name.indexOf(validType, file.name.length - validType.length) != -1
+    else if /\/\*$/.test validType
       # This is something like a image/* mime type
-      return yes if baseMimeType == validMimeType.replace /\/.*$/, ""
+      return yes if baseMimeType == validType.replace /\/.*$/, ""
     else
-      return yes if mimeType == validMimeType
+      return yes if mimeType == validType
 
   return no
 
