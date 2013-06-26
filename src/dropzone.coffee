@@ -82,6 +82,9 @@ class Dropzone extends Em
     # If true, the dropzone will present a file selector when clicked.
     clickable: yes
 
+    # Whether hidden files in directories should be ignored.
+    ignoreHiddenFiles: yes
+
     # You can set accepted mime types here. 
     # 
     # The default implementation of the `accept()` function will check this 
@@ -623,11 +626,33 @@ class Dropzone extends Em
     return unless e.dataTransfer
     files = e.dataTransfer.files
     @emit "selectedfiles", files
-    @handleFiles files if files.length
+
+    # Even if it's a folder, files.length will contain the folders.
+    if files.length
+      items = e.dataTransfer.items
+      if items and items.length and (items[0].webkitGetAsEntry? or items[0].getAsEntry?)
+        # The browser supports dropping of folders, so handle items instead of files
+        @handleItems items
+      else
+        @handleFiles files
+    return
 
 
   handleFiles: (files) ->
     @addFile file for file in files
+
+  # When a folder is dropped, items must be handled instead of files.
+  handleItems: (items) ->
+    for item in items
+      if item.webkitGetAsEntry?
+        entry = item.webkitGetAsEntry()
+        if entry.isFile
+          @addFile item.getAsFile()
+        else if entry.isDirectory
+          @addDirectory entry, entry.name
+      else
+        @addFile item.getAsFile()
+    return
 
   # If `done()` is called without argument the file is accepted
   # If you call it with an error message, the file is rejected
@@ -669,6 +694,25 @@ class Dropzone extends Em
         if @options.enqueueForUpload
           file.status = Dropzone.QUEUED
           @processQueue()
+
+  # Used to read a directory, and call addFile() with every file found.
+  addDirectory: (entry, path) ->
+    dirReader = entry.createReader()
+
+
+    entriesReader = (entries) =>
+      for entry in entries
+        if entry.isFile
+          entry.file (file) =>
+            return if @options.ignoreHiddenFiles and file.name.substring(0, 1) is '.'
+            file.fullPath = "#{path}/#{file.name}"
+            @addFile file
+        else if entry.isDirectory
+          @addDirectory entry, "#{path}/#{entry.name}"
+      return
+
+    dirReader.readEntries entriesReader, (error) -> console?.log? error 
+
 
   # Can be called by the user to remove a file
   removeFile: (file) ->
@@ -878,7 +922,7 @@ class Dropzone extends Em
 
 
 
-Dropzone.version = "3.5.2"
+Dropzone.version = "3.5.3"
 
 
 # This is a map of options for your different dropzones. Add configurations

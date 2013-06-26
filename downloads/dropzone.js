@@ -423,6 +423,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       thumbnailHeight: 100,
       params: {},
       clickable: true,
+      ignoreHiddenFiles: true,
       acceptedMimeTypes: null,
       acceptParameter: null,
       enqueueForUpload: true,
@@ -974,14 +975,19 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     };
 
     Dropzone.prototype.drop = function(e) {
-      var files;
+      var files, items;
       if (!e.dataTransfer) {
         return;
       }
       files = e.dataTransfer.files;
       this.emit("selectedfiles", files);
       if (files.length) {
-        return this.handleFiles(files);
+        items = e.dataTransfer.items;
+        if (items && items.length && ((items[0].webkitGetAsEntry != null) || (items[0].getAsEntry != null))) {
+          this.handleItems(items);
+        } else {
+          this.handleFiles(files);
+        }
       }
     };
 
@@ -993,6 +999,23 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         _results.push(this.addFile(file));
       }
       return _results;
+    };
+
+    Dropzone.prototype.handleItems = function(items) {
+      var entry, item, _i, _len;
+      for (_i = 0, _len = items.length; _i < _len; _i++) {
+        item = items[_i];
+        if (item.webkitGetAsEntry != null) {
+          entry = item.webkitGetAsEntry();
+          if (entry.isFile) {
+            this.addFile(item.getAsFile());
+          } else if (entry.isDirectory) {
+            this.addDirectory(entry, entry.name);
+          }
+        } else {
+          this.addFile(item.getAsFile());
+        }
+      }
     };
 
     Dropzone.prototype.accept = function(file, done) {
@@ -1030,6 +1053,32 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
             return _this.processQueue();
           }
         }
+      });
+    };
+
+    Dropzone.prototype.addDirectory = function(entry, path) {
+      var dirReader, entriesReader,
+        _this = this;
+      dirReader = entry.createReader();
+      entriesReader = function(entries) {
+        var _i, _len;
+        for (_i = 0, _len = entries.length; _i < _len; _i++) {
+          entry = entries[_i];
+          if (entry.isFile) {
+            entry.file(function(file) {
+              if (_this.options.ignoreHiddenFiles && file.name.substring(0, 1) === '.') {
+                return;
+              }
+              file.fullPath = "" + path + "/" + file.name;
+              return _this.addFile(file);
+            });
+          } else if (entry.isDirectory) {
+            _this.addDirectory(entry, "" + path + "/" + entry.name);
+          }
+        }
+      };
+      return dirReader.readEntries(entriesReader, function(error) {
+        return typeof console !== "undefined" && console !== null ? typeof console.log === "function" ? console.log(error) : void 0 : void 0;
       });
     };
 
@@ -1242,7 +1291,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
   })(Em);
 
-  Dropzone.version = "3.5.2";
+  Dropzone.version = "3.5.3";
 
   Dropzone.options = {};
 
