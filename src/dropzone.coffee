@@ -760,9 +760,10 @@ class Dropzone extends Em
     # Put the xhr object in the file object to be able to reference it later.
     file.xhr = xhr
 
-    xhr.withCredentials = !!@options.withCredentials
-
     xhr.open @options.method, @options.url, true
+
+    # Has to be after `.open()`. See https://github.com/enyo/dropzone/issues/179
+    xhr.withCredentials = !!@options.withCredentials
 
 
     response = null
