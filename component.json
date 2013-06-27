@@ -6,7 +6,7 @@
   "scripts": [ "index.js", "lib/dropzone.js" ],
   "styles": [ "downloads/css/basic.css" ],
   "dependencies": {
-    "component/emitter": "*"
+    "emitter": "*"
   },
   "license": "MIT"
 }
