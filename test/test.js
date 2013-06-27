@@ -943,6 +943,18 @@
         });
       });
       describe("enqueueFile()", function() {
+        it("should be wrapped by enqueueFiles()", function() {
+          var mock1, mock2, mock3;
+          sinon.stub(dropzone, "enqueueFile");
+          mock1 = getMockFile();
+          mock2 = getMockFile();
+          mock3 = getMockFile();
+          dropzone.enqueueFiles([mock1, mock2, mock3]);
+          dropzone.enqueueFile.callCount.should.equal(3);
+          dropzone.enqueueFile.args[0][0].should.equal(mock1);
+          dropzone.enqueueFile.args[1][0].should.equal(mock2);
+          return dropzone.enqueueFile.args[2][0].should.equal(mock3);
+        });
         it("should fail if the file has already been processed", function() {
           mockFile.status = Dropzone.ERROR;
           expect((function() {

@@ -858,6 +858,15 @@ Emitter.prototype.hasListeners = function(event){
       });
     };
 
+    Dropzone.prototype.enqueueFiles = function(files) {
+      var file, _i, _len;
+      for (_i = 0, _len = files.length; _i < _len; _i++) {
+        file = files[_i];
+        this.enqueueFile(file);
+      }
+      return null;
+    };
+
     Dropzone.prototype.enqueueFile = function(file) {
       var _this = this;
       if (file.status === Dropzone.ACCEPTED) {

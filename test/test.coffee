@@ -464,58 +464,58 @@ describe "Dropzone", ->
 
     describe ".cancelUpload()", ->
       it "should properly cancel upload if file currently uploading", (done) ->
-          mockFile = getMockFile()
+        mockFile = getMockFile()
 
-          dropzone.accept = (file, done) -> done()
+        dropzone.accept = (file, done) -> done()
 
-          dropzone.addFile mockFile
+        dropzone.addFile mockFile
 
-          setTimeout ->
-            mockFile.status.should.equal Dropzone.UPLOADING
-            dropzone.getUploadingFiles()[0].should.equal mockFile
-            dropzone.cancelUpload mockFile
-            mockFile.status.should.equal Dropzone.CANCELED
-            dropzone.getUploadingFiles().length.should.equal 0
-            dropzone.getQueuedFiles().length.should.equal 0
-            done()
-          , 10
-
-      it "should properly cancel the upload if file is not yet uploading", ->
-          mockFile = getMockFile()
-
-          dropzone.accept = (file, done) -> done()
-
-          # Making sure the file stays in the queue.
-          dropzone.options.parallelUploads = 0
-
-          dropzone.addFile mockFile
-          mockFile.status.should.equal Dropzone.QUEUED
-          dropzone.getQueuedFiles()[0].should.equal mockFile
-
+        setTimeout ->
+          mockFile.status.should.equal Dropzone.UPLOADING
+          dropzone.getUploadingFiles()[0].should.equal mockFile
           dropzone.cancelUpload mockFile
           mockFile.status.should.equal Dropzone.CANCELED
-          dropzone.getQueuedFiles().length.should.equal 0
           dropzone.getUploadingFiles().length.should.equal 0
+          dropzone.getQueuedFiles().length.should.equal 0
+          done()
+        , 10
+
+      it "should properly cancel the upload if file is not yet uploading", ->
+        mockFile = getMockFile()
+
+        dropzone.accept = (file, done) -> done()
+
+        # Making sure the file stays in the queue.
+        dropzone.options.parallelUploads = 0
+
+        dropzone.addFile mockFile
+        mockFile.status.should.equal Dropzone.QUEUED
+        dropzone.getQueuedFiles()[0].should.equal mockFile
+
+        dropzone.cancelUpload mockFile
+        mockFile.status.should.equal Dropzone.CANCELED
+        dropzone.getQueuedFiles().length.should.equal 0
+        dropzone.getUploadingFiles().length.should.equal 0
 
       it "should call processQueue()", (done) ->
-          mockFile = getMockFile()
+        mockFile = getMockFile()
 
-          dropzone.accept = (file, done) -> done()
+        dropzone.accept = (file, done) -> done()
 
-          # Making sure the file stays in the queue.
-          dropzone.options.parallelUploads = 0
+        # Making sure the file stays in the queue.
+        dropzone.options.parallelUploads = 0
 
-          sinon.spy dropzone, "processQueue"
+        sinon.spy dropzone, "processQueue"
 
-          dropzone.addFile mockFile
-          setTimeout ->
-            dropzone.processQueue.callCount.should.equal 1
+        dropzone.addFile mockFile
+        setTimeout ->
+          dropzone.processQueue.callCount.should.equal 1
 
-            dropzone.cancelUpload mockFile
+          dropzone.cancelUpload mockFile
 
-            dropzone.processQueue.callCount.should.equal 2
-            done()
-          , 10
+          dropzone.processQueue.callCount.should.equal 2
+          done()
+        , 10
 
       it "should properly cancel all files with the same XHR if uploadMultiple is true"
 
