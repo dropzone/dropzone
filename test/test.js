@@ -148,41 +148,103 @@
           });
         });
       });
-      return describe("Dropzone.isValidMimeType()", function() {
-        it("should return true if called without acceptedMimeTypes", function() {
-          return Dropzone.isValidMimeType("some/type", null).should.be.ok;
+      return describe("Dropzone.isValidFile()", function() {
+        it("should return true if called without acceptedFiles", function() {
+          return Dropzone.isValidFile({
+            type: "some/type"
+          }, null).should.be.ok;
         });
         it("should properly validate if called with concrete mime types", function() {
           var acceptedMimeTypes;
           acceptedMimeTypes = "text/html,image/jpeg,application/json";
-          Dropzone.isValidMimeType("text/html", acceptedMimeTypes).should.be.ok;
-          Dropzone.isValidMimeType("image/jpeg", acceptedMimeTypes).should.be.ok;
-          Dropzone.isValidMimeType("application/json", acceptedMimeTypes).should.be.ok;
-          return Dropzone.isValidMimeType("image/bmp", acceptedMimeTypes).should.not.be.ok;
+          Dropzone.isValidFile({
+            type: "text/html"
+          }, acceptedMimeTypes).should.be.ok;
+          Dropzone.isValidFile({
+            type: "image/jpeg"
+          }, acceptedMimeTypes).should.be.ok;
+          Dropzone.isValidFile({
+            type: "application/json"
+          }, acceptedMimeTypes).should.be.ok;
+          return Dropzone.isValidFile({
+            type: "image/bmp"
+          }, acceptedMimeTypes).should.not.be.ok;
         });
         it("should properly validate if called with base mime types", function() {
           var acceptedMimeTypes;
           acceptedMimeTypes = "text/*,image/*,application/*";
-          Dropzone.isValidMimeType("text/html", acceptedMimeTypes).should.be.ok;
-          Dropzone.isValidMimeType("image/jpeg", acceptedMimeTypes).should.be.ok;
-          Dropzone.isValidMimeType("application/json", acceptedMimeTypes).should.be.ok;
-          Dropzone.isValidMimeType("image/bmp", acceptedMimeTypes).should.be.ok;
-          return Dropzone.isValidMimeType("some/type", acceptedMimeTypes).should.not.be.ok;
+          Dropzone.isValidFile({
+            type: "text/html"
+          }, acceptedMimeTypes).should.be.ok;
+          Dropzone.isValidFile({
+            type: "image/jpeg"
+          }, acceptedMimeTypes).should.be.ok;
+          Dropzone.isValidFile({
+            type: "application/json"
+          }, acceptedMimeTypes).should.be.ok;
+          Dropzone.isValidFile({
+            type: "image/bmp"
+          }, acceptedMimeTypes).should.be.ok;
+          return Dropzone.isValidFile({
+            type: "some/type"
+          }, acceptedMimeTypes).should.not.be.ok;
         });
         it("should properly validate if called with mixed mime types", function() {
           var acceptedMimeTypes;
           acceptedMimeTypes = "text/*,image/jpeg,application/*";
-          Dropzone.isValidMimeType("text/html", acceptedMimeTypes).should.be.ok;
-          Dropzone.isValidMimeType("image/jpeg", acceptedMimeTypes).should.be.ok;
-          Dropzone.isValidMimeType("image/bmp", acceptedMimeTypes).should.not.be.ok;
-          Dropzone.isValidMimeType("application/json", acceptedMimeTypes).should.be.ok;
-          return Dropzone.isValidMimeType("some/type", acceptedMimeTypes).should.not.be.ok;
+          Dropzone.isValidFile({
+            type: "text/html"
+          }, acceptedMimeTypes).should.be.ok;
+          Dropzone.isValidFile({
+            type: "image/jpeg"
+          }, acceptedMimeTypes).should.be.ok;
+          Dropzone.isValidFile({
+            type: "image/bmp"
+          }, acceptedMimeTypes).should.not.be.ok;
+          Dropzone.isValidFile({
+            type: "application/json"
+          }, acceptedMimeTypes).should.be.ok;
+          return Dropzone.isValidFile({
+            type: "some/type"
+          }, acceptedMimeTypes).should.not.be.ok;
         });
-        return it("should properly validate even with spaces in between", function() {
+        it("should properly validate even with spaces in between", function() {
           var acceptedMimeTypes;
           acceptedMimeTypes = "text/html ,   image/jpeg, application/json";
-          Dropzone.isValidMimeType("text/html", acceptedMimeTypes).should.be.ok;
-          return Dropzone.isValidMimeType("image/jpeg", acceptedMimeTypes).should.be.ok;
+          Dropzone.isValidFile({
+            type: "text/html"
+          }, acceptedMimeTypes).should.be.ok;
+          return Dropzone.isValidFile({
+            type: "image/jpeg"
+          }, acceptedMimeTypes).should.be.ok;
+        });
+        return it("should properly validate extensions", function() {
+          var acceptedMimeTypes;
+          acceptedMimeTypes = "text/html ,    image/jpeg, .pdf  ,.png";
+          Dropzone.isValidFile({
+            name: "somxsfsd",
+            type: "text/html"
+          }, acceptedMimeTypes).should.be.ok;
+          Dropzone.isValidFile({
+            name: "somesdfsdf",
+            type: "image/jpeg"
+          }, acceptedMimeTypes).should.be.ok;
+          Dropzone.isValidFile({
+            name: "somesdfadfadf",
+            type: "application/json"
+          }, acceptedMimeTypes).should.not.be.ok;
+          Dropzone.isValidFile({
+            name: "some-file file.pdf",
+            type: "random/type"
+          }, acceptedMimeTypes).should.be.ok;
+          Dropzone.isValidFile({
+            name: "some-file.pdf file.gif",
+            type: "random/type"
+          }, acceptedMimeTypes).should.not.be.ok;
+          return Dropzone.isValidFile({
+            name: "some-file file.png",
+            type: "random/type"
+          }, acceptedMimeTypes).should.be.ok;
         });
       });
     });
@@ -295,16 +357,16 @@
           });
         }).to["throw"]("Dropzone already attached.");
       });
-      it("should throw an exception if both acceptParameter and acceptedMimeTypes are specified", function() {
+      it("should throw an exception if both acceptedFiles and acceptedMimeTypes are specified", function() {
         var element;
         element = document.createElement("div");
         return expect(function() {
           return dropzone = new Dropzone(element, {
             url: "test",
-            acceptParameter: "param",
+            acceptedFiles: "param",
             acceptedMimeTypes: "types"
           });
-        }).to["throw"]("You can't provide both 'acceptParameter' and 'acceptedMimeTypes'. 'acceptParameter' is deprecated.");
+        }).to["throw"]("You can't provide both 'acceptedFiles' and 'acceptedMimeTypes'. 'acceptedMimeTypes' is deprecated.");
       });
       it("should set itself as element.dropzone", function() {
         var element;
@@ -356,6 +418,13 @@
               return done();
             }
           });
+        });
+        it("should set acceptedFiles if deprecated acceptedMimetypes option has been passed", function() {
+          dropzone = new Dropzone(element, {
+            url: "/some/other/url",
+            acceptedMimeTypes: "my/type"
+          });
+          return dropzone.options.acceptedFiles.should.equal("my/type");
         });
         return describe("options.clickable", function() {
           var clickableElement;
@@ -410,9 +479,9 @@
       describe("clickable", function() {
         var dropzone, dropzones, name, _results;
         dropzones = {
-          "using acceptParameter": new Dropzone(Dropzone.createElement("<form action=\"/\"></form>"), {
+          "using acceptedFiles": new Dropzone(Dropzone.createElement("<form action=\"/\"></form>"), {
             clickable: true,
-            acceptParameter: "audio/*,video/*"
+            acceptedFiles: "audio/*,video/*"
           }),
           "using acceptedMimeTypes": new Dropzone(Dropzone.createElement("<form action=\"/\"></form>"), {
             clickable: true,
@@ -584,7 +653,7 @@
             return err.should.eql("File is too big (10MB). Max filesize: 4MB.");
           });
         });
-        it("should properly accept files which mime types are listed in acceptedMimeTypes", function() {
+        it("should properly accept files which mime types are listed in acceptedFiles", function() {
           dropzone.accept({
             type: "audio/mp3"
           }, function(err) {
@@ -601,7 +670,7 @@
             return expect(err).to.be.undefined;
           });
         });
-        return it("should properly reject files when the mime type isn't listed in acceptedMimeTypes", function() {
+        return it("should properly reject files when the mime type isn't listed in acceptedFiles", function() {
           return dropzone.accept({
             type: "image/jpeg"
           }, function(err) {
@@ -610,7 +679,7 @@
         });
       });
       describe(".removeFile()", function() {
-        return it("should abort uploading if file is currently being uploaded", function() {
+        return it("should abort uploading if file is currently being uploaded", function(done) {
           var mockFile;
           mockFile = getMockFile();
           dropzone.uploadFile = function(file) {};
@@ -619,27 +688,33 @@
           };
           sinon.stub(dropzone, "cancelUpload");
           dropzone.addFile(mockFile);
-          mockFile.status.should.equal(Dropzone.UPLOADING);
-          dropzone.getUploadingFiles()[0].should.equal(mockFile);
-          dropzone.cancelUpload.callCount.should.equal(0);
-          dropzone.removeFile(mockFile);
-          return dropzone.cancelUpload.callCount.should.equal(1);
+          return setTimeout(function() {
+            mockFile.status.should.equal(Dropzone.UPLOADING);
+            dropzone.getUploadingFiles()[0].should.equal(mockFile);
+            dropzone.cancelUpload.callCount.should.equal(0);
+            dropzone.removeFile(mockFile);
+            dropzone.cancelUpload.callCount.should.equal(1);
+            return done();
+          }, 10);
         });
       });
       describe(".cancelUpload()", function() {
-        it("should properly cancel upload if file currently uploading", function() {
+        it("should properly cancel upload if file currently uploading", function(done) {
           var mockFile;
           mockFile = getMockFile();
           dropzone.accept = function(file, done) {
             return done();
           };
           dropzone.addFile(mockFile);
-          mockFile.status.should.equal(Dropzone.UPLOADING);
-          dropzone.getUploadingFiles()[0].should.equal(mockFile);
-          dropzone.cancelUpload(mockFile);
-          mockFile.status.should.equal(Dropzone.CANCELED);
-          dropzone.getUploadingFiles().length.should.equal(0);
-          return dropzone.getQueuedFiles().length.should.equal(0);
+          return setTimeout(function() {
+            mockFile.status.should.equal(Dropzone.UPLOADING);
+            dropzone.getUploadingFiles()[0].should.equal(mockFile);
+            dropzone.cancelUpload(mockFile);
+            mockFile.status.should.equal(Dropzone.CANCELED);
+            dropzone.getUploadingFiles().length.should.equal(0);
+            dropzone.getQueuedFiles().length.should.equal(0);
+            return done();
+          }, 10);
         });
         it("should properly cancel the upload if file is not yet uploading", function() {
           var mockFile;
@@ -656,7 +731,7 @@
           dropzone.getQueuedFiles().length.should.equal(0);
           return dropzone.getUploadingFiles().length.should.equal(0);
         });
-        return it("should call processQueue()", function() {
+        it("should call processQueue()", function(done) {
           var mockFile;
           mockFile = getMockFile();
           dropzone.accept = function(file, done) {
@@ -665,48 +740,58 @@
           dropzone.options.parallelUploads = 0;
           sinon.spy(dropzone, "processQueue");
           dropzone.addFile(mockFile);
-          dropzone.processQueue.callCount.should.equal(1);
-          dropzone.cancelUpload(mockFile);
-          return dropzone.processQueue.callCount.should.equal(2);
+          return setTimeout(function() {
+            dropzone.processQueue.callCount.should.equal(1);
+            dropzone.cancelUpload(mockFile);
+            dropzone.processQueue.callCount.should.equal(2);
+            return done();
+          }, 10);
         });
+        return it("should properly cancel all files with the same XHR if uploadMultiple is true");
       });
       describe(".disable()", function() {
-        return it("should properly cancel all pending uploads", function() {
+        return it("should properly cancel all pending uploads", function(done) {
           dropzone.accept = function(file, done) {
             return done();
           };
           dropzone.options.parallelUploads = 1;
           dropzone.addFile(getMockFile());
           dropzone.addFile(getMockFile());
-          dropzone.getUploadingFiles().length.should.equal(1);
-          dropzone.getQueuedFiles().length.should.equal(1);
-          dropzone.files.length.should.equal(2);
-          sinon.spy(requests[0], "abort");
-          requests[0].abort.callCount.should.equal(0);
-          dropzone.disable();
-          requests[0].abort.callCount.should.equal(1);
-          dropzone.getUploadingFiles().length.should.equal(0);
-          dropzone.getQueuedFiles().length.should.equal(0);
-          dropzone.files.length.should.equal(2);
-          dropzone.files[0].status.should.equal(Dropzone.CANCELED);
-          return dropzone.files[1].status.should.equal(Dropzone.CANCELED);
+          return setTimeout(function() {
+            dropzone.getUploadingFiles().length.should.equal(1);
+            dropzone.getQueuedFiles().length.should.equal(1);
+            dropzone.files.length.should.equal(2);
+            sinon.spy(requests[0], "abort");
+            requests[0].abort.callCount.should.equal(0);
+            dropzone.disable();
+            requests[0].abort.callCount.should.equal(1);
+            dropzone.getUploadingFiles().length.should.equal(0);
+            dropzone.getQueuedFiles().length.should.equal(0);
+            dropzone.files.length.should.equal(2);
+            dropzone.files[0].status.should.equal(Dropzone.CANCELED);
+            dropzone.files[1].status.should.equal(Dropzone.CANCELED);
+            return done();
+          }, 10);
         });
       });
       describe(".destroy()", function() {
-        it("should properly cancel all pending uploads and remove all file references", function() {
+        it("should properly cancel all pending uploads and remove all file references", function(done) {
           dropzone.accept = function(file, done) {
             return done();
           };
           dropzone.options.parallelUploads = 1;
           dropzone.addFile(getMockFile());
           dropzone.addFile(getMockFile());
-          dropzone.getUploadingFiles().length.should.equal(1);
-          dropzone.getQueuedFiles().length.should.equal(1);
-          dropzone.files.length.should.equal(2);
-          sinon.spy(dropzone, "disable");
-          dropzone.destroy();
-          dropzone.disable.callCount.should.equal(1);
-          return element.should.not.have.property("dropzone");
+          return setTimeout(function() {
+            dropzone.getUploadingFiles().length.should.equal(1);
+            dropzone.getQueuedFiles().length.should.equal(1);
+            dropzone.files.length.should.equal(2);
+            sinon.spy(dropzone, "disable");
+            dropzone.destroy();
+            dropzone.disable.callCount.should.equal(1);
+            element.should.not.have.property("dropzone");
+            return done();
+          }, 10);
         });
         return it("should be able to create instance of dropzone on the same element after destroy", function() {
           dropzone.destroy();
@@ -773,16 +858,16 @@
       });
     });
     describe("helper function", function() {
-      return describe("getExistingFallback()", function() {
-        var dropzone, element;
-        element = null;
-        dropzone = null;
-        beforeEach(function() {
-          element = Dropzone.createElement("<div></div>");
-          return dropzone = new Dropzone(element, {
-            url: "url"
-          });
+      var dropzone, element;
+      element = null;
+      dropzone = null;
+      beforeEach(function() {
+        element = Dropzone.createElement("<div></div>");
+        return dropzone = new Dropzone(element, {
+          url: "url"
         });
+      });
+      describe("getExistingFallback()", function() {
         it("should return undefined if no fallback", function() {
           return expect(dropzone.getExistingFallback()).to.equal(void 0);
         });
@@ -803,6 +888,9 @@
           element.appendChild(fallback);
           return fallback.should.equal(dropzone.getExistingFallback());
         });
+      });
+      return describe("getFallbackForm()", function() {
+        return it("should properly add [] to the file name if uploadMultiple is true");
       });
     });
     return describe("file handling", function() {
@@ -873,16 +961,20 @@
             return dropzone.enqueueFile(mockFile);
           })).to["throw"]("This file can't be queued because it has already been processed or was rejected.");
         });
-        return it("should set the status to QUEUED and call processQueue if everything's ok", function() {
+        return it("should set the status to QUEUED and call processQueue asynchronously if everything's ok", function(done) {
           mockFile.status = Dropzone.ACCEPTED;
           sinon.stub(dropzone, "processQueue");
           dropzone.processQueue.callCount.should.equal(0);
           dropzone.enqueueFile(mockFile);
           mockFile.status.should.equal(Dropzone.QUEUED);
-          return dropzone.processQueue.callCount.should.equal(1);
+          dropzone.processQueue.callCount.should.equal(0);
+          return setTimeout(function() {
+            dropzone.processQueue.callCount.should.equal(1);
+            return done();
+          }, 10);
         });
       });
-      return describe("uploadFile()", function() {
+      return describe("uploadFiles()", function() {
         var requests, xhr;
         xhr = null;
         requests = null;
@@ -896,20 +988,25 @@
         afterEach(function() {
           return xhr.restore();
         });
-        it("should properly urlencode the filename for the headers", function() {
+        it("should be wrapped by uploadFile()", function() {
+          sinon.stub(dropzone, "uploadFiles");
           dropzone.uploadFile(mockFile);
-          return requests[0].requestHeaders["X-File-Name"].should.eql('test%20file%20name');
+          dropzone.uploadFiles.callCount.should.equal(1);
+          return dropzone.uploadFiles.calledWith([mockFile]).should.be.ok;
         });
-        it("should ignore the onreadystate callback if readyState != 4", function() {
+        it("should ignore the onreadystate callback if readyState != 4", function(done) {
           dropzone.addFile(mockFile);
-          mockFile.status.should.eql(Dropzone.UPLOADING);
-          requests[0].status = 200;
-          requests[0].readyState = 3;
-          requests[0].onload();
-          mockFile.status.should.eql(Dropzone.UPLOADING);
-          requests[0].readyState = 4;
-          requests[0].onload();
-          return mockFile.status.should.eql(Dropzone.SUCCESS);
+          return setTimeout(function() {
+            mockFile.status.should.eql(Dropzone.UPLOADING);
+            requests[0].status = 200;
+            requests[0].readyState = 3;
+            requests[0].onload();
+            mockFile.status.should.eql(Dropzone.UPLOADING);
+            requests[0].readyState = 4;
+            requests[0].onload();
+            mockFile.status.should.eql(Dropzone.SUCCESS);
+            return done();
+          }, 10);
         });
         describe("settings()", function() {
           it("should correctly set `withCredentials` on the xhr object", function() {
@@ -926,27 +1023,31 @@
               "Foo-Header": "foobar"
             };
             dropzone.uploadFile(mockFile);
-            requests[0].requestHeaders["Foo-Header"].should.eql('foobar');
-            return requests[0].requestHeaders["X-File-Name"].should.eql('test%20file%20name');
+            return requests[0].requestHeaders["Foo-Header"].should.eql('foobar');
           });
         });
         return describe("should properly set status of file", function() {
-          return it("should correctly set `withCredentials` on the xhr object", function() {
+          return it("should correctly set `withCredentials` on the xhr object", function(done) {
             dropzone.addFile(mockFile);
-            mockFile.status.should.eql(Dropzone.UPLOADING);
-            requests.length.should.equal(1);
-            requests[0].status = 400;
-            requests[0].readyState = 4;
-            requests[0].onload();
-            mockFile.status.should.eql(Dropzone.ERROR);
-            mockFile = getMockFile();
-            dropzone.addFile(mockFile);
-            mockFile.status.should.eql(Dropzone.UPLOADING);
-            requests.length.should.equal(2);
-            requests[1].status = 200;
-            requests[1].readyState = 4;
-            requests[1].onload();
-            return mockFile.status.should.eql(Dropzone.SUCCESS);
+            return setTimeout(function() {
+              mockFile.status.should.eql(Dropzone.UPLOADING);
+              requests.length.should.equal(1);
+              requests[0].status = 400;
+              requests[0].readyState = 4;
+              requests[0].onload();
+              mockFile.status.should.eql(Dropzone.ERROR);
+              mockFile = getMockFile();
+              dropzone.addFile(mockFile);
+              return setTimeout(function() {
+                mockFile.status.should.eql(Dropzone.UPLOADING);
+                requests.length.should.equal(2);
+                requests[1].status = 200;
+                requests[1].readyState = 4;
+                requests[1].onload();
+                mockFile.status.should.eql(Dropzone.SUCCESS);
+                return done();
+              }, 10);
+            }, 10);
           });
         });
       });
