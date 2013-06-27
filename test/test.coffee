@@ -444,7 +444,7 @@ describe "Dropzone", ->
 
 
     describe ".removeFile()", ->
-      it "should abort uploading if file is currently being uploaded", ->
+      it "should abort uploading if file is currently being uploaded", (done) ->
         mockFile = getMockFile()
         dropzone.uploadFile = (file) ->
         dropzone.accept = (file, done) -> done()
@@ -452,26 +452,33 @@ describe "Dropzone", ->
         sinon.stub dropzone, "cancelUpload"
 
         dropzone.addFile mockFile
-        mockFile.status.should.equal Dropzone.UPLOADING
-        dropzone.getUploadingFiles()[0].should.equal mockFile
+        setTimeout ->
+          mockFile.status.should.equal Dropzone.UPLOADING
+          dropzone.getUploadingFiles()[0].should.equal mockFile
 
-        dropzone.cancelUpload.callCount.should.equal 0
-        dropzone.removeFile mockFile
-        dropzone.cancelUpload.callCount.should.equal 1
+          dropzone.cancelUpload.callCount.should.equal 0
+          dropzone.removeFile mockFile
+          dropzone.cancelUpload.callCount.should.equal 1
+          done()
+        , 10
 
     describe ".cancelUpload()", ->
-      it "should properly cancel upload if file currently uploading", ->
+      it "should properly cancel upload if file currently uploading", (done) ->
           mockFile = getMockFile()
 
           dropzone.accept = (file, done) -> done()
 
           dropzone.addFile mockFile
-          mockFile.status.should.equal Dropzone.UPLOADING
-          dropzone.getUploadingFiles()[0].should.equal mockFile
-          dropzone.cancelUpload mockFile
-          mockFile.status.should.equal Dropzone.CANCELED
-          dropzone.getUploadingFiles().length.should.equal 0
-          dropzone.getQueuedFiles().length.should.equal 0
+
+          setTimeout ->
+            mockFile.status.should.equal Dropzone.UPLOADING
+            dropzone.getUploadingFiles()[0].should.equal mockFile
+            dropzone.cancelUpload mockFile
+            mockFile.status.should.equal Dropzone.CANCELED
+            dropzone.getUploadingFiles().length.should.equal 0
+            dropzone.getQueuedFiles().length.should.equal 0
+            done()
+          , 10
 
       it "should properly cancel the upload if file is not yet uploading", ->
           mockFile = getMockFile()
@@ -490,7 +497,7 @@ describe "Dropzone", ->
           dropzone.getQueuedFiles().length.should.equal 0
           dropzone.getUploadingFiles().length.should.equal 0
 
-      it "should call processQueue()", ->
+      it "should call processQueue()", (done) ->
           mockFile = getMockFile()
 
           dropzone.accept = (file, done) -> done()
@@ -501,15 +508,20 @@ describe "Dropzone", ->
           sinon.spy dropzone, "processQueue"
 
           dropzone.addFile mockFile
-          dropzone.processQueue.callCount.should.equal 1
+          setTimeout ->
+            dropzone.processQueue.callCount.should.equal 1
 
-          dropzone.cancelUpload mockFile
+            dropzone.cancelUpload mockFile
 
-          dropzone.processQueue.callCount.should.equal 2
+            dropzone.processQueue.callCount.should.equal 2
+            done()
+          , 10
+
+      it "should properly cancel all files with the same XHR if uploadMultiple is true"
 
 
     describe ".disable()", ->
-      it "should properly cancel all pending uploads", ->
+      it "should properly cancel all pending uploads", (done) ->
           dropzone.accept = (file, done) -> done()
 
           dropzone.options.parallelUploads = 1
@@ -517,27 +529,31 @@ describe "Dropzone", ->
           dropzone.addFile getMockFile()
           dropzone.addFile getMockFile()
 
-          dropzone.getUploadingFiles().length.should.equal 1
-          dropzone.getQueuedFiles().length.should.equal 1
-          dropzone.files.length.should.equal 2
+          setTimeout ->
 
-          sinon.spy requests[0], "abort"
+            dropzone.getUploadingFiles().length.should.equal 1
+            dropzone.getQueuedFiles().length.should.equal 1
+            dropzone.files.length.should.equal 2
 
-          requests[0].abort.callCount.should.equal 0
+            sinon.spy requests[0], "abort"
 
-          dropzone.disable()
+            requests[0].abort.callCount.should.equal 0
 
-          requests[0].abort.callCount.should.equal 1
+            dropzone.disable()
 
-          dropzone.getUploadingFiles().length.should.equal 0
-          dropzone.getQueuedFiles().length.should.equal 0
-          dropzone.files.length.should.equal 2
+            requests[0].abort.callCount.should.equal 1
 
-          dropzone.files[0].status.should.equal Dropzone.CANCELED
-          dropzone.files[1].status.should.equal Dropzone.CANCELED
+            dropzone.getUploadingFiles().length.should.equal 0
+            dropzone.getQueuedFiles().length.should.equal 0
+            dropzone.files.length.should.equal 2
+
+            dropzone.files[0].status.should.equal Dropzone.CANCELED
+            dropzone.files[1].status.should.equal Dropzone.CANCELED
+            done()
+          , 10
 
     describe ".destroy()", ->
-      it "should properly cancel all pending uploads and remove all file references", ->
+      it "should properly cancel all pending uploads and remove all file references", (done) ->
           dropzone.accept = (file, done) -> done()
 
           dropzone.options.parallelUploads = 1
@@ -545,16 +561,20 @@ describe "Dropzone", ->
           dropzone.addFile getMockFile()
           dropzone.addFile getMockFile()
 
-          dropzone.getUploadingFiles().length.should.equal 1
-          dropzone.getQueuedFiles().length.should.equal 1
-          dropzone.files.length.should.equal 2
 
-          sinon.spy dropzone, "disable"
+          setTimeout ->
+            dropzone.getUploadingFiles().length.should.equal 1
+            dropzone.getQueuedFiles().length.should.equal 1
+            dropzone.files.length.should.equal 2
 
-          dropzone.destroy()
+            sinon.spy dropzone, "disable"
 
-          dropzone.disable.callCount.should.equal 1
-          element.should.not.have.property "dropzone"
+            dropzone.destroy()
+
+            dropzone.disable.callCount.should.equal 1
+            element.should.not.have.property "dropzone"
+            done()
+          , 10
 
       it "should be able to create instance of dropzone on the same element after destroy", ->
           dropzone.destroy()
@@ -620,13 +640,13 @@ describe "Dropzone", ->
 
 
   describe "helper function", ->
-    describe "getExistingFallback()", ->
-      element = null
-      dropzone = null
-      beforeEach ->
-        element = Dropzone.createElement """<div></div>"""
-        dropzone = new Dropzone element, url: "url"
+    element = null
+    dropzone = null
+    beforeEach ->
+      element = Dropzone.createElement """<div></div>"""
+      dropzone = new Dropzone element, url: "url"
 
+    describe "getExistingFallback()", ->
       it "should return undefined if no fallback", ->
         expect(dropzone.getExistingFallback()).to.equal undefined
 
@@ -643,6 +663,10 @@ describe "Dropzone", ->
         fallback = Dropzone.createElement """<div class=" abc fallback test "></div>"""
         element.appendChild fallback
         fallback.should.equal dropzone.getExistingFallback()
+
+    describe "getFallbackForm()", ->
+
+      it "should properly add [] to the file name if uploadMultiple is true"
 
 
   describe "file handling", ->
