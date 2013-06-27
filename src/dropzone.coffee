@@ -698,6 +698,9 @@ class Dropzone extends Em
 
         @enqueueFile file if @options.enqueueForUpload
 
+  # Wrapper for enqueuFile
+  enqueueFiles: (files) -> @enqueueFile file for file in files; null
+
   enqueueFile: (file) ->
     if file.status == Dropzone.ACCEPTED
       file.status = Dropzone.QUEUED
