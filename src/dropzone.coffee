@@ -825,6 +825,9 @@ class Dropzone extends Em
 
     @processQueue()
 
+  # Wrapper for uploadFiles()
+  uploadFile: (file) -> @uploadFiles [ file ]
+
   uploadFiles: (files) ->
     xhr = new XMLHttpRequest()
 

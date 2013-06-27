@@ -731,15 +731,19 @@ describe "Dropzone", ->
         mockFile.status = Dropzone.ADDED
         expect((-> dropzone.enqueueFile(mockFile))).to.throw "This file can't be queued because it has already been processed or was rejected."
 
-      it "should set the status to QUEUED and call processQueue if everything's ok", ->
+      it "should set the status to QUEUED and call processQueue asynchronously if everything's ok", (done) ->
         mockFile.status = Dropzone.ACCEPTED
         sinon.stub dropzone, "processQueue"
         dropzone.processQueue.callCount.should.equal 0
         dropzone.enqueueFile mockFile
         mockFile.status.should.equal Dropzone.QUEUED
-        dropzone.processQueue.callCount.should.equal 1
+        dropzone.processQueue.callCount.should.equal 0
+        setTimeout ->
+          dropzone.processQueue.callCount.should.equal 1
+          done()
+        , 10
 
-    describe "uploadFile()", ->
+    describe "uploadFiles()", ->
       xhr = null
       requests = null
 
@@ -754,25 +758,36 @@ describe "Dropzone", ->
       afterEach ->
         xhr.restore()
 
-      it "should properly urlencode the filename for the headers", ->
-        dropzone.uploadFile mockFile
-        requests[0].requestHeaders["X-File-Name"].should.eql 'test%20file%20name'
+      # Removed this test because multiple filenames can be transmitted now
+      # it "should properly urlencode the filename for the headers"
 
-      it "should ignore the onreadystate callback if readyState != 4", ->
+      it "should be wrapped by uploadFile()", ->
+        sinon.stub dropzone, "uploadFiles"
+
+        dropzone.uploadFile mockFile
+
+        dropzone.uploadFiles.callCount.should.equal 1
+        dropzone.uploadFiles.calledWith([ mockFile ]).should.be.ok
+
+      it "should ignore the onreadystate callback if readyState != 4", (done) ->
         dropzone.addFile mockFile
 
-        mockFile.status.should.eql Dropzone.UPLOADING
+        setTimeout ->
 
-        requests[0].status = 200
-        requests[0].readyState = 3
-        requests[0].onload()
+          mockFile.status.should.eql Dropzone.UPLOADING
 
-        mockFile.status.should.eql Dropzone.UPLOADING
-      
-        requests[0].readyState = 4
-        requests[0].onload()
+          requests[0].status = 200
+          requests[0].readyState = 3
+          requests[0].onload()
 
-        mockFile.status.should.eql Dropzone.SUCCESS
+          mockFile.status.should.eql Dropzone.UPLOADING
+        
+          requests[0].readyState = 4
+          requests[0].onload()
+
+          mockFile.status.should.eql Dropzone.SUCCESS
+          done()
+        , 10
       
 
 
@@ -790,33 +805,37 @@ describe "Dropzone", ->
           dropzone.options.headers = {"Foo-Header": "foobar"}
           dropzone.uploadFile mockFile
           requests[0].requestHeaders["Foo-Header"].should.eql 'foobar'
-          requests[0].requestHeaders["X-File-Name"].should.eql 'test%20file%20name'
 
       describe "should properly set status of file", ->
-        it "should correctly set `withCredentials` on the xhr object", ->
+        it "should correctly set `withCredentials` on the xhr object", (done) ->
           dropzone.addFile mockFile
 
-          mockFile.status.should.eql Dropzone.UPLOADING
+          setTimeout ->
+            mockFile.status.should.eql Dropzone.UPLOADING
 
-          requests.length.should.equal 1
-          requests[0].status = 400
-          requests[0].readyState = 4
+            requests.length.should.equal 1
+            requests[0].status = 400
+            requests[0].readyState = 4
 
-          requests[0].onload()
+            requests[0].onload()
 
-          mockFile.status.should.eql Dropzone.ERROR
+            mockFile.status.should.eql Dropzone.ERROR
 
 
-          mockFile = getMockFile()
-          dropzone.addFile mockFile
+            mockFile = getMockFile()
+            dropzone.addFile mockFile
 
-          mockFile.status.should.eql Dropzone.UPLOADING
+            setTimeout ->
+              mockFile.status.should.eql Dropzone.UPLOADING
 
-          requests.length.should.equal 2
-          requests[1].status = 200
-          requests[1].readyState = 4
+              requests.length.should.equal 2
+              requests[1].status = 200
+              requests[1].readyState = 4
 
-          requests[1].onload()
+              requests[1].onload()
 
-          mockFile.status.should.eql Dropzone.SUCCESS
+              mockFile.status.should.eql Dropzone.SUCCESS
+              done()
+            , 10
+          , 10
 
