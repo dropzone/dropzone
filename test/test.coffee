@@ -849,6 +849,33 @@ describe "Dropzone", ->
         , 10
       
 
+      it "should emit error and errormultiple when response was not OK", (done) ->
+        dropzone.options.uploadMultiple = yes
+
+        error = no
+        errormultiple = no
+        complete = no
+        completemultiple = no
+        dropzone.on "error", -> error = yes
+        dropzone.on "errormultiple", -> errormultiple = yes
+        dropzone.on "complete", -> complete = yes
+        dropzone.on "completemultiple", -> completemultiple = yes
+
+        dropzone.addFile mockFile
+
+        setTimeout ->
+
+          mockFile.status.should.eql Dropzone.UPLOADING
+
+          requests[0].status = 400
+          requests[0].readyState = 4
+          requests[0].onload()
+
+          expect(yes == error == errormultiple == complete == completemultiple).to.be.ok
+
+          done()
+        , 10
+
 
       describe "settings()", ->
         it "should correctly set `withCredentials` on the xhr object", ->
@@ -902,9 +929,11 @@ describe "Dropzone", ->
           dropzone.options.paramName = "myName"
 
           formData = null
+          sendingMultipleCount = 0
           sendingCount = 0
-          dropzone.on "sending", (files, xhr, tformData) ->
-            sendingCount++
+          dropzone.on "sending", (file, xhr, tformData) -> sendingCount++
+          dropzone.on "sendingmultiple", (files, xhr, tformData) ->
+            sendingMultipleCount++
             formData = tformData
             sinon.spy tformData, "append"
 
@@ -915,7 +944,8 @@ describe "Dropzone", ->
           dropzone.addFile mock2
 
           setTimeout ->
-            sendingCount.should.equal 1
+            sendingCount.should.equal 2
+            sendingMultipleCount.should.equal 1
             dropzone.uploadFiles [ mock1, mock2 ]
             formData.append.callCount.should.equal 2
             formData.append.args[0][0].should.eql "myName[]"

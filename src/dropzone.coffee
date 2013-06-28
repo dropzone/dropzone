@@ -52,13 +52,18 @@ class Dropzone extends Em
     "removedfile"
     "thumbnail"
     "error"
-    "processingfile"
+    "processing"
+    "processingmultiple"
     "uploadprogress"
     "totaluploadprogress"
     "sending"
+    "sendingmultiple"
     "success"
+    "successmultiple"
     "canceled"
+    "canceledmultiple"
     "complete"
+    "completemultiple"
     "reset"
   ]
 
@@ -303,9 +308,11 @@ class Dropzone extends Em
     # Called when a file gets processed. Since there is a cue, not all added
     # files are processed immediately.
     # Receives `file`
-    processingfile: (file) ->
+    processing: (file) ->
       file.previewElement.classList.add "dz-processing"
       file._removeLink.textContent = @options.dictCancelUpload if file._removeLink
+    
+    processingmultiple: noop
     
     # Called whenever the upload progress gets updated.
     # Receives `file`, `progress` (percentage 0-100) and `bytesSent`.
@@ -322,18 +329,26 @@ class Dropzone extends Em
     # `formData` object to add additional information.
     sending: noop
     
+    sendingmultiple: noop
+    
     # When the complete upload is finished and successfull
     # Receives `file`
     success: (file) ->
       file.previewElement.classList.add "dz-success"
 
+    successmultiple: noop
+
     # When the upload is canceled.
     canceled: (file) -> @emit "error", file, "Upload canceled."
+
+    canceledmultiple: noop
 
     # When the upload is finished, either with success or an error.
     # Receives `file`
     complete: (file) ->
       file._removeLink.textContent = @options.dictRemoveFile if file._removeLink
+
+    completemultiple: noop
 
 
 
@@ -691,7 +706,7 @@ class Dropzone extends Em
     @accept file, (error) =>
       if error
         file.accepted = false # Backwards compatibility
-        @errorProcessing file, error # Will set the file.status
+        @_errorProcessing [ file ], error # Will set the file.status
       else
         file.status = Dropzone.ACCEPTED
         file.accepted = true # Backwards compatibility
@@ -802,7 +817,9 @@ class Dropzone extends Em
       file.processing = yes # Backwards compatibility
       file.status = Dropzone.UPLOADING
 
-      @emit "processingfile", file
+      @emit "processing", file
+
+    @emit "processingmultiple", files if @options.uploadMultiple
 
     @uploadFiles files
 
@@ -821,10 +838,12 @@ class Dropzone extends Em
       groupedFile.status = Dropzone.CANCELED for groupedFile in groupedFiles
       file.xhr.abort()
       @emit "canceled", groupedFile for groupedFile in groupedFiles
+      @emit "canceledmultiple", groupedFiles if @options.uploadMultiple
 
     else if file.status in [ Dropzone.ADDED, Dropzone.ACCEPTED, Dropzone.QUEUED ]
       file.status = Dropzone.CANCELED
       @emit "canceled", file
+      @emit "canceledmultiple", [ file ] if @options.uploadMultiple
 
     @processQueue()
 
@@ -847,7 +866,7 @@ class Dropzone extends Em
 
     handleError = =>
       for file in files
-        @errorProcessing file, response || @options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr
+        @_errorProcessing files, response || @options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr
 
 
     updateProgress = (e) =>
@@ -895,7 +914,7 @@ class Dropzone extends Em
       unless 200 <= xhr.status < 300
         handleError()
       else
-        @finished file, response, e for file in files
+        @_finished files, response, e
 
     xhr.onerror = =>
       return if files[0].status == Dropzone.CANCELED
@@ -930,10 +949,8 @@ class Dropzone extends Em
 
 
     # Let the user add additional data if necessary
-    if @options.uploadMultiple
-      @emit "sending", files, xhr, formData
-    else 
-      @emit "sending", file, xhr, formData for file in files
+    @emit "sending", file, xhr, formData for file in files
+    @emit "sendingmultiple", files, xhr, formData if @options.uploadMultiple
 
     # Finally add the file
     # Has to be last because some servers (eg: S3) expect the file to be the
@@ -945,21 +962,29 @@ class Dropzone extends Em
 
   # Called internally when processing is finished.
   # Individual callbacks have to be called in the appropriate sections.
-  finished: (file, responseText, e) ->
-    file.status = Dropzone.SUCCESS
-    @processQueue()
-    @emit "success", file, responseText, e
-    @emit "finished", file, responseText, e # For backwards compatibility
-    @emit "complete", file
+  _finished: (files, responseText, e) ->
+    for file in files
+      file.status = Dropzone.SUCCESS
+      @emit "success", file, responseText, e
+      @emit "complete", file
+    if @options.uploadMultiple
+      @emit "successmultiple", files, responseText, e
+      @emit "completemultiple", files
 
+    @processQueue()
 
   # Called internally when processing is finished.
   # Individual callbacks have to be called in the appropriate sections.
-  errorProcessing: (file, message, xhr) ->
-    file.status = Dropzone.ERROR
+  _errorProcessing: (files, message, xhr) ->
+    for file in files
+      file.status = Dropzone.ERROR
+      @emit "error", file, message, xhr
+      @emit "complete", file
+    if @options.uploadMultiple
+      @emit "errormultiple", files, message, xhr
+      @emit "completemultiple", files
+    
     @processQueue()
-    @emit "error", file, message, xhr
-    @emit "complete", file
 
 
 
