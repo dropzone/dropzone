@@ -517,7 +517,42 @@ describe "Dropzone", ->
           done()
         , 10
 
-      it "should properly cancel all files with the same XHR if uploadMultiple is true"
+      it "should properly cancel all files with the same XHR if uploadMultiple is true", (done) ->
+        mock1 = getMockFile()
+        mock2 = getMockFile()
+        mock3 = getMockFile()
+
+        dropzone.accept = (file, done) -> done()
+
+        # Making sure the file stays in the queue.
+        dropzone.options.uploadMultiple = yes
+        dropzone.options.parallelUploads = 3
+
+        sinon.spy dropzone, "processFiles"
+
+        dropzone.addFile mock1
+        dropzone.addFile mock2
+        dropzone.addFile mock3
+
+        setTimeout ->
+          dropzone.processFiles.callCount.should.equal 1
+
+          sinon.spy mock1.xhr, "abort"
+
+          dropzone.cancelUpload mock1
+
+          expect(mock1.xhr == mock2.xhr == mock3.xhr).to.be.ok
+
+          mock1.status.should.equal Dropzone.CANCELED
+          mock2.status.should.equal Dropzone.CANCELED
+          mock3.status.should.equal Dropzone.CANCELED
+
+          # The XHR should only be aborted once!
+          mock1.xhr.abort.callCount.should.equal 1
+
+          done()
+        , 10
+
 
 
     describe ".disable()", ->

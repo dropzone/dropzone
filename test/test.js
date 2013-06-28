@@ -747,7 +747,33 @@
             return done();
           }, 10);
         });
-        return it("should properly cancel all files with the same XHR if uploadMultiple is true");
+        return it("should properly cancel all files with the same XHR if uploadMultiple is true", function(done) {
+          var mock1, mock2, mock3;
+          mock1 = getMockFile();
+          mock2 = getMockFile();
+          mock3 = getMockFile();
+          dropzone.accept = function(file, done) {
+            return done();
+          };
+          dropzone.options.uploadMultiple = true;
+          dropzone.options.parallelUploads = 3;
+          sinon.spy(dropzone, "processFiles");
+          dropzone.addFile(mock1);
+          dropzone.addFile(mock2);
+          dropzone.addFile(mock3);
+          return setTimeout(function() {
+            var _ref;
+            dropzone.processFiles.callCount.should.equal(1);
+            sinon.spy(mock1.xhr, "abort");
+            dropzone.cancelUpload(mock1);
+            expect((mock1.xhr === (_ref = mock2.xhr) && _ref === mock3.xhr)).to.be.ok;
+            mock1.status.should.equal(Dropzone.CANCELED);
+            mock2.status.should.equal(Dropzone.CANCELED);
+            mock3.status.should.equal(Dropzone.CANCELED);
+            mock1.xhr.abort.callCount.should.equal(1);
+            return done();
+          }, 10);
+        });
       });
       describe(".disable()", function() {
         return it("should properly cancel all pending uploads", function(done) {
