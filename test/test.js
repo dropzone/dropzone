@@ -1071,12 +1071,61 @@
             requests.length.should.eql(2);
             return requests[1].withCredentials.should.eql(true);
           });
-          return it("should correctly override headers on the xhr object", function() {
+          it("should correctly override headers on the xhr object", function() {
             dropzone.options.headers = {
               "Foo-Header": "foobar"
             };
             dropzone.uploadFile(mockFile);
             return requests[0].requestHeaders["Foo-Header"].should.eql('foobar');
+          });
+          it("should properly use the paramName without [] as file upload if uploadMultiple is false", function(done) {
+            var formData, mock1, mock2, sendingCount;
+            dropzone.options.uploadMultiple = false;
+            dropzone.options.paramName = "myName";
+            formData = [];
+            sendingCount = 0;
+            dropzone.on("sending", function(files, xhr, tformData) {
+              sendingCount++;
+              formData.push(tformData);
+              return sinon.spy(tformData, "append");
+            });
+            mock1 = getMockFile();
+            mock2 = getMockFile();
+            dropzone.addFile(mock1);
+            dropzone.addFile(mock2);
+            return setTimeout(function() {
+              sendingCount.should.equal(2);
+              formData.length.should.equal(2);
+              formData[0].append.callCount.should.equal(1);
+              formData[1].append.callCount.should.equal(1);
+              formData[0].append.args[0][0].should.eql("myName");
+              formData[0].append.args[0][0].should.eql("myName");
+              return done();
+            }, 10);
+          });
+          return it("should properly use the paramName with [] as file upload if uploadMultiple is true", function(done) {
+            var formData, mock1, mock2, sendingCount;
+            dropzone.options.uploadMultiple = true;
+            dropzone.options.paramName = "myName";
+            formData = null;
+            sendingCount = 0;
+            dropzone.on("sending", function(files, xhr, tformData) {
+              sendingCount++;
+              formData = tformData;
+              return sinon.spy(tformData, "append");
+            });
+            mock1 = getMockFile();
+            mock2 = getMockFile();
+            dropzone.addFile(mock1);
+            dropzone.addFile(mock2);
+            return setTimeout(function() {
+              sendingCount.should.equal(1);
+              dropzone.uploadFiles([mock1, mock2]);
+              formData.append.callCount.should.equal(2);
+              formData.append.args[0][0].should.eql("myName[]");
+              formData.append.args[1][0].should.eql("myName[]");
+              return done();
+            }, 10);
           });
         });
         return describe("should properly set status of file", function() {

@@ -1359,9 +1359,13 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
           }
         }
       }
-      for (_k = 0, _len2 = files.length; _k < _len2; _k++) {
-        file = files[_k];
-        this.emit("sending", file, xhr, formData);
+      if (this.options.uploadMultiple) {
+        this.emit("sending", files, xhr, formData);
+      } else {
+        for (_k = 0, _len2 = files.length; _k < _len2; _k++) {
+          file = files[_k];
+          this.emit("sending", file, xhr, formData);
+        }
       }
       for (_l = 0, _len3 = files.length; _l < _len3; _l++) {
         file = files[_l];
