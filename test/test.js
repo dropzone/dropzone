@@ -1061,6 +1061,35 @@
             return done();
           }, 10);
         });
+        it("should emit error and errormultiple when response was not OK", function(done) {
+          var complete, completemultiple, error, errormultiple;
+          dropzone.options.uploadMultiple = true;
+          error = false;
+          errormultiple = false;
+          complete = false;
+          completemultiple = false;
+          dropzone.on("error", function() {
+            return error = true;
+          });
+          dropzone.on("errormultiple", function() {
+            return errormultiple = true;
+          });
+          dropzone.on("complete", function() {
+            return complete = true;
+          });
+          dropzone.on("completemultiple", function() {
+            return completemultiple = true;
+          });
+          dropzone.addFile(mockFile);
+          return setTimeout(function() {
+            mockFile.status.should.eql(Dropzone.UPLOADING);
+            requests[0].status = 400;
+            requests[0].readyState = 4;
+            requests[0].onload();
+            expect((((true === error && error === errormultiple) && errormultiple === complete) && complete === completemultiple)).to.be.ok;
+            return done();
+          }, 10);
+        });
         describe("settings()", function() {
           it("should correctly set `withCredentials` on the xhr object", function() {
             dropzone.uploadFile(mockFile);
@@ -1104,13 +1133,17 @@
             }, 10);
           });
           return it("should properly use the paramName with [] as file upload if uploadMultiple is true", function(done) {
-            var formData, mock1, mock2, sendingCount;
+            var formData, mock1, mock2, sendingCount, sendingMultipleCount;
             dropzone.options.uploadMultiple = true;
             dropzone.options.paramName = "myName";
             formData = null;
+            sendingMultipleCount = 0;
             sendingCount = 0;
-            dropzone.on("sending", function(files, xhr, tformData) {
-              sendingCount++;
+            dropzone.on("sending", function(file, xhr, tformData) {
+              return sendingCount++;
+            });
+            dropzone.on("sendingmultiple", function(files, xhr, tformData) {
+              sendingMultipleCount++;
               formData = tformData;
               return sinon.spy(tformData, "append");
             });
@@ -1119,7 +1152,8 @@
             dropzone.addFile(mock1);
             dropzone.addFile(mock2);
             return setTimeout(function() {
-              sendingCount.should.equal(1);
+              sendingCount.should.equal(2);
+              sendingMultipleCount.should.equal(1);
               dropzone.uploadFiles([mock1, mock2]);
               formData.append.callCount.should.equal(2);
               formData.append.args[0][0].should.eql("myName[]");

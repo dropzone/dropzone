@@ -408,7 +408,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     */
 
 
-    Dropzone.prototype.events = ["drop", "dragstart", "dragend", "dragenter", "dragover", "dragleave", "selectedfiles", "addedfile", "removedfile", "thumbnail", "error", "processingfile", "uploadprogress", "totaluploadprogress", "sending", "success", "canceled", "complete", "reset"];
+    Dropzone.prototype.events = ["drop", "dragstart", "dragend", "dragenter", "dragover", "dragleave", "selectedfiles", "addedfile", "removedfile", "thumbnail", "error", "processing", "processingmultiple", "uploadprogress", "totaluploadprogress", "sending", "sendingmultiple", "success", "successmultiple", "canceled", "canceledmultiple", "complete", "completemultiple", "reset"];
 
     Dropzone.prototype.defaultOptions = {
       url: null,
@@ -566,28 +566,33 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         file.previewElement.classList.add("dz-error");
         return file.previewElement.querySelector("[data-dz-errormessage]").textContent = message;
       },
-      processingfile: function(file) {
+      processing: function(file) {
         file.previewElement.classList.add("dz-processing");
         if (file._removeLink) {
           return file._removeLink.textContent = this.options.dictCancelUpload;
         }
       },
+      processingmultiple: noop,
       uploadprogress: function(file, progress, bytesSent) {
         return file.previewElement.querySelector("[data-dz-uploadprogress]").style.width = "" + progress + "%";
       },
       totaluploadprogress: noop,
       sending: noop,
+      sendingmultiple: noop,
       success: function(file) {
         return file.previewElement.classList.add("dz-success");
       },
+      successmultiple: noop,
       canceled: function(file) {
         return this.emit("error", file, "Upload canceled.");
       },
+      canceledmultiple: noop,
       complete: function(file) {
         if (file._removeLink) {
           return file._removeLink.textContent = this.options.dictRemoveFile;
         }
       },
+      completemultiple: noop,
       previewTemplate: "<div class=\"dz-preview dz-file-preview\">\n  <div class=\"dz-details\">\n    <div class=\"dz-filename\"><span data-dz-name></span></div>\n    <div class=\"dz-size\" data-dz-size></div>\n    <img data-dz-thumbnail />\n  </div>\n  <div class=\"dz-progress\"><span class=\"dz-upload\" data-dz-uploadprogress></span></div>\n  <div class=\"dz-success-mark\"><span>✔</span></div>\n  <div class=\"dz-error-mark\"><span>✘</span></div>\n  <div class=\"dz-error-message\"><span data-dz-errormessage></span></div>\n</div>"
     };
 
@@ -1045,7 +1050,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       return this.accept(file, function(error) {
         if (error) {
           file.accepted = false;
-          return _this.errorProcessing(file, error);
+          return _this._errorProcessing([file], error);
         } else {
           file.status = Dropzone.ACCEPTED;
           file.accepted = true;
@@ -1192,7 +1197,10 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         file = files[_i];
         file.processing = true;
         file.status = Dropzone.UPLOADING;
-        this.emit("processingfile", file);
+        this.emit("processing", file);
+      }
+      if (this.options.uploadMultiple) {
+        this.emit("processingmultiple", files);
       }
       return this.uploadFiles(files);
     };
@@ -1226,9 +1234,15 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
           groupedFile = groupedFiles[_j];
           this.emit("canceled", groupedFile);
         }
+        if (this.options.uploadMultiple) {
+          this.emit("canceledmultiple", groupedFiles);
+        }
       } else if ((_ref = file.status) === Dropzone.ADDED || _ref === Dropzone.ACCEPTED || _ref === Dropzone.QUEUED) {
         file.status = Dropzone.CANCELED;
         this.emit("canceled", file);
+        if (this.options.uploadMultiple) {
+          this.emit("canceledmultiple", [file]);
+        }
       }
       return this.processQueue();
     };
@@ -1253,7 +1267,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         _results = [];
         for (_j = 0, _len1 = files.length; _j < _len1; _j++) {
           file = files[_j];
-          _results.push(_this.errorProcessing(file, response || _this.options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr));
+          _results.push(_this._errorProcessing(files, response || _this.options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr));
         }
         return _results;
       };
@@ -1292,7 +1306,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         return _results;
       };
       xhr.onload = function(e) {
-        var _j, _len1, _ref, _results;
+        var _ref;
         if (files[0].status === Dropzone.CANCELED) {
           return;
         }
@@ -1312,12 +1326,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         if (!((200 <= (_ref = xhr.status) && _ref < 300))) {
           return handleError();
         } else {
-          _results = [];
-          for (_j = 0, _len1 = files.length; _j < _len1; _j++) {
-            file = files[_j];
-            _results.push(_this.finished(file, response, e));
-          }
-          return _results;
+          return _this._finished(files, response, e);
         }
       };
       xhr.onerror = function() {
@@ -1359,13 +1368,12 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
           }
         }
       }
+      for (_k = 0, _len2 = files.length; _k < _len2; _k++) {
+        file = files[_k];
+        this.emit("sending", file, xhr, formData);
+      }
       if (this.options.uploadMultiple) {
-        this.emit("sending", files, xhr, formData);
-      } else {
-        for (_k = 0, _len2 = files.length; _k < _len2; _k++) {
-          file = files[_k];
-          this.emit("sending", file, xhr, formData);
-        }
+        this.emit("sendingmultiple", files, xhr, formData);
       }
       for (_l = 0, _len3 = files.length; _l < _len3; _l++) {
         file = files[_l];
@@ -1374,19 +1382,34 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       return xhr.send(formData);
     };
 
-    Dropzone.prototype.finished = function(file, responseText, e) {
-      file.status = Dropzone.SUCCESS;
-      this.processQueue();
-      this.emit("success", file, responseText, e);
-      this.emit("finished", file, responseText, e);
-      return this.emit("complete", file);
+    Dropzone.prototype._finished = function(files, responseText, e) {
+      var file, _i, _len;
+      for (_i = 0, _len = files.length; _i < _len; _i++) {
+        file = files[_i];
+        file.status = Dropzone.SUCCESS;
+        this.emit("success", file, responseText, e);
+        this.emit("complete", file);
+      }
+      if (this.options.uploadMultiple) {
+        this.emit("successmultiple", files, responseText, e);
+        this.emit("completemultiple", files);
+      }
+      return this.processQueue();
     };
 
-    Dropzone.prototype.errorProcessing = function(file, message, xhr) {
-      file.status = Dropzone.ERROR;
-      this.processQueue();
-      this.emit("error", file, message, xhr);
-      return this.emit("complete", file);
+    Dropzone.prototype._errorProcessing = function(files, message, xhr) {
+      var file, _i, _len;
+      for (_i = 0, _len = files.length; _i < _len; _i++) {
+        file = files[_i];
+        file.status = Dropzone.ERROR;
+        this.emit("error", file, message, xhr);
+        this.emit("complete", file);
+      }
+      if (this.options.uploadMultiple) {
+        this.emit("errormultiple", files, message, xhr);
+        this.emit("completemultiple", files);
+      }
+      return this.processQueue();
     };
 
     return Dropzone;
