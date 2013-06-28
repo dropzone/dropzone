@@ -930,7 +930,10 @@ class Dropzone extends Em
 
 
     # Let the user add additional data if necessary
-    @emit "sending", file, xhr, formData for file in files
+    if @options.uploadMultiple
+      @emit "sending", files, xhr, formData
+    else 
+      @emit "sending", file, xhr, formData for file in files
 
     # Finally add the file
     # Has to be last because some servers (eg: S3) expect the file to be the

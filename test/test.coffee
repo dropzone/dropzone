@@ -865,6 +865,65 @@ describe "Dropzone", ->
           dropzone.uploadFile mockFile
           requests[0].requestHeaders["Foo-Header"].should.eql 'foobar'
 
+        it "should properly use the paramName without [] as file upload if uploadMultiple is false", (done) ->
+          dropzone.options.uploadMultiple = false
+          dropzone.options.paramName = "myName"
+
+          formData = [ ]
+          sendingCount = 0
+          dropzone.on "sending", (files, xhr, tformData) ->
+            sendingCount++
+
+            formData.push tformData
+            sinon.spy tformData, "append"
+
+
+          mock1 = getMockFile()
+          mock2 = getMockFile()
+
+          dropzone.addFile mock1
+          dropzone.addFile mock2
+
+          setTimeout ->
+            sendingCount.should.equal 2
+
+            formData.length.should.equal 2
+            formData[0].append.callCount.should.equal 1
+            formData[1].append.callCount.should.equal 1
+            formData[0].append.args[0][0].should.eql "myName"
+            formData[0].append.args[0][0].should.eql "myName"
+
+            done()
+          , 10
+
+
+        it "should properly use the paramName with [] as file upload if uploadMultiple is true", (done) ->
+          dropzone.options.uploadMultiple = yes
+          dropzone.options.paramName = "myName"
+
+          formData = null
+          sendingCount = 0
+          dropzone.on "sending", (files, xhr, tformData) ->
+            sendingCount++
+            formData = tformData
+            sinon.spy tformData, "append"
+
+          mock1 = getMockFile()
+          mock2 = getMockFile()
+
+          dropzone.addFile mock1
+          dropzone.addFile mock2
+
+          setTimeout ->
+            sendingCount.should.equal 1
+            dropzone.uploadFiles [ mock1, mock2 ]
+            formData.append.callCount.should.equal 2
+            formData.append.args[0][0].should.eql "myName[]"
+            formData.append.args[1][0].should.eql "myName[]"
+            done()
+          , 10
+
+
       describe "should properly set status of file", ->
         it "should correctly set `withCredentials` on the xhr object", (done) ->
           dropzone.addFile mockFile
