@@ -665,8 +665,18 @@ describe "Dropzone", ->
         fallback.should.equal dropzone.getExistingFallback()
 
     describe "getFallbackForm()", ->
-
-      it "should properly add [] to the file name if uploadMultiple is true"
+      it "should use the paramName without [] if uploadMultiple is false", ->
+        dropzone.options.uploadMultiple = false
+        dropzone.options.paramName = "myFile"
+        fallback = dropzone.getFallbackForm()
+        fileInput = fallback.querySelector "input[type=file]"
+        fileInput.name.should.equal "myFile"
+      it "should properly add [] to the file name if uploadMultiple is true", ->
+        dropzone.options.uploadMultiple = yes
+        dropzone.options.paramName = "myFile"
+        fallback = dropzone.getFallbackForm()
+        fileInput = fallback.querySelector "input[type=file]"
+        fileInput.name.should.equal "myFile[]"
 
 
   describe "file handling", ->

@@ -890,7 +890,22 @@
         });
       });
       return describe("getFallbackForm()", function() {
-        return it("should properly add [] to the file name if uploadMultiple is true");
+        it("should use the paramName without [] if uploadMultiple is false", function() {
+          var fallback, fileInput;
+          dropzone.options.uploadMultiple = false;
+          dropzone.options.paramName = "myFile";
+          fallback = dropzone.getFallbackForm();
+          fileInput = fallback.querySelector("input[type=file]");
+          return fileInput.name.should.equal("myFile");
+        });
+        return it("should properly add [] to the file name if uploadMultiple is true", function() {
+          var fallback, fileInput;
+          dropzone.options.uploadMultiple = true;
+          dropzone.options.paramName = "myFile";
+          fallback = dropzone.getFallbackForm();
+          fileInput = fallback.querySelector("input[type=file]");
+          return fileInput.name.should.equal("myFile[]");
+        });
       });
     });
     return describe("file handling", function() {
