@@ -887,7 +887,7 @@ class Dropzone extends Em
         inputName = input.getAttribute "name"
         inputType = input.getAttribute "type"
 
-        if !inputType or inputType.toLowerCase() != "checkbox" or input.checked
+        if !inputType or (inputType.toLowerCase() != "checkbox" and inputType.toLowerCase() != "radio") or input.checked
           formData.append inputName, input.value
 
 
