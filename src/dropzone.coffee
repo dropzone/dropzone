@@ -937,19 +937,20 @@ class Dropzone extends Em
     # Adding all @options parameters
     formData.append key, value for key, value of @options.params if @options.params
 
+    # Let the user add additional data if necessary
+    @emit "sending", file, xhr, formData for file in files
+    @emit "sendingmultiple", files, xhr, formData if @options.uploadMultiple
+
+
     # Take care of other input elements
     if @element.tagName == "FORM"
       for input in @element.querySelectorAll "input, textarea, select, button"
         inputName = input.getAttribute "name"
         inputType = input.getAttribute "type"
 
-        if !inputType or (inputType.toLowerCase() != "checkbox" and inputType.toLowerCase() != "radio") or input.checked
+        if !inputType or (inputType.toLowerCase() not in [ "checkbox", "radio" ]) or input.checked
           formData.append inputName, input.value
 
-
-    # Let the user add additional data if necessary
-    @emit "sending", file, xhr, formData for file in files
-    @emit "sendingmultiple", files, xhr, formData if @options.uploadMultiple
 
     # Finally add the file
     # Has to be last because some servers (eg: S3) expect the file to be the
