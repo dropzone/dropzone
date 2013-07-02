@@ -261,7 +261,8 @@ The valid options are:
 | `method`                | Defaults to `"post"` and can be changed to `"put"` if necessary.
 | `parallelUploads`       | How many file uploads to process in parallel (See the *Enqueuing file uploads* section for more info)
 | `maxFilesize`           | in MB
-| `paramName`             | The name of the file param that gets transferred. Defaults to `file`.
+| `paramName`             | The name of the file param that gets transferred. Defaults to `file`. **NOTE**: If you have the option `uploadMultiple` set to `true`, then Dropzone will append `[]` to the name.
+| `uploadMultiple`        | Whether Dropzone should send multiple files in one request. If this it set to true, then the fallback file input element will have the `multiple` attribute as well. This option will also trigger additional events (like `processingmultiple`). See the events section for more information.
 | `headers`               | An object to send additional headers to the server. Eg: `headers: { "My-Awesome-Header": "header value" }`
 | `addRemoveLinks`        | This will add a link to every file preview to remove or cancel (if already uploading) the file. The `dictCancelUpload`, `dictCancelUploadConfirmation` and `dictRemoveFile` options are used for the wording.
 | `previewsContainer`     | defines where to display the file previews – if `null` the Dropzone element is used. Can be a plain HTMLElement or a CSS selector. The element should have the `dropzone-previews` class so the previews are displayed properly.
@@ -272,9 +273,10 @@ The valid options are:
 | `thumbnailHeight`       |
 | `resize`                | is the function that gets called to create the resize information. It gets the `file` as first parameter and must return an object with `srcX`, `srcY`, `srcWidth` and `srcHeight` and the same for `trg*`. Those values are going to be used by `ctx.drawImage()`.
 | `init`                  | is a function that gets called when Dropzone is initialized. You can setup event listeners inside this function.
-| `acceptedMimeTypes`     | The default implementation of `accept` checks the file's mime type against this list. If the Dropzone is `clickable` this option will be used as [`accept`](https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-accept) parameter on the hidden file input as well.
+| `acceptedMimeTypes`     | The default implementation of `accept` checks the file's mime type against this list. This is a comma separated list of mime types or file extensions. Eg.: `image/*,application/pdf,.psd`. If the Dropzone is `clickable` this option will be used as [`accept`](https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-accept) parameter on the hidden file input as well.
 | `accept`                | is a function that gets a [file](https://developer.mozilla.org/en-US/docs/DOM/File) and a `done` function as parameter. If the done function is invoked without a parameter, the file will be processed. If you pass an error message it will be displayed and the file will not be uploaded. This function will not be called if the file is too big or doesn't match the mime types.
-| `enqueueForUpload`      | When false, dropped files aren't uploaded automatically. See below for more info on enqueuing file uploads.
+| <strike>`enqueueForUpload`</strike> | Deprecated in favor of `autoProcessQueue`.
+| `autoProcessQueue`      | When set to `false` you have to call `myDropzone.processQueue()` yourself in order to upload the dropped files. See below for more information on handling queues.
 | `previewTemplate`       | is a string that contains the template used for each dropped image. Change it to fulfill your needs but make sure to properly provide all elements.
 | `forceFallback`         | defaults to `false`. If `true` the fallback will be forced. This is very useful to test your server implementations first and make sure that everything works as expected without dropzone if you experience problems, and to test how your fallbacks will look.
 | `fallback`              | is a function that gets called when the browser is not supported. The default implementation shows the fallback input field and adds a text.
@@ -301,27 +303,18 @@ to translate dropzone, you can also provide these options:
 
 ### Enqueuing file uploads
 
-When a file gets added to the dropzone, it's `status` gets set to `Dropzone.QUEUED`.
-Whenever this happens or a file upload has finished `.processQueue()` is called
-which checks how many files are currently uploading, and if it's less than
-`options.parallelUploads` `.processFile(file)` is called.
+When a file gets added to the dropzone, it's `status` gets set to `Dropzone.QUEUED`
+(after the `accept` function check passes) which means that the file is now
+in the queue.
 
-If you set `enqueueForUpload` to `false`, the `status` property of the file will
-be set to `Dropzone.ACCEPTED` and it won't be on the queue for uploads automatically.
+If you have the option `autoProcessQueue` set to `true` then the queue is immediately
+processed, after a file is dropped or an upload finished, by calling
+`.processQueue()` which checks how many files are currently uploading,
+and if it's less than `options.parallelUploads` `.processFile(file)` is called.
 
-Now, to programmatically let Dropzone process a file you can either call:
-
-```js
-myDropzone.processFile(file);
-```
-if you want it to be processed immediately, or
-
-```js
-myDropzone.enqueueFile(file);
-```
-
-if you want to use a queue. (This will set `file.status` to `Dropzone.QUEUED` and
-call `.processFile(file)` for you)
+If you set `autoProcessQueue` to `false`, then `.processQueue()` is never called
+implicitly. This means that you have to call it yourself when you want to
+upload all files currently queued.
 
 
 ## listen to events
@@ -388,12 +381,24 @@ All of these receive the [file](https://developer.mozilla.org/en-US/docs/DOM/Fil
 | `selectedfiles`       | Receives an array of files and gets called whenever files are dropped or selected.
 | `thumbnail`           | When the thumbnail has been generated. Receives the [**dataUrl**](http://en.wikipedia.org/wiki/Data_URI_scheme) as second parameter.
 | `error`               | An error occured. Receives the **errorMessage** as second parameter and if the error was due to the XMLHttpRequest the xhr object as third.
-| `processingfile`      | When a file gets processed (since there is a queue not all files are processed immediately)
+| `processing`          | When a file gets processed (since there is a queue not all files are processed immediately). This event was called `processingfile` previously.
 | `uploadprogress`      | Gets called periodically whenever the file upload progress changes.<br />Gets the **progress** parameter as second parameter which is a percentage (0-100) and the **bytesSent** parameter as third which is the number of the bytes that have been sent to the server.<br />When an upload finishes dropzone *ensures* that uploadprogress will be called with a percentage of 100 *at least* once.<br />**Warning:** This function can potentially be called with the same progress multiple times.
-| `sending`             | Called just before the file is sent. Gets the xhr object and the [formData](https://developer.mozilla.org/en-US/docs/DOM/XMLHttpRequest/FormData) objects as second and third parameters, so you can modify them (for example to add a CSRF token) or add additional data.
+| `sending`             | Called just before the file is sent. **CAREFUL**: if you have enabled `uploadMultiple` then this gets called only once with the array of uploaded files as first parameter. Gets the xhr object and the [formData](https://developer.mozilla.org/en-US/docs/DOM/XMLHttpRequest/FormData) objects as second and third parameters, so you can modify them (for example to add a CSRF token) or add additional data.
 | `success`             | The file has been uploaded successfully. Gets the server response as second argument. (This event was called `finished` previously)
 | `complete`            | Called when the upload was either successful or erroneous.
+| `canceled`            | Called when a file upload gets canceled.
 | `reset`               | Called when all files in the list are removed and the dropzone is reset to initial state.
+
+All of these receive a list of files as first parameter and are only called if the `uploadMultiple` option is true:
+
+| Parameter             | Description
+|-----------------------|-------------
+| `processingmultiple`  | See `processing` for description.
+| `sendingmultiple`     | See `sending` for description.
+| `successmultiple`     | See `success` for description.
+| `completemultiple`    | See `complete` for description.
+| `canceledmultiple`    | See `canceled` for description.
+
 
 Special event:
 
@@ -467,13 +472,11 @@ cancel the uploads.
 
 * * *
 
-If you have `enqueueForUpload` disabled, you'll need to manage the uploading
+If you have `autoProcessQueue` disabled, you'll need to call `.processQueue()`
 yourself.
 
-You can either call `.uploadFile(file)` or `.enqueueFile(file)` to handle a file.
-
 This can be useful if you want to display the files and let the user click an
-accept button to actually upload the file.
+accept button to actually upload the file(s).
 
 * * *
 
