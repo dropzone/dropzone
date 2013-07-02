@@ -1092,6 +1092,32 @@
             return done();
           }, 10);
         });
+        it("should include hidden files in the form and unchecked checkboxes and radiobuttons should be excluded", function(done) {
+          var element, formData, mock1;
+          element = Dropzone.createElement("<form action=\"/the/url\">\n  <input type=\"hidden\" name=\"test\" value=\"hidden\" />\n  <input type=\"checkbox\" name=\"unchecked\" value=\"1\" />\n  <input type=\"checkbox\" name=\"checked\" value=\"value1\" checked=\"checked\" />\n  <input type=\"radio\" value=\"radiovalue1\" name=\"radio1\" />\n  <input type=\"radio\" value=\"radiovalue2\" name=\"radio1\" checked=\"checked\" />\n</form>");
+          dropzone = new Dropzone(element, {
+            url: "/the/url"
+          });
+          formData = null;
+          dropzone.on("sending", function(file, xhr, tformData) {
+            formData = tformData;
+            return sinon.spy(tformData, "append");
+          });
+          mock1 = getMockFile();
+          dropzone.addFile(mock1);
+          return setTimeout(function() {
+            formData.append.callCount.should.equal(4);
+            formData.append.args[0][0].should.eql("test");
+            formData.append.args[0][1].should.eql("hidden");
+            formData.append.args[1][0].should.eql("checked");
+            formData.append.args[1][1].should.eql("value1");
+            formData.append.args[2][0].should.eql("radio1");
+            formData.append.args[2][1].should.eql("radiovalue2");
+            formData.append.args[3][0].should.eql("file");
+            formData.append.args[3][1].should.equal(mock1);
+            return done();
+          }, 10);
+        });
         describe("settings()", function() {
           it("should correctly set `withCredentials` on the xhr object", function() {
             dropzone.uploadFile(mockFile);

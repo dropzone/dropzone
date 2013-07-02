@@ -1253,7 +1253,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     };
 
     Dropzone.prototype.uploadFiles = function(files) {
-      var file, formData, handleError, header, headers, input, inputName, inputType, key, name, progressObj, response, updateProgress, value, xhr, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2,
+      var file, formData, handleError, header, headers, input, inputName, inputType, key, name, progressObj, response, updateProgress, value, xhr, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3,
         _this = this;
       xhr = new XMLHttpRequest();
       for (_i = 0, _len = files.length; _i < _len; _i++) {
@@ -1358,23 +1358,23 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
           formData.append(key, value);
         }
       }
-      if (this.element.tagName === "FORM") {
-        _ref2 = this.element.querySelectorAll("input, textarea, select, button");
-        for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-          input = _ref2[_j];
-          inputName = input.getAttribute("name");
-          inputType = input.getAttribute("type");
-          if (!inputType || inputType.toLowerCase() !== "checkbox" || input.checked) {
-            formData.append(inputName, input.value);
-          }
-        }
-      }
-      for (_k = 0, _len2 = files.length; _k < _len2; _k++) {
-        file = files[_k];
+      for (_j = 0, _len1 = files.length; _j < _len1; _j++) {
+        file = files[_j];
         this.emit("sending", file, xhr, formData);
       }
       if (this.options.uploadMultiple) {
         this.emit("sendingmultiple", files, xhr, formData);
+      }
+      if (this.element.tagName === "FORM") {
+        _ref2 = this.element.querySelectorAll("input, textarea, select, button");
+        for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+          input = _ref2[_k];
+          inputName = input.getAttribute("name");
+          inputType = input.getAttribute("type");
+          if (!inputType || ((_ref3 = inputType.toLowerCase()) !== "checkbox" && _ref3 !== "radio") || input.checked) {
+            formData.append(inputName, input.value);
+          }
+        }
       }
       for (_l = 0, _len3 = files.length; _l < _len3; _l++) {
         file = files[_l];
