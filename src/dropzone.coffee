@@ -52,12 +52,18 @@ class Dropzone extends Em
     "removedfile"
     "thumbnail"
     "error"
-    "processingfile"
+    "processing"
+    "processingmultiple"
     "uploadprogress"
     "totaluploadprogress"
     "sending"
+    "sendingmultiple"
     "success"
+    "successmultiple"
+    "canceled"
+    "canceledmultiple"
     "complete"
+    "completemultiple"
     "reset"
   ]
 
@@ -68,6 +74,7 @@ class Dropzone extends Em
     method: "post"
     withCredentials: no
     parallelUploads: 2
+    uploadMultiple: no # Whether to send multiple files in one request.
     maxFilesize: 256 # in MB
     paramName: "file" # The name of the file param that gets transferred.
     createImageThumbnails: true
@@ -91,21 +98,24 @@ class Dropzone extends Em
     # property, and if the Dropzone is clickable this will be used as
     # `accept` attribute.
     # 
+    # This is a comma separated list of mime types or extensions. E.g.:
+    # 
+    #     audio/*,video/*,image/png,.pdf
+    # 
     # See https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-accept
     # for a reference.
-    acceptedMimeTypes: null # eg: "audio/*,video/*,image/*"
+    acceptedFiles: null
 
     # @deprecated
-    # Use acceptedMimeTypes instead.
-    acceptParameter: null
+    # Use acceptedFiles instead.
+    acceptedMimeTypes: null
 
-    # If false, files will not be added to the process queue automatically.
+    # If false, files will be added to the queue but the queu will not be
+    # processed automatically.
     # This can be useful if you need some additional user input before sending
-    # files.
-    # If you're ready to send the file, set the file.status to Dropzone.QUEUED
-    # and call processQueue()
-    enqueueForUpload: yes
-
+    # files (or if you want want all files sent at once).
+    # If you're ready to send the file simply call myDropzone.processQueue()
+    autoProcessQueue: on
 
     # If true, Dropzone will add a link to each file preview to cancel/remove
     # the upload.
@@ -297,9 +307,11 @@ class Dropzone extends Em
     # Called when a file gets processed. Since there is a cue, not all added
     # files are processed immediately.
     # Receives `file`
-    processingfile: (file) ->
+    processing: (file) ->
       file.previewElement.classList.add "dz-processing"
       file._removeLink.textContent = @options.dictCancelUpload if file._removeLink
+    
+    processingmultiple: noop
     
     # Called whenever the upload progress gets updated.
     # Receives `file`, `progress` (percentage 0-100) and `bytesSent`.
@@ -316,15 +328,26 @@ class Dropzone extends Em
     # `formData` object to add additional information.
     sending: noop
     
+    sendingmultiple: noop
+    
     # When the complete upload is finished and successfull
     # Receives `file`
     success: (file) ->
       file.previewElement.classList.add "dz-success"
 
+    successmultiple: noop
+
+    # When the upload is canceled.
+    canceled: (file) -> @emit "error", file, "Upload canceled."
+
+    canceledmultiple: noop
+
     # When the upload is finished, either with success or an error.
     # Receives `file`
     complete: (file) ->
       file._removeLink.textContent = @options.dictRemoveFile if file._removeLink
+
+    completemultiple: noop
 
 
 
@@ -381,7 +404,12 @@ class Dropzone extends Em
 
     throw new Error "No URL provided." unless @options.url
 
-    throw new Error "You can't provide both 'acceptParameter' and 'acceptedMimeTypes'. 'acceptParameter' is deprecated." if @options.acceptParameter and @options.acceptedMimeTypes
+    throw new Error "You can't provide both 'acceptedFiles' and 'acceptedMimeTypes'. 'acceptedMimeTypes' is deprecated." if @options.acceptedFiles and @options.acceptedMimeTypes
+
+    # Backwards compatibility
+    if @options.acceptedMimeTypes
+      @options.acceptedFiles = @options.acceptedMimeTypes 
+      delete @options.acceptedMimeTypes
 
     @options.method = @options.method.toUpperCase()
 
@@ -420,14 +448,6 @@ class Dropzone extends Em
   getUploadingFiles: -> file for file in @files when file.status == Dropzone.UPLOADING
 
 
-  enqueueFile: (file) ->
-    if file.status == Dropzone.ACCEPTED
-      file.status = Dropzone.QUEUED
-      @processQueue()
-    else
-      throw new Error "This file can't be queued because it has already been processed or was rejected."
-
-
   init: ->
     # In case it isn't set already
     @element.setAttribute("enctype", "multipart/form-data") if @element.tagName == "form"
@@ -440,12 +460,9 @@ class Dropzone extends Em
         document.body.removeChild @hiddenFileInput if @hiddenFileInput
         @hiddenFileInput = document.createElement "input"
         @hiddenFileInput.setAttribute "type", "file"
-        @hiddenFileInput.setAttribute "multiple", "multiple"
+        @hiddenFileInput.setAttribute "multiple", "multiple" if @options.uploadMultiple
 
-        @hiddenFileInput.setAttribute "accept", @options.acceptedMimeTypes if @options.acceptedMimeTypes?
-
-        # Backwards compatibility
-        @hiddenFileInput.setAttribute "accept", @options.acceptParameter if @options.acceptParameter?
+        @hiddenFileInput.setAttribute "accept", @options.acceptedFiles if @options.acceptedFiles?
 
         # Not setting `display="none"` because some browsers don't accept clicks
         # on elements that aren't displayed.
@@ -475,6 +492,8 @@ class Dropzone extends Em
     @on "uploadprogress", => @updateTotalUploadProgress()
 
     @on "removedfile", => @updateTotalUploadProgress()
+
+    @on "canceled", (file) => @emit "complete", file
 
     noPropagation = (e) ->
       e.stopPropagation()
@@ -558,7 +577,7 @@ class Dropzone extends Em
 
     fieldsString = """<div class="dz-fallback">"""
     fieldsString += """<p>#{@options.dictFallbackText}</p>""" if @options.dictFallbackText
-    fieldsString += """<input type="file" name="#{@options.paramName}[]" multiple="multiple" /><button type="submit">Upload!</button></div>"""
+    fieldsString += """<input type="file" name="#{@options.paramName}#{if @options.uploadMultiple then "[]" else ""}" #{if @options.uploadMultiple then 'multiple="multiple"' } /><button type="submit">Upload!</button></div>"""
 
     fields = Dropzone.createElement fieldsString
     if @element.tagName isnt "FORM"
@@ -659,11 +678,11 @@ class Dropzone extends Em
   # (This allows for asynchronous validation)
   # 
   # This function checks the filesize, and if the file.type passes the 
-  # `acceptedMimeTypes` check.
+  # `acceptedFiles` check.
   accept: (file, done) ->
     if file.size > @options.maxFilesize * 1024 * 1024
       done @options.dictFileTooBig.replace("{{filesize}}", Math.round(file.size / 1024 / 10.24) / 100).replace("{{maxFilesize}}", @options.maxFilesize)
-    else unless Dropzone.isValidMimeType file.type, @options.acceptedMimeTypes
+    else unless Dropzone.isValidFile file, @options.acceptedFiles
       done @options.dictInvalidFileType
     else
       @options.accept.call this, file, done
@@ -686,14 +705,22 @@ class Dropzone extends Em
     @accept file, (error) =>
       if error
         file.accepted = false # Backwards compatibility
-        @errorProcessing file, error # Will set the file.status
+        @_errorProcessing [ file ], error # Will set the file.status
       else
-        file.status = Dropzone.ACCEPTED
         file.accepted = true # Backwards compatibility
 
-        if @options.enqueueForUpload
-          file.status = Dropzone.QUEUED
-          @processQueue()
+        @enqueueFile file
+
+  # Wrapper for enqueuFile
+  enqueueFiles: (files) -> @enqueueFile file for file in files; null
+
+  enqueueFile: (file) ->
+    if file.status == Dropzone.ADDED
+      file.status = Dropzone.QUEUED
+      if @options.autoProcessQueue
+        setTimeout (=> @processQueue()), 1 # Deferring the call
+    else
+      throw new Error "This file can't be queued because it has already been processed or was rejected."
 
   # Used to read a directory, and call addFile() with every file found.
   addDirectory: (entry, path) ->
@@ -766,21 +793,38 @@ class Dropzone extends Em
     i = processingLength
 
     queuedFiles = @getQueuedFiles()
-    while i < parallelUploads
-      return unless queuedFiles.length # Nothing left to process
-      @processFile queuedFiles.shift()
-      i++
+
+    return unless queuedFiles.length > 0
+
+    if @options.uploadMultiple
+      # The files should be uploaded in one request
+      @processFiles queuedFiles.slice 0, parallelUploads
+    else
+      while i < parallelUploads
+        return unless queuedFiles.length # Nothing left to process
+        @processFile queuedFiles.shift()
+        i++
+
+
+  # Wrapper for `processFiles`
+  processFile: (file) -> @processFiles [ file ]
 
 
   # Loads the file, then calls finishedLoading()
-  processFile: (file) ->
-    file.processing = yes # Backwards compatibility
-    file.status = Dropzone.UPLOADING
+  processFiles: (files) ->
+    for file in files
+      file.processing = yes # Backwards compatibility
+      file.status = Dropzone.UPLOADING
 
-    @emit "processingfile", file
+      @emit "processing", file
 
-    @uploadFile file
+    @emit "processingmultiple", files if @options.uploadMultiple
 
+    @uploadFiles files
+
+
+
+  _getFilesWithXhr: (xhr) -> files = (file for file in @files when file.xhr == xhr)
 
 
   # Cancels the file upload and sets the status to CANCELED
@@ -789,20 +833,27 @@ class Dropzone extends Em
   # set to CANCELED.
   cancelUpload: (file) ->
     if file.status == Dropzone.UPLOADING
-      file.status = Dropzone.CANCELED
+      groupedFiles = @_getFilesWithXhr file.xhr
+      groupedFile.status = Dropzone.CANCELED for groupedFile in groupedFiles
       file.xhr.abort()
-    else if file.status in [ Dropzone.ADDED, Dropzone.ACCEPTED, Dropzone.QUEUED ]
+      @emit "canceled", groupedFile for groupedFile in groupedFiles
+      @emit "canceledmultiple", groupedFiles if @options.uploadMultiple
+
+    else if file.status in [ Dropzone.ADDED, Dropzone.QUEUED ]
       file.status = Dropzone.CANCELED
+      @emit "canceled", file
+      @emit "canceledmultiple", [ file ] if @options.uploadMultiple
 
-    @emit "complete", file
+    @processQueue() if @options.autoProcessQueue
 
-    @processQueue()
+  # Wrapper for uploadFiles()
+  uploadFile: (file) -> @uploadFiles [ file ]
 
-  uploadFile: (file) ->
+  uploadFiles: (files) ->
     xhr = new XMLHttpRequest()
 
-    # Put the xhr object in the file object to be able to reference it later.
-    file.xhr = xhr
+    # Put the xhr object in the file objects to be able to reference it later.
+    file.xhr = xhr for file in files
 
     xhr.open @options.method, @options.url, true
 
@@ -813,33 +864,39 @@ class Dropzone extends Em
     response = null
 
     handleError = =>
-      @errorProcessing file, response || @options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr
+      for file in files
+        @_errorProcessing files, response || @options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr
 
 
     updateProgress = (e) =>
       if e?
         progress = 100 * e.loaded / e.total
 
-        file.upload =
-          progress: progress
-          total: e.total
-          bytesSent: e.loaded
+        for file in files
+          file.upload =
+            progress: progress
+            total: e.total
+            bytesSent: e.loaded
       else
         # Called when the file finished uploading
 
-        # Nothing to do, already at 100%
-        return if file.upload.progress == 100 and file.upload.bytesSent == file.upload.total
+        allFilesFinished = yes
 
         progress = 100
-        file.upload.progress = progress
-        file.upload.bytesSent = file.upload.total
 
+        for file in files
+          allFilesFinished = no unless file.upload.progress == 100 and file.upload.bytesSent == file.upload.total
+          file.upload.progress = progress
+          file.upload.bytesSent = file.upload.total
 
-      @emit "uploadprogress", file, progress, file.upload.bytesSent
+        # Nothing to do, all files already at 100%
+        return if allFilesFinished
 
+      for file in files
+        @emit "uploadprogress", file, progress, file.upload.bytesSent
 
     xhr.onload = (e) =>
-      return if file.status == Dropzone.CANCELED
+      return if files[0].status == Dropzone.CANCELED
 
       return unless xhr.readyState is 4
 
@@ -856,10 +913,10 @@ class Dropzone extends Em
       unless 200 <= xhr.status < 300
         handleError()
       else
-        @finished file, response, e
+        @_finished files, response, e
 
     xhr.onerror = =>
-      return if file.status == Dropzone.CANCELED
+      return if files[0].status == Dropzone.CANCELED
       handleError()
 
     # Some browsers do not have the .upload property
@@ -870,7 +927,6 @@ class Dropzone extends Em
       "Accept": "application/json",
       "Cache-Control": "no-cache",
       "X-Requested-With": "XMLHttpRequest",
-      "X-File-Name": encodeURIComponent file.name
 
     extend headers, @options.headers if @options.headers
       
@@ -881,48 +937,58 @@ class Dropzone extends Em
     # Adding all @options parameters
     formData.append key, value for key, value of @options.params if @options.params
 
+    # Let the user add additional data if necessary
+    @emit "sending", file, xhr, formData for file in files
+    @emit "sendingmultiple", files, xhr, formData if @options.uploadMultiple
+
+
     # Take care of other input elements
     if @element.tagName == "FORM"
       for input in @element.querySelectorAll "input, textarea, select, button"
         inputName = input.getAttribute "name"
         inputType = input.getAttribute "type"
 
-        if !inputType or inputType.toLowerCase() != "checkbox" or input.checked
+        if !inputType or (inputType.toLowerCase() not in [ "checkbox", "radio" ]) or input.checked
           formData.append inputName, input.value
 
-
-    # Let the user add additional data if necessary
-    @emit "sending", file, xhr, formData
 
     # Finally add the file
     # Has to be last because some servers (eg: S3) expect the file to be the
     # last parameter
-    formData.append @options.paramName, file
+    formData.append "#{@options.paramName}#{if @options.uploadMultiple then "[]" else ""}", file, file.name for file in files
 
     xhr.send formData
 
 
   # Called internally when processing is finished.
   # Individual callbacks have to be called in the appropriate sections.
-  finished: (file, responseText, e) ->
-    file.status = Dropzone.SUCCESS
-    @processQueue()
-    @emit "success", file, responseText, e
-    @emit "finished", file, responseText, e # For backwards compatibility
-    @emit "complete", file
+  _finished: (files, responseText, e) ->
+    for file in files
+      file.status = Dropzone.SUCCESS
+      @emit "success", file, responseText, e
+      @emit "complete", file
+    if @options.uploadMultiple
+      @emit "successmultiple", files, responseText, e
+      @emit "completemultiple", files
 
+    @processQueue() if @options.autoProcessQueue
 
   # Called internally when processing is finished.
   # Individual callbacks have to be called in the appropriate sections.
-  errorProcessing: (file, message, xhr) ->
-    file.status = Dropzone.ERROR
-    @processQueue()
-    @emit "error", file, message, xhr
-    @emit "complete", file
+  _errorProcessing: (files, message, xhr) ->
+    for file in files
+      file.status = Dropzone.ERROR
+      @emit "error", file, message, xhr
+      @emit "complete", file
+    if @options.uploadMultiple
+      @emit "errormultiple", files, message, xhr
+      @emit "completemultiple", files
+    
+    @processQueue() if @options.autoProcessQueue
 
 
 
-Dropzone.version = "3.5.3"
+Dropzone.version = "3.6.0"
 
 
 # This is a map of options for your different dropzones. Add configurations
@@ -1072,19 +1138,22 @@ Dropzone.getElements = (els, name) ->
 # Validates the mime type like this:
 # 
 # https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-accept
-Dropzone.isValidMimeType = (mimeType, acceptedMimeTypes) ->
-  return yes unless acceptedMimeTypes # If there are no accepted mime types, it's OK
-  acceptedMimeTypes = acceptedMimeTypes.split ","
+Dropzone.isValidFile = (file, acceptedFiles) ->
+  return yes unless acceptedFiles # If there are no accepted mime types, it's OK
+  acceptedFiles = acceptedFiles.split ","
 
+  mimeType = file.type
   baseMimeType = mimeType.replace /\/.*$/, ""
 
-  for validMimeType in acceptedMimeTypes
-    validMimeType = validMimeType.trim()
-    if /\/\*$/.test validMimeType
+  for validType in acceptedFiles
+    validType = validType.trim()
+    if validType.charAt(0) == "."
+      return yes if file.name.indexOf(validType, file.name.length - validType.length) != -1
+    else if /\/\*$/.test validType
       # This is something like a image/* mime type
-      return yes if baseMimeType == validMimeType.replace /\/.*$/, ""
+      return yes if baseMimeType == validType.replace /\/.*$/, ""
     else
-      return yes if mimeType == validMimeType
+      return yes if mimeType == validType
 
   return no
 
@@ -1109,10 +1178,10 @@ else
 # Dropzone file status codes
 Dropzone.ADDED = "added"
 
-# Accepted does not necessarely mean queued.
-Dropzone.ACCEPTED = "accepted"
-
 Dropzone.QUEUED = "queued"
+# For backwards compatibility. Now, if a file is accepted, it's either queued
+# or uploading.
+Dropzone.ACCEPTED = Dropzone.QUEUED
 
 Dropzone.UPLOADING = "uploading"
 Dropzone.PROCESSING = Dropzone.UPLOADING # alias
