@@ -988,7 +988,7 @@ class Dropzone extends Em
 
 
 
-Dropzone.version = "3.6.0"
+Dropzone.version = "3.6.1-dev"
 
 
 # This is a map of options for your different dropzones. Add configurations
