@@ -229,7 +229,7 @@ Emitter.prototype.hasListeners = function(event){
       ignoreHiddenFiles: true,
       acceptedFiles: null,
       acceptedMimeTypes: null,
-      enqueueForUpload: true,
+      autoProcessQueue: true,
       addRemoveLinks: false,
       previewsContainer: null,
       dictDefaultMessage: "Drop files here to upload",
@@ -854,11 +854,8 @@ Emitter.prototype.hasListeners = function(event){
           file.accepted = false;
           return _this._errorProcessing([file], error);
         } else {
-          file.status = Dropzone.ACCEPTED;
           file.accepted = true;
-          if (_this.options.enqueueForUpload) {
-            return _this.enqueueFile(file);
-          }
+          return _this.enqueueFile(file);
         }
       });
     };
@@ -874,11 +871,13 @@ Emitter.prototype.hasListeners = function(event){
 
     Dropzone.prototype.enqueueFile = function(file) {
       var _this = this;
-      if (file.status === Dropzone.ACCEPTED) {
+      if (file.status === Dropzone.ADDED) {
         file.status = Dropzone.QUEUED;
-        return setTimeout((function() {
-          return _this.processQueue();
-        }), 1);
+        if (this.options.autoProcessQueue) {
+          return setTimeout((function() {
+            return _this.processQueue();
+          }), 1);
+        }
       } else {
         throw new Error("This file can't be queued because it has already been processed or was rejected.");
       }
@@ -1039,14 +1038,16 @@ Emitter.prototype.hasListeners = function(event){
         if (this.options.uploadMultiple) {
           this.emit("canceledmultiple", groupedFiles);
         }
-      } else if ((_ref = file.status) === Dropzone.ADDED || _ref === Dropzone.ACCEPTED || _ref === Dropzone.QUEUED) {
+      } else if ((_ref = file.status) === Dropzone.ADDED || _ref === Dropzone.QUEUED) {
         file.status = Dropzone.CANCELED;
         this.emit("canceled", file);
         if (this.options.uploadMultiple) {
           this.emit("canceledmultiple", [file]);
         }
       }
-      return this.processQueue();
+      if (this.options.autoProcessQueue) {
+        return this.processQueue();
+      }
     };
 
     Dropzone.prototype.uploadFile = function(file) {
@@ -1196,7 +1197,9 @@ Emitter.prototype.hasListeners = function(event){
         this.emit("successmultiple", files, responseText, e);
         this.emit("completemultiple", files);
       }
-      return this.processQueue();
+      if (this.options.autoProcessQueue) {
+        return this.processQueue();
+      }
     };
 
     Dropzone.prototype._errorProcessing = function(files, message, xhr) {
@@ -1211,7 +1214,9 @@ Emitter.prototype.hasListeners = function(event){
         this.emit("errormultiple", files, message, xhr);
         this.emit("completemultiple", files);
       }
-      return this.processQueue();
+      if (this.options.autoProcessQueue) {
+        return this.processQueue();
+      }
     };
 
     return Dropzone;
@@ -1428,9 +1433,9 @@ Emitter.prototype.hasListeners = function(event){
 
   Dropzone.ADDED = "added";
 
-  Dropzone.ACCEPTED = "accepted";
-
   Dropzone.QUEUED = "queued";
+
+  Dropzone.ACCEPTED = Dropzone.QUEUED;
 
   Dropzone.UPLOADING = "uploading";
 

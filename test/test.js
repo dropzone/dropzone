@@ -968,19 +968,25 @@
           doneFunction("error");
           return mockFile.status.should.eql(Dropzone.ERROR);
         });
-        return it("should properly set the status of the file if enqueueForUpload is false", function() {
+        return it("should properly set the status of the file if autoProcessQueue is false and not call processQueue", function(done) {
           var doneFunction;
           doneFunction = null;
-          dropzone.options.enqueueForUpload = false;
+          dropzone.options.autoProcessQueue = false;
           dropzone.accept = function(file, done) {
             return doneFunction = done;
           };
           dropzone.processFile = function() {};
           dropzone.uploadFile = function() {};
           dropzone.addFile(mockFile);
+          sinon.stub(dropzone, "processQueue");
           mockFile.status.should.eql(Dropzone.ADDED);
           doneFunction();
-          return mockFile.status.should.eql(Dropzone.ACCEPTED);
+          mockFile.status.should.eql(Dropzone.QUEUED);
+          dropzone.processQueue.callCount.should.equal(0);
+          return setTimeout((function() {
+            dropzone.processQueue.callCount.should.equal(0);
+            return done();
+          }), 10);
         });
       });
       describe("enqueueFile()", function() {
@@ -1006,16 +1012,12 @@
             return dropzone.enqueueFile(mockFile);
           })).to["throw"]("This file can't be queued because it has already been processed or was rejected.");
           mockFile.status = Dropzone.UPLOADING;
-          expect((function() {
-            return dropzone.enqueueFile(mockFile);
-          })).to["throw"]("This file can't be queued because it has already been processed or was rejected.");
-          mockFile.status = Dropzone.ADDED;
           return expect((function() {
             return dropzone.enqueueFile(mockFile);
           })).to["throw"]("This file can't be queued because it has already been processed or was rejected.");
         });
         return it("should set the status to QUEUED and call processQueue asynchronously if everything's ok", function(done) {
-          mockFile.status = Dropzone.ACCEPTED;
+          mockFile.status = Dropzone.ADDED;
           sinon.stub(dropzone, "processQueue");
           dropzone.processQueue.callCount.should.equal(0);
           dropzone.enqueueFile(mockFile);
