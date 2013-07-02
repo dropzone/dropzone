@@ -110,13 +110,12 @@ class Dropzone extends Em
     # Use acceptedFiles instead.
     acceptedMimeTypes: null
 
-    # If false, files will not be added to the process queue automatically.
+    # If false, files will be added to the queue but the queu will not be
+    # processed automatically.
     # This can be useful if you need some additional user input before sending
-    # files.
-    # If you're ready to send the file, set the file.status to Dropzone.QUEUED
-    # and call processQueue()
-    enqueueForUpload: yes
-
+    # files (or if you want want all files sent at once).
+    # If you're ready to send the file simply call myDropzone.processQueue()
+    autoProcessQueue: on
 
     # If true, Dropzone will add a link to each file preview to cancel/remove
     # the upload.
@@ -708,18 +707,18 @@ class Dropzone extends Em
         file.accepted = false # Backwards compatibility
         @_errorProcessing [ file ], error # Will set the file.status
       else
-        file.status = Dropzone.ACCEPTED
         file.accepted = true # Backwards compatibility
 
-        @enqueueFile file if @options.enqueueForUpload
+        @enqueueFile file
 
   # Wrapper for enqueuFile
   enqueueFiles: (files) -> @enqueueFile file for file in files; null
 
   enqueueFile: (file) ->
-    if file.status == Dropzone.ACCEPTED
+    if file.status == Dropzone.ADDED
       file.status = Dropzone.QUEUED
-      setTimeout (=> @processQueue()), 1 # Deferring the call
+      if @options.autoProcessQueue
+        setTimeout (=> @processQueue()), 1 # Deferring the call
     else
       throw new Error "This file can't be queued because it has already been processed or was rejected."
 
@@ -840,12 +839,12 @@ class Dropzone extends Em
       @emit "canceled", groupedFile for groupedFile in groupedFiles
       @emit "canceledmultiple", groupedFiles if @options.uploadMultiple
 
-    else if file.status in [ Dropzone.ADDED, Dropzone.ACCEPTED, Dropzone.QUEUED ]
+    else if file.status in [ Dropzone.ADDED, Dropzone.QUEUED ]
       file.status = Dropzone.CANCELED
       @emit "canceled", file
       @emit "canceledmultiple", [ file ] if @options.uploadMultiple
 
-    @processQueue()
+    @processQueue() if @options.autoProcessQueue
 
   # Wrapper for uploadFiles()
   uploadFile: (file) -> @uploadFiles [ file ]
@@ -971,7 +970,7 @@ class Dropzone extends Em
       @emit "successmultiple", files, responseText, e
       @emit "completemultiple", files
 
-    @processQueue()
+    @processQueue() if @options.autoProcessQueue
 
   # Called internally when processing is finished.
   # Individual callbacks have to be called in the appropriate sections.
@@ -984,7 +983,7 @@ class Dropzone extends Em
       @emit "errormultiple", files, message, xhr
       @emit "completemultiple", files
     
-    @processQueue()
+    @processQueue() if @options.autoProcessQueue
 
 
 
@@ -1178,10 +1177,10 @@ else
 # Dropzone file status codes
 Dropzone.ADDED = "added"
 
-# Accepted does not necessarely mean queued.
-Dropzone.ACCEPTED = "accepted"
-
 Dropzone.QUEUED = "queued"
+# For backwards compatibility. Now, if a file is accepted, it's either queued
+# or uploading.
+Dropzone.ACCEPTED = Dropzone.QUEUED
 
 Dropzone.UPLOADING = "uploading"
 Dropzone.PROCESSING = Dropzone.UPLOADING # alias

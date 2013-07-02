@@ -750,18 +750,24 @@ describe "Dropzone", ->
         doneFunction("error")
         mockFile.status.should.eql Dropzone.ERROR
 
-      it "should properly set the status of the file if enqueueForUpload is false", ->
+      it "should properly set the status of the file if autoProcessQueue is false and not call processQueue", (done) ->
         doneFunction = null
-        dropzone.options.enqueueForUpload = false
+        dropzone.options.autoProcessQueue = false
         dropzone.accept = (file, done) -> doneFunction = done
         dropzone.processFile = ->
         dropzone.uploadFile = ->
 
         dropzone.addFile mockFile
+        sinon.stub dropzone, "processQueue"
 
         mockFile.status.should.eql Dropzone.ADDED
         doneFunction()
-        mockFile.status.should.eql Dropzone.ACCEPTED
+        mockFile.status.should.eql Dropzone.QUEUED
+        dropzone.processQueue.callCount.should.equal 0
+        setTimeout (->
+          dropzone.processQueue.callCount.should.equal 0
+          done()
+        ), 10
 
 
 
@@ -787,11 +793,9 @@ describe "Dropzone", ->
         expect((-> dropzone.enqueueFile(mockFile))).to.throw "This file can't be queued because it has already been processed or was rejected."
         mockFile.status = Dropzone.UPLOADING
         expect((-> dropzone.enqueueFile(mockFile))).to.throw "This file can't be queued because it has already been processed or was rejected."
-        mockFile.status = Dropzone.ADDED
-        expect((-> dropzone.enqueueFile(mockFile))).to.throw "This file can't be queued because it has already been processed or was rejected."
 
       it "should set the status to QUEUED and call processQueue asynchronously if everything's ok", (done) ->
-        mockFile.status = Dropzone.ACCEPTED
+        mockFile.status = Dropzone.ADDED
         sinon.stub dropzone, "processQueue"
         dropzone.processQueue.callCount.should.equal 0
         dropzone.enqueueFile mockFile
