@@ -6,6 +6,18 @@ firstTag=`git tag | tail -2 | head -1`
 secondTag=`git tag | tail -1`
 
 
+if [ "$1" == "-h" ]
+then
+  echo ""
+  echo "Usage:"
+  echo "  './changelog' prints the changelog from the last two tags"
+  echo "  './changelog v1.0.0' prints the changelog from v1.0.0 to the latest tag except if:"
+  echo "  './changelog HEAD' which prints the changelog from the latest tag to HEAD"
+  echo "  './changelog v1.0.0 v2.0.0' prints the changelog from v1.0.0 to v2.0.0"
+  echo ""
+  exit
+fi
+
 if [ $# -eq 2 ] 
 then
   firstTag=$1
@@ -22,7 +34,10 @@ else
   fi
 fi
 
+echo
+echo "Type './changelog -h' for usage"
 
+echo
 echo "CHANGELOG from $firstTag to $secondTag"
 echo
 
