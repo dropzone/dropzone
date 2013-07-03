@@ -714,6 +714,27 @@ describe "Dropzone", ->
         fileInput.name.should.equal "myFile[]"
 
 
+    describe "getAcceptedFiles()", ->
+      it "should only return accepted files", ->
+        mock1 = getMockFile()
+        mock2 = getMockFile()
+        mock3 = getMockFile()
+        mock4 = getMockFile()
+        dropzone.options.accept = (file, done) ->
+          if file in [ mock1, mock3 ]
+            done()
+          else
+            done "error"
+
+        dropzone.addFile mock1
+        dropzone.addFile mock2
+        dropzone.addFile mock3
+        dropzone.addFile mock4
+
+        files = dropzone.getAcceptedFiles()
+        files.should.eql [ mock1, mock3 ]
+
+
   describe "file handling", ->
     mockFile = null
     dropzone = null
