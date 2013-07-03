@@ -736,6 +736,32 @@ describe "Dropzone", ->
       it "getRejectedFiles() should only return rejected files", ->
         dropzone.getRejectedFiles().should.eql [ mock2, mock4 ]
 
+    describe "getQueuedFiles()", ->
+      it "should return all files with the status Dropzone.QUEUED", ->
+        mock1 = getMockFile()
+        mock2 = getMockFile()
+        mock3 = getMockFile()
+        mock4 = getMockFile()
+
+        dropzone.options.accept = (file, done) -> file.done = done
+
+        dropzone.addFile mock1
+        dropzone.addFile mock2
+        dropzone.addFile mock3
+        dropzone.addFile mock4
+
+        dropzone.getQueuedFiles().should.eql [ ]
+
+        mock1.done()
+        mock3.done()
+
+        dropzone.getQueuedFiles().should.eql [ mock1, mock3 ]
+        mock1.status.should.equal Dropzone.QUEUED
+        mock3.status.should.equal Dropzone.QUEUED
+        mock2.status.should.equal Dropzone.ADDED
+        mock4.status.should.equal Dropzone.ADDED
+
+
 
   describe "file handling", ->
     mockFile = null
