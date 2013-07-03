@@ -440,7 +440,7 @@ class Dropzone extends Em
 
   # Returns all files that have been rejected
   # Not sure when that's going to be useful, but added for completeness.
-  getRejectedFiles: -> file for file in @files unless file.accepted
+  getRejectedFiles: -> file for file in @files when not file.accepted
 
   # Returns all files that are in the queue
   getQueuedFiles: -> file for file in @files when file.status == Dropzone.QUEUED
@@ -988,7 +988,7 @@ class Dropzone extends Em
 
 
 
-Dropzone.version = "3.6.0"
+Dropzone.version = "3.6.1"
 
 
 # This is a map of options for your different dropzones. Add configurations

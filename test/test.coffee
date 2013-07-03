@@ -714,6 +714,85 @@ describe "Dropzone", ->
         fileInput.name.should.equal "myFile[]"
 
 
+    describe "getAcceptedFiles() / getRejectedFiles()", ->
+      mock1 = mock2 = mock3 = mock4 = null
+      beforeEach ->
+        mock1 = getMockFile()
+        mock2 = getMockFile()
+        mock3 = getMockFile()
+        mock4 = getMockFile()
+        dropzone.options.accept = (file, done) ->
+          if file in [ mock1, mock3 ]
+            done()
+          else
+            done "error"
+        dropzone.addFile mock1
+        dropzone.addFile mock2
+        dropzone.addFile mock3
+        dropzone.addFile mock4
+
+      it "getAcceptedFiles() should only return accepted files", ->
+        dropzone.getAcceptedFiles().should.eql [ mock1, mock3 ]
+      it "getRejectedFiles() should only return rejected files", ->
+        dropzone.getRejectedFiles().should.eql [ mock2, mock4 ]
+
+    describe "getQueuedFiles()", ->
+      it "should return all files with the status Dropzone.QUEUED", ->
+        mock1 = getMockFile()
+        mock2 = getMockFile()
+        mock3 = getMockFile()
+        mock4 = getMockFile()
+
+        dropzone.options.accept = (file, done) -> file.done = done
+
+        dropzone.addFile mock1
+        dropzone.addFile mock2
+        dropzone.addFile mock3
+        dropzone.addFile mock4
+
+        dropzone.getQueuedFiles().should.eql [ ]
+
+        mock1.done()
+        mock3.done()
+
+        dropzone.getQueuedFiles().should.eql [ mock1, mock3 ]
+        mock1.status.should.equal Dropzone.QUEUED
+        mock3.status.should.equal Dropzone.QUEUED
+        mock2.status.should.equal Dropzone.ADDED
+        mock4.status.should.equal Dropzone.ADDED
+
+
+    describe "getUploadingFiles()", ->
+      it "should return all files with the status Dropzone.UPLOADING", (done) ->
+        mock1 = getMockFile()
+        mock2 = getMockFile()
+        mock3 = getMockFile()
+        mock4 = getMockFile()
+
+        dropzone.options.accept = (file, done) -> file.done = done
+        dropzone.uploadFile = ->
+
+        dropzone.addFile mock1
+        dropzone.addFile mock2
+        dropzone.addFile mock3
+        dropzone.addFile mock4
+
+        dropzone.getUploadingFiles().should.eql [ ]
+
+        mock1.done()
+        mock3.done()
+
+        setTimeout (->
+          dropzone.getUploadingFiles().should.eql [ mock1, mock3 ]
+          mock1.status.should.equal Dropzone.UPLOADING
+          mock3.status.should.equal Dropzone.UPLOADING
+          mock2.status.should.equal Dropzone.ADDED
+          mock4.status.should.equal Dropzone.ADDED
+          done()
+        ), 10
+
+
+
   describe "file handling", ->
     mockFile = null
     dropzone = null
