@@ -762,6 +762,36 @@ describe "Dropzone", ->
         mock4.status.should.equal Dropzone.ADDED
 
 
+    describe "getUploadingFiles()", ->
+      it "should return all files with the status Dropzone.UPLOADING", (done) ->
+        mock1 = getMockFile()
+        mock2 = getMockFile()
+        mock3 = getMockFile()
+        mock4 = getMockFile()
+
+        dropzone.options.accept = (file, done) -> file.done = done
+        dropzone.uploadFile = ->
+
+        dropzone.addFile mock1
+        dropzone.addFile mock2
+        dropzone.addFile mock3
+        dropzone.addFile mock4
+
+        dropzone.getUploadingFiles().should.eql [ ]
+
+        mock1.done()
+        mock3.done()
+
+        setTimeout (->
+          dropzone.getUploadingFiles().should.eql [ mock1, mock3 ]
+          mock1.status.should.equal Dropzone.UPLOADING
+          mock3.status.should.equal Dropzone.UPLOADING
+          mock2.status.should.equal Dropzone.ADDED
+          mock4.status.should.equal Dropzone.ADDED
+          done()
+        ), 10
+
+
 
   describe "file handling", ->
     mockFile = null
