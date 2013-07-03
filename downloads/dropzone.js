@@ -680,15 +680,15 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
     Dropzone.prototype.getRejectedFiles = function() {
       var file, _i, _len, _ref, _results;
-      if (!file.accepted) {
-        _ref = this.files;
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          file = _ref[_i];
+      _ref = this.files;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        file = _ref[_i];
+        if (!file.accepted) {
           _results.push(file);
         }
-        return _results;
       }
+      return _results;
     };
 
     Dropzone.prototype.getQueuedFiles = function() {

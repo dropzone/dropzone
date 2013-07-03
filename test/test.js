@@ -915,7 +915,7 @@
           return fallback.should.equal(dropzone.getExistingFallback());
         });
       });
-      return describe("getFallbackForm()", function() {
+      describe("getFallbackForm()", function() {
         it("should use the paramName without [] if uploadMultiple is false", function() {
           var fallback, fileInput;
           dropzone.options.uploadMultiple = false;
@@ -931,6 +931,85 @@
           fallback = dropzone.getFallbackForm();
           fileInput = fallback.querySelector("input[type=file]");
           return fileInput.name.should.equal("myFile[]");
+        });
+      });
+      describe("getAcceptedFiles() / getRejectedFiles()", function() {
+        var mock1, mock2, mock3, mock4;
+        mock1 = mock2 = mock3 = mock4 = null;
+        beforeEach(function() {
+          mock1 = getMockFile();
+          mock2 = getMockFile();
+          mock3 = getMockFile();
+          mock4 = getMockFile();
+          dropzone.options.accept = function(file, done) {
+            if (file === mock1 || file === mock3) {
+              return done();
+            } else {
+              return done("error");
+            }
+          };
+          dropzone.addFile(mock1);
+          dropzone.addFile(mock2);
+          dropzone.addFile(mock3);
+          return dropzone.addFile(mock4);
+        });
+        it("getAcceptedFiles() should only return accepted files", function() {
+          return dropzone.getAcceptedFiles().should.eql([mock1, mock3]);
+        });
+        return it("getRejectedFiles() should only return rejected files", function() {
+          return dropzone.getRejectedFiles().should.eql([mock2, mock4]);
+        });
+      });
+      describe("getQueuedFiles()", function() {
+        return it("should return all files with the status Dropzone.QUEUED", function() {
+          var mock1, mock2, mock3, mock4;
+          mock1 = getMockFile();
+          mock2 = getMockFile();
+          mock3 = getMockFile();
+          mock4 = getMockFile();
+          dropzone.options.accept = function(file, done) {
+            return file.done = done;
+          };
+          dropzone.addFile(mock1);
+          dropzone.addFile(mock2);
+          dropzone.addFile(mock3);
+          dropzone.addFile(mock4);
+          dropzone.getQueuedFiles().should.eql([]);
+          mock1.done();
+          mock3.done();
+          dropzone.getQueuedFiles().should.eql([mock1, mock3]);
+          mock1.status.should.equal(Dropzone.QUEUED);
+          mock3.status.should.equal(Dropzone.QUEUED);
+          mock2.status.should.equal(Dropzone.ADDED);
+          return mock4.status.should.equal(Dropzone.ADDED);
+        });
+      });
+      return describe("getUploadingFiles()", function() {
+        return it("should return all files with the status Dropzone.UPLOADING", function(done) {
+          var mock1, mock2, mock3, mock4;
+          mock1 = getMockFile();
+          mock2 = getMockFile();
+          mock3 = getMockFile();
+          mock4 = getMockFile();
+          dropzone.options.accept = function(file, done) {
+            return file.done = done;
+          };
+          dropzone.uploadFile = function() {};
+          dropzone.addFile(mock1);
+          dropzone.addFile(mock2);
+          dropzone.addFile(mock3);
+          dropzone.addFile(mock4);
+          dropzone.getUploadingFiles().should.eql([]);
+          mock1.done();
+          mock3.done();
+          return setTimeout((function() {
+            dropzone.getUploadingFiles().should.eql([mock1, mock3]);
+            mock1.status.should.equal(Dropzone.UPLOADING);
+            mock3.status.should.equal(Dropzone.UPLOADING);
+            mock2.status.should.equal(Dropzone.ADDED);
+            mock4.status.should.equal(Dropzone.ADDED);
+            return done();
+          }), 10);
         });
       });
     });
