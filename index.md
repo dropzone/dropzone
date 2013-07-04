@@ -159,7 +159,7 @@ elements) by instantiating the `Dropzone` class
 
 ```js
 // Dropzone class:
-var myDropzone = new Dropzone("div#myId", { url: "/file/post"})
+var myDropzone = new Dropzone("div#myId", { url: "/file/post"});
 ```
 
 or if you use jQuery, you can use the jQuery plugin Dropzone ships with:
