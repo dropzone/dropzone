@@ -528,7 +528,7 @@ example:
 
 {% highlight js %}
 myDropzone.on("addedfile", function(file) {
-  file.previewElement.click(function() { myDropzone.removeFile(file); });
+  file.previewElement.addEventListener("click", function() { myDropzone.removeFile(file); });
 });
 {% endhighlight %}
 
