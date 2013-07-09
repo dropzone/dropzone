@@ -1253,7 +1253,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     };
 
     Dropzone.prototype.uploadFiles = function(files) {
-      var file, formData, handleError, header, headers, input, inputName, inputType, key, name, progressObj, response, updateProgress, value, xhr, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3,
+      var file, formData, handleError, headerName, headerValue, headers, input, inputName, inputType, key, progressObj, response, updateProgress, value, xhr, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3,
         _this = this;
       xhr = new XMLHttpRequest();
       for (_i = 0, _len = files.length; _i < _len; _i++) {
@@ -1346,9 +1346,9 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       if (this.options.headers) {
         extend(headers, this.options.headers);
       }
-      for (header in headers) {
-        name = headers[header];
-        xhr.setRequestHeader(header, name);
+      for (headerName in headers) {
+        headerValue = headers[headerName];
+        xhr.setRequestHeader(headerName, headerValue);
       }
       formData = new FormData();
       if (this.options.params) {
