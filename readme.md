@@ -81,6 +81,12 @@ or at the [source](https://github.com/enyo/dropzone/blob/master/src/dropzone.cof
 I use [emitter](https://github.com/component/emitter) to manage events. If you want to register to some event you can do so on the `dropzone` object itself:
 
 ```js
+Dropzone.options.myDropzone({
+  init: function() {
+    this.on("error", function(file, message) { alert(message); });
+  }
+});
+// or if you need to access a Dropzone somewhere else:
 var myDropzone = Dropzone.forElement("div#my-dropzone");
 myDropzone.on("error", function(file, message) { alert(message); });
 ```
