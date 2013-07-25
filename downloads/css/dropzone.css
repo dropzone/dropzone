@@ -180,7 +180,7 @@
   top: 50%;
   left: 50%;
 }
-@media all and (-webkit-min-device-pixel-ratio: 1.5) {
+@media all and (-webkit-min-device-pixel-ratio:1.5),(min--moz-device-pixel-ratio:1.5),(-o-min-device-pixel-ratio:1.5/1),(min-device-pixel-ratio:1.5),(min-resolution:138dpi),(min-resolution:1.5dppx) {
   .dropzone .dz-default.dz-message {
     background-image: url("../images/spritemap@2x.png");
     -webkit-background-size: 428px 406px;
@@ -200,14 +200,14 @@
 }
 .dropzone.dz-drag-hover .dz-message {
   opacity: 0.15;
-  filter: alpha(opacity=15);
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=15)";
+  filter: alpha(opacity=15);
 }
 .dropzone.dz-started .dz-message {
   display: block;
   opacity: 0;
-  filter: alpha(opacity=0);
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
 }
 .dropzone .dz-preview,
 .dropzone-previews .dz-preview {
@@ -219,8 +219,8 @@
 .dropzone-previews .dz-preview.dz-image-preview:hover .dz-details img {
   display: block;
   opacity: 0.1;
-  filter: alpha(opacity=10);
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity=10);
 }
 .dropzone .dz-preview.dz-success .dz-success-mark,
 .dropzone-previews .dz-preview.dz-success .dz-success-mark {
@@ -244,8 +244,8 @@
 .dropzone-previews .dz-preview .dz-success-mark {
   display: block;
   opacity: 0;
-  filter: alpha(opacity=0);
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
   -webkit-transition: opacity 0.4s ease-in-out;
   -moz-transition: opacity 0.4s ease-in-out;
   -o-transition: opacity 0.4s ease-in-out;
@@ -254,7 +254,7 @@
   background-image: url("../images/spritemap.png");
   background-repeat: no-repeat;
 }
-@media all and (-webkit-min-device-pixel-ratio: 1.5) {
+@media all and (-webkit-min-device-pixel-ratio:1.5),(min--moz-device-pixel-ratio:1.5),(-o-min-device-pixel-ratio:1.5/1),(min-device-pixel-ratio:1.5),(min-resolution:138dpi),(min-resolution:1.5dppx) {
   .dropzone .dz-preview .dz-error-mark,
   .dropzone-previews .dz-preview .dz-error-mark,
   .dropzone .dz-preview .dz-success-mark,
@@ -302,7 +302,7 @@
   background-repeat: repeat-x;
   background-position: 0px -400px;
 }
-@media all and (-webkit-min-device-pixel-ratio: 1.5) {
+@media all and (-webkit-min-device-pixel-ratio:1.5),(min--moz-device-pixel-ratio:1.5),(-o-min-device-pixel-ratio:1.5/1),(min-device-pixel-ratio:1.5),(min-resolution:138dpi),(min-resolution:1.5dppx) {
   .dropzone .dz-preview .dz-progress .dz-upload,
   .dropzone-previews .dz-preview .dz-progress .dz-upload {
     background-image: url("../images/spritemap@2x.png");
@@ -315,8 +315,8 @@
 .dropzone-previews .dz-preview.dz-success .dz-progress {
   display: block;
   opacity: 0;
-  filter: alpha(opacity=0);
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
   -webkit-transition: opacity 0.4s ease-in-out;
   -moz-transition: opacity 0.4s ease-in-out;
   -o-transition: opacity 0.4s ease-in-out;
@@ -327,8 +327,8 @@
 .dropzone-previews .dz-preview .dz-error-message {
   display: block;
   opacity: 0;
-  filter: alpha(opacity=0);
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
   -webkit-transition: opacity 0.3s ease-in-out;
   -moz-transition: opacity 0.3s ease-in-out;
   -o-transition: opacity 0.3s ease-in-out;
@@ -344,11 +344,11 @@
 .dropzone a.dz-remove,
 .dropzone-previews a.dz-remove {
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #fafafa), color-stop(1, #eee));
-  background-image: -webkit-linear-gradient(top, #fafafa 0%, #eee 100%);
-  background-image: -moz-linear-gradient(top, #fafafa 0%, #eee 100%);
-  background-image: -o-linear-gradient(top, #fafafa 0%, #eee 100%);
-  background-image: -ms-linear-gradient(top, #fafafa 0%, #eee 100%);
-  background-image: linear-gradient(top, #fafafa 0%, #eee 100%);
+  background-image: -webkit-linear-gradient(top, #fafafa 0, #eee 100%);
+  background-image: -moz-linear-gradient(top, #fafafa 0, #eee 100%);
+  background-image: -o-linear-gradient(top, #fafafa 0, #eee 100%);
+  background-image: -ms-linear-gradient(top, #fafafa 0, #eee 100%);
+  background-image: linear-gradient(top, #fafafa 0, #eee 100%);
   -webkit-border-radius: 2px;
   border-radius: 2px;
   border: 1px solid #eee;
