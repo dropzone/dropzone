@@ -1176,10 +1176,10 @@ Emitter.prototype.hasListeners = function(event){
       }
       for (_j = 0, _len1 = files.length; _j < _len1; _j++) {
         file = files[_j];
-        this.emit("sending", file, xhr, formData);
+        this.emit("sending", file, xhr, formData, this.emit);
       }
       if (this.options.uploadMultiple) {
-        this.emit("sendingmultiple", files, xhr, formData);
+        this.emit("sendingmultiple", files, xhr, formData, this.emit);
       }
       if (this.element.tagName === "FORM") {
         _ref2 = this.element.querySelectorAll("input, textarea, select, button");
