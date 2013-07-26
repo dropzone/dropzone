@@ -938,8 +938,8 @@ class Dropzone extends Em
     formData.append key, value for key, value of @options.params if @options.params
 
     # Let the user add additional data if necessary
-    @emit "sending", file, xhr, formData for file in files
-    @emit "sendingmultiple", files, xhr, formData if @options.uploadMultiple
+    @emit "sending", file, xhr, formData, @emit for file in files
+    @emit "sendingmultiple", files, xhr, formData, @emit if @options.uploadMultiple
 
 
     # Take care of other input elements
