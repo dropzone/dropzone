@@ -1192,15 +1192,20 @@ Emitter.prototype.hasListeners = function(event){
           }
         }
       }
-      for (_l = 0, _len3 = files.length; _l < _len3; _l++) {
-        file = files[_l];
-        formData.append("" + this.options.paramName + (this.options.uploadMultiple ? "[]" : ""), file, file.name);
-      }
       if (this.options.sendingAsync) {
         return this.on('sendingAsyncDone', function() {
+          var _l, _len3;
+          for (_l = 0, _len3 = files.length; _l < _len3; _l++) {
+            file = files[_l];
+            formData.append("" + _this.options.paramName + (_this.options.uploadMultiple ? "[]" : ""), file, file.name);
+          }
           return xhr.send(formData);
         });
       } else {
+        for (_l = 0, _len3 = files.length; _l < _len3; _l++) {
+          file = files[_l];
+          formData.append("" + this.options.paramName + (this.options.uploadMultiple ? "[]" : ""), file, file.name);
+        }
         return xhr.send(formData);
       }
     };
