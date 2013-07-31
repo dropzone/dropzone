@@ -1,19 +1,19 @@
 ###
 #
 # More info at [www.dropzonejs.com](http://www.dropzonejs.com)
-# 
-# Copyright (c) 2012, Matias Meno  
-# 
+#
+# Copyright (c) 2012, Matias Meno
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -92,16 +92,16 @@ class Dropzone extends Em
     # Whether hidden files in directories should be ignored.
     ignoreHiddenFiles: yes
 
-    # You can set accepted mime types here. 
-    # 
-    # The default implementation of the `accept()` function will check this 
+    # You can set accepted mime types here.
+    #
+    # The default implementation of the `accept()` function will check this
     # property, and if the Dropzone is clickable this will be used as
     # `accept` attribute.
-    # 
+    #
     # This is a comma separated list of mime types or extensions. E.g.:
-    # 
+    #
     #     audio/*,video/*,image/png,.pdf
-    # 
+    #
     # See https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-accept
     # for a reference.
     acceptedFiles: null
@@ -125,10 +125,10 @@ class Dropzone extends Em
     # A CSS selector or HTML element for the file previews container.
     # If null, the dropzone element itself will be used
     previewsContainer: null
-    
+
 
     # Dictionary
-     
+
     # The text used before any files are dropped
     dictDefaultMessage: "Drop files here to upload"
 
@@ -183,24 +183,24 @@ class Dropzone extends Em
       unless messageElement
         messageElement = Dropzone.createElement """<div class="dz-message"><span></span></div>"""
         @element.appendChild messageElement
-          
+
       span = messageElement.getElementsByTagName("span")[0]
       span.textContent = @options.dictFallbackMessage if span
 
       @element.appendChild @getFallbackForm()
-    
+
 
 
     # Gets called to calculate the thumbnail dimensions.
-    # 
+    #
     # You can use file.width, file.height, options.thumbnailWidth and
     # options.thumbnailHeight to calculate the dimensions.
-    # 
+    #
     # The dimensions are going to be used like this:
-    #   
+    #
     #     var info = @options.resize.call(this, file);
     #     ctx.drawImage(img, info.srcX, info.srcY, info.srcWidth, info.srcHeight, info.trgX, info.trgY, info.trgWidth, info.trgHeight);
-    #     
+    #
     #  srcX, srcy, trgX and trgY can be omitted (in which case 0 is assumed).
     #  trgWidth and trgHeight can be omitted (in which case the options.thumbnailWidth / options.thumbnailHeight are used)
     resize: (file) ->
@@ -212,7 +212,7 @@ class Dropzone extends Em
 
       srcRatio = file.width / file.height
       trgRatio = @options.thumbnailWidth / @options.thumbnailHeight
-      
+
       if file.height < @options.thumbnailHeight or file.width < @options.thumbnailWidth
         # This image is smaller than the canvas
         info.trgHeight = info.srcHeight
@@ -251,7 +251,7 @@ class Dropzone extends Em
     dragenter: (e) -> @element.classList.add "dz-drag-hover"
     dragover: (e) -> @element.classList.add "dz-drag-hover"
     dragleave: (e) -> @element.classList.remove "dz-drag-hover"
-    
+
     # Called whenever files are dropped or selected
     selectedfiles: (files) ->
       @element.classList.add "dz-started" if @element == @previewsContainer
@@ -296,23 +296,23 @@ class Dropzone extends Em
       thumbnailElement.alt = file.name
       thumbnailElement.src = dataUrl
 
-    
+
     # Called whenever an error occurs
     # Receives `file` and `message`
     error: (file, message) ->
       file.previewElement.classList.add "dz-error"
       file.previewElement.querySelector("[data-dz-errormessage]").textContent = message
-    
-    
+
+
     # Called when a file gets processed. Since there is a cue, not all added
     # files are processed immediately.
     # Receives `file`
     processing: (file) ->
       file.previewElement.classList.add "dz-processing"
       file._removeLink.textContent = @options.dictCancelUpload if file._removeLink
-    
+
     processingmultiple: noop
-    
+
     # Called whenever the upload progress gets updated.
     # Receives `file`, `progress` (percentage 0-100) and `bytesSent`.
     # To get the total number of bytes of the file, use `file.size`
@@ -327,9 +327,9 @@ class Dropzone extends Em
     # parameter, so you can modify it (for example to add a CSRF token) and a
     # `formData` object to add additional information.
     sending: noop
-    
+
     sendingmultiple: noop
-    
+
     # When the complete upload is finished and successfull
     # Receives `file`
     success: (file) ->
@@ -408,7 +408,7 @@ class Dropzone extends Em
 
     # Backwards compatibility
     if @options.acceptedMimeTypes
-      @options.acceptedFiles = @options.acceptedMimeTypes 
+      @options.acceptedFiles = @options.acceptedMimeTypes
       delete @options.acceptedMimeTypes
 
     @options.method = @options.method.toUpperCase()
@@ -430,7 +430,7 @@ class Dropzone extends Em
         @clickableElements = [ @element ]
       else
         @clickableElements = Dropzone.getElements @options.clickable, "clickable"
-      
+
 
     @init()
 
@@ -545,7 +545,7 @@ class Dropzone extends Em
     @disable()
     @removeAllFiles true
     if @hiddenFileInput?.parentNode
-      @hiddenFileInput.parentNode.removeChild @hiddenFileInput 
+      @hiddenFileInput.parentNode.removeChild @hiddenFileInput
       @hiddenFileInput = null
     delete @element.dropzone
 
@@ -591,7 +591,7 @@ class Dropzone extends Em
 
 
   # Returns the fallback elements if they exist already
-  # 
+  #
   # This code has to pass in IE7 :(
   getExistingFallback: ->
     getFallback = (elements) -> return el for el in elements when /(^| )fallback($| )/.test el.className
@@ -604,7 +604,7 @@ class Dropzone extends Em
   setupEventListeners: ->
     for elementListeners in @listeners
       elementListeners.element.addEventListener event, listener, false for event, listener of elementListeners.events
-      
+
 
   # Deactivates all listeners stored in @listeners
   removeEventListeners: ->
@@ -634,7 +634,7 @@ class Dropzone extends Em
       size = size / 100000
       string = "MB"
     else if size >= 100
-      size = size / 100 
+      size = size / 100
       string = "KB"
     else
       size = size * 10
@@ -676,8 +676,8 @@ class Dropzone extends Em
   # If `done()` is called without argument the file is accepted
   # If you call it with an error message, the file is rejected
   # (This allows for asynchronous validation)
-  # 
-  # This function checks the filesize, and if the file.type passes the 
+  #
+  # This function checks the filesize, and if the file.type passes the
   # `acceptedFiles` check.
   accept: (file, done) ->
     if file.size > @options.maxFilesize * 1024 * 1024
@@ -738,7 +738,7 @@ class Dropzone extends Em
           @addDirectory entry, "#{path}/#{entry.name}"
       return
 
-    dirReader.readEntries entriesReader, (error) -> console?.log? error 
+    dirReader.readEntries entriesReader, (error) -> console?.log? error
 
 
   # Can be called by the user to remove a file
@@ -904,7 +904,7 @@ class Dropzone extends Em
 
       if xhr.getResponseHeader("content-type") and ~xhr.getResponseHeader("content-type").indexOf "application/json"
         try
-          response = JSON.parse response 
+          response = JSON.parse response
         catch e
           response = "Invalid JSON response from server."
 
@@ -929,7 +929,7 @@ class Dropzone extends Em
       "X-Requested-With": "XMLHttpRequest",
 
     extend headers, @options.headers if @options.headers
-      
+
     xhr.setRequestHeader header, name for header, name of headers
 
     formData = new FormData()
@@ -955,9 +955,15 @@ class Dropzone extends Em
     # Finally add the file
     # Has to be last because some servers (eg: S3) expect the file to be the
     # last parameter
-    formData.append "#{@options.paramName}#{if @options.uploadMultiple then "[]" else ""}", file, file.name for file in files
 
-    xhr.send formData
+    if @options.sendingAsync
+      @on 'sendingAsyncDone', =>
+        formData.append "#{@options.paramName}#{if @options.uploadMultiple then "[]" else ""}", file, file.name for file in files
+        xhr.send formData
+
+    else
+      formData.append "#{@options.paramName}#{if @options.uploadMultiple then "[]" else ""}", file, file.name for file in files
+      xhr.send formData
 
 
   # Called internally when processing is finished.
@@ -983,7 +989,7 @@ class Dropzone extends Em
     if @options.uploadMultiple
       @emit "errormultiple", files, message, xhr
       @emit "completemultiple", files
-    
+
     @processQueue() if @options.autoProcessQueue
 
 
@@ -995,15 +1001,15 @@ Dropzone.version = "3.6.1"
 # to this object for your different dropzone elemens.
 #
 # Example:
-# 
+#
 #     Dropzone.options.myDropzoneElementId = { maxFilesize: 1 };
-# 
+#
 # To disable autoDiscover for a specific element, you can set `false` as an option:
-# 
+#
 #     Dropzone.options.myDisabledElementId = false;
-# 
+#
 # And in html:
-# 
+#
 #     <form action="/upload" id="my-dropzone-element-id" class="dropzone"></form>
 Dropzone.options = { }
 
@@ -1053,12 +1059,12 @@ Dropzone.discover = ->
 # So I created a blacklist of userAgents. Yes, yes. Browser sniffing, I know.
 # But what to do when browsers *theoretically* support an API, but crash
 # when using it.
-# 
+#
 # This is a list of regular expressions tested against navigator.userAgent
-# 
+#
 # ** It should only be used on browser that *do* support the API, but
 # incorrectly **
-# 
+#
 Dropzone.blacklistedBrowsers = [
   # The mac os version of opera 12 seems to have a problem with the File drag'n'drop API.
   /opera.*Macintosh.*version\/12/i
@@ -1136,7 +1142,7 @@ Dropzone.getElements = (els, name) ->
 
 
 # Validates the mime type like this:
-# 
+#
 # https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-accept
 Dropzone.isValidFile = (file, acceptedFiles) ->
   return yes unless acceptedFiles # If there are no accepted mime types, it's OK
