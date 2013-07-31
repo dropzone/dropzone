@@ -955,13 +955,14 @@ class Dropzone extends Em
     # Finally add the file
     # Has to be last because some servers (eg: S3) expect the file to be the
     # last parameter
-    formData.append "#{@options.paramName}#{if @options.uploadMultiple then "[]" else ""}", file, file.name for file in files
 
     if @options.sendingAsync
       @on 'sendingAsyncDone', =>
+        formData.append "#{@options.paramName}#{if @options.uploadMultiple then "[]" else ""}", file, file.name for file in files
         xhr.send formData
 
     else
+      formData.append "#{@options.paramName}#{if @options.uploadMultiple then "[]" else ""}", file, file.name for file in files
       xhr.send formData
 
 
