@@ -958,6 +958,7 @@ class Dropzone extends Em
 
     if @options.sendingAsync
       @on 'sendingAsyncDone', =>
+        @off 'sendingAsyncDone'
         formData.append "#{@options.paramName}#{if @options.uploadMultiple then "[]" else ""}", file, file.name for file in files
         xhr.send formData
 

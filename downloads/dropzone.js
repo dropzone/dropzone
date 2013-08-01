@@ -1405,6 +1405,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       if (this.options.sendingAsync) {
         return this.on('sendingAsyncDone', function() {
           var _l, _len3;
+          _this.off('sendingAsyncDone');
           for (_l = 0, _len3 = files.length; _l < _len3; _l++) {
             file = files[_l];
             formData.append("" + _this.options.paramName + (_this.options.uploadMultiple ? "[]" : ""), file, file.name);
