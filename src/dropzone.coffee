@@ -1032,8 +1032,6 @@ Dropzone.autoDiscover = on
 
 # Looks for all .dropzone elements and creates a dropzone for them
 Dropzone.discover = ->
-  return unless Dropzone.autoDiscover
-
   if document.querySelectorAll
     dropzones = document.querySelectorAll ".dropzone"
   else
@@ -1246,4 +1244,7 @@ contentLoaded = (win, fn) ->
     win[add] pre + "load", init, false
 
 
-contentLoaded window, Dropzone.discover
+# As a single function to be able to write tests.
+Dropzone._autoDiscoverFunction = -> Dropzone.discover() if Dropzone.autoDiscover
+contentLoaded window, Dropzone._autoDiscoverFunction
+

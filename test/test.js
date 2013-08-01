@@ -145,10 +145,17 @@
           after(function() {
             return document.body.removeChild(element3);
           });
-          return it("should not create dropzones if Dropzone.autoDiscover == false", function() {
+          it("should create dropzones even if Dropzone.autoDiscover == false", function() {
             Dropzone.autoDiscover = false;
             Dropzone.discover();
-            return expect(element3.dropzone).to.not.be.ok;
+            return expect(element3.dropzone).to.be.ok;
+          });
+          return it("should not automatically be called if Dropzone.autoDiscover == false", function() {
+            Dropzone.autoDiscover = false;
+            Dropzone.discover = function() {
+              return expect(false).to.be.ok;
+            };
+            return Dropzone._autoDiscoverFunction();
           });
         });
       });

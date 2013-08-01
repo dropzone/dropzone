@@ -1254,9 +1254,6 @@ Emitter.prototype.hasListeners = function(event){
 
   Dropzone.discover = function() {
     var checkElements, dropzone, dropzones, _i, _len, _results;
-    if (!Dropzone.autoDiscover) {
-      return;
-    }
     if (document.querySelectorAll) {
       dropzones = document.querySelectorAll(".dropzone");
     } else {
@@ -1509,7 +1506,13 @@ Emitter.prototype.hasListeners = function(event){
     }
   };
 
-  contentLoaded(window, Dropzone.discover);
+  Dropzone._autoDiscoverFunction = function() {
+    if (Dropzone.autoDiscover) {
+      return Dropzone.discover();
+    }
+  };
+
+  contentLoaded(window, Dropzone._autoDiscoverFunction);
 
 }).call(this);
 

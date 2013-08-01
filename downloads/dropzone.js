@@ -1452,9 +1452,6 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
   Dropzone.discover = function() {
     var checkElements, dropzone, dropzones, _i, _len, _results;
-    if (!Dropzone.autoDiscover) {
-      return;
-    }
     if (document.querySelectorAll) {
       dropzones = document.querySelectorAll(".dropzone");
     } else {
@@ -1707,7 +1704,13 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     }
   };
 
-  contentLoaded(window, Dropzone.discover);
+  Dropzone._autoDiscoverFunction = function() {
+    if (Dropzone.autoDiscover) {
+      return Dropzone.discover();
+    }
+  };
+
+  contentLoaded(window, Dropzone._autoDiscoverFunction);
 
 }).call(this);
 

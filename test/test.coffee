@@ -121,10 +121,17 @@ describe "Dropzone", ->
         after ->
           document.body.removeChild element3
 
-        it "should not create dropzones if Dropzone.autoDiscover == false", ->
+        it "should create dropzones even if Dropzone.autoDiscover == false", ->
+          # Because the check is in the actual contentLoaded function.
           Dropzone.autoDiscover = off
           Dropzone.discover()
-          expect(element3.dropzone).to.not.be.ok
+          expect(element3.dropzone).to.be.ok
+
+        it "should not automatically be called if Dropzone.autoDiscover == false", ->
+          Dropzone.autoDiscover = off
+          Dropzone.discover = -> expect(false).to.be.ok
+          Dropzone._autoDiscoverFunction()
+
 
     describe "Dropzone.isValidFile()", ->
       it "should return true if called without acceptedFiles", ->
