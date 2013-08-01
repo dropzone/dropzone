@@ -2,7 +2,7 @@
   chai.should();
 
   describe("Dropzone", function() {
-    var getMockFile;
+    var getMockFile, xhr;
     getMockFile = function() {
       return {
         name: "test file name",
@@ -10,6 +10,10 @@
         type: "text/html"
       };
     };
+    xhr = null;
+    beforeEach(function() {
+      return xhr = sinon.useFakeXMLHttpRequest();
+    });
     describe("static functions", function() {
       describe("Dropzone.createElement()", function() {
         var element;
@@ -141,10 +145,17 @@
           after(function() {
             return document.body.removeChild(element3);
           });
-          return it("should not create dropzones if Dropzone.autoDiscover == false", function() {
+          it("should create dropzones even if Dropzone.autoDiscover == false", function() {
             Dropzone.autoDiscover = false;
             Dropzone.discover();
-            return expect(element3.dropzone).to.not.be.ok;
+            return expect(element3.dropzone).to.be.ok;
+          });
+          return it("should not automatically be called if Dropzone.autoDiscover == false", function() {
+            Dropzone.autoDiscover = false;
+            Dropzone.discover = function() {
+              return expect(false).to.be.ok;
+            };
+            return Dropzone._autoDiscoverFunction();
           });
         });
       });
@@ -611,13 +622,11 @@
       });
     });
     describe("instance", function() {
-      var dropzone, element, requests, xhr;
+      var dropzone, element, requests;
       element = null;
       dropzone = null;
-      xhr = null;
       requests = null;
       beforeEach(function() {
-        xhr = sinon.useFakeXMLHttpRequest();
         requests = [];
         xhr.onCreate = function(xhr) {
           return requests.push(xhr);
@@ -991,8 +1000,8 @@
           mock2 = getMockFile();
           mock3 = getMockFile();
           mock4 = getMockFile();
-          dropzone.options.accept = function(file, done) {
-            return file.done = done;
+          dropzone.options.accept = function(file, _done) {
+            return file.done = _done;
           };
           dropzone.uploadFile = function() {};
           dropzone.addFile(mock1);
@@ -1109,11 +1118,9 @@
         });
       });
       return describe("uploadFiles()", function() {
-        var requests, xhr;
-        xhr = null;
+        var requests;
         requests = null;
         beforeEach(function() {
-          xhr = sinon.useFakeXMLHttpRequest();
           requests = [];
           return xhr.onCreate = function(xhr) {
             return requests.push(xhr);

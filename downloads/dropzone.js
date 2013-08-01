@@ -439,6 +439,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       dictCancelUpload: "Cancel upload",
       dictCancelUploadConfirmation: "Are you sure you want to cancel this upload?",
       dictRemoveFile: "Remove file",
+      dictRemoveFileConfirmation: null,
       accept: function(file, done) {
         return done();
       },
@@ -544,7 +545,13 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
                 return _this.removeFile(file);
               }
             } else {
-              return _this.removeFile(file);
+              if (_this.options.dictRemoveFileConfirmation) {
+                if (window.confirm(_this.options.dictRemoveFileConfirmation)) {
+                  return _this.removeFile(file);
+                }
+              } else {
+                return _this.removeFile(file);
+              }
             }
           });
           return file.previewElement.appendChild(file._removeLink);
@@ -733,9 +740,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
           }
           _this.hiddenFileInput = document.createElement("input");
           _this.hiddenFileInput.setAttribute("type", "file");
-          if (_this.options.uploadMultiple) {
-            _this.hiddenFileInput.setAttribute("multiple", "multiple");
-          }
+          _this.hiddenFileInput.setAttribute("multiple", "multiple");
           if (_this.options.acceptedFiles != null) {
             _this.hiddenFileInput.setAttribute("accept", _this.options.acceptedFiles);
           }
@@ -1169,12 +1174,15 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       parallelUploads = this.options.parallelUploads;
       processingLength = this.getUploadingFiles().length;
       i = processingLength;
+      if (processingLength >= parallelUploads) {
+        return;
+      }
       queuedFiles = this.getQueuedFiles();
       if (!(queuedFiles.length > 0)) {
         return;
       }
       if (this.options.uploadMultiple) {
-        return this.processFiles(queuedFiles.slice(0, parallelUploads));
+        return this.processFiles(queuedFiles.slice(0, parallelUploads - processingLength));
       } else {
         while (i < parallelUploads) {
           if (!queuedFiles.length) {
@@ -1253,7 +1261,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     };
 
     Dropzone.prototype.uploadFiles = function(files) {
-      var file, formData, handleError, header, headers, input, inputName, inputType, key, name, progressObj, response, updateProgress, value, xhr, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3,
+      var file, formData, handleError, headerName, headerValue, headers, input, inputName, inputType, key, progressObj, response, updateProgress, value, xhr, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3,
         _this = this;
       xhr = new XMLHttpRequest();
       for (_i = 0, _len = files.length; _i < _len; _i++) {
@@ -1346,9 +1354,9 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       if (this.options.headers) {
         extend(headers, this.options.headers);
       }
-      for (header in headers) {
-        name = headers[header];
-        xhr.setRequestHeader(header, name);
+      for (headerName in headers) {
+        headerValue = headers[headerName];
+        xhr.setRequestHeader(headerName, headerValue);
       }
       formData = new FormData();
       if (this.options.params) {
@@ -1421,7 +1429,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
   })(Em);
 
-  Dropzone.version = "3.6.1";
+  Dropzone.version = "3.6.2";
 
   Dropzone.options = {};
 
@@ -1449,9 +1457,6 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
   Dropzone.discover = function() {
     var checkElements, dropzone, dropzones, _i, _len, _results;
-    if (!Dropzone.autoDiscover) {
-      return;
-    }
     if (document.querySelectorAll) {
       dropzones = document.querySelectorAll(".dropzone");
     } else {
@@ -1704,14 +1709,19 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     }
   };
 
-  contentLoaded(window, Dropzone.discover);
+  Dropzone._autoDiscoverFunction = function() {
+    if (Dropzone.autoDiscover) {
+      return Dropzone.discover();
+    }
+  };
+
+  contentLoaded(window, Dropzone._autoDiscoverFunction);
 
 }).call(this);
 
 });
 require.alias("component-emitter/index.js", "dropzone/deps/emitter/index.js");
 require.alias("component-emitter/index.js", "emitter/index.js");
-
 if (typeof exports == "object") {
   module.exports = require("dropzone");
 } else if (typeof define == "function" && define.amd) {

@@ -157,6 +157,9 @@ class Dropzone extends Em
     # If used, the text to be used to remove a file.
     dictRemoveFile: "Remove file"
 
+    # If this is not null, then the user will be prompted before removing a file.
+    dictRemoveFileConfirmation: null
+
     # If `done()` is called without argument the file is accepted
     # If you call it with an error message, the file is rejected
     # (This allows for asynchronous validation).
@@ -279,7 +282,10 @@ class Dropzone extends Em
           if file.status == Dropzone.UPLOADING
             @removeFile file if window.confirm @options.dictCancelUploadConfirmation
           else
-            @removeFile file
+            if @options.dictRemoveFileConfirmation
+              @removeFile file if window.confirm @options.dictRemoveFileConfirmation
+            else
+              @removeFile file
 
         file.previewElement.appendChild file._removeLink
 
@@ -460,7 +466,7 @@ class Dropzone extends Em
         document.body.removeChild @hiddenFileInput if @hiddenFileInput
         @hiddenFileInput = document.createElement "input"
         @hiddenFileInput.setAttribute "type", "file"
-        @hiddenFileInput.setAttribute "multiple", "multiple" if @options.uploadMultiple
+        @hiddenFileInput.setAttribute "multiple", "multiple"
 
         @hiddenFileInput.setAttribute "accept", @options.acceptedFiles if @options.acceptedFiles?
 
@@ -792,13 +798,16 @@ class Dropzone extends Em
     processingLength = @getUploadingFiles().length
     i = processingLength
 
+    # There are already at least as many files uploading than should be
+    return if processingLength >= parallelUploads
+
     queuedFiles = @getQueuedFiles()
 
     return unless queuedFiles.length > 0
 
     if @options.uploadMultiple
       # The files should be uploaded in one request
-      @processFiles queuedFiles.slice 0, parallelUploads
+      @processFiles queuedFiles.slice 0, (parallelUploads - processingLength)
     else
       while i < parallelUploads
         return unless queuedFiles.length # Nothing left to process
@@ -930,7 +939,7 @@ class Dropzone extends Em
 
     extend headers, @options.headers if @options.headers
       
-    xhr.setRequestHeader header, name for header, name of headers
+    xhr.setRequestHeader headerName, headerValue for headerName, headerValue of headers
 
     formData = new FormData()
 
@@ -988,7 +997,7 @@ class Dropzone extends Em
 
 
 
-Dropzone.version = "3.6.1"
+Dropzone.version = "3.6.2"
 
 
 # This is a map of options for your different dropzones. Add configurations
@@ -1029,8 +1038,6 @@ Dropzone.autoDiscover = on
 
 # Looks for all .dropzone elements and creates a dropzone for them
 Dropzone.discover = ->
-  return unless Dropzone.autoDiscover
-
   if document.querySelectorAll
     dropzones = document.querySelectorAll ".dropzone"
   else
@@ -1243,4 +1250,7 @@ contentLoaded = (win, fn) ->
     win[add] pre + "load", init, false
 
 
-contentLoaded window, Dropzone.discover
+# As a single function to be able to write tests.
+Dropzone._autoDiscoverFunction = -> Dropzone.discover() if Dropzone.autoDiscover
+contentLoaded window, Dropzone._autoDiscoverFunction
+

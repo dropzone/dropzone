@@ -9,6 +9,10 @@ describe "Dropzone", ->
     type: "text/html"
 
 
+  xhr = null
+  beforeEach -> xhr = sinon.useFakeXMLHttpRequest()
+
+
   describe "static functions", ->
 
     describe "Dropzone.createElement()", ->
@@ -117,10 +121,17 @@ describe "Dropzone", ->
         after ->
           document.body.removeChild element3
 
-        it "should not create dropzones if Dropzone.autoDiscover == false", ->
+        it "should create dropzones even if Dropzone.autoDiscover == false", ->
+          # Because the check is in the actual contentLoaded function.
           Dropzone.autoDiscover = off
           Dropzone.discover()
-          expect(element3.dropzone).to.not.be.ok
+          expect(element3.dropzone).to.be.ok
+
+        it "should not automatically be called if Dropzone.autoDiscover == false", ->
+          Dropzone.autoDiscover = off
+          Dropzone.discover = -> expect(false).to.be.ok
+          Dropzone._autoDiscoverFunction()
+
 
     describe "Dropzone.isValidFile()", ->
       it "should return true if called without acceptedFiles", ->
@@ -409,10 +420,8 @@ describe "Dropzone", ->
 
     element = null
     dropzone = null
-    xhr = null
     requests = null
     beforeEach ->
-      xhr = sinon.useFakeXMLHttpRequest()
       requests = [ ]
       xhr.onCreate = (xhr) -> requests.push xhr
 
@@ -769,7 +778,7 @@ describe "Dropzone", ->
         mock3 = getMockFile()
         mock4 = getMockFile()
 
-        dropzone.options.accept = (file, done) -> file.done = done
+        dropzone.options.accept = (file, _done) -> file.done = _done
         dropzone.uploadFile = ->
 
         dropzone.addFile mock1
@@ -886,13 +895,11 @@ describe "Dropzone", ->
         , 10
 
     describe "uploadFiles()", ->
-      xhr = null
       requests = null
 
 
 
       beforeEach ->
-        xhr = sinon.useFakeXMLHttpRequest()
         requests = [ ]
 
         xhr.onCreate = (xhr) -> requests.push xhr
