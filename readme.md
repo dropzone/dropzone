@@ -101,7 +101,7 @@ or at the [source](src/dropzone.coffee#L43).
 - Chrome 7+
 - Firefox 4+
 - IE 10+
-- Opera 12+ (Currently disabled for MacOS because their API is buggy)
+- Opera 12+ (Version 12 for MacOS is disabled because their API is buggy)
 - Safari 6+
 
 For all the other browsers, dropzone provides an oldschool file input fallback.
