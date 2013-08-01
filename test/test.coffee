@@ -9,6 +9,10 @@ describe "Dropzone", ->
     type: "text/html"
 
 
+  xhr = null
+  beforeEach -> xhr = sinon.useFakeXMLHttpRequest()
+
+
   describe "static functions", ->
 
     describe "Dropzone.createElement()", ->
@@ -409,10 +413,8 @@ describe "Dropzone", ->
 
     element = null
     dropzone = null
-    xhr = null
     requests = null
     beforeEach ->
-      xhr = sinon.useFakeXMLHttpRequest()
       requests = [ ]
       xhr.onCreate = (xhr) -> requests.push xhr
 
@@ -769,7 +771,7 @@ describe "Dropzone", ->
         mock3 = getMockFile()
         mock4 = getMockFile()
 
-        dropzone.options.accept = (file, done) -> file.done = done
+        dropzone.options.accept = (file, _done) -> file.done = _done
         dropzone.uploadFile = ->
 
         dropzone.addFile mock1
@@ -886,13 +888,11 @@ describe "Dropzone", ->
         , 10
 
     describe "uploadFiles()", ->
-      xhr = null
       requests = null
 
 
 
       beforeEach ->
-        xhr = sinon.useFakeXMLHttpRequest()
         requests = [ ]
 
         xhr.onCreate = (xhr) -> requests.push xhr

@@ -39,10 +39,10 @@
     "grunt-component-build": "*",
     "grunt-contrib-copy": "*",
     "grunt-contrib-watch": "*",
-    "mocha-phantomjs": "2.x",
-    "mocha": "1.9",
-    "sinon": "*",
-    "chai": "*"
+    "mocha-phantomjs": "3.1.x",
+    "mocha": "1.12.x",
+    "sinon": "1.7.x",
+    "chai": "1.7.x"
   }
 
 }

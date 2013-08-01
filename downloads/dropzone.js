@@ -1169,12 +1169,15 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       parallelUploads = this.options.parallelUploads;
       processingLength = this.getUploadingFiles().length;
       i = processingLength;
+      if (processingLength >= parallelUploads) {
+        return;
+      }
       queuedFiles = this.getQueuedFiles();
       if (!(queuedFiles.length > 0)) {
         return;
       }
       if (this.options.uploadMultiple) {
-        return this.processFiles(queuedFiles.slice(0, parallelUploads));
+        return this.processFiles(queuedFiles.slice(0, parallelUploads - processingLength));
       } else {
         while (i < parallelUploads) {
           if (!queuedFiles.length) {
@@ -1711,7 +1714,6 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 });
 require.alias("component-emitter/index.js", "dropzone/deps/emitter/index.js");
 require.alias("component-emitter/index.js", "emitter/index.js");
-
 if (typeof exports == "object") {
   module.exports = require("dropzone");
 } else if (typeof define == "function" && define.amd) {
