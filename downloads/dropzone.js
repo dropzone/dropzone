@@ -439,6 +439,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       dictCancelUpload: "Cancel upload",
       dictCancelUploadConfirmation: "Are you sure you want to cancel this upload?",
       dictRemoveFile: "Remove file",
+      dictRemoveFileConfirmation: null,
       accept: function(file, done) {
         return done();
       },
@@ -544,7 +545,13 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
                 return _this.removeFile(file);
               }
             } else {
-              return _this.removeFile(file);
+              if (_this.options.dictRemoveFileConfirmation) {
+                if (window.confirm(_this.options.dictRemoveFileConfirmation)) {
+                  return _this.removeFile(file);
+                }
+              } else {
+                return _this.removeFile(file);
+              }
             }
           });
           return file.previewElement.appendChild(file._removeLink);
