@@ -733,9 +733,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
           }
           _this.hiddenFileInput = document.createElement("input");
           _this.hiddenFileInput.setAttribute("type", "file");
-          if (_this.options.uploadMultiple) {
-            _this.hiddenFileInput.setAttribute("multiple", "multiple");
-          }
+          _this.hiddenFileInput.setAttribute("multiple", "multiple");
           if (_this.options.acceptedFiles != null) {
             _this.hiddenFileInput.setAttribute("accept", _this.options.acceptedFiles);
           }
