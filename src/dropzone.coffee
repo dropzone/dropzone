@@ -792,13 +792,16 @@ class Dropzone extends Em
     processingLength = @getUploadingFiles().length
     i = processingLength
 
+    # There are already at least as many files uploading than should be
+    return if processingLength >= parallelUploads
+
     queuedFiles = @getQueuedFiles()
 
     return unless queuedFiles.length > 0
 
     if @options.uploadMultiple
       # The files should be uploaded in one request
-      @processFiles queuedFiles.slice 0, parallelUploads
+      @processFiles queuedFiles.slice 0, (parallelUploads - processingLength)
     else
       while i < parallelUploads
         return unless queuedFiles.length # Nothing left to process
