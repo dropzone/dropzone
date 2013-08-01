@@ -1,7 +1,7 @@
 {
   "name": "dropzone",
   "repo": "enyo/dropzone",
-  "version": "3.6.2",
+  "version": "3.6.3-dev",
   "description": "Handles drag and drop of files for you.",
   "scripts": [ "index.js", "lib/dropzone.js" ],
   "styles": [ "downloads/css/basic.css" ],
