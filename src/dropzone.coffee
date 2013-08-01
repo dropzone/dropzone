@@ -157,6 +157,9 @@ class Dropzone extends Em
     # If used, the text to be used to remove a file.
     dictRemoveFile: "Remove file"
 
+    # If this is not null, then the user will be prompted before removing a file.
+    dictRemoveFileConfirmation: null
+
     # If `done()` is called without argument the file is accepted
     # If you call it with an error message, the file is rejected
     # (This allows for asynchronous validation).
@@ -279,7 +282,10 @@ class Dropzone extends Em
           if file.status == Dropzone.UPLOADING
             @removeFile file if window.confirm @options.dictCancelUploadConfirmation
           else
-            @removeFile file
+            if @options.dictRemoveFileConfirmation
+              @removeFile file if window.confirm @options.dictRemoveFileConfirmation
+            else
+              @removeFile file
 
         file.previewElement.appendChild file._removeLink
 
