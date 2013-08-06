@@ -271,6 +271,7 @@ The valid options are:
 | `maxThumbnailFilesize`  | in MB. When the filename exceeds this limit, the thumbnail will not be generated
 | `thumbnailWidth`        |
 | `thumbnailHeight`       |
+| `maxFiles`              | if not `null` defines how many files this Dropzone handles. If it exceeds, the event `maxfilesexceeded` will be called. The dropzone element gets the class `dz-max-files-reached` accordingly so you can provided visual feedback.
 | `resize`                | is the function that gets called to create the resize information. It gets the `file` as first parameter and must return an object with `srcX`, `srcY`, `srcWidth` and `srcHeight` and the same for `trg*`. Those values are going to be used by `ctx.drawImage()`.
 | `init`                  | is a function that gets called when Dropzone is initialized. You can setup event listeners inside this function.
 | <strike>`acceptedMimeTypes`</strike> | Deprecated in favor of `acceptedFiles`
@@ -295,6 +296,7 @@ to translate dropzone, you can also provide these options:
 | `dictCancelUpload`             | If `addRemoveLinks` is true, the text to be used for the cancel upload link.
 | `dictCancelUploadConfirmation` | If `addRemoveLinks` is true, the text to be used for confirmation when cancelling upload.
 | `dictRemoveFile`               | If `addRemoveLinks` is true, the text to be used to remove a file.
+| `dictMaxFilesExceeded`         | If `maxFiles` is set, this will be the error message when it's exceeded.
 
 
 > You can also overwrite all default event actions in the options. So if you provide the option `drop` you can overwrite the default `drop` event handler.
@@ -388,7 +390,7 @@ All of these receive the [file](https://developer.mozilla.org/en-US/docs/DOM/Fil
 | `success`             | The file has been uploaded successfully. Gets the server response as second argument. (This event was called `finished` previously)
 | `complete`            | Called when the upload was either successful or erroneous.
 | `canceled`            | Called when a file upload gets canceled.
-| `reset`               | Called when all files in the list are removed and the dropzone is reset to initial state.
+| `maxfilesexceeded`    | Called when the number of files accepted exceeds the `maxFiles` limit.
 
 All of these receive a list of files as first parameter and are only called if the `uploadMultiple` option is true:
 
@@ -401,11 +403,12 @@ All of these receive a list of files as first parameter and are only called if t
 | `canceledmultiple`    | See `canceled` for description.
 
 
-Special event:
+Special events:
 
 | Parameter             | Description
 |-----------------------|-------------
 | `totaluploadprogress` | Called with the total upload progress (0-100), the totalBytes and the totalBytesSent. This event can be used to show the overall upload progress of all files.
+| `reset`               | Called when all files in the list are removed and the dropzone is reset to initial state.
 
 
 ## layout
@@ -495,6 +498,22 @@ To get
 If you do not need a dropzone anymore, just call `.disable()` on the object. This
 will remove all event listeners on the element, and clear all file arrays. To
 reenable a Dropzone use `.enable()`.
+
+* * *
+
+If you don't like the default browser modals for `confirm` calls,
+you can handle them yourself by overwriting `Dropzone.confirm`.
+
+```js
+Dropzone.confirm = function(question, accepted, rejected) {
+  // Ask the question, and call accepted() or rejected() accordingly.
+  // CAREFUL: rejected might not be defined. Do nothing in that case.
+};
+
+```
+
+
+
 
 ## tips
 
