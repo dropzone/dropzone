@@ -65,6 +65,7 @@ class Dropzone extends Em
     "complete"
     "completemultiple"
     "reset"
+    "maxfilesexceeded"
   ]
 
 
@@ -81,6 +82,10 @@ class Dropzone extends Em
     maxThumbnailFilesize: 10 # in MB. When the filename exceeds this limit, the thumbnail will not be generated.
     thumbnailWidth: 100
     thumbnailHeight: 100
+
+    # Can be used to limit the maximum number of files that will be handled
+    # by this Dropzone
+    maxFiles: null
 
     # Can be an object of additional parameters to transfer to the server.
     # This is the same as adding hidden input fields in the form element.
@@ -159,6 +164,10 @@ class Dropzone extends Em
 
     # If this is not null, then the user will be prompted before removing a file.
     dictRemoveFileConfirmation: null
+
+    # Displayed when the maxFiles have been exceeded
+    dictMaxFilesExceeded: "You can only upload {{maxFiles}} files."
+
 
     # If `done()` is called without argument the file is accepted
     # If you call it with an error message, the file is rejected
@@ -280,18 +289,21 @@ class Dropzone extends Em
           e.preventDefault()
           e.stopPropagation()
           if file.status == Dropzone.UPLOADING
-            @removeFile file if window.confirm @options.dictCancelUploadConfirmation
+            Dropzone.confirm @options.dictCancelUploadConfirmation, => @removeFile file
           else
             if @options.dictRemoveFileConfirmation
-              @removeFile file if window.confirm @options.dictRemoveFileConfirmation
+              Dropzone.confirm @options.dictRemoveFileConfirmation, => @removeFile file
             else
               @removeFile file
 
         file.previewElement.appendChild file._removeLink
 
+      @_updateMaxFilesReachedClass()
+
     # Called whenever a file is removed.
     removedfile: (file) ->
       file.previewElement?.parentNode.removeChild file.previewElement
+      @_updateMaxFilesReachedClass()
 
     # Called when a thumbnail has been generated
     # Receives `file` and `dataUrl`
@@ -355,6 +367,7 @@ class Dropzone extends Em
 
     completemultiple: noop
 
+    maxfilesexceeded: noop
 
 
 
@@ -406,7 +419,11 @@ class Dropzone extends Em
 
     @options = extend { }, @defaultOptions, elementOptions, options ? { }
 
-    @options.url = @element.action unless @options.url?
+    # If the browser failed, just call the fallback and leave
+    return @options.fallback.call this if @options.forceFallback or !Dropzone.isBrowserSupported()
+
+    # @options.url = @element.getAttribute "action" unless @options.url?
+    @options.url = @element.getAttribute "action" unless @options.url?
 
     throw new Error "No URL provided." unless @options.url
 
@@ -418,9 +435,6 @@ class Dropzone extends Em
       delete @options.acceptedMimeTypes
 
     @options.method = @options.method.toUpperCase()
-
-    # If the browser failed, just call the fallback and leave
-    return @options.fallback.call this if @options.forceFallback or !Dropzone.isBrowserSupported()
 
     if (fallback = @getExistingFallback()) and fallback.parentNode
       # Remove the fallback
@@ -647,6 +661,16 @@ class Dropzone extends Em
       string = "b"
     "<strong>#{Math.round(size)/10}</strong> #{string}"
 
+
+  # Adds or removes the `dz-max-files-reached` class from the form.
+  _updateMaxFilesReachedClass: ->
+    if @options.maxFiles and @getAcceptedFiles().length >= @options.maxFiles
+      @element.classList.add "dz-max-files-reached"
+    else
+      @element.classList.remove "dz-max-files-reached"
+
+
+
   drop: (e) ->
     return unless e.dataTransfer
     files = e.dataTransfer.files
@@ -690,6 +714,9 @@ class Dropzone extends Em
       done @options.dictFileTooBig.replace("{{filesize}}", Math.round(file.size / 1024 / 10.24) / 100).replace("{{maxFilesize}}", @options.maxFilesize)
     else unless Dropzone.isValidFile file, @options.acceptedFiles
       done @options.dictInvalidFileType
+    else if @options.maxFiles and @getAcceptedFiles().length >= @options.maxFiles
+      done @options.dictMaxFilesExceeded.replace "{{maxFiles}}", @options.maxFiles
+      @emit "maxfilesexceeded", file
     else
       @options.accept.call this, file, done
 
@@ -710,17 +737,16 @@ class Dropzone extends Em
 
     @accept file, (error) =>
       if error
-        file.accepted = false # Backwards compatibility
+        file.accepted = false
         @_errorProcessing [ file ], error # Will set the file.status
       else
-        file.accepted = true # Backwards compatibility
-
-        @enqueueFile file
+        @enqueueFile file # Will set .accepted = true
 
   # Wrapper for enqueuFile
   enqueueFiles: (files) -> @enqueueFile file for file in files; null
 
   enqueueFile: (file) ->
+    file.accepted = true
     if file.status == Dropzone.ADDED
       file.status = Dropzone.QUEUED
       if @options.autoProcessQueue
@@ -997,7 +1023,7 @@ class Dropzone extends Em
 
 
 
-Dropzone.version = "3.6.2"
+Dropzone.version = "3.7.0"
 
 
 # This is a map of options for your different dropzones. Add configurations
@@ -1140,7 +1166,15 @@ Dropzone.getElements = (els, name) ->
 
   return elements
 
-
+# Asks the user the question and calls accepted or rejected accordingly
+# 
+# The default implementation just uses `window.confirm` and then calls the
+# appropriate callback.
+Dropzone.confirm = (question, accepted, rejected) ->
+  if window.confirm question
+    accepted()
+  else if rejected?
+    rejected()
 
 # Validates the mime type like this:
 # 
