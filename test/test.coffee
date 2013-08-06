@@ -208,7 +208,6 @@ describe "Dropzone", ->
         rejected.should.equal no
 
 
-
   describe "Dropzone.getElement() / getElements()", ->
     tmpElements = [ ]
 
@@ -406,7 +405,7 @@ describe "Dropzone", ->
 
     beforeEach ->
       element = Dropzone.createElement """<div></div>"""
-      dropzone = new Dropzone element, maxFilesize: 4, url: "url", acceptedMimeTypes: "audio/*,image/png"
+      dropzone = new Dropzone element, maxFilesize: 4, url: "url", acceptedMimeTypes: "audio/*,image/png", maxFiles: 3
 
     describe "file specific", ->
       file = null
@@ -460,7 +459,7 @@ describe "Dropzone", ->
 
       element = Dropzone.createElement """<div></div>"""
       document.body.appendChild element
-      dropzone = new Dropzone element, maxFilesize: 4, url: "url", acceptedMimeTypes: "audio/*,image/png", uploadprogress: ->
+      dropzone = new Dropzone element, maxFilesize: 4, maxFiles: 100, url: "url", acceptedMimeTypes: "audio/*,image/png", uploadprogress: ->
     afterEach ->
       document.body.removeChild element
       dropzone.destroy()
@@ -481,8 +480,27 @@ describe "Dropzone", ->
         dropzone.accept { type: "audio/wav" }, (err) -> expect(err).to.be.undefined
 
       it "should properly reject files when the mime type isn't listed in acceptedFiles", ->
-
         dropzone.accept { type: "image/jpeg" }, (err) -> err.should.eql "You can't upload files of this type."
+
+      it "should fail if maxFiles has been exceeded and call the event maxfilesexceeded", ->
+        sinon.stub dropzone, "getAcceptedFiles"
+        file = { type: "audio/mp3" }
+
+        dropzone.getAcceptedFiles.returns { length: 99 }
+
+        called = no
+        dropzone.on "maxfilesexceeded", (lfile) ->
+          lfile.should.equal file
+          called = yes
+
+        dropzone.accept file, (err) -> expect(err).to.be.undefined
+        called.should.not.be.ok
+
+        dropzone.getAcceptedFiles.returns { length: 100 }
+        dropzone.accept file, (err) -> expect(err).to.equal "You can only upload 100 files."
+        called.should.be.ok
+
+        dropzone.getAcceptedFiles.restore()
 
 
     describe ".removeFile()", ->

@@ -65,6 +65,7 @@ class Dropzone extends Em
     "complete"
     "completemultiple"
     "reset"
+    "maxfilesexceeded"
   ]
 
 
@@ -81,6 +82,10 @@ class Dropzone extends Em
     maxThumbnailFilesize: 10 # in MB. When the filename exceeds this limit, the thumbnail will not be generated.
     thumbnailWidth: 100
     thumbnailHeight: 100
+
+    # Can be used to limit the maximum number of files that will be handled
+    # by this Dropzone
+    maxFiles: null
 
     # Can be an object of additional parameters to transfer to the server.
     # This is the same as adding hidden input fields in the form element.
@@ -159,6 +164,10 @@ class Dropzone extends Em
 
     # If this is not null, then the user will be prompted before removing a file.
     dictRemoveFileConfirmation: null
+
+    # Displayed when the maxFiles have been exceeded
+    dictMaxFilesExceeded: "You can only upload {{maxFiles}} files."
+
 
     # If `done()` is called without argument the file is accepted
     # If you call it with an error message, the file is rejected
@@ -355,6 +364,7 @@ class Dropzone extends Em
 
     completemultiple: noop
 
+    maxfilesexceeded: noop
 
 
 
@@ -691,6 +701,9 @@ class Dropzone extends Em
       done @options.dictFileTooBig.replace("{{filesize}}", Math.round(file.size / 1024 / 10.24) / 100).replace("{{maxFilesize}}", @options.maxFilesize)
     else unless Dropzone.isValidFile file, @options.acceptedFiles
       done @options.dictInvalidFileType
+    else if @options.maxFiles and @getAcceptedFiles().length >= @options.maxFiles
+      done @options.dictMaxFilesExceeded.replace "{{maxFiles}}", @options.maxFiles
+      @emit "maxfilesexceeded", file
     else
       @options.accept.call this, file, done
 
@@ -711,17 +724,16 @@ class Dropzone extends Em
 
     @accept file, (error) =>
       if error
-        file.accepted = false # Backwards compatibility
+        file.accepted = false
         @_errorProcessing [ file ], error # Will set the file.status
       else
-        file.accepted = true # Backwards compatibility
-
-        @enqueueFile file
+        @enqueueFile file # Will set .accepted = true
 
   # Wrapper for enqueuFile
   enqueueFiles: (files) -> @enqueueFile file for file in files; null
 
   enqueueFile: (file) ->
+    file.accepted = true
     if file.status == Dropzone.ADDED
       file.status = Dropzone.QUEUED
       if @options.autoProcessQueue
