@@ -298,9 +298,12 @@ class Dropzone extends Em
 
         file.previewElement.appendChild file._removeLink
 
+      @_updateMaxFilesReachedClass()
+
     # Called whenever a file is removed.
     removedfile: (file) ->
       file.previewElement?.parentNode.removeChild file.previewElement
+      @_updateMaxFilesReachedClass()
 
     # Called when a thumbnail has been generated
     # Receives `file` and `dataUrl`
@@ -657,6 +660,16 @@ class Dropzone extends Em
       size = size * 10
       string = "b"
     "<strong>#{Math.round(size)/10}</strong> #{string}"
+
+
+  # Adds or removes the `dz-max-files-reached` class from the form.
+  _updateMaxFilesReachedClass: ->
+    if @options.maxFiles and @getAcceptedFiles().length >= @options.maxFiles
+      @element.classList.add "dz-max-files-reached"
+    else
+      @element.classList.remove "dz-max-files-reached"
+
+
 
   drop: (e) ->
     return unless e.dataTransfer

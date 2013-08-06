@@ -685,6 +685,23 @@ describe "Dropzone", ->
         dropzone.filesize(2 * 1024 * 1024 * 1024).should.eql "<strong>2.1</strong> GB"
         dropzone.filesize(2 * 1000 * 1000 * 1000).should.eql "<strong>2</strong> GB"
 
+    describe "._updateMaxFilesReachedClass()", ->
+      it "should properly add the dz-max-files-reached class", ->
+        dropzone.getAcceptedFiles = -> length: 10
+        dropzone.options.maxFiles = 10
+        dropzone.element.classList.contains("dz-max-files-reached").should.not.be.ok
+        dropzone._updateMaxFilesReachedClass()
+        dropzone.element.classList.contains("dz-max-files-reached").should.be.ok
+      it "should properly remove the dz-max-files-reached class", ->
+        dropzone.getAcceptedFiles = -> length: 10
+        dropzone.options.maxFiles = 10
+        dropzone.element.classList.contains("dz-max-files-reached").should.not.be.ok
+        dropzone._updateMaxFilesReachedClass()
+        dropzone.element.classList.contains("dz-max-files-reached").should.be.ok
+        dropzone.getAcceptedFiles = -> length: 9
+        dropzone._updateMaxFilesReachedClass()
+        dropzone.element.classList.contains("dz-max-files-reached").should.not.be.ok
+
     describe "events", ->
 
       describe "progress updates", ->
@@ -731,7 +748,6 @@ describe "Dropzone", ->
           # It shouldn't matter that progress is not properly updated since the total size
           # should be calculated from the bytes
           dropzone.emit "uploadprogress", { }
-
 
 
   describe "helper function", ->
