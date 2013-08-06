@@ -280,10 +280,10 @@ class Dropzone extends Em
           e.preventDefault()
           e.stopPropagation()
           if file.status == Dropzone.UPLOADING
-            @removeFile file if window.confirm @options.dictCancelUploadConfirmation
+            Dropzone.confirm @options.dictCancelUploadConfirmation, => @removeFile file
           else
             if @options.dictRemoveFileConfirmation
-              @removeFile file if window.confirm @options.dictRemoveFileConfirmation
+              Dropzone.confirm @options.dictRemoveFileConfirmation, => @removeFile file
             else
               @removeFile file
 
@@ -1141,7 +1141,15 @@ Dropzone.getElements = (els, name) ->
 
   return elements
 
-
+# Asks the user the question and calls accepted or rejected accordingly
+# 
+# The default implementation just uses `window.confirm` and then calls the
+# appropriate callback.
+Dropzone.confirm = (question, accepted, rejected) ->
+  if window.confirm question
+    accepted()
+  else if rejected?
+    rejected()
 
 # Validates the mime type like this:
 # 

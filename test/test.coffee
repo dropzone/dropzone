@@ -180,6 +180,34 @@ describe "Dropzone", ->
         Dropzone.isValidFile({ name: "some-file.pdf file.gif", type: "random/type" }, acceptedMimeTypes).should.not.be.ok
         Dropzone.isValidFile({ name: "some-file file.png", type: "random/type" }, acceptedMimeTypes).should.be.ok
 
+    describe "Dropzone.confirm", ->
+      beforeEach -> sinon.stub window, "confirm"
+      afterEach -> window.confirm.restore()
+      it "should forward to window.confirm and call the callbacks accordingly", ->
+        accepted = rejected = no
+        window.confirm.returns yes
+        Dropzone.confirm "test question", (-> accepted = yes), (-> rejected = yes)
+        window.confirm.args[0][0].should.equal "test question"
+        accepted.should.equal yes
+        rejected.should.equal no
+
+        accepted = rejected = no
+        window.confirm.returns no
+        Dropzone.confirm "test question 2", (-> accepted = yes), (-> rejected = yes)
+        window.confirm.args[1][0].should.equal "test question 2"
+        accepted.should.equal no
+        rejected.should.equal yes
+
+      it "should not error if rejected is not provided", ->
+        accepted = rejected = no
+        window.confirm.returns no
+        Dropzone.confirm "test question", (-> accepted = yes)
+        window.confirm.args[0][0].should.equal "test question"
+        # Nothing should have changed since there is no rejected function.
+        accepted.should.equal no
+        rejected.should.equal no
+
+
 
   describe "Dropzone.getElement() / getElements()", ->
     tmpElements = [ ]
