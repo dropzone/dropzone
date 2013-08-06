@@ -253,6 +253,11 @@ describe "Dropzone", ->
       dropzone = new Dropzone element, url: "url"
       element.dropzone.should.equal dropzone
 
+    it "should use the action attribute not the element with the name action", ->
+      element = Dropzone.createElement """<form action="real-action"><input type="hidden" name="action" value="wrong-action" /></form>"""
+      dropzone = new Dropzone element
+      dropzone.options.url.should.equal "real-action"
+
     describe "options", ->
       element = null
       element2 = null

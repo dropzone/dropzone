@@ -406,7 +406,11 @@ class Dropzone extends Em
 
     @options = extend { }, @defaultOptions, elementOptions, options ? { }
 
-    @options.url = @element.action unless @options.url?
+    # If the browser failed, just call the fallback and leave
+    return @options.fallback.call this if @options.forceFallback or !Dropzone.isBrowserSupported()
+
+    # @options.url = @element.getAttribute "action" unless @options.url?
+    @options.url = @element.getAttribute "action" unless @options.url?
 
     throw new Error "No URL provided." unless @options.url
 
@@ -418,9 +422,6 @@ class Dropzone extends Em
       delete @options.acceptedMimeTypes
 
     @options.method = @options.method.toUpperCase()
-
-    # If the browser failed, just call the fallback and leave
-    return @options.fallback.call this if @options.forceFallback or !Dropzone.isBrowserSupported()
 
     if (fallback = @getExistingFallback()) and fallback.parentNode
       # Remove the fallback
