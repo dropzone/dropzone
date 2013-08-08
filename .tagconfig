@@ -49,6 +49,12 @@
       ]
     },
     {
+      "name": "bower.json",
+      "regexs": [
+        "\"version\": \"###\""
+      ]
+    },
+    {
       "name": "readme.md",
       "regexs": [
         "\\*Version ###\\*"
