@@ -615,8 +615,7 @@ Emitter.prototype.hasListeners = function(event){
             },
             "drop": function(e) {
               noPropagation(e);
-              _this.drop(e);
-              return _this.emit("drop", e);
+              return _this.drop(e);
             },
             "dragend": function(e) {
               return _this.emit("dragend", e);
@@ -807,6 +806,7 @@ Emitter.prototype.hasListeners = function(event){
       if (!e.dataTransfer) {
         return;
       }
+      this.emit("drop", e);
       files = e.dataTransfer.files;
       this.emit("selectedfiles", files);
       if (files.length) {
