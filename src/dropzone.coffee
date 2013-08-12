@@ -520,7 +520,6 @@ class Dropzone extends Em
           "drop": (e) =>
             noPropagation e
             @drop e
-            @emit "drop", e
           "dragend": (e) =>
             @emit "dragend", e
       }
@@ -643,6 +642,8 @@ class Dropzone extends Em
 
   drop: (e) ->
     return unless e.dataTransfer
+    @emit "drop", e
+
     files = e.dataTransfer.files
     @emit "selectedfiles", files
 
