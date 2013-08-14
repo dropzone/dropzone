@@ -210,7 +210,7 @@ Emitter.prototype.hasListeners = function(event){
     */
 
 
-    Dropzone.prototype.events = ["drop", "dragstart", "dragend", "dragenter", "dragover", "dragleave", "selectedfiles", "addedfile", "removedfile", "thumbnail", "error", "processing", "processingmultiple", "uploadprogress", "totaluploadprogress", "sending", "sendingmultiple", "success", "successmultiple", "canceled", "canceledmultiple", "complete", "completemultiple", "reset", "maxfilesexceeded"];
+    Dropzone.prototype.events = ["drop", "dragstart", "dragend", "dragenter", "dragover", "dragleave", "selectedfiles", "addedfile", "removedfile", "thumbnail", "error", "errormultiple", "processing", "processingmultiple", "uploadprogress", "totaluploadprogress", "sending", "sendingmultiple", "success", "successmultiple", "canceled", "canceledmultiple", "complete", "completemultiple", "reset", "maxfilesexceeded"];
 
     Dropzone.prototype.defaultOptions = {
       url: null,
@@ -381,6 +381,7 @@ Emitter.prototype.hasListeners = function(event){
         file.previewElement.classList.add("dz-error");
         return file.previewElement.querySelector("[data-dz-errormessage]").textContent = message;
       },
+      errormultiple: noop,
       processing: function(file) {
         file.previewElement.classList.add("dz-processing");
         if (file._removeLink) {
@@ -615,8 +616,7 @@ Emitter.prototype.hasListeners = function(event){
             },
             "drop": function(e) {
               noPropagation(e);
-              _this.drop(e);
-              return _this.emit("drop", e);
+              return _this.drop(e);
             },
             "dragend": function(e) {
               return _this.emit("dragend", e);
@@ -807,6 +807,7 @@ Emitter.prototype.hasListeners = function(event){
       if (!e.dataTransfer) {
         return;
       }
+      this.emit("drop", e);
       files = e.dataTransfer.files;
       this.emit("selectedfiles", files);
       if (files.length) {
@@ -1249,7 +1250,7 @@ Emitter.prototype.hasListeners = function(event){
 
   })(Em);
 
-  Dropzone.version = "3.7.0";
+  Dropzone.version = "3.7.1";
 
   Dropzone.options = {};
 

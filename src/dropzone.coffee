@@ -52,6 +52,7 @@ class Dropzone extends Em
     "removedfile"
     "thumbnail"
     "error"
+    "errormultiple"
     "processing"
     "processingmultiple"
     "uploadprogress"
@@ -321,6 +322,7 @@ class Dropzone extends Em
       file.previewElement.classList.add "dz-error"
       file.previewElement.querySelector("[data-dz-errormessage]").textContent = message
     
+    errormultiple: noop
     
     # Called when a file gets processed. Since there is a cue, not all added
     # files are processed immediately.
@@ -540,7 +542,6 @@ class Dropzone extends Em
           "drop": (e) =>
             noPropagation e
             @drop e
-            @emit "drop", e
           "dragend": (e) =>
             @emit "dragend", e
       }
@@ -673,6 +674,8 @@ class Dropzone extends Em
 
   drop: (e) ->
     return unless e.dataTransfer
+    @emit "drop", e
+
     files = e.dataTransfer.files
     @emit "selectedfiles", files
 
@@ -1023,7 +1026,7 @@ class Dropzone extends Em
 
 
 
-Dropzone.version = "3.7.0"
+Dropzone.version = "3.7.1"
 
 
 # This is a map of options for your different dropzones. Add configurations

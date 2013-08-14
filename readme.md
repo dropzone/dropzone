@@ -2,7 +2,7 @@
   <img alt="Dropzone.js" src="http://www.dropzonejs.com/images/logo.png" />
 </h1>
 
-*Version 3.7.0*
+*Version 3.7.1*
 
 Dropzone.js is a light weight JavaScript library that turns an HTML element into a dropzone.
 This means that a user can drag and drop a file onto it, and the file gets uploaded to the server via AJAX.
@@ -115,7 +115,7 @@ I realize that there [are](http://valums.com/ajax-upload/) [already](http://tuto
 - Big files should get uploaded without a problem.
 - I wanted a callback for image previews, that don't kill the browser if too many too big images are viewed.
 - I want to use the latest API of browsers. I don't care if it falls back to the normal upload form if the browser is too old.
-
+- I don't think that it's necessary anymore to depend on libraries such as jQuery (especially when providing functionality that isn't available in old browsers anyway).
 
 ## Other projects
 
