@@ -52,6 +52,7 @@ class Dropzone extends Em
     "removedfile"
     "thumbnail"
     "error"
+    "errormultiple"
     "processing"
     "processingmultiple"
     "uploadprogress"
@@ -321,6 +322,7 @@ class Dropzone extends Em
       file.previewElement.classList.add "dz-error"
       file.previewElement.querySelector("[data-dz-errormessage]").textContent = message
     
+    errormultiple: noop
     
     # Called when a file gets processed. Since there is a cue, not all added
     # files are processed immediately.
