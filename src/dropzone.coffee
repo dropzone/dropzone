@@ -299,8 +299,6 @@ class Dropzone extends Em
 
         file.previewElement.appendChild file._removeLink
 
-      @_updateMaxFilesReachedClass()
-
     # Called whenever a file is removed.
     removedfile: (file) ->
       file.previewElement?.parentNode.removeChild file.previewElement
@@ -744,6 +742,8 @@ class Dropzone extends Em
         @_errorProcessing [ file ], error # Will set the file.status
       else
         @enqueueFile file # Will set .accepted = true
+      @_updateMaxFilesReachedClass()
+
 
   # Wrapper for enqueuFile
   enqueueFiles: (files) -> @enqueueFile file for file in files; null
