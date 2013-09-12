@@ -692,6 +692,17 @@ describe "Dropzone", ->
         dropzone.element.classList.contains("dz-max-files-reached").should.not.be.ok
         dropzone._updateMaxFilesReachedClass()
         dropzone.element.classList.contains("dz-max-files-reached").should.be.ok
+      it "should fire the 'maxfilesreached' event when appropriate", ->
+        spy = sinon.spy()
+        dropzone.on "maxfilesreached", -> spy()
+        dropzone.getAcceptedFiles = -> length: 9
+        dropzone.options.maxFiles = 10
+        dropzone._updateMaxFilesReachedClass()
+        spy.should.not.have.been.called
+        dropzone.getAcceptedFiles = -> length: 10
+        dropzone._updateMaxFilesReachedClass()
+        spy.should.have.been.called
+
       it "should properly remove the dz-max-files-reached class", ->
         dropzone.getAcceptedFiles = -> length: 10
         dropzone.options.maxFiles = 10
