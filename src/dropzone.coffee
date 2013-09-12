@@ -669,7 +669,7 @@ class Dropzone extends Em
   # Adds or removes the `dz-max-files-reached` class from the form.
   _updateMaxFilesReachedClass: ->
     if @options.maxFiles and @getAcceptedFiles().length >= @options.maxFiles
-      @emit 'maxfilesreached', @files
+      @emit 'maxfilesreached', @files if @getAcceptedFiles().length == @options.maxFiles
       @element.classList.add "dz-max-files-reached"
     else
       @element.classList.remove "dz-max-files-reached"

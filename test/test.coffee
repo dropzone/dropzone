@@ -702,6 +702,9 @@ describe "Dropzone", ->
         dropzone.getAcceptedFiles = -> length: 10
         dropzone._updateMaxFilesReachedClass()
         spy.should.have.been.called
+        dropzone.getAcceptedFiles = -> length: 11
+        dropzone._updateMaxFilesReachedClass()
+        spy.should.have.been.calledOnce #ie, it has not been called again
 
       it "should properly remove the dz-max-files-reached class", ->
         dropzone.getAcceptedFiles = -> length: 10
