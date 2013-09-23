@@ -196,6 +196,9 @@ please contact me.
 - [Basic PHP file upload](http://www.php.net/manual/en/features.file-upload.post-method.php#example-354)
 - [Tutorial for Dropzone and Lavarel (PHP)](http://maxoffsky.com/code-blog/howto-ajax-multiple-file-upload-in-laravel/) written by Maksim Surguy
 
+Payed documentations:
+
+- [eBook for Dropzone with PHP](http://www.startutorial.com/homes/dropzonejs_php_the_complete_guide?utm_source=dzj&amp;utm_medium=banner&amp;utm_campaign=dropzonejs) by startutorial.com. (Not finished yet)
 
 
 Please look at the [Dropzone FAQ](https://github.com/enyo/dropzone/wiki/FAQ) if
