@@ -600,7 +600,7 @@ earlier versions of Internet Explorer – some even called me an IE hater. Altho
 I don't really object to that, the reason I do not support earlier versions of
 IE is very simple: IE up until version 10 does not provide the required APIs
 to implement only a fraction of what Dropzone aspires to do. If I were an IE
-hater, I wouldn't implement IE10 neither. But IE10 actually supports the APIs
+hater, I wouldn't implement IE10 either. But IE10 actually supports the APIs
 Dropzone requires, so it's supported. It's as simple as that. (The same goes
 for earlier versions of Firefox, Opera and Safari but those browsers have a
 good conversion rate and nobody uses Firefox 3.5 anymore. Why some people still
