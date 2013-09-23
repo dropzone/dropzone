@@ -1192,7 +1192,7 @@ Dropzone.isValidFile = (file, acceptedFiles) ->
   for validType in acceptedFiles
     validType = validType.trim()
     if validType.charAt(0) == "."
-      return yes if file.name.indexOf(validType, file.name.length - validType.length) != -1
+      return yes if file.name.toLowerCase().indexOf(validType.toLowerCase(), file.name.length - validType.length) != -1
     else if /\/\*$/.test validType
       # This is something like a image/* mime type
       return yes if baseMimeType == validType.replace /\/.*$/, ""
