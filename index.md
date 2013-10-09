@@ -96,7 +96,7 @@ in the downloads folder.
 
 This is all you need to get dropzone up and running. But if you want it to look
 as cool as my dropzone, you'll need to **download the css/dropzone.css,
-images/spritemap.png and images/spritemap.png@2x.png** as well from the
+images/spritemap.png and images/spritemap@2x.png** as well from the
 [downloads folder](https://github.com/enyo/dropzone/tree/master/downloads).
 
 If you change the folder names make sure you adjust the paths in the css.
