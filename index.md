@@ -200,7 +200,7 @@ please contact me.
 
 Paid documentations:
 
-- [eBook for Dropzone with PHP](http://www.startutorial.com/homes/dropzonejs_php_the_complete_guide?utm_source=dzj&amp;utm_medium=banner&amp;utm_campaign=dropzonejs) by startutorial.com. (Not finished yet)
+- [eBook for Dropzone with PHP](http://www.startutorial.com/homes/dropzonejs_php_the_complete_guide?utm_source=dzj&amp;utm_medium=banner&amp;utm_campaign=dropzonejs) by startutorial.com.
 
 
 Please look at the [Dropzone FAQ](https://github.com/enyo/dropzone/wiki/FAQ) if
