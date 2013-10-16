@@ -13,8 +13,14 @@ Try it out:
 
 (This is just a demo dropzone. Uploaded files are **not** stored.)
 
-I'm currently in the middle of working on [our new album](http://www.youtube.com/user/gingahome), so I don't have
-the time to react to issues and answers right away. I'm sorry about that. **The album will be presented october 12th.**
+<strike>I'm currently in the middle of working on our new album, so I don't have
+the time to react to issues and answers right away. I'm sorry about that.</strike>
+
+**We released the album!** It's called «YES / NO» and will be available in Austria
+in two weeks in stores, spotify and [on iTunes](https://itunes.apple.com/at/album/yes-no/id722931771).
+We are currently planning the international release dates.
+
+
 
 > Starting with Version 2.0 Dropzone no longer depends on jQuery!
 > See the section "version 2.0" at the bottom of the page for more information.
