@@ -67,6 +67,7 @@ class Dropzone extends Em
     "completemultiple"
     "reset"
     "maxfilesexceeded"
+    "filequeued"
   ]
 
 
@@ -752,6 +753,7 @@ class Dropzone extends Em
     file.accepted = true
     if file.status == Dropzone.ADDED
       file.status = Dropzone.QUEUED
+      @emit "filequeued", file
       if @options.autoProcessQueue
         setTimeout (=> @processQueue()), 1 # Deferring the call
     else
