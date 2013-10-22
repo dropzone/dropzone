@@ -535,6 +535,8 @@ class Dropzone extends Em
             noPropagation e
             @emit "dragenter", e
           "dragover": (e) =>
+            efct = e.dataTransfer.effectAllowed
+            e.dataTransfer.dropEffect = ('move' == efct || 'linkMove' == efct) ? 'move' : 'copy'
             noPropagation e
             @emit "dragover", e
           "dragleave": (e) =>
