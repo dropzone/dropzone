@@ -277,7 +277,7 @@ class Dropzone extends Em
     # Called when a file is added to the queue
     # Receives `file`
     addedfile: (file) ->
-      file.previewElement = Dropzone.createElement @options.previewTemplate
+      file.previewElement = Dropzone.createElement @options.previewTemplate.trim()
       file.previewTemplate = file.previewElement # Backwards compatibility
 
       @previewsContainer.appendChild file.previewElement
