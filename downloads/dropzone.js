@@ -1624,14 +1624,14 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
     if (!acceptedFiles) {
       return true;
     }
-    acceptedFiles = acceptedFiles.split(",");
+    acceptedFiles = acceptedFiles.toLowerCase().split(",");
     mimeType = file.type;
     baseMimeType = mimeType.replace(/\/.*$/, "");
     for (_i = 0, _len = acceptedFiles.length; _i < _len; _i++) {
       validType = acceptedFiles[_i];
       validType = validType.trim();
       if (validType.charAt(0) === ".") {
-        if (file.name.indexOf(validType, file.name.length - validType.length) !== -1) {
+        if (file.name.toLowerCase().indexOf(validType, file.name.toLowerCase().length - validType.length) !== -1) {
           return true;
         }
       } else if (/\/\*$/.test(validType)) {
