@@ -415,7 +415,7 @@ class Dropzone extends Em
     Dropzone.instances.push @
 
     # Put the dropzone inside the element itself.
-    element.dropzone = @
+    @element.dropzone = @
 
     elementOptions = Dropzone.optionsForElement(@element) ? { }
 
