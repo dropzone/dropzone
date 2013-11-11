@@ -482,7 +482,7 @@ class Dropzone extends Em
         document.body.removeChild @hiddenFileInput if @hiddenFileInput
         @hiddenFileInput = document.createElement "input"
         @hiddenFileInput.setAttribute "type", "file"
-        @hiddenFileInput.setAttribute "multiple", "multiple"
+        @hiddenFileInput.setAttribute "multiple", "multiple" if !@options.maxFiles? || @options.maxFiles > 1
 
         @hiddenFileInput.setAttribute "accept", @options.acceptedFiles if @options.acceptedFiles?
 
