@@ -494,7 +494,7 @@ class Dropzone extends Em
         @hiddenFileInput.style.left = "0"
         @hiddenFileInput.style.height = "0"
         @hiddenFileInput.style.width = "0"
-        document.body.appendChild @hiddenFileInput
+        _this.element.parentNode.insertBefore _this.element, @hiddenFileInput
         @hiddenFileInput.addEventListener "change", =>
           files = @hiddenFileInput.files
           if files.length
