@@ -277,12 +277,12 @@ class Dropzone extends Em
     # Called when a file is added to the queue
     # Receives `file`
     addedfile: (file) ->
-      file.previewElement = Dropzone.createElement @options.previewTemplate
+      file.previewElement = Dropzone.createElement @options.previewTemplate.trim()
       file.previewTemplate = file.previewElement # Backwards compatibility
 
       @previewsContainer.appendChild file.previewElement
-      file.previewElement.querySelector("[data-dz-name]").textContent = file.name
-      file.previewElement.querySelector("[data-dz-size]").innerHTML = @filesize file.size
+      node.textContent = file.name for node in file.previewElement.querySelectorAll("[data-dz-name]")
+      node.innerHTML = @filesize file.size for node in file.previewElement.querySelectorAll("[data-dz-size]")
 
       if @options.addRemoveLinks
         file._removeLink = Dropzone.createElement """<a class="dz-remove" href="javascript:undefined;">#{@options.dictRemoveFile}</a>"""
@@ -311,16 +311,16 @@ class Dropzone extends Em
     thumbnail: (file, dataUrl) ->
       file.previewElement.classList.remove "dz-file-preview"
       file.previewElement.classList.add "dz-image-preview"
-      thumbnailElement = file.previewElement.querySelector("[data-dz-thumbnail]")
-      thumbnailElement.alt = file.name
-      thumbnailElement.src = dataUrl
+      for thumbnailElement in file.previewElement.querySelectorAll("[data-dz-thumbnail]")
+        thumbnailElement.alt = file.name
+        thumbnailElement.src = dataUrl
 
     
     # Called whenever an error occurs
     # Receives `file` and `message`
     error: (file, message) ->
       file.previewElement.classList.add "dz-error"
-      file.previewElement.querySelector("[data-dz-errormessage]").textContent = message
+      node.textContent = message for node in file.previewElement.querySelectorAll("[data-dz-errormessage]")
     
     errormultiple: noop
     
@@ -337,7 +337,7 @@ class Dropzone extends Em
     # Receives `file`, `progress` (percentage 0-100) and `bytesSent`.
     # To get the total number of bytes of the file, use `file.size`
     uploadprogress: (file, progress, bytesSent) ->
-      file.previewElement.querySelector("[data-dz-uploadprogress]").style.width = "#{progress}%"
+      node.style.width = "#{progress}%" for node in file.previewElement.querySelectorAll("[data-dz-uploadprogress]")
 
     # Called whenever the total upload progress gets updated.
     # Called with totalUploadProgress (0-100), totalBytes and totalBytesSent
@@ -415,7 +415,7 @@ class Dropzone extends Em
     Dropzone.instances.push @
 
     # Put the dropzone inside the element itself.
-    element.dropzone = @
+    @element.dropzone = @
 
     elementOptions = Dropzone.optionsForElement(@element) ? { }
 
@@ -1026,7 +1026,7 @@ class Dropzone extends Em
 
 
 
-Dropzone.version = "3.7.1"
+Dropzone.version = "3.7.2-dev"
 
 
 # This is a map of options for your different dropzones. Add configurations
@@ -1192,7 +1192,7 @@ Dropzone.isValidFile = (file, acceptedFiles) ->
   for validType in acceptedFiles
     validType = validType.trim()
     if validType.charAt(0) == "."
-      return yes if file.name.indexOf(validType, file.name.length - validType.length) != -1
+      return yes if file.name.toLowerCase().indexOf(validType.toLowerCase(), file.name.length - validType.length) != -1
     else if /\/\*$/.test validType
       # This is something like a image/* mime type
       return yes if baseMimeType == validType.replace /\/.*$/, ""
