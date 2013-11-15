@@ -1,15 +1,14 @@
 Contribute
 ==========
 
-The latest stable version is always in the **[master](https://github.com/enyo/dropzone)** branch (which always
-points at the latest version tag).
 
-The latest development version is in the **[develop](https://github.com/enyo/dropzone/tree/develop)** branch.
+> I have changed my branching model recently (November 2013)! Previously
+> the latest version was always in develop, and pull request had to be
+> made on this branch. This is no longer the case!
 
-> Use the develop branch if you want to contribute or test features.
 
-Please do also **send pull requests to the `develop` branch**.
-I will **not** merge pull requests to the `master` branch.
+The latest version is always in the **[master](https://github.com/enyo/dropzone)**
+branch.
 
 
 > Please provide a test for any new feature (see the [testing section](#testing) below).
@@ -18,8 +17,12 @@ I will **not** merge pull requests to the `master` branch.
 Communicate
 -----------
 
-Before you start implementing new features, please create an issue about it first and discuss your intent.
-It might be something that someone else is already implementing or that goes against the concepts of Dropzone, and I really hate rejecting pull requests others spent hours writing on.
+Before you start implementing new features, please create an issue about
+it first and discuss your intent.
+
+It might be something that someone else is already implementing or that
+goes against the concepts of Dropzone, and I really hate rejecting pull
+requests others spent hours writing on.
 
 
 Developer Dependencies
