@@ -10,8 +10,8 @@ This means that a user can drag and drop a file onto it, and the file gets uploa
 > **Please read the [contributing guidelines](CONTRIBUTING.md) before you start working on Dropzone!**
 
 
-<div align="center" markdown="1">
-[![Download](https://raw.github.com/enyo/dropzone/master/logo.png)](https://github.com/enyo/dropzone/releases/latest)
+<div align="center">
+  <a href="https://github.com/enyo/dropzone/releases/latest"><img src="https://raw.github.com/enyo/dropzone/master/logo.png" alt="Download" /></a>
 </div>
 
 
