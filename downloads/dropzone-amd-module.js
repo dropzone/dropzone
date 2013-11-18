@@ -333,12 +333,21 @@ Emitter.prototype.hasListeners = function(event){
         return this.element.classList.remove("dz-started");
       },
       addedfile: function(file) {
-        var _this = this;
-        file.previewElement = Dropzone.createElement(this.options.previewTemplate);
+        var node, _i, _j, _len, _len1, _ref, _ref1,
+          _this = this;
+        file.previewElement = Dropzone.createElement(this.options.previewTemplate.trim());
         file.previewTemplate = file.previewElement;
         this.previewsContainer.appendChild(file.previewElement);
-        file.previewElement.querySelector("[data-dz-name]").textContent = file.name;
-        file.previewElement.querySelector("[data-dz-size]").innerHTML = this.filesize(file.size);
+        _ref = file.previewElement.querySelectorAll("[data-dz-name]");
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          node = _ref[_i];
+          node.textContent = file.name;
+        }
+        _ref1 = file.previewElement.querySelectorAll("[data-dz-size]");
+        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+          node = _ref1[_j];
+          node.innerHTML = this.filesize(file.size);
+        }
         if (this.options.addRemoveLinks) {
           file._removeLink = Dropzone.createElement("<a class=\"dz-remove\" href=\"javascript:undefined;\">" + this.options.dictRemoveFile + "</a>");
           file._removeLink.addEventListener("click", function(e) {
@@ -370,16 +379,28 @@ Emitter.prototype.hasListeners = function(event){
         return this._updateMaxFilesReachedClass();
       },
       thumbnail: function(file, dataUrl) {
-        var thumbnailElement;
+        var thumbnailElement, _i, _len, _ref, _results;
         file.previewElement.classList.remove("dz-file-preview");
         file.previewElement.classList.add("dz-image-preview");
-        thumbnailElement = file.previewElement.querySelector("[data-dz-thumbnail]");
-        thumbnailElement.alt = file.name;
-        return thumbnailElement.src = dataUrl;
+        _ref = file.previewElement.querySelectorAll("[data-dz-thumbnail]");
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          thumbnailElement = _ref[_i];
+          thumbnailElement.alt = file.name;
+          _results.push(thumbnailElement.src = dataUrl);
+        }
+        return _results;
       },
       error: function(file, message) {
+        var node, _i, _len, _ref, _results;
         file.previewElement.classList.add("dz-error");
-        return file.previewElement.querySelector("[data-dz-errormessage]").textContent = message;
+        _ref = file.previewElement.querySelectorAll("[data-dz-errormessage]");
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          node = _ref[_i];
+          _results.push(node.textContent = message);
+        }
+        return _results;
       },
       errormultiple: noop,
       processing: function(file) {
@@ -390,7 +411,14 @@ Emitter.prototype.hasListeners = function(event){
       },
       processingmultiple: noop,
       uploadprogress: function(file, progress, bytesSent) {
-        return file.previewElement.querySelector("[data-dz-uploadprogress]").style.width = "" + progress + "%";
+        var node, _i, _len, _ref, _results;
+        _ref = file.previewElement.querySelectorAll("[data-dz-uploadprogress]");
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          node = _ref[_i];
+          _results.push(node.style.width = "" + progress + "%");
+        }
+        return _results;
       },
       totaluploadprogress: noop,
       sending: noop,
@@ -444,7 +472,7 @@ Emitter.prototype.hasListeners = function(event){
         throw new Error("Dropzone already attached.");
       }
       Dropzone.instances.push(this);
-      element.dropzone = this;
+      this.element.dropzone = this;
       elementOptions = (_ref = Dropzone.optionsForElement(this.element)) != null ? _ref : {};
       this.options = extend({}, this.defaultOptions, elementOptions, options != null ? options : {});
       if (this.options.forceFallback || !Dropzone.isBrowserSupported()) {
@@ -550,7 +578,9 @@ Emitter.prototype.hasListeners = function(event){
           }
           _this.hiddenFileInput = document.createElement("input");
           _this.hiddenFileInput.setAttribute("type", "file");
-          _this.hiddenFileInput.setAttribute("multiple", "multiple");
+          if ((_this.options.maxFiles == null) || _this.options.maxFiles > 1) {
+            _this.hiddenFileInput.setAttribute("multiple", "multiple");
+          }
           if (_this.options.acceptedFiles != null) {
             _this.hiddenFileInput.setAttribute("accept", _this.options.acceptedFiles);
           }
@@ -679,7 +709,7 @@ Emitter.prototype.hasListeners = function(event){
       if (this.options.dictFallbackText) {
         fieldsString += "<p>" + this.options.dictFallbackText + "</p>";
       }
-      fieldsString += "<input type=\"file\" name=\"" + this.options.paramName + (this.options.uploadMultiple ? "[]" : "") + "\" " + (this.options.uploadMultiple ? 'multiple="multiple"' : void 0) + " /><button type=\"submit\">Upload!</button></div>";
+      fieldsString += "<input type=\"file\" name=\"" + this.options.paramName + (this.options.uploadMultiple ? "[]" : "") + "\" " + (this.options.uploadMultiple ? 'multiple="multiple"' : void 0) + " /><input type=\"submit\" value=\"Upload!\"></div>";
       fields = Dropzone.createElement(fieldsString);
       if (this.element.tagName !== "FORM") {
         form = Dropzone.createElement("<form action=\"" + this.options.url + "\" enctype=\"multipart/form-data\" method=\"" + this.options.method + "\"></form>");
@@ -1250,7 +1280,7 @@ Emitter.prototype.hasListeners = function(event){
 
   })(Em);
 
-  Dropzone.version = "3.7.2-dev";
+  Dropzone.version = "3.7.2";
 
   Dropzone.options = {};
 
@@ -1433,7 +1463,7 @@ Emitter.prototype.hasListeners = function(event){
       validType = acceptedFiles[_i];
       validType = validType.trim();
       if (validType.charAt(0) === ".") {
-        if (file.name.indexOf(validType, file.name.length - validType.length) !== -1) {
+        if (file.name.toLowerCase().indexOf(validType.toLowerCase(), file.name.length - validType.length) !== -1) {
           return true;
         }
       } else if (/\/\*$/.test(validType)) {
