@@ -9,7 +9,11 @@ This means that a user can drag and drop a file onto it, and the file gets uploa
 
 > **Please read the [contributing guidelines](CONTRIBUTING.md) before you start working on Dropzone!**
 
-https://github.com/enyo/dropzone/releases/latest
+
+<div align="center" markdown="1">
+[![Download](https://raw.github.com/enyo/dropzone/master/logo.png)](https://github.com/enyo/dropzone/releases/latest)
+</div>
+
 
 Starting with version 2.0.0 this library does no longer depend on jQuery (but
 it still works as a jQuery module).
