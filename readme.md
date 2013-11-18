@@ -11,7 +11,7 @@ This means that a user can drag and drop a file onto it, and the file gets uploa
 
 
 <div align="center">
-  <a href="https://github.com/enyo/dropzone/releases/latest"><img src="https://raw.github.com/enyo/dropzone/master/logo.png" alt="Download" /></a>
+  <a href="https://github.com/enyo/dropzone/releases/latest"><img src="https://raw.github.com/enyo/dropzone/master/download.png" alt="Download" /></a>
 </div>
 
 
