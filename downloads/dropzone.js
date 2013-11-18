@@ -1,3 +1,4 @@
+;(function(){
 
 /**
  * Require the given path.
@@ -1481,7 +1482,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
   })(Em);
 
-  Dropzone.version = "3.7.2";
+  Dropzone.version = "3.7.3";
 
   Dropzone.options = {};
 
@@ -1782,3 +1783,10 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 });
 require.alias("component-emitter/index.js", "dropzone/deps/emitter/index.js");
 require.alias("component-emitter/index.js", "emitter/index.js");
+if (typeof exports == "object") {
+  module.exports = require("dropzone");
+} else if (typeof define == "function" && define.amd) {
+  define(function(){ return require("dropzone"); });
+} else {
+  this["Dropzone"] = require("dropzone");
+}})();
