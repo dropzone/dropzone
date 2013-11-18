@@ -23,11 +23,13 @@ module.exports = (grunt) ->
 
     componentbuild:
       app:
-        output: "build/"
+        # output: "build/"
         name: "build"
-        config: "component.json"
-        styles: false
-        scripts: true
+        src: "."
+        dest: "./build"
+        # config: "component.json"
+        # styles: false
+        # scripts: true
         standalone: "Dropzone"
 
     copy:
