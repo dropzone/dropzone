@@ -22,6 +22,9 @@ module.exports = (grunt) ->
           "test/test.js": "test/*.coffee"
 
     componentbuild:
+      options:
+        standalone: "Dropzone"
+        
       app:
         # output: "build/"
         name: "build"
@@ -30,7 +33,6 @@ module.exports = (grunt) ->
         # config: "component.json"
         # styles: false
         # scripts: true
-        standalone: "Dropzone"
 
     copy:
       component:
