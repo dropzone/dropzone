@@ -67,6 +67,7 @@ class Dropzone extends Em
     "completemultiple"
     "reset"
     "maxfilesexceeded"
+    "maxfilesreached"
   ]
 
 
@@ -371,6 +372,8 @@ class Dropzone extends Em
 
     maxfilesexceeded: noop
 
+    maxfilesreached: noop
+
 
 
     # This template will be chosen when a new file is dropped.
@@ -671,6 +674,7 @@ class Dropzone extends Em
   # Adds or removes the `dz-max-files-reached` class from the form.
   _updateMaxFilesReachedClass: ->
     if @options.maxFiles and @getAcceptedFiles().length >= @options.maxFiles
+      @emit 'maxfilesreached', @files if @getAcceptedFiles().length == @options.maxFiles
       @element.classList.add "dz-max-files-reached"
     else
       @element.classList.remove "dz-max-files-reached"
