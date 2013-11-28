@@ -401,7 +401,8 @@ All of these receive the [file](https://developer.mozilla.org/en-US/docs/DOM/Fil
 | `success`             | The file has been uploaded successfully. Gets the server response as second argument. (This event was called `finished` previously)
 | `complete`            | Called when the upload was either successful or erroneous.
 | `canceled`            | Called when a file upload gets canceled.
-| `maxfilesexceeded`    | Called when the number of files accepted exceeds the `maxFiles` limit.
+| `maxfilesreached`     | Called when the number of files accepted reached the `maxFiles` limit.
+| `maxfilesexceeded`    | Called for each file that has been rejected because the number of files exceeds the `maxFiles` limit.
 
 All of these receive a list of files as first parameter and are only called if the `uploadMultiple` option is true:
 
