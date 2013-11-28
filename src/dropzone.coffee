@@ -805,7 +805,9 @@ class Dropzone extends Em
     fileReader = new FileReader
 
     fileReader.onload = =>
-      img = new Image
+      # Not using `new Image` here because of a bug in latest Chrome versions.
+      # See https://github.com/enyo/dropzone/pull/226
+      img = document.createElement "img"
 
       img.onload = =>
         file.width = img.width
