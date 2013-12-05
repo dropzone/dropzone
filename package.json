@@ -16,7 +16,7 @@
       "web": "http://www.matiasmeno.com"
   }],
   "scripts": {
-    "test": "node_modules/mocha-phantomjs/bin/mocha-phantomjs test/test.html"
+    "test": "./test.sh"
   },
   "bugs": {
     "email": "m@tias.me",
