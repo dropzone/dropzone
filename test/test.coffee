@@ -67,6 +67,10 @@ describe "Dropzone", ->
         element.id = "test-element2"
         expect(Dropzone.optionsForElement(element)).to.equal undefined
 
+      it "should return undefined and not throw if it's a form with an input element of the name 'id'", ->
+        element = Dropzone.createElement """<form><input name="id" /</form>"""
+        expect(Dropzone.optionsForElement(element)).to.equal undefined
+
     describe "Dropzone.forElement()", ->
       element = document.createElement "div"
       element.id = "some-test-element"
