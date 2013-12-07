@@ -243,7 +243,7 @@ Emitter.prototype.hasListeners = function(event){
       dictCancelUploadConfirmation: "Are you sure you want to cancel this upload?",
       dictRemoveFile: "Remove file",
       dictRemoveFileConfirmation: null,
-      dictMaxFilesExceeded: "You can only upload {{maxFiles}} files.",
+      dictMaxFilesExceeded: "You can not upload any more files.",
       accept: function(file, done) {
         return done();
       },
@@ -393,6 +393,9 @@ Emitter.prototype.hasListeners = function(event){
       error: function(file, message) {
         var node, _i, _len, _ref, _results;
         file.previewElement.classList.add("dz-error");
+        if (typeof message !== "String" && message.error) {
+          message = message.error;
+        }
         _ref = file.previewElement.querySelectorAll("[data-dz-errormessage]");
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -681,7 +684,8 @@ Emitter.prototype.hasListeners = function(event){
         this.hiddenFileInput.parentNode.removeChild(this.hiddenFileInput);
         this.hiddenFileInput = null;
       }
-      return delete this.element.dropzone;
+      delete this.element.dropzone;
+      return Dropzone.instances.splice(Dropzone.instances.indexOf(this), 1);
     };
 
     Dropzone.prototype.updateTotalUploadProgress = function() {
@@ -808,18 +812,18 @@ Emitter.prototype.hasListeners = function(event){
 
     Dropzone.prototype.filesize = function(size) {
       var string;
-      if (size >= 100000000000) {
-        size = size / 100000000000;
-        string = "TB";
-      } else if (size >= 100000000) {
-        size = size / 100000000;
-        string = "GB";
-      } else if (size >= 100000) {
-        size = size / 100000;
-        string = "MB";
-      } else if (size >= 100) {
-        size = size / 100;
-        string = "KB";
+      if (size >= 1024 * 1024 * 1024 * 1024 / 10) {
+        size = size / (1024 * 1024 * 1024 * 1024 / 10);
+        string = "TiB";
+      } else if (size >= 1024 * 1024 * 1024 / 10) {
+        size = size / (1024 * 1024 * 1024 / 10);
+        string = "GiB";
+      } else if (size >= 1024 * 1024 / 10) {
+        size = size / (1024 * 1024 / 10);
+        string = "MiB";
+      } else if (size >= 1024 / 10) {
+        size = size / (1024 / 10);
+        string = "KiB";
       } else {
         size = size * 10;
         string = "b";
@@ -828,7 +832,7 @@ Emitter.prototype.hasListeners = function(event){
     };
 
     Dropzone.prototype._updateMaxFilesReachedClass = function() {
-      if (this.options.maxFiles && this.getAcceptedFiles().length >= this.options.maxFiles) {
+      if ((this.options.maxFiles != null) && this.getAcceptedFiles().length >= this.options.maxFiles) {
         if (this.getAcceptedFiles().length === this.options.maxFiles) {
           this.emit('maxfilesreached', this.files);
         }
@@ -888,7 +892,7 @@ Emitter.prototype.hasListeners = function(event){
         return done(this.options.dictFileTooBig.replace("{{filesize}}", Math.round(file.size / 1024 / 10.24) / 100).replace("{{maxFilesize}}", this.options.maxFilesize));
       } else if (!Dropzone.isValidFile(file, this.options.acceptedFiles)) {
         return done(this.options.dictInvalidFileType);
-      } else if (this.options.maxFiles && this.getAcceptedFiles().length >= this.options.maxFiles) {
+      } else if ((this.options.maxFiles != null) && this.getAcceptedFiles().length >= this.options.maxFiles) {
         done(this.options.dictMaxFilesExceeded.replace("{{maxFiles}}", this.options.maxFiles));
         return this.emit("maxfilesexceeded", file);
       } else {
@@ -1119,7 +1123,7 @@ Emitter.prototype.hasListeners = function(event){
     };
 
     Dropzone.prototype.uploadFiles = function(files) {
-      var file, formData, handleError, headerName, headerValue, headers, input, inputName, inputType, key, progressObj, response, updateProgress, value, xhr, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3,
+      var file, formData, handleError, headerName, headerValue, headers, input, inputName, inputType, key, option, progressObj, response, updateProgress, value, xhr, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3, _ref4,
         _this = this;
       xhr = new XMLHttpRequest();
       for (_i = 0, _len = files.length; _i < _len; _i++) {
@@ -1237,13 +1241,21 @@ Emitter.prototype.hasListeners = function(event){
           input = _ref2[_k];
           inputName = input.getAttribute("name");
           inputType = input.getAttribute("type");
-          if (!inputType || ((_ref3 = inputType.toLowerCase()) !== "checkbox" && _ref3 !== "radio") || input.checked) {
+          if (input.tagName === "SELECT" && input.hasAttribute("multiple")) {
+            _ref3 = input.options;
+            for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
+              option = _ref3[_l];
+              if (option.selected) {
+                formData.append(inputName, option.value);
+              }
+            }
+          } else if (!inputType || ((_ref4 = inputType.toLowerCase()) !== "checkbox" && _ref4 !== "radio") || input.checked) {
             formData.append(inputName, input.value);
           }
         }
       }
-      for (_l = 0, _len3 = files.length; _l < _len3; _l++) {
-        file = files[_l];
+      for (_m = 0, _len4 = files.length; _m < _len4; _m++) {
+        file = files[_m];
         formData.append("" + this.options.paramName + (this.options.uploadMultiple ? "[]" : ""), file, file.name);
       }
       return xhr.send(formData);
@@ -1287,13 +1299,13 @@ Emitter.prototype.hasListeners = function(event){
 
   })(Em);
 
-  Dropzone.version = "3.7.4-dev";
+  Dropzone.version = "3.7.4";
 
   Dropzone.options = {};
 
   Dropzone.optionsForElement = function(element) {
-    if (element.id && typeof element.id === "string") {
-      return Dropzone.options[camelize(element.id)];
+    if (element.getAttribute("id")) {
+      return Dropzone.options[camelize(element.getAttribute("id"))];
     } else {
       return void 0;
     }
