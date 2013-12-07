@@ -663,31 +663,37 @@ describe "Dropzone", ->
 
     describe ".destroy()", ->
       it "should properly cancel all pending uploads and remove all file references", (done) ->
-          dropzone.accept = (file, done) -> done()
+        dropzone.accept = (file, done) -> done()
 
-          dropzone.options.parallelUploads = 1
+        dropzone.options.parallelUploads = 1
 
-          dropzone.addFile getMockFile()
-          dropzone.addFile getMockFile()
+        dropzone.addFile getMockFile()
+        dropzone.addFile getMockFile()
 
 
-          setTimeout ->
-            dropzone.getUploadingFiles().length.should.equal 1
-            dropzone.getQueuedFiles().length.should.equal 1
-            dropzone.files.length.should.equal 2
+        setTimeout ->
+          dropzone.getUploadingFiles().length.should.equal 1
+          dropzone.getQueuedFiles().length.should.equal 1
+          dropzone.files.length.should.equal 2
 
-            sinon.spy dropzone, "disable"
+          sinon.spy dropzone, "disable"
 
-            dropzone.destroy()
+          dropzone.destroy()
 
-            dropzone.disable.callCount.should.equal 1
-            element.should.not.have.property "dropzone"
-            done()
-          , 10
+          dropzone.disable.callCount.should.equal 1
+          element.should.not.have.property "dropzone"
+          done()
+        , 10
 
       it "should be able to create instance of dropzone on the same element after destroy", ->
-          dropzone.destroy()
-          ( -> new Dropzone element, maxFilesize: 4, url: "url", acceptedMimeTypes: "audio/*,image/png", uploadprogress: -> ).should.not.throw( Error )
+        dropzone.destroy()
+        ( -> new Dropzone element, maxFilesize: 4, url: "url", acceptedMimeTypes: "audio/*,image/png", uploadprogress: -> ).should.not.throw( Error )
+
+      it "should remove itself from Dropzone.instances", ->
+        (Dropzone.instances.indexOf(dropzone) != -1).should.be.ok
+        dropzone.destroy()
+        (Dropzone.instances.indexOf(dropzone) == -1).should.be.ok
+
 
 
     describe ".filesize()", ->

@@ -576,6 +576,7 @@ class Dropzone extends Em
       @hiddenFileInput.parentNode.removeChild @hiddenFileInput 
       @hiddenFileInput = null
     delete @element.dropzone
+    Dropzone.instances.splice Dropzone.instances.indexOf(this), 1
 
 
   updateTotalUploadProgress: ->
