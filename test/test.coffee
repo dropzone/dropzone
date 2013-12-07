@@ -425,7 +425,7 @@ describe "Dropzone", ->
       beforeEach ->
         file =
           name: "test name"
-          size: 2 * 1000 * 1000
+          size: 2 * 1024 * 1024
         dropzone.options.addedfile.call dropzone, file
 
       describe ".addedFile()", ->
@@ -433,7 +433,7 @@ describe "Dropzone", ->
           file.previewElement.should.be.instanceof Element
 
           file.previewElement.querySelector("[data-dz-name]").innerHTML.should.eql "test name"
-          file.previewElement.querySelector("[data-dz-size]").innerHTML.should.eql "<strong>2</strong> MB"
+          file.previewElement.querySelector("[data-dz-size]").innerHTML.should.eql "<strong>2</strong> MiB"
 
       describe ".error()", ->
         it "should properly insert the error", ->
@@ -720,10 +720,10 @@ describe "Dropzone", ->
 
       it "should convert to KiloBytes, etc.. not KibiBytes", ->
 
-        dropzone.filesize(2 * 1024 * 1024).should.eql "<strong>2.1</strong> MB"
-        dropzone.filesize(2 * 1000 * 1000).should.eql "<strong>2</strong> MB"
-        dropzone.filesize(2 * 1024 * 1024 * 1024).should.eql "<strong>2.1</strong> GB"
-        dropzone.filesize(2 * 1000 * 1000 * 1000).should.eql "<strong>2</strong> GB"
+        # dropzone.filesize(2 * 1000 * 1000).should.eql "<strong>1.9</strong> MiB"
+        dropzone.filesize(2 * 1024 * 1024).should.eql "<strong>2</strong> MiB"
+        dropzone.filesize(2 * 1000 * 1000 * 1000).should.eql "<strong>1.9</strong> GiB"
+        dropzone.filesize(2 * 1024 * 1024 * 1024).should.eql "<strong>2</strong> GiB"
 
     describe "._updateMaxFilesReachedClass()", ->
       it "should properly add the dz-max-files-reached class", ->

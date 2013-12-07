@@ -654,18 +654,18 @@ class Dropzone extends Em
 
   # Returns a nicely formatted filesize
   filesize: (size) ->
-    if size >= 100000000000
-      size = size / 100000000000
-      string = "TB"
-    else if size >= 100000000
-      size = size / 100000000
-      string = "GB"
-    else if size >= 100000
-      size = size / 100000
-      string = "MB"
-    else if size >= 100
-      size = size / 100 
-      string = "KB"
+    if      size >= 1024 * 1024 * 1024 * 1024 / 10
+      size = size / (1024 * 1024 * 1024 * 1024 / 10)
+      string = "TiB"
+    else if size >= 1024 * 1024 * 1024 / 10
+      size = size / (1024 * 1024 * 1024 / 10)
+      string = "GiB"
+    else if size >= 1024 * 1024 / 10
+      size = size / (1024 * 1024 / 10)
+      string = "MiB"
+    else if size >= 1024 / 10
+      size = size / (1024 / 10)
+      string = "KiB"
     else
       size = size * 10
       string = "b"
