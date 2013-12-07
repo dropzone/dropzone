@@ -432,6 +432,11 @@ describe "Dropzone", ->
 
           file.previewElement.querySelector("[data-dz-errormessage]").innerHTML.should.eql "test message"
 
+        it "should properly insert the error when provided with an object containing the error", ->
+          dropzone.options.error.call dropzone, file, error: "test message"
+
+          file.previewElement.querySelector("[data-dz-errormessage]").innerHTML.should.eql "test message"
+
       describe ".thumbnail()", ->
         it "should properly insert the error", ->
           transparentGif = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="

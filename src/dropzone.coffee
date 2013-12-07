@@ -319,6 +319,7 @@ class Dropzone extends Em
     # Receives `file` and `message`
     error: (file, message) ->
       file.previewElement.classList.add "dz-error"
+      message = message.error if typeof message != "String" and message.error
       node.textContent = message for node in file.previewElement.querySelectorAll("[data-dz-errormessage]")
     
     errormultiple: noop
