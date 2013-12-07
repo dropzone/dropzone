@@ -1063,6 +1063,7 @@ describe "Dropzone", ->
                                               <input type="checkbox" name="checked" value="value1" checked="checked" />
                                               <input type="radio" value="radiovalue1" name="radio1" />
                                               <input type="radio" value="radiovalue2" name="radio1" checked="checked" />
+                                              <select name="select"><option value="1">1</option><option value="2" selected>2</option></select>
                                             </form>"""
         dropzone = new Dropzone element, url: "/the/url"
 
@@ -1077,7 +1078,7 @@ describe "Dropzone", ->
         dropzone.addFile mock1
 
         setTimeout ->
-          formData.append.callCount.should.equal 4
+          formData.append.callCount.should.equal 5
 
           formData.append.args[0][0].should.eql "test"
           formData.append.args[0][1].should.eql "hidden"
@@ -1088,8 +1089,11 @@ describe "Dropzone", ->
           formData.append.args[2][0].should.eql "radio1"
           formData.append.args[2][1].should.eql "radiovalue2"
 
-          formData.append.args[3][0].should.eql "file"
-          formData.append.args[3][1].should.equal mock1
+          formData.append.args[3][0].should.eql "select"
+          formData.append.args[3][1].should.eql "2"
+
+          formData.append.args[4][0].should.eql "file"
+          formData.append.args[4][1].should.equal mock1
 
           # formData.append.args[1][0].should.eql "myName[]"
           done()
