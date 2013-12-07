@@ -71,6 +71,10 @@ describe "Dropzone", ->
         element = Dropzone.createElement """<form><input name="id" /</form>"""
         expect(Dropzone.optionsForElement(element)).to.equal undefined
 
+      it "should ignore input fields with the name='id'", ->
+        element = Dropzone.createElement """<form id="test-element"><input type="hidden" name="id" value="fooo" /></form>"""
+        Dropzone.optionsForElement(element).should.equal testOptions
+
     describe "Dropzone.forElement()", ->
       element = document.createElement "div"
       element.id = "some-test-element"

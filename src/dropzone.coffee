@@ -1066,7 +1066,7 @@ Dropzone.options = { }
 # Returns the options for an element or undefined if none available.
 Dropzone.optionsForElement = (element) ->
   # Get the `Dropzone.options.elementId` for this element if it exists
-  if element.id and typeof element.id == "string" then Dropzone.options[camelize element.id] else undefined
+  if element.getAttribute("id") then Dropzone.options[camelize element.getAttribute "id"] else undefined
 
 
 # Holds a list of all dropzone instances
