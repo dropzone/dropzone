@@ -210,7 +210,7 @@ Emitter.prototype.hasListeners = function(event){
     */
 
 
-    Dropzone.prototype.events = ["drop", "dragstart", "dragend", "dragenter", "dragover", "dragleave", "selectedfiles", "addedfile", "removedfile", "thumbnail", "error", "errormultiple", "processing", "processingmultiple", "uploadprogress", "totaluploadprogress", "sending", "sendingmultiple", "success", "successmultiple", "canceled", "canceledmultiple", "complete", "completemultiple", "reset", "maxfilesexceeded"];
+    Dropzone.prototype.events = ["drop", "dragstart", "dragend", "dragenter", "dragover", "dragleave", "selectedfiles", "addedfile", "removedfile", "thumbnail", "error", "errormultiple", "processing", "processingmultiple", "uploadprogress", "totaluploadprogress", "sending", "sendingmultiple", "success", "successmultiple", "canceled", "canceledmultiple", "complete", "completemultiple", "reset", "maxfilesexceeded", "maxfilesreached"];
 
     Dropzone.prototype.defaultOptions = {
       url: null,
@@ -367,9 +367,8 @@ Emitter.prototype.hasListeners = function(event){
               }
             }
           });
-          file.previewElement.appendChild(file._removeLink);
+          return file.previewElement.appendChild(file._removeLink);
         }
-        return this._updateMaxFilesReachedClass();
       },
       removedfile: function(file) {
         var _ref;
@@ -438,6 +437,7 @@ Emitter.prototype.hasListeners = function(event){
       },
       completemultiple: noop,
       maxfilesexceeded: noop,
+      maxfilesreached: noop,
       previewTemplate: "<div class=\"dz-preview dz-file-preview\">\n  <div class=\"dz-details\">\n    <div class=\"dz-filename\"><span data-dz-name></span></div>\n    <div class=\"dz-size\" data-dz-size></div>\n    <img data-dz-thumbnail />\n  </div>\n  <div class=\"dz-progress\"><span class=\"dz-upload\" data-dz-uploadprogress></span></div>\n  <div class=\"dz-success-mark\"><span>✔</span></div>\n  <div class=\"dz-error-mark\"><span>✘</span></div>\n  <div class=\"dz-error-message\"><span data-dz-errormessage></span></div>\n</div>"
     };
 
@@ -638,6 +638,9 @@ Emitter.prototype.hasListeners = function(event){
               return _this.emit("dragenter", e);
             },
             "dragover": function(e) {
+              var efct;
+              efct = e.dataTransfer.effectAllowed;
+              e.dataTransfer.dropEffect = 'move' === efct || 'linkMove' === efct ? 'move' : 'copy';
               noPropagation(e);
               return _this.emit("dragover", e);
             },
@@ -826,6 +829,9 @@ Emitter.prototype.hasListeners = function(event){
 
     Dropzone.prototype._updateMaxFilesReachedClass = function() {
       if (this.options.maxFiles && this.getAcceptedFiles().length >= this.options.maxFiles) {
+        if (this.getAcceptedFiles().length === this.options.maxFiles) {
+          this.emit('maxfilesreached', this.files);
+        }
         return this.element.classList.add("dz-max-files-reached");
       } else {
         return this.element.classList.remove("dz-max-files-reached");
@@ -906,10 +912,11 @@ Emitter.prototype.hasListeners = function(event){
       return this.accept(file, function(error) {
         if (error) {
           file.accepted = false;
-          return _this._errorProcessing([file], error);
+          _this._errorProcessing([file], error);
         } else {
-          return _this.enqueueFile(file);
+          _this.enqueueFile(file);
         }
+        return _this._updateMaxFilesReachedClass();
       });
     };
 
@@ -995,7 +1002,7 @@ Emitter.prototype.hasListeners = function(event){
       fileReader = new FileReader;
       fileReader.onload = function() {
         var img;
-        img = new Image;
+        img = document.createElement("img");
         img.onload = function() {
           var canvas, ctx, resizeInfo, thumbnail, _ref, _ref1, _ref2, _ref3;
           file.width = img.width;
@@ -1285,7 +1292,7 @@ Emitter.prototype.hasListeners = function(event){
   Dropzone.options = {};
 
   Dropzone.optionsForElement = function(element) {
-    if (element.id) {
+    if (element.id && typeof element.id === "string") {
       return Dropzone.options[camelize(element.id)];
     } else {
       return void 0;

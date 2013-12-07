@@ -73,8 +73,12 @@
           element.id = "test-element";
           return Dropzone.optionsForElement(element).should.equal(testOptions);
         });
-        return it("should return undefined if no options set", function() {
+        it("should return undefined if no options set", function() {
           element.id = "test-element2";
+          return expect(Dropzone.optionsForElement(element)).to.equal(void 0);
+        });
+        return it("should return undefined and not throw if it's a form with an input element of the name 'id'", function() {
+          element = Dropzone.createElement("<form><input name=\"id\" /</form>");
           return expect(Dropzone.optionsForElement(element)).to.equal(void 0);
         });
       });
@@ -936,6 +940,35 @@
           dropzone.element.classList.contains("dz-max-files-reached").should.not.be.ok;
           dropzone._updateMaxFilesReachedClass();
           return dropzone.element.classList.contains("dz-max-files-reached").should.be.ok;
+        });
+        it("should fire the 'maxfilesreached' event when appropriate", function() {
+          var spy;
+          spy = sinon.spy();
+          dropzone.on("maxfilesreached", function() {
+            return spy();
+          });
+          dropzone.getAcceptedFiles = function() {
+            return {
+              length: 9
+            };
+          };
+          dropzone.options.maxFiles = 10;
+          dropzone._updateMaxFilesReachedClass();
+          spy.should.not.have.been.called;
+          dropzone.getAcceptedFiles = function() {
+            return {
+              length: 10
+            };
+          };
+          dropzone._updateMaxFilesReachedClass();
+          spy.should.have.been.called;
+          dropzone.getAcceptedFiles = function() {
+            return {
+              length: 11
+            };
+          };
+          dropzone._updateMaxFilesReachedClass();
+          return spy.should.have.been.calledOnce;
         });
         return it("should properly remove the dz-max-files-reached class", function() {
           dropzone.getAcceptedFiles = function() {
