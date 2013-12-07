@@ -168,7 +168,8 @@ class Dropzone extends Em
     dictRemoveFileConfirmation: null
 
     # Displayed when the maxFiles have been exceeded
-    dictMaxFilesExceeded: "You can only upload {{maxFiles}} files."
+    # You can use {{maxFiles}} here, which will be replaced by the option.
+    dictMaxFilesExceeded: "You can not upload any more files."
 
 
     # If `done()` is called without argument the file is accepted
@@ -673,7 +674,7 @@ class Dropzone extends Em
 
   # Adds or removes the `dz-max-files-reached` class from the form.
   _updateMaxFilesReachedClass: ->
-    if @options.maxFiles and @getAcceptedFiles().length >= @options.maxFiles
+    if @options.maxFiles? and @getAcceptedFiles().length >= @options.maxFiles
       @emit 'maxfilesreached', @files if @getAcceptedFiles().length == @options.maxFiles
       @element.classList.add "dz-max-files-reached"
     else
@@ -726,7 +727,7 @@ class Dropzone extends Em
       done @options.dictFileTooBig.replace("{{filesize}}", Math.round(file.size / 1024 / 10.24) / 100).replace("{{maxFilesize}}", @options.maxFilesize)
     else unless Dropzone.isValidFile file, @options.acceptedFiles
       done @options.dictInvalidFileType
-    else if @options.maxFiles and @getAcceptedFiles().length >= @options.maxFiles
+    else if @options.maxFiles? and @getAcceptedFiles().length >= @options.maxFiles
       done @options.dictMaxFilesExceeded.replace "{{maxFiles}}", @options.maxFiles
       @emit "maxfilesexceeded", file
     else

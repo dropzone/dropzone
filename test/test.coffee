@@ -502,6 +502,8 @@ describe "Dropzone", ->
 
         dropzone.getAcceptedFiles.returns { length: 99 }
 
+        dropzone.options.dictMaxFilesExceeded = "You can only upload {{maxFiles}} files."
+
         called = no
         dropzone.on "maxfilesexceeded", (lfile) ->
           lfile.should.equal file
@@ -515,6 +517,20 @@ describe "Dropzone", ->
         called.should.be.ok
 
         dropzone.getAcceptedFiles.restore()
+
+      it "should properly handle if maxFiles is 0", ->
+        file = { type: "audio/mp3" }
+
+        dropzone.options.maxFiles = 0
+
+        called = no
+        dropzone.on "maxfilesexceeded", (lfile) ->
+          lfile.should.equal file
+          called = yes
+
+        dropzone.accept file, (err) -> expect(err).to.equal "You can not upload any more files."
+        called.should.be.ok
+
 
 
     describe ".removeFile()", ->
