@@ -998,7 +998,10 @@ class Dropzone extends Em
         inputName = input.getAttribute "name"
         inputType = input.getAttribute "type"
 
-        if !inputType or (inputType.toLowerCase() not in [ "checkbox", "radio" ]) or input.checked
+        if input.tagName == "SELECT" and input.hasAttribute "multiple"
+          # Possibly multiple values
+          formData.append inputName, option.value for option in input.options when option.selected
+        else if !inputType or (inputType.toLowerCase() not in [ "checkbox", "radio" ]) or input.checked
           formData.append inputName, input.value
 
 

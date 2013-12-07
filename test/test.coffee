@@ -1100,6 +1100,44 @@ describe "Dropzone", ->
         , 10
 
 
+      it "should all values of a select that has the multiple attribute", (done) ->
+        element = Dropzone.createElement """<form action="/the/url">
+                                              <select name="select" multiple>
+                                                <option value="value1">1</option>
+                                                <option value="value2" selected>2</option>
+                                                <option value="value3">3</option>
+                                                <option value="value4" selected>4</option>
+                                              </select>
+                                            </form>"""
+        dropzone = new Dropzone element, url: "/the/url"
+
+
+        formData = null
+        dropzone.on "sending", (file, xhr, tformData) ->
+          formData = tformData
+          sinon.spy tformData, "append"
+
+        mock1 = getMockFile()
+
+        dropzone.addFile mock1
+
+        setTimeout ->
+          formData.append.callCount.should.equal 3
+
+          formData.append.args[0][0].should.eql "select"
+          formData.append.args[0][1].should.eql "value2"
+
+          formData.append.args[1][0].should.eql "select"
+          formData.append.args[1][1].should.eql "value4"
+
+          formData.append.args[2][0].should.eql "file"
+          formData.append.args[2][1].should.equal mock1
+
+          # formData.append.args[1][0].should.eql "myName[]"
+          done()
+        , 10
+
+
 
       describe "settings()", ->
         it "should correctly set `withCredentials` on the xhr object", ->
