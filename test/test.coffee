@@ -284,6 +284,11 @@ describe "Dropzone", ->
       dropzone = new Dropzone element, url: "url"
       element.dropzone.should.equal dropzone
 
+    it "should add itself to Dropzone.instances", ->
+      element = document.createElement "div"
+      dropzone = new Dropzone element, url: "url"
+      Dropzone.instances[Dropzone.instances.length - 1].should.equal dropzone
+
     it "should use the action attribute not the element with the name action", ->
       element = Dropzone.createElement """<form action="real-action"><input type="hidden" name="action" value="wrong-action" /></form>"""
       dropzone = new Dropzone element
