@@ -825,7 +825,10 @@ class Dropzone extends Em
         ctx = canvas.getContext "2d"
         canvas.width = resizeInfo.trgWidth
         canvas.height = resizeInfo.trgHeight
-        ctx.drawImage img, resizeInfo.srcX ? 0, resizeInfo.srcY ? 0, resizeInfo.srcWidth, resizeInfo.srcHeight, resizeInfo.trgX ? 0, resizeInfo.trgY ? 0, resizeInfo.trgWidth, resizeInfo.trgHeight
+
+        # This is a bugfix for iOS' scaling bug. 
+        drawImageIOSFix ctx, img, resizeInfo.srcX ? 0, resizeInfo.srcY ? 0, resizeInfo.srcWidth, resizeInfo.srcHeight, resizeInfo.trgX ? 0, resizeInfo.trgY ? 0, resizeInfo.trgWidth, resizeInfo.trgHeight
+
         thumbnail = canvas.toDataURL "image/png"
 
         @emit "thumbnail", file, thumbnail
@@ -1250,6 +1253,55 @@ Dropzone.PROCESSING = Dropzone.UPLOADING # alias
 Dropzone.CANCELED = "canceled"
 Dropzone.ERROR = "error"
 Dropzone.SUCCESS = "success"
+
+
+
+
+
+
+
+###
+
+Bugfix for iOS 6 and 7
+Source: http://stackoverflow.com/questions/11929099/html5-canvas-drawimage-ratio-bug-ios
+based on the work of https://github.com/stomita/ios-imagefile-megapixel
+
+###
+
+# Detecting vertical squash in loaded image.
+# Fixes a bug which squash image vertically while drawing into canvas for some images.
+# This is a bug in iOS6 devices. This function from https://github.com/stomita/ios-imagefile-megapixel
+detectVerticalSquash = (img) ->
+  iw = img.naturalWidth
+  ih = img.naturalHeight
+  canvas = document.createElement("canvas")
+  canvas.width = 1
+  canvas.height = ih
+  ctx = canvas.getContext("2d")
+  ctx.drawImage img, 0, 0
+  data = ctx.getImageData(0, 0, 1, ih).data
+  
+
+  # search image edge pixel position in case it is squashed vertically.
+  sy = 0
+  ey = ih
+  py = ih
+  while py > sy
+    alpha = data[(py - 1) * 4 + 3]
+
+    if alpha is 0 then ey = py else sy = py
+
+    py = (ey + sy) >> 1
+  ratio = (py / ih)
+
+  if (ratio is 0) then 1 else ratio
+
+# A replacement for context.drawImage
+# (args are for source and destination).
+drawImageIOSFix = (ctx, img, sx, sy, sw, sh, dx, dy, dw, dh) ->
+  vertSquashRatio = detectVerticalSquash img
+  ctx.drawImage img, sx, sy, sw, sh, dx, dy, dw, dh / vertSquashRatio
+
 
 
 
