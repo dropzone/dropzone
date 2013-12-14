@@ -268,8 +268,7 @@ class Dropzone extends Em
     dragleave: (e) -> @element.classList.remove "dz-drag-hover"
     
     # Called whenever files are dropped or selected
-    selectedfiles: (files) ->
-      @element.classList.add "dz-started" if @element == @previewsContainer
+    selectedfiles: noop
 
     # Called whenever there are no files left in the dropzone anymore, and the
     # dropzone should be displayed as if in the initial state.
@@ -279,6 +278,8 @@ class Dropzone extends Em
     # Called when a file is added to the queue
     # Receives `file`
     addedfile: (file) ->
+      @element.classList.add "dz-started" if @element == @previewsContainer
+
       file.previewElement = Dropzone.createElement @options.previewTemplate.trim()
       file.previewTemplate = file.previewElement # Backwards compatibility
 
