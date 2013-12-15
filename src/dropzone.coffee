@@ -779,7 +779,7 @@ class Dropzone extends Em
 
     @emit "addedfile", file
 
-    @createThumbnail file  if @options.createImageThumbnails and file.type.match(/image.*/) and file.size <= @options.maxThumbnailFilesize * 1024 * 1024
+    @_enqueueThumbnail file
 
     @accept file, (error) =>
       if error
@@ -802,6 +802,23 @@ class Dropzone extends Em
     else
       throw new Error "This file can't be queued because it has already been processed or was rejected."
 
+
+  _thumbnailQueue: [ ]
+  _processingThumbnail: no
+  _enqueueThumbnail: (file) ->
+    if @options.createImageThumbnails and file.type.match(/image.*/) and file.size <= @options.maxThumbnailFilesize * 1024 * 1024
+      @_thumbnailQueue.push(file)
+      setTimeout (=> @_processThumbnailQueue()), 1 # Deferring the call
+
+  _processThumbnailQueue: ->
+    return if @_processingThumbnail
+
+    @_processingThumbnail = yes
+    @createThumbnail @_thumbnailQueue.shift(), =>
+      @_processingThumbnail = no
+      @_processThumbnailQueue()
+
+
   # Can be called by the user to remove a file
   removeFile: (file) ->
     @cancelUpload file if file.status == Dropzone.UPLOADING
@@ -817,7 +834,7 @@ class Dropzone extends Em
       @removeFile file if file.status != Dropzone.UPLOADING || cancelIfNecessary
     return null
 
-  createThumbnail: (file) ->
+  createThumbnail: (file, callback) ->
 
     fileReader = new FileReader
 
@@ -846,6 +863,7 @@ class Dropzone extends Em
         thumbnail = canvas.toDataURL "image/png"
 
         @emit "thumbnail", file, thumbnail
+        callback() if callback?
 
       img.src = fileReader.result
 

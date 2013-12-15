@@ -1030,6 +1030,55 @@ describe "Dropzone", ->
 
 
 
+      describe "thumbnails", ->
+        it "should properly queue the thumbnail creation", (done) ->
+          doneFunction = null
+
+          dropzone.accept = (file, done) -> doneFunction = done
+          dropzone.processFile = ->
+          dropzone.uploadFile = ->
+
+          mock1 = getMockFile()
+          mock2 = getMockFile()
+          mock3 = getMockFile()
+          mock1.type = "image/jpg"
+          mock2.type = "image/jpg"
+          mock3.type = "image/jpg"
+
+          dropzone.on "thumbnail", ->
+            console.log "HII"
+
+          ct_file = ct_callback = null
+          dropzone.createThumbnail = (file, callback) ->
+            ct_file = file
+            ct_callback = callback
+
+          sinon.spy dropzone, "createThumbnail"
+          
+          dropzone.addFile mock1
+          dropzone.addFile mock2
+          dropzone.addFile mock3
+
+          dropzone.files.length.should.eql 3
+          setTimeout (->
+            dropzone.createThumbnail.callCount.should.eql 1
+            mock1.should.equal ct_file
+            ct_callback()
+            dropzone.createThumbnail.callCount.should.eql 2
+            mock2.should.equal ct_file
+            ct_callback()
+            dropzone.createThumbnail.callCount.should.eql 3
+            mock3.should.equal ct_file
+
+            done()
+          ), 10
+          
+
+          # dropzone.addFile mock1
+
+
+
+
     describe "enqueueFile()", ->
       it "should be wrapped by enqueueFiles()", ->
         sinon.stub dropzone, "enqueueFile"
