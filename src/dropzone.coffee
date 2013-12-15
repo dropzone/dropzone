@@ -522,10 +522,9 @@ class Dropzone extends Em
 
     # Emit a `queuecomplete` event if all files finished uploading.
     @on "complete", (file) =>
-      # This needs to be deferred so that `queuecomplete` really triggers after `complete`
-      setTimeout (=>
-        @emit "queuecomplete" if @getUploadingFiles().length == 0 and @getQueuedFiles().length == 0
-      ), 0
+      if @getUploadingFiles().length == 0 and @getQueuedFiles().length == 0
+        # This needs to be deferred so that `queuecomplete` really triggers after `complete`
+        setTimeout (=> @emit "queuecomplete"), 0
 
 
     noPropagation = (e) ->
