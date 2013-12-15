@@ -979,17 +979,54 @@ describe "Dropzone", ->
         ), 10
 
       it "should create a remove link if configured to do so", ->
-        doneFunction = null
         dropzone.options.addRemoveLinks = true
-        dropzone.accept = (file, done) -> doneFunction = done
         dropzone.processFile = ->
         dropzone.uploadFile = ->
 
-        dropzone.addFile mockFile
         sinon.stub dropzone, "processQueue"
+        dropzone.addFile mockFile
 
         dropzone.files[0].previewElement.querySelector("a[data-dz-remove].dz-remove").should.be.ok
 
+
+      it "should attach an event handler to data-dz-remove links", ->
+        dropzone.options.previewTemplate = """
+                                            <div class="dz-preview dz-file-preview">
+                                              <div class="dz-details">
+                                                <div class="dz-filename"><span data-dz-name></span></div>
+                                                <div class="dz-size" data-dz-size></div>
+                                                <img data-dz-thumbnail />
+                                              </div>
+                                              <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
+                                              <div class="dz-success-mark"><span>✔</span></div>
+                                              <div class="dz-error-mark"><span>✘</span></div>
+                                              <div class="dz-error-message"><span data-dz-errormessage></span></div>
+                                              <a class="link1" data-dz-remove></a>
+                                              <a class="link2" data-dz-remove></a>
+                                            </div>
+                                            """
+
+        sinon.stub dropzone, "processQueue"
+
+        dropzone.addFile mockFile
+
+        file = dropzone.files[0]
+        removeLink1 = file.previewElement.querySelector("a[data-dz-remove].link1")
+        removeLink2 = file.previewElement.querySelector("a[data-dz-remove].link2")
+
+        sinon.stub dropzone, "removeFile"
+
+        event = document.createEvent "HTMLEvents"
+        event.initEvent "click", true, true
+        removeLink1.dispatchEvent event
+
+        dropzone.removeFile.callCount.should.eql 1
+
+        event = document.createEvent "HTMLEvents"
+        event.initEvent "click", true, true
+        removeLink2.dispatchEvent event
+
+        dropzone.removeFile.callCount.should.eql 2
 
 
 

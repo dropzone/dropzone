@@ -286,19 +286,22 @@ class Dropzone extends Em
       node.innerHTML = @filesize file.size for node in file.previewElement.querySelectorAll("[data-dz-size]")
 
       if @options.addRemoveLinks
-        file._removeLink = Dropzone.createElement """<a class="dz-remove" href="javascript:undefined;">#{@options.dictRemoveFile}</a>"""
-        file._removeLink.addEventListener "click", (e) =>
-          e.preventDefault()
-          e.stopPropagation()
-          if file.status == Dropzone.UPLOADING
-            Dropzone.confirm @options.dictCancelUploadConfirmation, => @removeFile file
-          else
-            if @options.dictRemoveFileConfirmation
-              Dropzone.confirm @options.dictRemoveFileConfirmation, => @removeFile file
-            else
-              @removeFile file
-
+        file._removeLink = Dropzone.createElement """<a class="dz-remove" href="javascript:undefined;" data-dz-remove>#{@options.dictRemoveFile}</a>"""
         file.previewElement.appendChild file._removeLink
+
+      removeFileEvent = (e) =>
+        e.preventDefault()
+        e.stopPropagation()
+        if file.status == Dropzone.UPLOADING
+          Dropzone.confirm @options.dictCancelUploadConfirmation, => @removeFile file
+        else
+          if @options.dictRemoveFileConfirmation
+            Dropzone.confirm @options.dictRemoveFileConfirmation, => @removeFile file
+          else
+            @removeFile file
+
+      removeLink.addEventListener "click", removeFileEvent for removeLink in file.previewElement.querySelectorAll("[data-dz-remove]")
+        
 
     # Called whenever a file is removed.
     removedfile: (file) ->
