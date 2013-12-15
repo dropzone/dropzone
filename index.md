@@ -420,6 +420,7 @@ Special events:
 |-----------------------|-------------
 | `totaluploadprogress` | Called with the total upload progress (0-100), the totalBytes and the totalBytesSent. This event can be used to show the overall upload progress of all files.
 | `reset`               | Called when all files in the list are removed and the dropzone is reset to initial state.
+| `queuecomplete`       | Called when all files in the queue finished uploading.
 
 
 ## layout
