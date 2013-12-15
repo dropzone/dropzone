@@ -266,6 +266,8 @@ class Dropzone extends Em
     dragover: (e) -> @element.classList.add "dz-drag-hover"
     dragleave: (e) -> @element.classList.remove "dz-drag-hover"
 
+    paste: noop
+
     # Called whenever there are no files left in the dropzone anymore, and the
     # dropzone should be displayed as if in the initial state.
     reset: ->
@@ -497,8 +499,7 @@ class Dropzone extends Em
         document.body.appendChild @hiddenFileInput
         @hiddenFileInput.addEventListener "change", =>
           files = @hiddenFileInput.files
-          if files.length
-            @handleFiles files
+          @addFile file for file in files if files.length
           setupHiddenFileInput()
       setupHiddenFileInput()
 
@@ -548,6 +549,9 @@ class Dropzone extends Em
             @drop e
           "dragend": (e) =>
             @emit "dragend", e
+          "paste": (e) =>
+            noPropagation e
+            @paste e
       }
     ]
 
@@ -687,29 +691,60 @@ class Dropzone extends Em
     # Even if it's a folder, files.length will contain the folders.
     if files.length
       items = e.dataTransfer.items
-      if items and items.length and (items[0].webkitGetAsEntry? or items[0].getAsEntry?)
+      if items and items.length and (items[0].webkitGetAsEntry?)
         # The browser supports dropping of folders, so handle items instead of files
-        @handleItems items
+        @_addFilesFromItems items
       else
         @handleFiles files
     return
+
+  paste: (e) ->
+    return # This is disabled right now, because the browsers don't implement it properly.
+
+    return unless e?.clipboardData?.items?
+
+    @emit "paste", e
+    items = e.clipboardData.items
+
+    @_addFilesFromItems items if items.length
 
 
   handleFiles: (files) ->
     @addFile file for file in files
 
-  # When a folder is dropped, items must be handled instead of files.
-  handleItems: (items) ->
+  # When a folder is dropped (or files are pasted), items must be handled
+  # instead of files.
+  _addFilesFromItems: (items) ->
     for item in items
-      if item.webkitGetAsEntry?
-        entry = item.webkitGetAsEntry()
+      if item.webkitGetAsEntry? and entry = item.webkitGetAsEntry()
         if entry.isFile
           @addFile item.getAsFile()
         else if entry.isDirectory
-          @addDirectory entry, entry.name
-      else
-        @addFile item.getAsFile()
-    return
+          # Append all files from that directory to files
+          @_addFilesFromDirectory entry, entry.name
+      else if item.getAsFile?
+        if !item.kind? or item.kind == "file"
+          @addFile item.getAsFile()
+
+
+  # Goes through the directory, and adds each file it finds recursively
+  _addFilesFromDirectory: (directory, path) ->
+    dirReader = directory.createReader()
+
+    entriesReader = (entries) =>
+      for entry in entries
+        if entry.isFile
+          entry.file (file) =>
+            return if @options.ignoreHiddenFiles and file.name.substring(0, 1) is '.'
+            file.fullPath = "#{path}/#{file.name}"
+            @addFile file
+        else if entry.isDirectory
+          @_addFilesFromDirectory entry, "#{path}/#{entry.name}"
+      return
+
+    dirReader.readEntries entriesReader, (error) -> console?.log? error 
+
+
 
   # If `done()` is called without argument the file is accepted
   # If you call it with an error message, the file is rejected
@@ -763,25 +798,6 @@ class Dropzone extends Em
         setTimeout (=> @processQueue()), 1 # Deferring the call
     else
       throw new Error "This file can't be queued because it has already been processed or was rejected."
-
-  # Used to read a directory, and call addFile() with every file found.
-  addDirectory: (entry, path) ->
-    dirReader = entry.createReader()
-
-
-    entriesReader = (entries) =>
-      for entry in entries
-        if entry.isFile
-          entry.file (file) =>
-            return if @options.ignoreHiddenFiles and file.name.substring(0, 1) is '.'
-            file.fullPath = "#{path}/#{file.name}"
-            @addFile file
-        else if entry.isDirectory
-          @addDirectory entry, "#{path}/#{entry.name}"
-      return
-
-    dirReader.readEntries entriesReader, (error) -> console?.log? error 
-
 
   # Can be called by the user to remove a file
   removeFile: (file) ->
