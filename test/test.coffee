@@ -978,6 +978,19 @@ describe "Dropzone", ->
           done()
         ), 10
 
+      it "should create a remove link if configured to do so", ->
+        doneFunction = null
+        dropzone.options.addRemoveLinks = true
+        dropzone.accept = (file, done) -> doneFunction = done
+        dropzone.processFile = ->
+        dropzone.uploadFile = ->
+
+        dropzone.addFile mockFile
+        sinon.stub dropzone, "processQueue"
+
+        dropzone.files[0].previewElement.querySelector("a[data-dz-remove].dz-remove").should.be.ok
+
+
 
 
     describe "enqueueFile()", ->
