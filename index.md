@@ -392,7 +392,6 @@ All of these receive the [file](https://developer.mozilla.org/en-US/docs/DOM/Fil
 |-----------------------|-------------
 | `addedfile`           | 
 | `removedfile`         | Called whenever a file is removed from the list. You can listen to this and delete the file from your server if you want to.
-| `selectedfiles`       | Receives an array of files and gets called whenever files are dropped or selected.
 | `thumbnail`           | When the thumbnail has been generated. Receives the [**dataUrl**](http://en.wikipedia.org/wiki/Data_URI_scheme) as second parameter.
 | `error`               | An error occured. Receives the **errorMessage** as second parameter and if the error was due to the XMLHttpRequest the xhr object as third.
 | `processing`          | When a file gets processed (since there is a queue not all files are processed immediately). This event was called `processingfile` previously.
