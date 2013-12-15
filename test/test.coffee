@@ -1379,3 +1379,34 @@ describe "Dropzone", ->
             , 10
           , 10
 
+
+    describe "complete file", ->
+      it "should properly emit the queuecomplete event when the complete queue is finished", (done) ->
+
+        mock1 = getMockFile()
+        mock2 = getMockFile()
+        mock3 = getMockFile()
+        mock1.status = Dropzone.ADDED
+        mock2.status = Dropzone.ADDED
+        mock3.status = Dropzone.ADDED
+        mock1.name = "mock1"
+        mock2.name = "mock2"
+        mock3.name = "mock3"
+
+
+        dropzone.uploadFiles = (files) ->
+          setTimeout (=>
+            @_finished files, null, null
+          ), 1
+
+        completedFiles = 0        
+        dropzone.on "complete", (file) ->
+          completedFiles++
+
+        dropzone.on "queuecomplete", ->
+          completedFiles.should.equal 3
+          done()
+
+        dropzone.addFile mock1
+        dropzone.addFile mock2
+        dropzone.addFile mock3
