@@ -489,7 +489,7 @@ describe "Dropzone", ->
         dropzone.accept { size: 2 * 1024 * 1024, type: "audio/mp3" }, (err) -> expect(err).to.be.undefined
 
       it "shouldn't pass if the filesize is too big", ->
-        dropzone.accept { size: 10 * 1024 * 1024, type: "audio/mp3" }, (err) -> err.should.eql "File is too big (10MB). Max filesize: 4MB."
+        dropzone.accept { size: 10 * 1024 * 1024, type: "audio/mp3" }, (err) -> err.should.eql "File is too big (10MiB). Max filesize: 4MiB."
 
       it "should properly accept files which mime types are listed in acceptedFiles", ->
 
