@@ -731,7 +731,7 @@
             size: 10 * 1024 * 1024,
             type: "audio/mp3"
           }, function(err) {
-            return err.should.eql("File is too big (10MB). Max filesize: 4MB.");
+            return err.should.eql("File is too big (10MiB). Max filesize: 4MiB.");
           });
         });
         it("should properly accept files which mime types are listed in acceptedFiles", function() {
@@ -1236,7 +1236,7 @@
           doneFunction("error");
           return mockFile.status.should.eql(Dropzone.ERROR);
         });
-        return it("should properly set the status of the file if autoProcessQueue is false and not call processQueue", function(done) {
+        it("should properly set the status of the file if autoProcessQueue is false and not call processQueue", function(done) {
           var doneFunction;
           doneFunction = null;
           dropzone.options.autoProcessQueue = false;
@@ -1255,6 +1255,73 @@
             dropzone.processQueue.callCount.should.equal(0);
             return done();
           }), 10);
+        });
+        it("should create a remove link if configured to do so", function() {
+          dropzone.options.addRemoveLinks = true;
+          dropzone.processFile = function() {};
+          dropzone.uploadFile = function() {};
+          sinon.stub(dropzone, "processQueue");
+          dropzone.addFile(mockFile);
+          return dropzone.files[0].previewElement.querySelector("a[data-dz-remove].dz-remove").should.be.ok;
+        });
+        it("should attach an event handler to data-dz-remove links", function() {
+          var event, file, removeLink1, removeLink2;
+          dropzone.options.previewTemplate = "<div class=\"dz-preview dz-file-preview\">\n  <div class=\"dz-details\">\n    <div class=\"dz-filename\"><span data-dz-name></span></div>\n    <div class=\"dz-size\" data-dz-size></div>\n    <img data-dz-thumbnail />\n  </div>\n  <div class=\"dz-progress\"><span class=\"dz-upload\" data-dz-uploadprogress></span></div>\n  <div class=\"dz-success-mark\"><span>✔</span></div>\n  <div class=\"dz-error-mark\"><span>✘</span></div>\n  <div class=\"dz-error-message\"><span data-dz-errormessage></span></div>\n  <a class=\"link1\" data-dz-remove></a>\n  <a class=\"link2\" data-dz-remove></a>\n</div>";
+          sinon.stub(dropzone, "processQueue");
+          dropzone.addFile(mockFile);
+          file = dropzone.files[0];
+          removeLink1 = file.previewElement.querySelector("a[data-dz-remove].link1");
+          removeLink2 = file.previewElement.querySelector("a[data-dz-remove].link2");
+          sinon.stub(dropzone, "removeFile");
+          event = document.createEvent("HTMLEvents");
+          event.initEvent("click", true, true);
+          removeLink1.dispatchEvent(event);
+          dropzone.removeFile.callCount.should.eql(1);
+          event = document.createEvent("HTMLEvents");
+          event.initEvent("click", true, true);
+          removeLink2.dispatchEvent(event);
+          return dropzone.removeFile.callCount.should.eql(2);
+        });
+        return describe("thumbnails", function() {
+          return it("should properly queue the thumbnail creation", function(done) {
+            var ct_callback, ct_file, doneFunction, mock1, mock2, mock3;
+            doneFunction = null;
+            dropzone.accept = function(file, done) {
+              return doneFunction = done;
+            };
+            dropzone.processFile = function() {};
+            dropzone.uploadFile = function() {};
+            mock1 = getMockFile();
+            mock2 = getMockFile();
+            mock3 = getMockFile();
+            mock1.type = "image/jpg";
+            mock2.type = "image/jpg";
+            mock3.type = "image/jpg";
+            dropzone.on("thumbnail", function() {
+              return console.log("HII");
+            });
+            ct_file = ct_callback = null;
+            dropzone.createThumbnail = function(file, callback) {
+              ct_file = file;
+              return ct_callback = callback;
+            };
+            sinon.spy(dropzone, "createThumbnail");
+            dropzone.addFile(mock1);
+            dropzone.addFile(mock2);
+            dropzone.addFile(mock3);
+            dropzone.files.length.should.eql(3);
+            return setTimeout((function() {
+              dropzone.createThumbnail.callCount.should.eql(1);
+              mock1.should.equal(ct_file);
+              ct_callback();
+              dropzone.createThumbnail.callCount.should.eql(2);
+              mock2.should.equal(ct_file);
+              ct_callback();
+              dropzone.createThumbnail.callCount.should.eql(3);
+              mock3.should.equal(ct_file);
+              return done();
+            }), 10);
+          });
         });
       });
       describe("enqueueFile()", function() {
@@ -1297,7 +1364,7 @@
           }, 10);
         });
       });
-      return describe("uploadFiles()", function() {
+      describe("uploadFiles()", function() {
         var requests;
         requests = null;
         beforeEach(function() {
@@ -1505,6 +1572,37 @@
               }, 10);
             }, 10);
           });
+        });
+      });
+      return describe("complete file", function() {
+        return it("should properly emit the queuecomplete event when the complete queue is finished", function(done) {
+          var completedFiles, mock1, mock2, mock3;
+          mock1 = getMockFile();
+          mock2 = getMockFile();
+          mock3 = getMockFile();
+          mock1.status = Dropzone.ADDED;
+          mock2.status = Dropzone.ADDED;
+          mock3.status = Dropzone.ADDED;
+          mock1.name = "mock1";
+          mock2.name = "mock2";
+          mock3.name = "mock3";
+          dropzone.uploadFiles = function(files) {
+            var _this = this;
+            return setTimeout((function() {
+              return _this._finished(files, null, null);
+            }), 1);
+          };
+          completedFiles = 0;
+          dropzone.on("complete", function(file) {
+            return completedFiles++;
+          });
+          dropzone.on("queuecomplete", function() {
+            completedFiles.should.equal(3);
+            return done();
+          });
+          dropzone.addFile(mock1);
+          dropzone.addFile(mock2);
+          return dropzone.addFile(mock3);
         });
       });
     });
