@@ -47,7 +47,6 @@ class Dropzone extends Em
     "dragenter"
     "dragover"
     "dragleave"
-    "selectedfiles"
     "addedfile"
     "removedfile"
     "thumbnail"
@@ -266,9 +265,6 @@ class Dropzone extends Em
     dragenter: (e) -> @element.classList.add "dz-drag-hover"
     dragover: (e) -> @element.classList.add "dz-drag-hover"
     dragleave: (e) -> @element.classList.remove "dz-drag-hover"
-    
-    # Called whenever files are dropped or selected
-    selectedfiles: noop
 
     # Called whenever there are no files left in the dropzone anymore, and the
     # dropzone should be displayed as if in the initial state.
@@ -502,7 +498,6 @@ class Dropzone extends Em
         @hiddenFileInput.addEventListener "change", =>
           files = @hiddenFileInput.files
           if files.length
-            @emit "selectedfiles", files
             @handleFiles files
           setupHiddenFileInput()
       setupHiddenFileInput()
@@ -688,7 +683,6 @@ class Dropzone extends Em
     @emit "drop", e
 
     files = e.dataTransfer.files
-    @emit "selectedfiles", files
 
     # Even if it's a folder, files.length will contain the folders.
     if files.length
