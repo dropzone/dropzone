@@ -455,6 +455,13 @@ If you decide to rewrite the `previewTemplate` from scratch, you should put elem
 
 The default options for Dropzone will look for those element and update the content for it.
 
+If you want some specific link to remove a file (instead of the built in `addRemoveLinks` option), you can simply insert elements
+in the template with the `data-dz-remove` attribute. Example:
+
+{% highlight html %}
+  <img src="removebutton.png" alt="Click me to remove the file." data-dz-remove />
+{% endhighlight %}
+
 You are not forced to use those conventions though. If you override all the default event listeners
 you can completely rebuild your layout from scratch.
 
