@@ -806,7 +806,7 @@ class Dropzone extends Em
     if file.status == Dropzone.ADDED
       file.status = Dropzone.QUEUED
       if @options.autoProcessQueue
-        setTimeout (=> @processQueue()), 1 # Deferring the call
+        setTimeout (=> @processQueue()), 0 # Deferring the call
     else
       throw new Error "This file can't be queued because it has already been processed or was rejected."
 
@@ -816,7 +816,7 @@ class Dropzone extends Em
   _enqueueThumbnail: (file) ->
     if @options.createImageThumbnails and file.type.match(/image.*/) and file.size <= @options.maxThumbnailFilesize * 1024 * 1024
       @_thumbnailQueue.push(file)
-      setTimeout (=> @_processThumbnailQueue()), 1 # Deferring the call
+      setTimeout (=> @_processThumbnailQueue()), 0 # Deferring the call
 
   _processThumbnailQueue: ->
     return if @_processingThumbnail
