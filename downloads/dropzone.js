@@ -848,11 +848,11 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         return _this.emit("complete", file);
       });
       this.on("complete", function(file) {
-        return setTimeout((function() {
-          if (_this.getUploadingFiles().length === 0 && _this.getQueuedFiles().length === 0) {
+        if (_this.getUploadingFiles().length === 0 && _this.getQueuedFiles().length === 0) {
+          return setTimeout((function() {
             return _this.emit("queuecomplete");
-          }
-        }), 0);
+          }), 0);
+        }
       });
       noPropagation = function(e) {
         e.stopPropagation();
@@ -1246,7 +1246,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
     Dropzone.prototype._processThumbnailQueue = function() {
       var _this = this;
-      if (this._processingThumbnail) {
+      if (this._processingThumbnail || this._thumbnailQueue.length === 0) {
         return;
       }
       this._processingThumbnail = true;
@@ -1584,7 +1584,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
   })(Em);
 
-  Dropzone.version = "4.0.0-dev";
+  Dropzone.version = "3.8.2";
 
   Dropzone.options = {};
 
