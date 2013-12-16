@@ -818,7 +818,7 @@ class Dropzone extends Em
       setTimeout (=> @_processThumbnailQueue()), 0 # Deferring the call
 
   _processThumbnailQueue: ->
-    return if @_processingThumbnail
+    return if @_processingThumbnail or @_thumbnailQueue.length == 0
 
     @_processingThumbnail = yes
     @createThumbnail @_thumbnailQueue.shift(), =>
