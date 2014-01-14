@@ -134,7 +134,7 @@ there would have been a html input like this:
 <input type="file" name="file" />
 {% endhighlight %}
 
-If you want another name than `file` you can [configure dropzone](#configure)
+If you want another name than `file` you can [configure dropzone](#toc_6)
 with the option `paramName`.
 
 > If you're using component don't forget to `require("dropzone");` otherwise it won't be activated.
@@ -224,7 +224,7 @@ Configure
 There are two ways to configure dropzones.
 
 The obvious way is to pass an options object when instantiating a dropzone
-programmatically like in the previous [create dropzones programmatically](#create_dropzones_programmatically)
+programmatically like in the previous [create dropzones programmatically](#toc_4)
 section.
 
 But if you just have HTML elements with the `dropzone` class, then you don't
@@ -311,7 +311,7 @@ to translate dropzone, you can also provide these options:
 
 > You can also overwrite all default event actions in the options. So if you provide the option `drop` you can overwrite the default `drop` event handler.
 > *You should be familiar with the code if you do that because you can easily break the upload like this.*
-> If you just want to do additional stuff, like adding a few classes here and there, **[listen to the events](#listen_to_events) instead**!
+> If you just want to do additional stuff, like adding a few classes here and there, **[listen to the events](#toc_8) instead**!
 
 
 ### Enqueuing file uploads
@@ -400,7 +400,8 @@ All of these receive the [file](https://developer.mozilla.org/en-US/docs/DOM/Fil
 | `success`             | The file has been uploaded successfully. Gets the server response as second argument. (This event was called `finished` previously)
 | `complete`            | Called when the upload was either successful or erroneous.
 | `canceled`            | Called when a file upload gets canceled.
-| `maxfilesexceeded`    | Called when the number of files accepted exceeds the `maxFiles` limit.
+| `maxfilesreached`     | Called when the number of files accepted reached the `maxFiles` limit.
+| `maxfilesexceeded`    | Called for each file that has been rejected because the number of files exceeds the `maxFiles` limit.
 
 All of these receive a list of files as first parameter and are only called if the `uploadMultiple` option is true:
 
