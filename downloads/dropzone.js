@@ -875,7 +875,9 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
             },
             "dragover": function(e) {
               var efct;
-              efct = e.dataTransfer.effectAllowed;
+              try {
+                efct = e.dataTransfer.effectAllowed;
+              } catch (_error) {}
               e.dataTransfer.dropEffect = 'move' === efct || 'linkMove' === efct ? 'move' : 'copy';
               noPropagation(e);
               return _this.emit("dragover", e);
@@ -1584,7 +1586,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
 
   })(Em);
 
-  Dropzone.version = "4.0.0-dev";
+  Dropzone.version = "3.8.3";
 
   Dropzone.options = {};
 
