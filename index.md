@@ -5,6 +5,9 @@ title: Dropzone.js
 
 <section markdown="1">
 
+It's lightweight, doesn't depend on any other library (like jQuery) and
+is highly customizable.
+
 Try it out:
 
 <div id="dropzone"><form action="http://www.torrentplease.com/dropzone.php" class="dropzone" id="demo-upload">
@@ -13,20 +16,16 @@ Try it out:
 
 (This is just a demo dropzone. Uploaded files are **not** stored.)
 
-<strike>I'm currently in the middle of working on our new album, so I don't have
-the time to react to issues and answers right away. I'm sorry about that.</strike>
+* * *
 
-**We released the album!** It's called «YES / NO» and will be available in Austria
-in two weeks in stores, spotify and [on iTunes](https://itunes.apple.com/at/album/yes-no/id722931771).
+> If you are interested in my work, visit my website [www.colorglare.com](http://www.colorglare.com)
+> and subscribe to my [RSS feed](http://www.colorglare.com/feed.xml).
+
+**We just released our latest album!** It's called «YES / NO» and is now available in Austria
+in stores, on Spotify and [on iTunes](https://itunes.apple.com/at/album/yes-no/id722931771).
 Our international release will be in March, followed by a europe tour end of march.
 
 
-
-> Starting with Version 2.0 Dropzone no longer depends on jQuery!
-> See the section "version 2.0" at the bottom of the page for more information.
-
-I just released Version 3.0 which has a few backwards incompatibilities. Please
-see the section **version 3.0** at the bottom of the page for more information.
 
 * * *
 
