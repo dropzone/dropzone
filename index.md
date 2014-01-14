@@ -18,7 +18,7 @@ the time to react to issues and answers right away. I'm sorry about that.</strik
 
 **We released the album!** It's called «YES / NO» and will be available in Austria
 in two weeks in stores, spotify and [on iTunes](https://itunes.apple.com/at/album/yes-no/id722931771).
-We are currently planning the international release dates.
+Our international release will be in March, followed by a europe tour end of march.
 
 
 

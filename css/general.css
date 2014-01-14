@@ -574,6 +574,10 @@ footer {
   color: #fff;
   zoom: 1;
 }
+footer a {
+  color: #fff;
+  text-decoration: none;
+}
 footer h1 {
   color: #fff;
   line-height: 140%;
