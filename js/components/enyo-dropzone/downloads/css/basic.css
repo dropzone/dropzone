@@ -124,6 +124,7 @@
 }
 .dropzone .dz-preview .dz-progress .dz-upload,
 .dropzone-previews .dz-preview .dz-progress .dz-upload {
+  display: block;
   position: absolute;
   top: 0;
   bottom: 0;
