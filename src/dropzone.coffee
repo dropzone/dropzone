@@ -560,9 +560,11 @@ class Dropzone extends Em
             @drop e
           "dragend": (e) =>
             @emit "dragend", e
-          "paste": (e) =>
-            noPropagation e
-            @paste e
+
+          # This is disabled right now, because the browsers don't implement it properly.
+          # "paste": (e) =>
+          #   noPropagation e
+          #   @paste e
       }
     ]
 
@@ -710,8 +712,6 @@ class Dropzone extends Em
     return
 
   paste: (e) ->
-    return # This is disabled right now, because the browsers don't implement it properly.
-
     return unless e?.clipboardData?.items?
 
     @emit "paste", e
