@@ -129,7 +129,8 @@ class Dropzone extends Em
     addRemoveLinks: no
 
     # A CSS selector or HTML element for the file previews container.
-    # If null, the dropzone element itself will be used
+    # If null, the dropzone element itself will be used.
+    # If false, previews won't be rendered.
     previewsContainer: null
     
 
@@ -278,52 +279,55 @@ class Dropzone extends Em
     addedfile: (file) ->
       @element.classList.add "dz-started" if @element == @previewsContainer
 
-      file.previewElement = Dropzone.createElement @options.previewTemplate.trim()
-      file.previewTemplate = file.previewElement # Backwards compatibility
+      if @previewsContainer
+        file.previewElement = Dropzone.createElement @options.previewTemplate.trim()
+        file.previewTemplate = file.previewElement # Backwards compatibility
 
-      @previewsContainer.appendChild file.previewElement
-      node.textContent = file.name for node in file.previewElement.querySelectorAll("[data-dz-name]")
-      node.innerHTML = @filesize file.size for node in file.previewElement.querySelectorAll("[data-dz-size]")
+        @previewsContainer.appendChild file.previewElement
+        node.textContent = file.name for node in file.previewElement.querySelectorAll("[data-dz-name]")
+        node.innerHTML = @filesize file.size for node in file.previewElement.querySelectorAll("[data-dz-size]")
 
-      if @options.addRemoveLinks
-        file._removeLink = Dropzone.createElement """<a class="dz-remove" href="javascript:undefined;" data-dz-remove>#{@options.dictRemoveFile}</a>"""
-        file.previewElement.appendChild file._removeLink
+        if @options.addRemoveLinks
+          file._removeLink = Dropzone.createElement """<a class="dz-remove" href="javascript:undefined;" data-dz-remove>#{@options.dictRemoveFile}</a>"""
+          file.previewElement.appendChild file._removeLink
 
-      removeFileEvent = (e) =>
-        e.preventDefault()
-        e.stopPropagation()
-        if file.status == Dropzone.UPLOADING
-          Dropzone.confirm @options.dictCancelUploadConfirmation, => @removeFile file
-        else
-          if @options.dictRemoveFileConfirmation
-            Dropzone.confirm @options.dictRemoveFileConfirmation, => @removeFile file
+        removeFileEvent = (e) =>
+          e.preventDefault()
+          e.stopPropagation()
+          if file.status == Dropzone.UPLOADING
+            Dropzone.confirm @options.dictCancelUploadConfirmation, => @removeFile file
           else
-            @removeFile file
+            if @options.dictRemoveFileConfirmation
+              Dropzone.confirm @options.dictRemoveFileConfirmation, => @removeFile file
+            else
+              @removeFile file
 
-      removeLink.addEventListener "click", removeFileEvent for removeLink in file.previewElement.querySelectorAll("[data-dz-remove]")
+        removeLink.addEventListener "click", removeFileEvent for removeLink in file.previewElement.querySelectorAll("[data-dz-remove]")
         
 
     # Called whenever a file is removed.
     removedfile: (file) ->
-      file.previewElement?.parentNode.removeChild file.previewElement
+      file.previewElement?.parentNode.removeChild file.previewElement if file.previewElement
       @_updateMaxFilesReachedClass()
 
     # Called when a thumbnail has been generated
     # Receives `file` and `dataUrl`
     thumbnail: (file, dataUrl) ->
-      file.previewElement.classList.remove "dz-file-preview"
-      file.previewElement.classList.add "dz-image-preview"
-      for thumbnailElement in file.previewElement.querySelectorAll("[data-dz-thumbnail]")
-        thumbnailElement.alt = file.name
-        thumbnailElement.src = dataUrl
+      if file.previewElement
+        file.previewElement.classList.remove "dz-file-preview"
+        file.previewElement.classList.add "dz-image-preview"
+        for thumbnailElement in file.previewElement.querySelectorAll("[data-dz-thumbnail]")
+          thumbnailElement.alt = file.name
+          thumbnailElement.src = dataUrl
 
     
     # Called whenever an error occurs
     # Receives `file` and `message`
     error: (file, message) ->
-      file.previewElement.classList.add "dz-error"
-      message = message.error if typeof message != "String" and message.error
-      node.textContent = message for node in file.previewElement.querySelectorAll("[data-dz-errormessage]")
+      if file.previewElement
+        file.previewElement.classList.add "dz-error"
+        message = message.error if typeof message != "String" and message.error
+        node.textContent = message for node in file.previewElement.querySelectorAll("[data-dz-errormessage]")
     
     errormultiple: noop
     
@@ -331,8 +335,9 @@ class Dropzone extends Em
     # files are processed immediately.
     # Receives `file`
     processing: (file) ->
-      file.previewElement.classList.add "dz-processing"
-      file._removeLink.textContent = @options.dictCancelUpload if file._removeLink
+      if file.previewElement
+        file.previewElement.classList.add "dz-processing"
+        file._removeLink.textContent = @options.dictCancelUpload if file._removeLink
     
     processingmultiple: noop
     
@@ -340,7 +345,8 @@ class Dropzone extends Em
     # Receives `file`, `progress` (percentage 0-100) and `bytesSent`.
     # To get the total number of bytes of the file, use `file.size`
     uploadprogress: (file, progress, bytesSent) ->
-      node.style.width = "#{progress}%" for node in file.previewElement.querySelectorAll("[data-dz-uploadprogress]")
+      if file.previewElement
+        node.style.width = "#{progress}%" for node in file.previewElement.querySelectorAll("[data-dz-uploadprogress]")
 
     # Called whenever the total upload progress gets updated.
     # Called with totalUploadProgress (0-100), totalBytes and totalBytesSent
@@ -356,7 +362,8 @@ class Dropzone extends Em
     # When the complete upload is finished and successfull
     # Receives `file`
     success: (file) ->
-      file.previewElement.classList.add "dz-success"
+      if file.previewElement
+        file.previewElement.classList.add "dz-success"
 
     successmultiple: noop
 
@@ -447,10 +454,12 @@ class Dropzone extends Em
       # Remove the fallback
       fallback.parentNode.removeChild fallback
 
-    if @options.previewsContainer
-      @previewsContainer = Dropzone.getElement @options.previewsContainer, "previewsContainer"
-    else
-      @previewsContainer = @element
+    # Display previews in the previewsContainer element or the Dropzone element unless explicitly set to false
+    if @options.previewsContainer != false
+      if @options.previewsContainer
+        @previewsContainer = Dropzone.getElement @options.previewsContainer, "previewsContainer"
+      else
+        @previewsContainer = @element
 
     if @options.clickable
       if @options.clickable == yes
