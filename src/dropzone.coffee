@@ -872,6 +872,8 @@ class Dropzone extends Em
 
         @emit "thumbnail", file, thumbnail
         callback() if callback?
+        
+      img.onerror = callback
 
       img.src = fileReader.result
 
