@@ -124,6 +124,7 @@
 }
 .dropzone .dz-preview .dz-progress .dz-upload,
 .dropzone-previews .dz-preview .dz-progress .dz-upload {
+  display: block;
   position: absolute;
   top: 0;
   bottom: 0;
@@ -343,12 +344,11 @@
 }
 .dropzone a.dz-remove,
 .dropzone-previews a.dz-remove {
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #fafafa), color-stop(1, #eee));
-  background-image: -webkit-linear-gradient(top, #fafafa 0, #eee 100%);
-  background-image: -moz-linear-gradient(top, #fafafa 0, #eee 100%);
-  background-image: -o-linear-gradient(top, #fafafa 0, #eee 100%);
-  background-image: -ms-linear-gradient(top, #fafafa 0, #eee 100%);
-  background-image: linear-gradient(top, #fafafa 0, #eee 100%);
+  background-image: -webkit-linear-gradient(top, #fafafa, #eee);
+  background-image: -moz-linear-gradient(top, #fafafa, #eee);
+  background-image: -o-linear-gradient(top, #fafafa, #eee);
+  background-image: -ms-linear-gradient(top, #fafafa, #eee);
+  background-image: linear-gradient(to bottom, #fafafa, #eee);
   -webkit-border-radius: 2px;
   border-radius: 2px;
   border: 1px solid #eee;

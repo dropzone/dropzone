@@ -1,6 +1,6 @@
 {
   "name": "dropzone",
-  "version": "3.7.1",
+  "version": "3.8.4",
   "description": "Handles drag and drop of files for you.",
   "keywords": [ "dragndrop", "drag and drop", "file upload", "upload" ],
   "homepage": "http://www.dropzonejs.com",
@@ -16,19 +16,20 @@
       "web": "http://www.matiasmeno.com"
   }],
   "scripts": {
-    "test": "node_modules/mocha-phantomjs/bin/mocha-phantomjs test/test.html"
+    "test": "./test.sh"
   },
   "bugs": {
-    "mail": "m@tias.me"
+    "email": "m@tias.me",
+    "url": "https://github.com/enyo/dropzone/issues"
   },
   "licenses": [{
       "type": "MIT",
       "url": "http://www.opensource.org/licenses/MIT" 
   }],
-  "repositories": [{
+  "repository": {
       "type": "git",
       "url": "https://github.com/enyo/dropzone.git" 
-  }],
+  },
   "dependencies": { },
   "devDependencies": {
     "grunt": "*",

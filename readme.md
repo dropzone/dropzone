@@ -2,12 +2,18 @@
   <img alt="Dropzone.js" src="http://www.dropzonejs.com/images/logo.png" />
 </h1>
 
-*Version 3.7.1*
+*Version 3.8.4*
 
 Dropzone.js is a light weight JavaScript library that turns an HTML element into a dropzone.
 This means that a user can drag and drop a file onto it, and the file gets uploaded to the server via AJAX.
 
 > **Please read the [contributing guidelines](CONTRIBUTING.md) before you start working on Dropzone!**
+
+
+<div align="center">
+  <a href="https://github.com/enyo/dropzone/releases/latest"><img src="https://raw.github.com/enyo/dropzone/master/download.png" alt="Download" /></a>
+</div>
+
 
 Starting with version 2.0.0 this library does no longer depend on jQuery (but
 it still works as a jQuery module).
@@ -22,8 +28,6 @@ folder.
 
 Master  
 ![Build status](https://travis-ci.org/enyo/dropzone.png?branch=master)  
-Development  
-![Build status](https://travis-ci.org/enyo/dropzone.png)
 
 
 ## Main features

@@ -73,9 +73,17 @@
           element.id = "test-element";
           return Dropzone.optionsForElement(element).should.equal(testOptions);
         });
-        return it("should return undefined if no options set", function() {
+        it("should return undefined if no options set", function() {
           element.id = "test-element2";
           return expect(Dropzone.optionsForElement(element)).to.equal(void 0);
+        });
+        it("should return undefined and not throw if it's a form with an input element of the name 'id'", function() {
+          element = Dropzone.createElement("<form><input name=\"id\" /</form>");
+          return expect(Dropzone.optionsForElement(element)).to.equal(void 0);
+        });
+        return it("should ignore input fields with the name='id'", function() {
+          element = Dropzone.createElement("<form id=\"test-element\"><input type=\"hidden\" name=\"id\" value=\"fooo\" /></form>");
+          return Dropzone.optionsForElement(element).should.equal(testOptions);
         });
       });
       describe("Dropzone.forElement()", function() {
@@ -429,6 +437,14 @@
         });
         return element.dropzone.should.equal(dropzone);
       });
+      it("should add itself to Dropzone.instances", function() {
+        var element;
+        element = document.createElement("div");
+        dropzone = new Dropzone(element, {
+          url: "url"
+        });
+        return Dropzone.instances[Dropzone.instances.length - 1].should.equal(dropzone);
+      });
       it("should use the action attribute not the element with the name action", function() {
         var element;
         element = Dropzone.createElement("<form action=\"real-action\"><input type=\"hidden\" name=\"action\" value=\"wrong-action\" /></form>");
@@ -629,7 +645,7 @@
         beforeEach(function() {
           file = {
             name: "test name",
-            size: 2 * 1000 * 1000
+            size: 2 * 1024 * 1024
           };
           return dropzone.options.addedfile.call(dropzone, file);
         });
@@ -637,12 +653,18 @@
           return it("should properly create the previewElement", function() {
             file.previewElement.should.be["instanceof"](Element);
             file.previewElement.querySelector("[data-dz-name]").innerHTML.should.eql("test name");
-            return file.previewElement.querySelector("[data-dz-size]").innerHTML.should.eql("<strong>2</strong> MB");
+            return file.previewElement.querySelector("[data-dz-size]").innerHTML.should.eql("<strong>2</strong> MiB");
           });
         });
         describe(".error()", function() {
-          return it("should properly insert the error", function() {
+          it("should properly insert the error", function() {
             dropzone.options.error.call(dropzone, file, "test message");
+            return file.previewElement.querySelector("[data-dz-errormessage]").innerHTML.should.eql("test message");
+          });
+          return it("should properly insert the error when provided with an object containing the error", function() {
+            dropzone.options.error.call(dropzone, file, {
+              error: "test message"
+            });
             return file.previewElement.querySelector("[data-dz-errormessage]").innerHTML.should.eql("test message");
           });
         });
@@ -709,7 +731,7 @@
             size: 10 * 1024 * 1024,
             type: "audio/mp3"
           }, function(err) {
-            return err.should.eql("File is too big (10MB). Max filesize: 4MB.");
+            return err.should.eql("File is too big (10MiB). Max filesize: 4MiB.");
           });
         });
         it("should properly accept files which mime types are listed in acceptedFiles", function() {
@@ -736,7 +758,7 @@
             return err.should.eql("You can't upload files of this type.");
           });
         });
-        return it("should fail if maxFiles has been exceeded and call the event maxfilesexceeded", function() {
+        it("should fail if maxFiles has been exceeded and call the event maxfilesexceeded", function() {
           var called, file;
           sinon.stub(dropzone, "getAcceptedFiles");
           file = {
@@ -745,6 +767,7 @@
           dropzone.getAcceptedFiles.returns({
             length: 99
           });
+          dropzone.options.dictMaxFilesExceeded = "You can only upload {{maxFiles}} files.";
           called = false;
           dropzone.on("maxfilesexceeded", function(lfile) {
             lfile.should.equal(file);
@@ -762,6 +785,22 @@
           });
           called.should.be.ok;
           return dropzone.getAcceptedFiles.restore();
+        });
+        return it("should properly handle if maxFiles is 0", function() {
+          var called, file;
+          file = {
+            type: "audio/mp3"
+          };
+          dropzone.options.maxFiles = 0;
+          called = false;
+          dropzone.on("maxfilesexceeded", function(lfile) {
+            lfile.should.equal(file);
+            return called = true;
+          });
+          dropzone.accept(file, function(err) {
+            return expect(err).to.equal("You can not upload any more files.");
+          });
+          return called.should.be.ok;
         });
       });
       describe(".removeFile()", function() {
@@ -905,7 +944,7 @@
             return done();
           }, 10);
         });
-        return it("should be able to create instance of dropzone on the same element after destroy", function() {
+        it("should be able to create instance of dropzone on the same element after destroy", function() {
           dropzone.destroy();
           return (function() {
             return new Dropzone(element, {
@@ -916,13 +955,17 @@
             });
           }).should.not["throw"](Error);
         });
+        return it("should remove itself from Dropzone.instances", function() {
+          (Dropzone.instances.indexOf(dropzone) !== -1).should.be.ok;
+          dropzone.destroy();
+          return (Dropzone.instances.indexOf(dropzone) === -1).should.be.ok;
+        });
       });
       describe(".filesize()", function() {
         return it("should convert to KiloBytes, etc.. not KibiBytes", function() {
-          dropzone.filesize(2 * 1024 * 1024).should.eql("<strong>2.1</strong> MB");
-          dropzone.filesize(2 * 1000 * 1000).should.eql("<strong>2</strong> MB");
-          dropzone.filesize(2 * 1024 * 1024 * 1024).should.eql("<strong>2.1</strong> GB");
-          return dropzone.filesize(2 * 1000 * 1000 * 1000).should.eql("<strong>2</strong> GB");
+          dropzone.filesize(2 * 1024 * 1024).should.eql("<strong>2</strong> MiB");
+          dropzone.filesize(2 * 1000 * 1000 * 1000).should.eql("<strong>1.9</strong> GiB");
+          return dropzone.filesize(2 * 1024 * 1024 * 1024).should.eql("<strong>2</strong> GiB");
         });
       });
       describe("._updateMaxFilesReachedClass()", function() {
@@ -936,6 +979,35 @@
           dropzone.element.classList.contains("dz-max-files-reached").should.not.be.ok;
           dropzone._updateMaxFilesReachedClass();
           return dropzone.element.classList.contains("dz-max-files-reached").should.be.ok;
+        });
+        it("should fire the 'maxfilesreached' event when appropriate", function() {
+          var spy;
+          spy = sinon.spy();
+          dropzone.on("maxfilesreached", function() {
+            return spy();
+          });
+          dropzone.getAcceptedFiles = function() {
+            return {
+              length: 9
+            };
+          };
+          dropzone.options.maxFiles = 10;
+          dropzone._updateMaxFilesReachedClass();
+          spy.should.not.have.been.called;
+          dropzone.getAcceptedFiles = function() {
+            return {
+              length: 10
+            };
+          };
+          dropzone._updateMaxFilesReachedClass();
+          spy.should.have.been.called;
+          dropzone.getAcceptedFiles = function() {
+            return {
+              length: 11
+            };
+          };
+          dropzone._updateMaxFilesReachedClass();
+          return spy.should.have.been.calledOnce;
         });
         return it("should properly remove the dz-max-files-reached class", function() {
           dropzone.getAcceptedFiles = function() {
@@ -1164,7 +1236,7 @@
           doneFunction("error");
           return mockFile.status.should.eql(Dropzone.ERROR);
         });
-        return it("should properly set the status of the file if autoProcessQueue is false and not call processQueue", function(done) {
+        it("should properly set the status of the file if autoProcessQueue is false and not call processQueue", function(done) {
           var doneFunction;
           doneFunction = null;
           dropzone.options.autoProcessQueue = false;
@@ -1183,6 +1255,73 @@
             dropzone.processQueue.callCount.should.equal(0);
             return done();
           }), 10);
+        });
+        it("should create a remove link if configured to do so", function() {
+          dropzone.options.addRemoveLinks = true;
+          dropzone.processFile = function() {};
+          dropzone.uploadFile = function() {};
+          sinon.stub(dropzone, "processQueue");
+          dropzone.addFile(mockFile);
+          return dropzone.files[0].previewElement.querySelector("a[data-dz-remove].dz-remove").should.be.ok;
+        });
+        it("should attach an event handler to data-dz-remove links", function() {
+          var event, file, removeLink1, removeLink2;
+          dropzone.options.previewTemplate = "<div class=\"dz-preview dz-file-preview\">\n  <div class=\"dz-details\">\n    <div class=\"dz-filename\"><span data-dz-name></span></div>\n    <div class=\"dz-size\" data-dz-size></div>\n    <img data-dz-thumbnail />\n  </div>\n  <div class=\"dz-progress\"><span class=\"dz-upload\" data-dz-uploadprogress></span></div>\n  <div class=\"dz-success-mark\"><span>✔</span></div>\n  <div class=\"dz-error-mark\"><span>✘</span></div>\n  <div class=\"dz-error-message\"><span data-dz-errormessage></span></div>\n  <a class=\"link1\" data-dz-remove></a>\n  <a class=\"link2\" data-dz-remove></a>\n</div>";
+          sinon.stub(dropzone, "processQueue");
+          dropzone.addFile(mockFile);
+          file = dropzone.files[0];
+          removeLink1 = file.previewElement.querySelector("a[data-dz-remove].link1");
+          removeLink2 = file.previewElement.querySelector("a[data-dz-remove].link2");
+          sinon.stub(dropzone, "removeFile");
+          event = document.createEvent("HTMLEvents");
+          event.initEvent("click", true, true);
+          removeLink1.dispatchEvent(event);
+          dropzone.removeFile.callCount.should.eql(1);
+          event = document.createEvent("HTMLEvents");
+          event.initEvent("click", true, true);
+          removeLink2.dispatchEvent(event);
+          return dropzone.removeFile.callCount.should.eql(2);
+        });
+        return describe("thumbnails", function() {
+          return it("should properly queue the thumbnail creation", function(done) {
+            var ct_callback, ct_file, doneFunction, mock1, mock2, mock3;
+            doneFunction = null;
+            dropzone.accept = function(file, done) {
+              return doneFunction = done;
+            };
+            dropzone.processFile = function() {};
+            dropzone.uploadFile = function() {};
+            mock1 = getMockFile();
+            mock2 = getMockFile();
+            mock3 = getMockFile();
+            mock1.type = "image/jpg";
+            mock2.type = "image/jpg";
+            mock3.type = "image/jpg";
+            dropzone.on("thumbnail", function() {
+              return console.log("HII");
+            });
+            ct_file = ct_callback = null;
+            dropzone.createThumbnail = function(file, callback) {
+              ct_file = file;
+              return ct_callback = callback;
+            };
+            sinon.spy(dropzone, "createThumbnail");
+            dropzone.addFile(mock1);
+            dropzone.addFile(mock2);
+            dropzone.addFile(mock3);
+            dropzone.files.length.should.eql(3);
+            return setTimeout((function() {
+              dropzone.createThumbnail.callCount.should.eql(1);
+              mock1.should.equal(ct_file);
+              ct_callback();
+              dropzone.createThumbnail.callCount.should.eql(2);
+              mock2.should.equal(ct_file);
+              ct_callback();
+              dropzone.createThumbnail.callCount.should.eql(3);
+              mock3.should.equal(ct_file);
+              return done();
+            }), 10);
+          });
         });
       });
       describe("enqueueFile()", function() {
@@ -1225,7 +1364,7 @@
           }, 10);
         });
       });
-      return describe("uploadFiles()", function() {
+      describe("uploadFiles()", function() {
         var requests;
         requests = null;
         beforeEach(function() {
@@ -1288,7 +1427,7 @@
         });
         it("should include hidden files in the form and unchecked checkboxes and radiobuttons should be excluded", function(done) {
           var element, formData, mock1;
-          element = Dropzone.createElement("<form action=\"/the/url\">\n  <input type=\"hidden\" name=\"test\" value=\"hidden\" />\n  <input type=\"checkbox\" name=\"unchecked\" value=\"1\" />\n  <input type=\"checkbox\" name=\"checked\" value=\"value1\" checked=\"checked\" />\n  <input type=\"radio\" value=\"radiovalue1\" name=\"radio1\" />\n  <input type=\"radio\" value=\"radiovalue2\" name=\"radio1\" checked=\"checked\" />\n</form>");
+          element = Dropzone.createElement("<form action=\"/the/url\">\n  <input type=\"hidden\" name=\"test\" value=\"hidden\" />\n  <input type=\"checkbox\" name=\"unchecked\" value=\"1\" />\n  <input type=\"checkbox\" name=\"checked\" value=\"value1\" checked=\"checked\" />\n  <input type=\"radio\" value=\"radiovalue1\" name=\"radio1\" />\n  <input type=\"radio\" value=\"radiovalue2\" name=\"radio1\" checked=\"checked\" />\n  <select name=\"select\"><option value=\"1\">1</option><option value=\"2\" selected>2</option></select>\n</form>");
           dropzone = new Dropzone(element, {
             url: "/the/url"
           });
@@ -1300,15 +1439,41 @@
           mock1 = getMockFile();
           dropzone.addFile(mock1);
           return setTimeout(function() {
-            formData.append.callCount.should.equal(4);
+            formData.append.callCount.should.equal(5);
             formData.append.args[0][0].should.eql("test");
             formData.append.args[0][1].should.eql("hidden");
             formData.append.args[1][0].should.eql("checked");
             formData.append.args[1][1].should.eql("value1");
             formData.append.args[2][0].should.eql("radio1");
             formData.append.args[2][1].should.eql("radiovalue2");
-            formData.append.args[3][0].should.eql("file");
-            formData.append.args[3][1].should.equal(mock1);
+            formData.append.args[3][0].should.eql("select");
+            formData.append.args[3][1].should.eql("2");
+            formData.append.args[4][0].should.eql("file");
+            formData.append.args[4][1].should.equal(mock1);
+            return done();
+          }, 10);
+        });
+        it("should all values of a select that has the multiple attribute", function(done) {
+          var element, formData, mock1;
+          element = Dropzone.createElement("<form action=\"/the/url\">\n  <select name=\"select\" multiple>\n    <option value=\"value1\">1</option>\n    <option value=\"value2\" selected>2</option>\n    <option value=\"value3\">3</option>\n    <option value=\"value4\" selected>4</option>\n  </select>\n</form>");
+          dropzone = new Dropzone(element, {
+            url: "/the/url"
+          });
+          formData = null;
+          dropzone.on("sending", function(file, xhr, tformData) {
+            formData = tformData;
+            return sinon.spy(tformData, "append");
+          });
+          mock1 = getMockFile();
+          dropzone.addFile(mock1);
+          return setTimeout(function() {
+            formData.append.callCount.should.equal(3);
+            formData.append.args[0][0].should.eql("select");
+            formData.append.args[0][1].should.eql("value2");
+            formData.append.args[1][0].should.eql("select");
+            formData.append.args[1][1].should.eql("value4");
+            formData.append.args[2][0].should.eql("file");
+            formData.append.args[2][1].should.equal(mock1);
             return done();
           }, 10);
         });
@@ -1407,6 +1572,37 @@
               }, 10);
             }, 10);
           });
+        });
+      });
+      return describe("complete file", function() {
+        return it("should properly emit the queuecomplete event when the complete queue is finished", function(done) {
+          var completedFiles, mock1, mock2, mock3;
+          mock1 = getMockFile();
+          mock2 = getMockFile();
+          mock3 = getMockFile();
+          mock1.status = Dropzone.ADDED;
+          mock2.status = Dropzone.ADDED;
+          mock3.status = Dropzone.ADDED;
+          mock1.name = "mock1";
+          mock2.name = "mock2";
+          mock3.name = "mock3";
+          dropzone.uploadFiles = function(files) {
+            var _this = this;
+            return setTimeout((function() {
+              return _this._finished(files, null, null);
+            }), 1);
+          };
+          completedFiles = 0;
+          dropzone.on("complete", function(file) {
+            return completedFiles++;
+          });
+          dropzone.on("queuecomplete", function() {
+            completedFiles.should.equal(3);
+            return done();
+          });
+          dropzone.addFile(mock1);
+          dropzone.addFile(mock2);
+          return dropzone.addFile(mock3);
         });
       });
     });

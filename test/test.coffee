@@ -67,6 +67,14 @@ describe "Dropzone", ->
         element.id = "test-element2"
         expect(Dropzone.optionsForElement(element)).to.equal undefined
 
+      it "should return undefined and not throw if it's a form with an input element of the name 'id'", ->
+        element = Dropzone.createElement """<form><input name="id" /</form>"""
+        expect(Dropzone.optionsForElement(element)).to.equal undefined
+
+      it "should ignore input fields with the name='id'", ->
+        element = Dropzone.createElement """<form id="test-element"><input type="hidden" name="id" value="fooo" /></form>"""
+        Dropzone.optionsForElement(element).should.equal testOptions
+
     describe "Dropzone.forElement()", ->
       element = document.createElement "div"
       element.id = "some-test-element"
@@ -280,6 +288,11 @@ describe "Dropzone", ->
       dropzone = new Dropzone element, url: "url"
       element.dropzone.should.equal dropzone
 
+    it "should add itself to Dropzone.instances", ->
+      element = document.createElement "div"
+      dropzone = new Dropzone element, url: "url"
+      Dropzone.instances[Dropzone.instances.length - 1].should.equal dropzone
+
     it "should use the action attribute not the element with the name action", ->
       element = Dropzone.createElement """<form action="real-action"><input type="hidden" name="action" value="wrong-action" /></form>"""
       dropzone = new Dropzone element
@@ -412,7 +425,7 @@ describe "Dropzone", ->
       beforeEach ->
         file =
           name: "test name"
-          size: 2 * 1000 * 1000
+          size: 2 * 1024 * 1024
         dropzone.options.addedfile.call dropzone, file
 
       describe ".addedFile()", ->
@@ -420,11 +433,16 @@ describe "Dropzone", ->
           file.previewElement.should.be.instanceof Element
 
           file.previewElement.querySelector("[data-dz-name]").innerHTML.should.eql "test name"
-          file.previewElement.querySelector("[data-dz-size]").innerHTML.should.eql "<strong>2</strong> MB"
+          file.previewElement.querySelector("[data-dz-size]").innerHTML.should.eql "<strong>2</strong> MiB"
 
       describe ".error()", ->
         it "should properly insert the error", ->
           dropzone.options.error.call dropzone, file, "test message"
+
+          file.previewElement.querySelector("[data-dz-errormessage]").innerHTML.should.eql "test message"
+
+        it "should properly insert the error when provided with an object containing the error", ->
+          dropzone.options.error.call dropzone, file, error: "test message"
 
           file.previewElement.querySelector("[data-dz-errormessage]").innerHTML.should.eql "test message"
 
@@ -471,7 +489,7 @@ describe "Dropzone", ->
         dropzone.accept { size: 2 * 1024 * 1024, type: "audio/mp3" }, (err) -> expect(err).to.be.undefined
 
       it "shouldn't pass if the filesize is too big", ->
-        dropzone.accept { size: 10 * 1024 * 1024, type: "audio/mp3" }, (err) -> err.should.eql "File is too big (10MB). Max filesize: 4MB."
+        dropzone.accept { size: 10 * 1024 * 1024, type: "audio/mp3" }, (err) -> err.should.eql "File is too big (10MiB). Max filesize: 4MiB."
 
       it "should properly accept files which mime types are listed in acceptedFiles", ->
 
@@ -488,6 +506,8 @@ describe "Dropzone", ->
 
         dropzone.getAcceptedFiles.returns { length: 99 }
 
+        dropzone.options.dictMaxFilesExceeded = "You can only upload {{maxFiles}} files."
+
         called = no
         dropzone.on "maxfilesexceeded", (lfile) ->
           lfile.should.equal file
@@ -501,6 +521,20 @@ describe "Dropzone", ->
         called.should.be.ok
 
         dropzone.getAcceptedFiles.restore()
+
+      it "should properly handle if maxFiles is 0", ->
+        file = { type: "audio/mp3" }
+
+        dropzone.options.maxFiles = 0
+
+        called = no
+        dropzone.on "maxfilesexceeded", (lfile) ->
+          lfile.should.equal file
+          called = yes
+
+        dropzone.accept file, (err) -> expect(err).to.equal "You can not upload any more files."
+        called.should.be.ok
+
 
 
     describe ".removeFile()", ->
@@ -649,41 +683,47 @@ describe "Dropzone", ->
 
     describe ".destroy()", ->
       it "should properly cancel all pending uploads and remove all file references", (done) ->
-          dropzone.accept = (file, done) -> done()
+        dropzone.accept = (file, done) -> done()
 
-          dropzone.options.parallelUploads = 1
+        dropzone.options.parallelUploads = 1
 
-          dropzone.addFile getMockFile()
-          dropzone.addFile getMockFile()
+        dropzone.addFile getMockFile()
+        dropzone.addFile getMockFile()
 
 
-          setTimeout ->
-            dropzone.getUploadingFiles().length.should.equal 1
-            dropzone.getQueuedFiles().length.should.equal 1
-            dropzone.files.length.should.equal 2
+        setTimeout ->
+          dropzone.getUploadingFiles().length.should.equal 1
+          dropzone.getQueuedFiles().length.should.equal 1
+          dropzone.files.length.should.equal 2
 
-            sinon.spy dropzone, "disable"
+          sinon.spy dropzone, "disable"
 
-            dropzone.destroy()
+          dropzone.destroy()
 
-            dropzone.disable.callCount.should.equal 1
-            element.should.not.have.property "dropzone"
-            done()
-          , 10
+          dropzone.disable.callCount.should.equal 1
+          element.should.not.have.property "dropzone"
+          done()
+        , 10
 
       it "should be able to create instance of dropzone on the same element after destroy", ->
-          dropzone.destroy()
-          ( -> new Dropzone element, maxFilesize: 4, url: "url", acceptedMimeTypes: "audio/*,image/png", uploadprogress: -> ).should.not.throw( Error )
+        dropzone.destroy()
+        ( -> new Dropzone element, maxFilesize: 4, url: "url", acceptedMimeTypes: "audio/*,image/png", uploadprogress: -> ).should.not.throw( Error )
+
+      it "should remove itself from Dropzone.instances", ->
+        (Dropzone.instances.indexOf(dropzone) != -1).should.be.ok
+        dropzone.destroy()
+        (Dropzone.instances.indexOf(dropzone) == -1).should.be.ok
+
 
 
     describe ".filesize()", ->
 
       it "should convert to KiloBytes, etc.. not KibiBytes", ->
 
-        dropzone.filesize(2 * 1024 * 1024).should.eql "<strong>2.1</strong> MB"
-        dropzone.filesize(2 * 1000 * 1000).should.eql "<strong>2</strong> MB"
-        dropzone.filesize(2 * 1024 * 1024 * 1024).should.eql "<strong>2.1</strong> GB"
-        dropzone.filesize(2 * 1000 * 1000 * 1000).should.eql "<strong>2</strong> GB"
+        # dropzone.filesize(2 * 1000 * 1000).should.eql "<strong>1.9</strong> MiB"
+        dropzone.filesize(2 * 1024 * 1024).should.eql "<strong>2</strong> MiB"
+        dropzone.filesize(2 * 1000 * 1000 * 1000).should.eql "<strong>1.9</strong> GiB"
+        dropzone.filesize(2 * 1024 * 1024 * 1024).should.eql "<strong>2</strong> GiB"
 
     describe "._updateMaxFilesReachedClass()", ->
       it "should properly add the dz-max-files-reached class", ->
@@ -692,6 +732,20 @@ describe "Dropzone", ->
         dropzone.element.classList.contains("dz-max-files-reached").should.not.be.ok
         dropzone._updateMaxFilesReachedClass()
         dropzone.element.classList.contains("dz-max-files-reached").should.be.ok
+      it "should fire the 'maxfilesreached' event when appropriate", ->
+        spy = sinon.spy()
+        dropzone.on "maxfilesreached", -> spy()
+        dropzone.getAcceptedFiles = -> length: 9
+        dropzone.options.maxFiles = 10
+        dropzone._updateMaxFilesReachedClass()
+        spy.should.not.have.been.called
+        dropzone.getAcceptedFiles = -> length: 10
+        dropzone._updateMaxFilesReachedClass()
+        spy.should.have.been.called
+        dropzone.getAcceptedFiles = -> length: 11
+        dropzone._updateMaxFilesReachedClass()
+        spy.should.have.been.calledOnce #ie, it has not been called again
+
       it "should properly remove the dz-max-files-reached class", ->
         dropzone.getAcceptedFiles = -> length: 10
         dropzone.options.maxFiles = 10
@@ -924,6 +978,105 @@ describe "Dropzone", ->
           done()
         ), 10
 
+      it "should create a remove link if configured to do so", ->
+        dropzone.options.addRemoveLinks = true
+        dropzone.processFile = ->
+        dropzone.uploadFile = ->
+
+        sinon.stub dropzone, "processQueue"
+        dropzone.addFile mockFile
+
+        dropzone.files[0].previewElement.querySelector("a[data-dz-remove].dz-remove").should.be.ok
+
+
+      it "should attach an event handler to data-dz-remove links", ->
+        dropzone.options.previewTemplate = """
+                                            <div class="dz-preview dz-file-preview">
+                                              <div class="dz-details">
+                                                <div class="dz-filename"><span data-dz-name></span></div>
+                                                <div class="dz-size" data-dz-size></div>
+                                                <img data-dz-thumbnail />
+                                              </div>
+                                              <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
+                                              <div class="dz-success-mark"><span>✔</span></div>
+                                              <div class="dz-error-mark"><span>✘</span></div>
+                                              <div class="dz-error-message"><span data-dz-errormessage></span></div>
+                                              <a class="link1" data-dz-remove></a>
+                                              <a class="link2" data-dz-remove></a>
+                                            </div>
+                                            """
+
+        sinon.stub dropzone, "processQueue"
+
+        dropzone.addFile mockFile
+
+        file = dropzone.files[0]
+        removeLink1 = file.previewElement.querySelector("a[data-dz-remove].link1")
+        removeLink2 = file.previewElement.querySelector("a[data-dz-remove].link2")
+
+        sinon.stub dropzone, "removeFile"
+
+        event = document.createEvent "HTMLEvents"
+        event.initEvent "click", true, true
+        removeLink1.dispatchEvent event
+
+        dropzone.removeFile.callCount.should.eql 1
+
+        event = document.createEvent "HTMLEvents"
+        event.initEvent "click", true, true
+        removeLink2.dispatchEvent event
+
+        dropzone.removeFile.callCount.should.eql 2
+
+
+
+      describe "thumbnails", ->
+        it "should properly queue the thumbnail creation", (done) ->
+          doneFunction = null
+
+          dropzone.accept = (file, done) -> doneFunction = done
+          dropzone.processFile = ->
+          dropzone.uploadFile = ->
+
+          mock1 = getMockFile()
+          mock2 = getMockFile()
+          mock3 = getMockFile()
+          mock1.type = "image/jpg"
+          mock2.type = "image/jpg"
+          mock3.type = "image/jpg"
+
+          dropzone.on "thumbnail", ->
+            console.log "HII"
+
+          ct_file = ct_callback = null
+          dropzone.createThumbnail = (file, callback) ->
+            ct_file = file
+            ct_callback = callback
+
+          sinon.spy dropzone, "createThumbnail"
+          
+          dropzone.addFile mock1
+          dropzone.addFile mock2
+          dropzone.addFile mock3
+
+          dropzone.files.length.should.eql 3
+          setTimeout (->
+            dropzone.createThumbnail.callCount.should.eql 1
+            mock1.should.equal ct_file
+            ct_callback()
+            dropzone.createThumbnail.callCount.should.eql 2
+            mock2.should.equal ct_file
+            ct_callback()
+            dropzone.createThumbnail.callCount.should.eql 3
+            mock3.should.equal ct_file
+
+            done()
+          ), 10
+          
+
+          # dropzone.addFile mock1
+
+
 
 
     describe "enqueueFile()", ->
@@ -1040,6 +1193,7 @@ describe "Dropzone", ->
                                               <input type="checkbox" name="checked" value="value1" checked="checked" />
                                               <input type="radio" value="radiovalue1" name="radio1" />
                                               <input type="radio" value="radiovalue2" name="radio1" checked="checked" />
+                                              <select name="select"><option value="1">1</option><option value="2" selected>2</option></select>
                                             </form>"""
         dropzone = new Dropzone element, url: "/the/url"
 
@@ -1054,7 +1208,7 @@ describe "Dropzone", ->
         dropzone.addFile mock1
 
         setTimeout ->
-          formData.append.callCount.should.equal 4
+          formData.append.callCount.should.equal 5
 
           formData.append.args[0][0].should.eql "test"
           formData.append.args[0][1].should.eql "hidden"
@@ -1065,8 +1219,49 @@ describe "Dropzone", ->
           formData.append.args[2][0].should.eql "radio1"
           formData.append.args[2][1].should.eql "radiovalue2"
 
-          formData.append.args[3][0].should.eql "file"
-          formData.append.args[3][1].should.equal mock1
+          formData.append.args[3][0].should.eql "select"
+          formData.append.args[3][1].should.eql "2"
+
+          formData.append.args[4][0].should.eql "file"
+          formData.append.args[4][1].should.equal mock1
+
+          # formData.append.args[1][0].should.eql "myName[]"
+          done()
+        , 10
+
+
+      it "should all values of a select that has the multiple attribute", (done) ->
+        element = Dropzone.createElement """<form action="/the/url">
+                                              <select name="select" multiple>
+                                                <option value="value1">1</option>
+                                                <option value="value2" selected>2</option>
+                                                <option value="value3">3</option>
+                                                <option value="value4" selected>4</option>
+                                              </select>
+                                            </form>"""
+        dropzone = new Dropzone element, url: "/the/url"
+
+
+        formData = null
+        dropzone.on "sending", (file, xhr, tformData) ->
+          formData = tformData
+          sinon.spy tformData, "append"
+
+        mock1 = getMockFile()
+
+        dropzone.addFile mock1
+
+        setTimeout ->
+          formData.append.callCount.should.equal 3
+
+          formData.append.args[0][0].should.eql "select"
+          formData.append.args[0][1].should.eql "value2"
+
+          formData.append.args[1][0].should.eql "select"
+          formData.append.args[1][1].should.eql "value4"
+
+          formData.append.args[2][0].should.eql "file"
+          formData.append.args[2][1].should.equal mock1
 
           # formData.append.args[1][0].should.eql "myName[]"
           done()
@@ -1184,3 +1379,34 @@ describe "Dropzone", ->
             , 10
           , 10
 
+
+    describe "complete file", ->
+      it "should properly emit the queuecomplete event when the complete queue is finished", (done) ->
+
+        mock1 = getMockFile()
+        mock2 = getMockFile()
+        mock3 = getMockFile()
+        mock1.status = Dropzone.ADDED
+        mock2.status = Dropzone.ADDED
+        mock3.status = Dropzone.ADDED
+        mock1.name = "mock1"
+        mock2.name = "mock2"
+        mock3.name = "mock3"
+
+
+        dropzone.uploadFiles = (files) ->
+          setTimeout (=>
+            @_finished files, null, null
+          ), 1
+
+        completedFiles = 0        
+        dropzone.on "complete", (file) ->
+          completedFiles++
+
+        dropzone.on "queuecomplete", ->
+          completedFiles.should.equal 3
+          done()
+
+        dropzone.addFile mock1
+        dropzone.addFile mock2
+        dropzone.addFile mock3
