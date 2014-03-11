@@ -76,6 +76,7 @@ class Dropzone extends Em
     method: "post"
     withCredentials: no
     parallelUploads: 2
+    uploadRaw: false
     uploadMultiple: no # Whether to send multiple files in one request.
     maxFilesize: 256 # in MB
     paramName: "file" # The name of the file param that gets transferred.
@@ -1027,35 +1028,43 @@ class Dropzone extends Em
       
     xhr.setRequestHeader headerName, headerValue for headerName, headerValue of headers
 
-    formData = new FormData()
+    # Ignores the form and send just the file as raw binary data
+    if @options.uploadRaw
 
-    # Adding all @options parameters
-    formData.append key, value for key, value of @options.params if @options.params
+      # Just send the first file -- will not work properly with uploadMultiple
+      xhr.send files[0]
 
-    # Let the user add additional data if necessary
-    @emit "sending", file, xhr, formData for file in files
-    @emit "sendingmultiple", files, xhr, formData if @options.uploadMultiple
+    # Default way of sending, send the form as a form.
+    else
+      formData = new FormData()
 
+      # Adding all @options parameters
+      formData.append key, value for key, value of @options.params if @options.params
 
-    # Take care of other input elements
-    if @element.tagName == "FORM"
-      for input in @element.querySelectorAll "input, textarea, select, button"
-        inputName = input.getAttribute "name"
-        inputType = input.getAttribute "type"
-
-        if input.tagName == "SELECT" and input.hasAttribute "multiple"
-          # Possibly multiple values
-          formData.append inputName, option.value for option in input.options when option.selected
-        else if !inputType or (inputType.toLowerCase() not in [ "checkbox", "radio" ]) or input.checked
-          formData.append inputName, input.value
+      # Let the user add additional data if necessary
+      @emit "sending", file, xhr, formData for file in files
+      @emit "sendingmultiple", files, xhr, formData if @options.uploadMultiple
 
 
-    # Finally add the file
-    # Has to be last because some servers (eg: S3) expect the file to be the
-    # last parameter
-    formData.append "#{@options.paramName}#{if @options.uploadMultiple then "[]" else ""}", file, file.name for file in files
+      # Take care of other input elements
+      if @element.tagName == "FORM"
+        for input in @element.querySelectorAll "input, textarea, select, button"
+          inputName = input.getAttribute "name"
+          inputType = input.getAttribute "type"
 
-    xhr.send formData
+          if input.tagName == "SELECT" and input.hasAttribute "multiple"
+            # Possibly multiple values
+            formData.append inputName, option.value for option in input.options when option.selected
+          else if !inputType or (inputType.toLowerCase() not in [ "checkbox", "radio" ]) or input.checked
+            formData.append inputName, input.value
+
+
+      # Finally add the file
+      # Has to be last because some servers (eg: S3) expect the file to be the
+      # last parameter
+      formData.append "#{@options.paramName}#{if @options.uploadMultiple then "[]" else ""}", file, file.name for file in files
+
+      xhr.send formData
 
 
   # Called internally when processing is finished.
