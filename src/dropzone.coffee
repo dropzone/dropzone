@@ -785,16 +785,20 @@ class Dropzone extends Em
 
     file.status = Dropzone.ADDED
 
+    @emit "addedfile", file
+
     @_enqueueThumbnail file
 
     @accept file, (error) =>
       if error
         file.accepted = false
         @_errorProcessing [ file ], error # Will set the file.status
+        @emit "rejectedfile", file
       else
         @enqueueFile file # Will set .accepted = true
+        @emit "acceptedfile", file
       @_updateMaxFilesReachedClass()
-      @emit "addedfile", file
+
 
   # Wrapper for enqueuFile
   enqueueFiles: (files) -> @enqueueFile file for file in files; null

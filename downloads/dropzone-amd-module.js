@@ -1012,17 +1012,19 @@ Emitter.prototype.hasListeners = function(event){
       };
       this.files.push(file);
       file.status = Dropzone.ADDED;
+      this.emit("addedfile", file);
       this._enqueueThumbnail(file);
       return this.accept(file, (function(_this) {
         return function(error) {
           if (error) {
             file.accepted = false;
             _this._errorProcessing([file], error);
+            _this.emit("rejectedfile", file);
           } else {
             _this.enqueueFile(file);
+            _this.emit("acceptedfile", file);
           }
-          _this._updateMaxFilesReachedClass();
-          return _this.emit("addedfile", file);
+          return _this._updateMaxFilesReachedClass();
         };
       })(this));
     };
