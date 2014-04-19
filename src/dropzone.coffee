@@ -1187,7 +1187,7 @@ Dropzone.isBrowserSupported = ->
 without = (list, rejectedItem) -> item for item in list when item isnt rejectedItem
 
 # abc-def_ghi -> abcDefGhi
-camelize = (str) -> str.replace /[\-_](\w)/g, (match) -> match[1].toUpperCase()
+camelize = (str) -> str.replace /[\-_](\w)/g, (match) -> match.charAt(1).toUpperCase()
 
 # Creates an element from string
 Dropzone.createElement = (string) ->
