@@ -38,9 +38,12 @@ folder.
 ## Main features
 
 - Image thumbnail previews. Simply register the callback `thumbnail(file, data)` and display the image wherever you like
+- Retina enabled
 - Multiple files and synchronous uploads
 - Progress updates
 - Support for large files
+- Complete theming. The look and feel of Dropzone is just the default theme. You
+  can define everything yourself by overwriting the default event listeners.
 - Well tested
 
 ## Documentation
