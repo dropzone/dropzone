@@ -1,3 +1,6 @@
+
+;(function(){
+
 /**
  * Require the module at `name`.
  *
@@ -1817,4 +1820,11 @@ require.register("dropzone/lib/dropzone.js", function (exports, module) {
 
 });
 
-require("dropzone")
+if (typeof exports == "object") {
+  module.exports = require("dropzone");
+} else if (typeof define == "function" && define.amd) {
+  define([], function(){ return require("dropzone"); });
+} else {
+  this["Dropzone"] = require("dropzone");
+}
+})()
