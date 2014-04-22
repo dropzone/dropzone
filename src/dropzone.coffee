@@ -227,7 +227,7 @@ class Dropzone extends Em
       srcRatio = file.width / file.height
       trgRatio = @options.thumbnailWidth / @options.thumbnailHeight
       
-      if file.height < @options.thumbnailHeight or file.width < @options.thumbnailWidth
+      if file.height < @options.thumbnailHeight and file.width < @options.thumbnailWidth
         # This image is smaller than the canvas
         info.trgHeight = info.srcHeight
         info.trgWidth = info.srcWidth
