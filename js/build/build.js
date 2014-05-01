@@ -26,10 +26,14 @@ function require(path, parent, orig) {
   // perform real require()
   // by invoking the module's
   // registered function
-  if (!module.exports) {
-    module.exports = {};
-    module.client = module.component = true;
-    module.call(this, module.exports, require.relative(resolved), module);
+  if (!module._resolving && !module.exports) {
+    var mod = {};
+    mod.exports = {};
+    mod.client = mod.component = true;
+    module._resolving = true;
+    module.call(this, mod.exports, require.relative(resolved), mod);
+    delete module._resolving;
+    module.exports = mod.exports;
   }
 
   return module.exports;
@@ -63,7 +67,6 @@ require.aliases = {};
 
 require.resolve = function(path) {
   if (path.charAt(0) === '/') path = path.slice(1);
-  var index = path + '/index.js';
 
   var paths = [
     path,
@@ -76,10 +79,7 @@ require.resolve = function(path) {
   for (var i = 0; i < paths.length; i++) {
     var path = paths[i];
     if (require.modules.hasOwnProperty(path)) return path;
-  }
-
-  if (require.aliases.hasOwnProperty(index)) {
-    return require.aliases[index];
+    if (require.aliases.hasOwnProperty(path)) return require.aliases[path];
   }
 };
 
@@ -448,6 +448,7 @@ require.register("enyo-dropzone/lib/dropzone.js", function(exports, require, mod
       acceptedFiles: null,
       acceptedMimeTypes: null,
       autoProcessQueue: true,
+      autoQueue: true,
       addRemoveLinks: false,
       previewsContainer: null,
       dictDefaultMessage: "Drop files here to upload",
@@ -762,26 +763,34 @@ require.register("enyo-dropzone/lib/dropzone.js", function(exports, require, mod
       return _results;
     };
 
-    Dropzone.prototype.getQueuedFiles = function() {
+    Dropzone.prototype.getFilesWithStatus = function(status) {
       var file, _i, _len, _ref, _results;
       _ref = this.files;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         file = _ref[_i];
-        if (file.status === Dropzone.QUEUED) {
+        if (file.status === status) {
           _results.push(file);
         }
       }
       return _results;
     };
 
+    Dropzone.prototype.getQueuedFiles = function() {
+      return this.getFilesWithStatus(Dropzone.QUEUED);
+    };
+
     Dropzone.prototype.getUploadingFiles = function() {
+      return this.getFilesWithStatus(Dropzone.UPLOADING);
+    };
+
+    Dropzone.prototype.getActiveFiles = function() {
       var file, _i, _len, _ref, _results;
       _ref = this.files;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         file = _ref[_i];
-        if (file.status === Dropzone.UPLOADING) {
+        if (file.status === Dropzone.UPLOADING || file.status === Dropzone.QUEUED) {
           _results.push(file);
         }
       }
@@ -807,6 +816,7 @@ require.register("enyo-dropzone/lib/dropzone.js", function(exports, require, mod
           if ((_this.options.maxFiles == null) || _this.options.maxFiles > 1) {
             _this.hiddenFileInput.setAttribute("multiple", "multiple");
           }
+          _this.hiddenFileInput.className = "dz-hidden-input";
           if (_this.options.acceptedFiles != null) {
             _this.hiddenFileInput.setAttribute("accept", _this.options.acceptedFiles);
           }
@@ -890,10 +900,6 @@ require.register("enyo-dropzone/lib/dropzone.js", function(exports, require, mod
             },
             "dragend": function(e) {
               return _this.emit("dragend", e);
-            },
-            "paste": function(e) {
-              noPropagation(e);
-              return _this.paste(e);
             }
           }
         }
@@ -927,12 +933,12 @@ require.register("enyo-dropzone/lib/dropzone.js", function(exports, require, mod
     };
 
     Dropzone.prototype.updateTotalUploadProgress = function() {
-      var acceptedFiles, file, totalBytes, totalBytesSent, totalUploadProgress, _i, _len, _ref;
+      var activeFiles, file, totalBytes, totalBytesSent, totalUploadProgress, _i, _len, _ref;
       totalBytesSent = 0;
       totalBytes = 0;
-      acceptedFiles = this.getAcceptedFiles();
-      if (acceptedFiles.length) {
-        _ref = this.getAcceptedFiles();
+      activeFiles = this.getActiveFiles();
+      if (activeFiles.length) {
+        _ref = this.getActiveFiles();
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           file = _ref[_i];
           totalBytesSent += file.upload.bytesSent;
@@ -1099,7 +1105,6 @@ require.register("enyo-dropzone/lib/dropzone.js", function(exports, require, mod
 
     Dropzone.prototype.paste = function(e) {
       var items, _ref;
-      return;
       if ((e != null ? (_ref = e.clipboardData) != null ? _ref.items : void 0 : void 0) == null) {
         return;
       }
@@ -1201,7 +1206,10 @@ require.register("enyo-dropzone/lib/dropzone.js", function(exports, require, mod
           file.accepted = false;
           _this._errorProcessing([file], error);
         } else {
-          _this.enqueueFile(file);
+          file.accepted = true;
+          if (_this.options.autoQueue) {
+            _this.enqueueFile(file);
+          }
         }
         return _this._updateMaxFilesReachedClass();
       });
@@ -1218,8 +1226,7 @@ require.register("enyo-dropzone/lib/dropzone.js", function(exports, require, mod
 
     Dropzone.prototype.enqueueFile = function(file) {
       var _this = this;
-      file.accepted = true;
-      if (file.status === Dropzone.ADDED) {
+      if (file.status === Dropzone.ADDED && file.accepted === true) {
         file.status = Dropzone.QUEUED;
         if (this.options.autoProcessQueue) {
           return setTimeout((function() {
@@ -1585,7 +1592,7 @@ require.register("enyo-dropzone/lib/dropzone.js", function(exports, require, mod
 
   })(Em);
 
-  Dropzone.version = "4.0.0-dev";
+  Dropzone.version = "3.8.6";
 
   Dropzone.options = {};
 
@@ -1683,7 +1690,7 @@ require.register("enyo-dropzone/lib/dropzone.js", function(exports, require, mod
 
   camelize = function(str) {
     return str.replace(/[\-_](\w)/g, function(match) {
-      return match[1].toUpperCase();
+      return match.charAt(1).toUpperCase();
     });
   };
 
@@ -13399,14 +13406,22 @@ Dropzone.options.demoUpload = {
 
 
 });
+
+
+
+
+
+
 require.alias("enyo-dropzone/index.js", "boot/deps/dropzone/index.js");
 require.alias("enyo-dropzone/lib/dropzone.js", "boot/deps/dropzone/lib/dropzone.js");
+require.alias("enyo-dropzone/index.js", "dropzone/index.js");
 require.alias("component-emitter/index.js", "enyo-dropzone/deps/emitter/index.js");
 
 require.alias("enyo-opentip/index.js", "boot/deps/opentip/index.js");
 require.alias("enyo-opentip/lib/opentip.js", "boot/deps/opentip/lib/opentip.js");
 require.alias("enyo-opentip/lib/adapter-component.js", "boot/deps/opentip/lib/adapter-component.js");
+require.alias("enyo-opentip/index.js", "opentip/index.js");
 require.alias("component-jquery/index.js", "enyo-opentip/deps/jquery/index.js");
 
 require.alias("component-jquery/index.js", "boot/deps/jquery/index.js");
-
+require.alias("component-jquery/index.js", "jquery/index.js");
