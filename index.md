@@ -21,9 +21,10 @@ Try it out:
 > If you are interested in my work, visit my website [www.colorglare.com](http://www.colorglare.com)
 > and subscribe to my [RSS feed](http://www.colorglare.com/feed.xml).
 
-**We just released our latest album!** It's called «YES / NO» and is now available in Austria
+**We just released our latest album!** It's called «YES / NO» and is now available 
 in stores, on Spotify and [on iTunes](https://itunes.apple.com/at/album/yes-no/id722931771).
-Our international release will be in March, followed by a europe tour end of march.
+You can see our [latest video clip on youtube](http://youtu.be/3EPWhYmgdJk).
+
 
 
 
