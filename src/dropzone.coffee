@@ -116,7 +116,6 @@ class Dropzone extends Em
     # Use acceptedFiles instead.
     acceptedMimeTypes: null
 
-    # If false, files will be added to the queue but the queu will not be
     # If false, files will be added to the queue but the queue will not be
     # processed automatically.
     # This can be useful if you need some additional user input before sending
