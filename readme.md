@@ -2,7 +2,7 @@
   <img alt="Dropzone.js" src="http://www.dropzonejs.com/images/logo.png" />
 </h1>
 
-*Version 3.8.5*
+*Version 3.8.6*
 
 ![Build status](https://travis-ci.org/enyo/dropzone.png?branch=master)  
 
