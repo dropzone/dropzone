@@ -91,7 +91,7 @@ module.exports = (grunt) ->
 
   grunt.registerTask "css", "Compile the stylus files to css", [ "stylus" ]
 
-  # grunt.registerTask "js", "Compile coffeescript", [ "coffee", "componentbuild", "copy", "concat" ]
-  grunt.registerTask "js", "Compile coffeescript", [ "coffee", "copy", "concat" ]
+  grunt.registerTask "js", "Compile coffeescript", [ "coffee", "componentbuild", "copy", "concat" ]
+  # grunt.registerTask "js", "Compile coffeescript", [ "coffee", "copy", "concat" ]
 
   grunt.registerTask "downloads", "Compile all stylus and coffeescript files and generate the download files", [ "js", "css", "uglify" ]
