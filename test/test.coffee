@@ -930,6 +930,65 @@ describe "Dropzone", ->
         ), 10
 
 
+    describe "getActiveFiles()", ->
+      it "should return all files with the status Dropzone.UPLOADING or Dropzone.QUEUED", (done) ->
+        mock1 = getMockFile()
+        mock2 = getMockFile()
+        mock3 = getMockFile()
+        mock4 = getMockFile()
+
+        dropzone.options.accept = (file, _done) -> file.done = _done
+        dropzone.uploadFile = ->
+        dropzone.options.parallelUploads = 2
+
+        dropzone.addFile mock1
+        dropzone.addFile mock2
+        dropzone.addFile mock3
+        dropzone.addFile mock4
+
+        dropzone.getActiveFiles().should.eql [ ]
+
+        mock1.done()
+        mock3.done()
+        mock4.done()
+
+        setTimeout (->
+          dropzone.getActiveFiles().should.eql [ mock1, mock3, mock4 ]
+          mock1.status.should.equal Dropzone.UPLOADING
+          mock3.status.should.equal Dropzone.UPLOADING
+          mock2.status.should.equal Dropzone.ADDED
+          mock4.status.should.equal Dropzone.QUEUED
+          done()
+        ), 10
+
+
+    describe "getFilesWithStatus()", ->
+      it "should return all files with provided status", ->
+        mock1 = getMockFile()
+        mock2 = getMockFile()
+        mock3 = getMockFile()
+        mock4 = getMockFile()
+
+        dropzone.options.accept = (file, _done) -> file.done = _done
+        dropzone.uploadFile = ->
+
+        dropzone.addFile mock1
+        dropzone.addFile mock2
+        dropzone.addFile mock3
+        dropzone.addFile mock4
+
+        dropzone.getFilesWithStatus(Dropzone.ADDED).should.eql [ mock1, mock2, mock3, mock4 ]
+
+        mock1.status = Dropzone.UPLOADING
+        mock3.status = Dropzone.QUEUED
+        mock4.status = Dropzone.QUEUED
+
+        dropzone.getFilesWithStatus(Dropzone.ADDED).should.eql [ mock2 ]
+        dropzone.getFilesWithStatus(Dropzone.UPLOADING).should.eql [ mock1 ]
+        dropzone.getFilesWithStatus(Dropzone.QUEUED).should.eql [ mock3, mock4 ]
+        
+
+
 
   describe "file handling", ->
     mockFile = null
