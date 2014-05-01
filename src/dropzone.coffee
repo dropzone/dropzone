@@ -474,10 +474,15 @@ class Dropzone extends Em
   # Not sure when that's going to be useful, but added for completeness.
   getRejectedFiles: -> file for file in @files when not file.accepted
 
-  # Returns all files that are in the queue
-  getQueuedFiles: -> file for file in @files when file.status == Dropzone.QUEUED
+  getFilesWithStatus: (status) -> file for file in @files when file.status == status
 
-  getUploadingFiles: -> file for file in @files when file.status == Dropzone.UPLOADING
+  # Returns all files that are in the queue
+  getQueuedFiles: -> @getFilesWithStatus Dropzone.QUEUED
+
+  getUploadingFiles: -> @getFilesWithStatus Dropzone.UPLOADING
+
+  # Files that are either queued or uploading
+  getActiveFiles: -> file for file in @files when file.status == Dropzone.UPLOADING or file.status == Dropzone.QUEUED
 
 
   init: ->
@@ -603,10 +608,10 @@ class Dropzone extends Em
     totalBytesSent = 0
     totalBytes = 0
 
-    acceptedFiles = @getAcceptedFiles()
+    activeFiles = @getActiveFiles()
 
-    if acceptedFiles.length
-      for file in @getAcceptedFiles()
+    if activeFiles.length
+      for file in @getActiveFiles()
         totalBytesSent += file.upload.bytesSent
         totalBytes += file.upload.total
       totalUploadProgress = 100 * totalBytesSent / totalBytes
