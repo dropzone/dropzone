@@ -6,7 +6,7 @@ title: Dropzone.js
 <section markdown="1">
 
 It's lightweight, doesn't depend on any other library (like jQuery) and
-is highly customizable.
+is [highly customizable](/bootstrap.html).
 
 Try it out:
 
