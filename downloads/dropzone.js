@@ -1487,7 +1487,7 @@ require.register("dropzone/lib/dropzone.js", function (exports, module) {
 
   })(Em);
 
-  Dropzone.version = "3.8.6";
+  Dropzone.version = "3.8.7";
 
   Dropzone.options = {};
 
