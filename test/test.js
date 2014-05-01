@@ -1661,10 +1661,11 @@
           mock2.name = "mock2";
           mock3.name = "mock3";
           dropzone.uploadFiles = function(files) {
-            var _this = this;
-            return setTimeout((function() {
-              return _this._finished(files, null, null);
-            }), 1);
+            return setTimeout(((function(_this) {
+              return function() {
+                return _this._finished(files, null, null);
+              };
+            })(this)), 1);
           };
           completedFiles = 0;
           dropzone.on("complete", function(file) {
