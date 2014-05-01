@@ -4,6 +4,8 @@ describe "Dropzone", ->
 
 
   getMockFile = ->
+    status: Dropzone.ADDED
+    accepted: true
     name: "test file name"
     size: 123456
     type: "text/html"
@@ -765,6 +767,7 @@ describe "Dropzone", ->
             {
               size: 1990
               accepted: true
+              status: Dropzone.UPLOADING
               upload:
                 progress: 20
                 total: 2000 # The bytes to upload are higher than the file size
@@ -773,6 +776,7 @@ describe "Dropzone", ->
             {
               size: 1990
               accepted: true
+              status: Dropzone.UPLOADING
               upload:
                 progress: 10
                 total: 2000 # The bytes to upload are higher than the file size
@@ -802,6 +806,10 @@ describe "Dropzone", ->
           # It shouldn't matter that progress is not properly updated since the total size
           # should be calculated from the bytes
           dropzone.emit "uploadprogress", { }
+
+          # Just so the afterEach hook doesn't try to cancel them.
+          dropzone.files[0].status = Dropzone.CANCELED
+          dropzone.files[1].status = Dropzone.CANCELED
 
 
   describe "helper function", ->
