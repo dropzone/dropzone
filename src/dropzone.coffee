@@ -117,11 +117,16 @@ class Dropzone extends Em
     acceptedMimeTypes: null
 
     # If false, files will be added to the queue but the queu will not be
+    # If false, files will be added to the queue but the queue will not be
     # processed automatically.
     # This can be useful if you need some additional user input before sending
     # files (or if you want want all files sent at once).
     # If you're ready to send the file simply call myDropzone.processQueue()
     autoProcessQueue: on
+
+    # If false, files added to the dropzone will not be queued by default.
+    # You'll have to call `enqueueFile(file)` manually.
+    autoQueue: on
 
     # If true, Dropzone will add a link to each file preview to cancel/remove
     # the upload.
@@ -795,16 +800,16 @@ class Dropzone extends Em
         file.accepted = false
         @_errorProcessing [ file ], error # Will set the file.status
       else
-        @enqueueFile file # Will set .accepted = true
+        file.accepted = true
+        @enqueueFile file if @options.autoQueue # Will set .accepted = true
       @_updateMaxFilesReachedClass()
 
 
-  # Wrapper for enqueuFile
+  # Wrapper for enqueueFile
   enqueueFiles: (files) -> @enqueueFile file for file in files; null
 
   enqueueFile: (file) ->
-    file.accepted = true
-    if file.status == Dropzone.ADDED
+    if file.status == Dropzone.ADDED and file.accepted == true
       file.status = Dropzone.QUEUED
       if @options.autoProcessQueue
         setTimeout (=> @processQueue()), 0 # Deferring the call
