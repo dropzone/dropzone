@@ -986,6 +986,19 @@ describe "Dropzone", ->
           done()
         ), 10
 
+      it "should not add the file to the queue if autoQueue is false", ->
+        doneFunction = null
+        dropzone.options.autoQueue = false
+        dropzone.accept = (file, done) -> doneFunction = done
+        dropzone.processFile = ->
+        dropzone.uploadFile = ->
+
+        dropzone.addFile mockFile
+
+        mockFile.status.should.eql Dropzone.ADDED
+        doneFunction()
+        mockFile.status.should.eql Dropzone.ADDED
+
       it "should create a remove link if configured to do so", ->
         dropzone.options.addRemoveLinks = true
         dropzone.processFile = ->
