@@ -627,10 +627,12 @@ class Dropzone extends Em
   # This code has to pass in IE7 :(
   getFallbackForm: ->
     return existingFallback if existingFallback = @getExistingFallback()
+    pn = @options.paramName
+    pnVal = if typeof pn is "function" then pn 0 else "#{pn}#{if @options.uploadMultiple then "[]" else ""}"
 
     fieldsString = """<div class="dz-fallback">"""
     fieldsString += """<p>#{@options.dictFallbackText}</p>""" if @options.dictFallbackText
-    fieldsString += """<input type="file" name="#{@options.paramName}#{if @options.uploadMultiple then "[]" else ""}" #{if @options.uploadMultiple then 'multiple="multiple"' } /><input type="submit" value="Upload!"></div>"""
+    fieldsString += """<input type="file" name="#{pnVal}" #{if @options.uploadMultiple then 'multiple="multiple"' } /><input type="submit" value="Upload!"></div>"""
 
     fields = Dropzone.createElement fieldsString
     if @element.tagName isnt "FORM"
@@ -1063,7 +1065,9 @@ class Dropzone extends Em
     # Finally add the file
     # Has to be last because some servers (eg: S3) expect the file to be the
     # last parameter
-    formData.append "#{@options.paramName}#{if @options.uploadMultiple then "[]" else ""}", file, file.name for file in files
+    pn = @options.paramName
+    pnGen = (n) -> if typeof pn is "function" then pn n else "#{pn}#{if @options.uploadMultiple then "[]" else ""}"
+    formData.append pnGen(i), files[i], files[i].name for i in [0..files.length-1]
 
     xhr.send formData
 
