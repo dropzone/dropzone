@@ -1056,9 +1056,10 @@ class Dropzone extends Em
     # Finally add the file
     # Has to be last because some servers (eg: S3) expect the file to be the
     # last parameter
-    pn = @options.paramName
-    pnGen = (n) -> if typeof pn is "function" then pn n else "#{pn}#{if @options.uploadMultiple then "[]" else ""}"
-    formData.append pnGen(i), files[i], files[i].name for i in [0..files.length-1]
+    for i in [0..files.length-1]
+      pn = @options.paramName
+      pnVal = if typeof pn is "function" then pn i else "#{pn}#{if @options.uploadMultiple then "[]" else ""}"
+      formData.append pnVal, files[i], files[i].name
 
     xhr.send formData
 
