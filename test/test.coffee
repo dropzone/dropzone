@@ -482,9 +482,9 @@ describe "Dropzone", ->
         describe "with 'auto' thumbnail settings", ->
           it "should properly return target dimensions", ->
             testSettings = [
-              ["auto", "auto"],
-              ["auto", 150],
-              [150, "auto"]
+              [null, null],
+              [null, 150],
+              [150, null]
             ]
 
             for setting, i in testSettings
