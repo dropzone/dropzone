@@ -229,12 +229,27 @@ class Dropzone extends Em
         srcHeight: file.height
 
       srcRatio = file.width / file.height
-      trgRatio = @options.thumbnailWidth / @options.thumbnailHeight
+
+      info.optWidth = @options.thumbnailWidth
+      info.optHeight = @options.thumbnailHeight
+
+      # automatically calculate height, width, or both
+      if "auto" in [info.optWidth, info.optHeight]
+        if "auto" is info.optWidth and "auto" is info.optHeight
+          info.optWidth = info.srcWidth
+          info.optHeight = info.srcHeight
+        else if "auto" is info.optWidth
+          info.optWidth = srcRatio * info.optHeight
+        else if "auto" is info.optHeight
+          info.optHeight = (1/srcRatio) * info.optWidth
+
+      trgRatio = info.optWidth / info.optHeight
       
-      if file.height < @options.thumbnailHeight or file.width < @options.thumbnailWidth
+      if file.height < info.optHeight or file.width < info.optWidth
         # This image is smaller than the canvas
         info.trgHeight = info.srcHeight
         info.trgWidth = info.srcWidth
+
       else
         # Image is bigger and needs rescaling
         if srcRatio > trgRatio
@@ -867,8 +882,8 @@ class Dropzone extends Em
 
         resizeInfo = @options.resize.call @, file
 
-        resizeInfo.trgWidth ?= @options.thumbnailWidth
-        resizeInfo.trgHeight ?= @options.thumbnailHeight
+        resizeInfo.trgWidth ?= resizeInfo.optWidth 
+        resizeInfo.trgHeight ?= resizeInfo.optHeight
 
         canvas = document.createElement "canvas"
         ctx = canvas.getContext "2d"
