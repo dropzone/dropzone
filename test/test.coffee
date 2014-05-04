@@ -428,6 +428,8 @@ describe "Dropzone", ->
         file =
           name: "test name"
           size: 2 * 1024 * 1024
+          width: 200
+          height: 100
         dropzone.options.addedfile.call dropzone, file
 
       describe ".addedFile()", ->
@@ -466,6 +468,44 @@ describe "Dropzone", ->
           file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql "90%"
           dropzone.options.uploadprogress.call dropzone, file, 100
           file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql "100%"
+
+      describe ".resize()", ->
+
+        describe "with default thumbnail settings", ->
+          it "should properly return target dimensions", ->
+
+            info = dropzone.options.resize.call dropzone, file
+
+            info.optWidth.should.eql 100
+            info.optHeight.should.eql 100
+
+        describe "with 'auto' thumbnail settings", ->
+          it "should properly return target dimensions", ->
+            testSettings = [
+              ["auto", "auto"],
+              ["auto", 150],
+              [150, "auto"]
+            ]
+
+            for setting, i in testSettings
+              dropzone.options.thumbnailWidth = setting[0]
+              dropzone.options.thumbnailHeight = setting[1]
+
+              info = dropzone.options.resize.call dropzone, file
+
+              if i is 0
+                info.optWidth.should.eql 200
+                info.optHeight.should.eql 100
+
+              if i is 1
+                info.optWidth.should.eql 300
+                info.optHeight.should.eql 150
+
+              if i is 2
+                info.optWidth.should.eql 150
+                info.optHeight.should.eql 75
+
+            
 
 
   describe "instance", ->
@@ -1156,9 +1196,6 @@ describe "Dropzone", ->
 
           # dropzone.addFile mock1
 
-
-
-
     describe "enqueueFile()", ->
       it "should be wrapped by enqueueFiles()", ->
         sinon.stub dropzone, "enqueueFile"
@@ -1458,7 +1495,6 @@ describe "Dropzone", ->
               done()
             , 10
           , 10
-
 
     describe "complete file", ->
       it "should properly emit the queuecomplete event when the complete queue is finished", (done) ->
