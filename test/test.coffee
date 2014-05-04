@@ -505,9 +505,6 @@ describe "Dropzone", ->
                 info.optWidth.should.eql 150
                 info.optHeight.should.eql 75
 
-            
-
-
   describe "instance", ->
 
     element = null
