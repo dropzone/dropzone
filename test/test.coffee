@@ -836,12 +836,12 @@ describe "Dropzone", ->
         fallback = dropzone.getFallbackForm()
         fileInput = fallback.querySelector "input[type=file]"
         fileInput.name.should.equal "myFile"
-      it "should properly add [] to the file name if uploadMultiple is true", ->
+      it "should properly add [0] to the file name if uploadMultiple is true", ->
         dropzone.options.uploadMultiple = yes
         dropzone.options.paramName = "myFile"
         fallback = dropzone.getFallbackForm()
         fileInput = fallback.querySelector "input[type=file]"
-        fileInput.name.should.equal "myFile[]"
+        fileInput.name.should.equal "myFile[0]"
 
 
     describe "getAcceptedFiles() / getRejectedFiles()", ->
@@ -1340,8 +1340,8 @@ describe "Dropzone", ->
             sendingMultipleCount.should.equal 1
             dropzone.uploadFiles [ mock1, mock2 ]
             formData.append.callCount.should.equal 2
-            formData.append.args[0][0].should.eql "myName[]"
-            formData.append.args[1][0].should.eql "myName[]"
+            formData.append.args[0][0].should.eql "myName[0]"
+            formData.append.args[1][0].should.eql "myName[1]"
             done()
           , 10
 

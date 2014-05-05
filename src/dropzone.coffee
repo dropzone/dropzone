@@ -616,7 +616,7 @@ class Dropzone extends Em
     if typeof @options.paramName is "function"
       @options.paramName n
     else
-      "#{@options.paramName}#{if @options.uploadMultiple then "[]" else ""}"
+      "#{@options.paramName}#{if @options.uploadMultiple then "[#{n}]" else ""}"
 
   # Returns a form that can be used as fallback if the browser does not support DragnDrop
   #
