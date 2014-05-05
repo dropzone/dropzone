@@ -619,7 +619,13 @@ class Dropzone extends Em
 
     @emit "totaluploadprogress", totalUploadProgress, totalBytes, totalBytesSent
 
-
+  # @options.paramName can be a function taking one parameter rather than a string.
+  # A parameter name for a file is obtained simply by calling this with an index number.
+  _getParamName: (n) ->
+    if typeof @options.paramName is "function"
+      @options.paramName n
+    else
+      "#{@options.paramName}#{if @options.uploadMultiple then "[#{n}]" else ""}"
 
   # Returns a form that can be used as fallback if the browser does not support DragnDrop
   #
@@ -630,7 +636,7 @@ class Dropzone extends Em
 
     fieldsString = """<div class="dz-fallback">"""
     fieldsString += """<p>#{@options.dictFallbackText}</p>""" if @options.dictFallbackText
-    fieldsString += """<input type="file" name="#{@options.paramName}#{if @options.uploadMultiple then "[]" else ""}" #{if @options.uploadMultiple then 'multiple="multiple"' } /><input type="submit" value="Upload!"></div>"""
+    fieldsString += """<input type="file" name="#{@_getParamName 0}" #{if @options.uploadMultiple then 'multiple="multiple"' } /><input type="submit" value="Upload!"></div>"""
 
     fields = Dropzone.createElement fieldsString
     if @element.tagName isnt "FORM"
@@ -1063,7 +1069,7 @@ class Dropzone extends Em
     # Finally add the file
     # Has to be last because some servers (eg: S3) expect the file to be the
     # last parameter
-    formData.append "#{@options.paramName}#{if @options.uploadMultiple then "[]" else ""}", file, file.name for file in files
+    formData.append @_getParamName(i), files[i], files[i].name for i in [0..files.length-1]
 
     xhr.send formData
 

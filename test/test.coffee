@@ -838,18 +838,18 @@ describe "Dropzone", ->
         fallback.should.equal dropzone.getExistingFallback()
 
     describe "getFallbackForm()", ->
-      it "should use the paramName without [] if uploadMultiple is false", ->
+      it "should use the paramName without [0] if uploadMultiple is false", ->
         dropzone.options.uploadMultiple = false
         dropzone.options.paramName = "myFile"
         fallback = dropzone.getFallbackForm()
         fileInput = fallback.querySelector "input[type=file]"
         fileInput.name.should.equal "myFile"
-      it "should properly add [] to the file name if uploadMultiple is true", ->
+      it "should properly add [0] to the file name if uploadMultiple is true", ->
         dropzone.options.uploadMultiple = yes
         dropzone.options.paramName = "myFile"
         fallback = dropzone.getFallbackForm()
         fileInput = fallback.querySelector "input[type=file]"
-        fileInput.name.should.equal "myFile[]"
+        fileInput.name.should.equal "myFile[0]"
 
 
     describe "getAcceptedFiles() / getRejectedFiles()", ->
@@ -1364,7 +1364,7 @@ describe "Dropzone", ->
           dropzone.uploadFile mockFile
           requests[0].requestHeaders["Foo-Header"].should.eql 'foobar'
 
-        it "should properly use the paramName without [] as file upload if uploadMultiple is false", (done) ->
+        it "should properly use the paramName without [n] as file upload if uploadMultiple is false", (done) ->
           dropzone.options.uploadMultiple = false
           dropzone.options.paramName = "myName"
 
@@ -1396,7 +1396,7 @@ describe "Dropzone", ->
           , 10
 
 
-        it "should properly use the paramName with [] as file upload if uploadMultiple is true", (done) ->
+        it "should properly use the paramName with [n] as file upload if uploadMultiple is true", (done) ->
           dropzone.options.uploadMultiple = yes
           dropzone.options.paramName = "myName"
 
@@ -1420,8 +1420,8 @@ describe "Dropzone", ->
             sendingMultipleCount.should.equal 1
             dropzone.uploadFiles [ mock1, mock2 ]
             formData.append.callCount.should.equal 2
-            formData.append.args[0][0].should.eql "myName[]"
-            formData.append.args[1][0].should.eql "myName[]"
+            formData.append.args[0][0].should.eql "myName[0]"
+            formData.append.args[1][0].should.eql "myName[1]"
             done()
           , 10
 
