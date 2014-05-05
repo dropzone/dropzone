@@ -830,7 +830,7 @@ describe "Dropzone", ->
         fallback.should.equal dropzone.getExistingFallback()
 
     describe "getFallbackForm()", ->
-      it "should use the paramName without [] if uploadMultiple is false", ->
+      it "should use the paramName without [0] if uploadMultiple is false", ->
         dropzone.options.uploadMultiple = false
         dropzone.options.paramName = "myFile"
         fallback = dropzone.getFallbackForm()
@@ -1284,7 +1284,7 @@ describe "Dropzone", ->
           dropzone.uploadFile mockFile
           requests[0].requestHeaders["Foo-Header"].should.eql 'foobar'
 
-        it "should properly use the paramName without [] as file upload if uploadMultiple is false", (done) ->
+        it "should properly use the paramName without [n] as file upload if uploadMultiple is false", (done) ->
           dropzone.options.uploadMultiple = false
           dropzone.options.paramName = "myName"
 
@@ -1316,7 +1316,7 @@ describe "Dropzone", ->
           , 10
 
 
-        it "should properly use the paramName with [] as file upload if uploadMultiple is true", (done) ->
+        it "should properly use the paramName with [n] as file upload if uploadMultiple is true", (done) ->
           dropzone.options.uploadMultiple = yes
           dropzone.options.paramName = "myName"
 
