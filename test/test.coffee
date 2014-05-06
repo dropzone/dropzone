@@ -479,7 +479,7 @@ describe "Dropzone", ->
             info.optWidth.should.eql 100
             info.optHeight.should.eql 100
 
-        describe "with 'auto' thumbnail settings", ->
+        describe "with null thumbnail settings", ->
           it "should properly return target dimensions", ->
             testSettings = [
               [null, null],
