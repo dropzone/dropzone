@@ -647,7 +647,9 @@
         beforeEach(function() {
           file = {
             name: "test name",
-            size: 2 * 1024 * 1024
+            size: 2 * 1024 * 1024,
+            width: 200,
+            height: 100
           };
           return dropzone.options.addedfile.call(dropzone, file);
         });
@@ -680,7 +682,7 @@
             return thumbnail.alt.should.eql("test name");
           });
         });
-        return describe(".uploadprogress()", function() {
+        describe(".uploadprogress()", function() {
           return it("should properly set the width", function() {
             dropzone.options.uploadprogress.call(dropzone, file, 0);
             file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql("0%");
@@ -690,6 +692,44 @@
             file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql("90%");
             dropzone.options.uploadprogress.call(dropzone, file, 100);
             return file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql("100%");
+          });
+        });
+        return describe(".resize()", function() {
+          describe("with default thumbnail settings", function() {
+            return it("should properly return target dimensions", function() {
+              var info;
+              info = dropzone.options.resize.call(dropzone, file);
+              info.optWidth.should.eql(100);
+              return info.optHeight.should.eql(100);
+            });
+          });
+          return describe("with null thumbnail settings", function() {
+            return it("should properly return target dimensions", function() {
+              var i, info, setting, testSettings, _i, _len, _results;
+              testSettings = [[null, null], [null, 150], [150, null]];
+              _results = [];
+              for (i = _i = 0, _len = testSettings.length; _i < _len; i = ++_i) {
+                setting = testSettings[i];
+                dropzone.options.thumbnailWidth = setting[0];
+                dropzone.options.thumbnailHeight = setting[1];
+                info = dropzone.options.resize.call(dropzone, file);
+                if (i === 0) {
+                  info.optWidth.should.eql(200);
+                  info.optHeight.should.eql(100);
+                }
+                if (i === 1) {
+                  info.optWidth.should.eql(300);
+                  info.optHeight.should.eql(150);
+                }
+                if (i === 2) {
+                  info.optWidth.should.eql(150);
+                  _results.push(info.optHeight.should.eql(75));
+                } else {
+                  _results.push(void 0);
+                }
+              }
+              return _results;
+            });
           });
         });
       });
@@ -1111,7 +1151,7 @@
         });
       });
       describe("getFallbackForm()", function() {
-        it("should use the paramName without [] if uploadMultiple is false", function() {
+        it("should use the paramName without [0] if uploadMultiple is false", function() {
           var fallback, fileInput;
           dropzone.options.uploadMultiple = false;
           dropzone.options.paramName = "myFile";
@@ -1119,13 +1159,13 @@
           fileInput = fallback.querySelector("input[type=file]");
           return fileInput.name.should.equal("myFile");
         });
-        return it("should properly add [] to the file name if uploadMultiple is true", function() {
+        return it("should properly add [0] to the file name if uploadMultiple is true", function() {
           var fallback, fileInput;
           dropzone.options.uploadMultiple = true;
           dropzone.options.paramName = "myFile";
           fallback = dropzone.getFallbackForm();
           fileInput = fallback.querySelector("input[type=file]");
-          return fileInput.name.should.equal("myFile[]");
+          return fileInput.name.should.equal("myFile[0]");
         });
       });
       describe("getAcceptedFiles() / getRejectedFiles()", function() {
@@ -1568,7 +1608,7 @@
             dropzone.uploadFile(mockFile);
             return requests[0].requestHeaders["Foo-Header"].should.eql('foobar');
           });
-          it("should properly use the paramName without [] as file upload if uploadMultiple is false", function(done) {
+          it("should properly use the paramName without [n] as file upload if uploadMultiple is false", function(done) {
             var formData, mock1, mock2, sendingCount;
             dropzone.options.uploadMultiple = false;
             dropzone.options.paramName = "myName";
@@ -1593,7 +1633,7 @@
               return done();
             }, 10);
           });
-          return it("should properly use the paramName with [] as file upload if uploadMultiple is true", function(done) {
+          return it("should properly use the paramName with [n] as file upload if uploadMultiple is true", function(done) {
             var formData, mock1, mock2, sendingCount, sendingMultipleCount;
             dropzone.options.uploadMultiple = true;
             dropzone.options.paramName = "myName";
@@ -1617,8 +1657,8 @@
               sendingMultipleCount.should.equal(1);
               dropzone.uploadFiles([mock1, mock2]);
               formData.append.callCount.should.equal(2);
-              formData.append.args[0][0].should.eql("myName[]");
-              formData.append.args[1][0].should.eql("myName[]");
+              formData.append.args[0][0].should.eql("myName[0]");
+              formData.append.args[1][0].should.eql("myName[1]");
               return done();
             }, 10);
           });
@@ -1661,11 +1701,10 @@
           mock2.name = "mock2";
           mock3.name = "mock3";
           dropzone.uploadFiles = function(files) {
-            return setTimeout(((function(_this) {
-              return function() {
-                return _this._finished(files, null, null);
-              };
-            })(this)), 1);
+            var _this = this;
+            return setTimeout((function() {
+              return _this._finished(files, null, null);
+            }), 1);
           };
           completedFiles = 0;
           dropzone.on("complete", function(file) {
