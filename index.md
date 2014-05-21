@@ -21,7 +21,7 @@ Try it out:
 > If you are interested in my work, visit my website [www.colorglare.com](http://www.colorglare.com)
 > and subscribe to my [RSS feed](http://www.colorglare.com/feed.xml).
 
-**We just released our latest album!** It's called «YES / NO» and is now available 
+**We just released our latest album!** It's called «YES / NO» and is now available
 in stores, on Spotify and [on iTunes](https://itunes.apple.com/at/album/yes-no/id722931771).
 You can see our [latest video clip on youtube](http://youtu.be/3EPWhYmgdJk).
 
@@ -178,7 +178,7 @@ $("div#myId").dropzone({ url: "/file/post" });
 ```
 
 > Don't forget to specify an `url` option if you're not using a form element,
-> since Dropzone doesn't know where to post to without an `action` attribute. 
+> since Dropzone doesn't know where to post to without an `action` attribute.
 
 
 
@@ -280,8 +280,8 @@ The valid options are:
 | `clickable`             | If `true`, the dropzone element itself will be clickable, if `false` nothing will be clickable. Otherwise you can pass an HTML element, a CSS selector (for multiple elements) or an array of those.
 | `createImageThumbnails` |
 | `maxThumbnailFilesize`  | in MB. When the filename exceeds this limit, the thumbnail will not be generated
-| `thumbnailWidth`        |
-| `thumbnailHeight`       |
+| `thumbnailWidth`        | if `null`, the ratio of the image will be used to calculate it.
+| `thumbnailHeight`       | the same as `thumbnailWidth`. If both are null, images will not be resized.
 | `maxFiles`              | if not `null` defines how many files this Dropzone handles. If it exceeds, the event `maxfilesexceeded` will be called. The dropzone element gets the class `dz-max-files-reached` accordingly so you can provided visual feedback.
 | `resize`                | is the function that gets called to create the resize information. It gets the `file` as first parameter and must return an object with `srcX`, `srcY`, `srcWidth` and `srcHeight` and the same for `trg*`. Those values are going to be used by `ctx.drawImage()`.
 | `init`                  | is a function that gets called when Dropzone is initialized. You can setup event listeners inside this function.
@@ -348,7 +348,7 @@ Dropzone.options.myAwesomeDropzone = {
 // Or programmatically, when creating a Dropzone.
 // This is more complex and should only be used if you need to create your
 // Dropzones on demand.
-// 
+//
 // This example uses jQuery so it creates the Dropzone, only when the DOM has
 // loaded.
 
@@ -358,7 +358,7 @@ Dropzone.autoDiscover = false;
 // Dropzone.options.myDropzone = false;
 
 $(function() {
-  // Now that the DOM is fully loaded, create the dropzone, and setup the 
+  // Now that the DOM is fully loaded, create the dropzone, and setup the
   // event listeners
 
   var myDropzone = new Dropzone("#my-dropzone");
@@ -390,7 +390,7 @@ All of these receive the [file](https://developer.mozilla.org/en-US/docs/DOM/Fil
 
 | Parameter             | Description
 |-----------------------|-------------
-| `addedfile`           | 
+| `addedfile`           |
 | `removedfile`         | Called whenever a file is removed from the list. You can listen to this and delete the file from your server if you want to.
 | `thumbnail`           | When the thumbnail has been generated. Receives the [**dataUrl**](http://en.wikipedia.org/wiki/Data_URI_scheme) as second parameter.
 | `error`               | An error occured. Receives the **errorMessage** as second parameter and if the error was due to the XMLHttpRequest the xhr object as third.
@@ -692,4 +692,3 @@ Dropzone.forElement("#my-dropzone"); // Providing a selector string.
 ```
 
 </section>
-
