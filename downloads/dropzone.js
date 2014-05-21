@@ -238,19 +238,19 @@ require.register("dropzone/lib/dropzone.js", function (exports, module) {
 /*
  *
  * More info at [www.dropzonejs.com](http://www.dropzonejs.com)
- * 
- * Copyright (c) 2012, Matias Meno  
- * 
+ *
+ * Copyright (c) 2012, Matias Meno
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -360,15 +360,13 @@ require.register("dropzone/lib/dropzone.js", function (exports, module) {
         srcRatio = file.width / file.height;
         info.optWidth = this.options.thumbnailWidth;
         info.optHeight = this.options.thumbnailHeight;
-        if (!((info.optWidth != null) && (info.optHeigh != null))) {
-          if ((info.optWidth == null) && (info.optHeight == null)) {
-            info.optWidth = info.srcWidth;
-            info.optHeight = info.srcHeight;
-          } else if (info.optWidth == null) {
-            info.optWidth = srcRatio * info.optHeight;
-          } else if (info.optHeight == null) {
-            info.optHeight = (1 / srcRatio) * info.optWidth;
-          }
+        if ((info.optWidth == null) && (info.optHeight == null)) {
+          info.optWidth = info.srcWidth;
+          info.optHeight = info.srcHeight;
+        } else if (info.optWidth == null) {
+          info.optWidth = srcRatio * info.optHeight;
+        } else if (info.optHeight == null) {
+          info.optHeight = (1 / srcRatio) * info.optWidth;
         }
         trgRatio = info.optWidth / info.optHeight;
         if (file.height < info.optHeight || file.width < info.optWidth) {
@@ -1522,7 +1520,7 @@ require.register("dropzone/lib/dropzone.js", function (exports, module) {
 
   })(Em);
 
-  Dropzone.version = "3.10.0";
+  Dropzone.version = "3.10.1";
 
   Dropzone.options = {};
 
