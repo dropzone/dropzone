@@ -234,15 +234,14 @@ class Dropzone extends Em
       info.optWidth = @options.thumbnailWidth
       info.optHeight = @options.thumbnailHeight
 
-      if not (info.optWidth? and info.optHeight?)
-        # automatically calculate dimensions if not specified
-        if not info.optWidth? and not info.optHeight?
-          info.optWidth = info.srcWidth
-          info.optHeight = info.srcHeight
-        else if not info.optWidth?
-          info.optWidth = srcRatio * info.optHeight
-        else if not info.optHeight?
-          info.optHeight = (1/srcRatio) * info.optWidth
+      # automatically calculate dimensions if not specified
+      if !info.optWidth? and !info.optHeight?
+        info.optWidth = info.srcWidth
+        info.optHeight = info.srcHeight
+      else if !info.optWidth?
+        info.optWidth = srcRatio * info.optHeight
+      else if !info.optHeight?
+        info.optHeight = (1/srcRatio) * info.optWidth
 
       trgRatio = info.optWidth / info.optHeight
 
