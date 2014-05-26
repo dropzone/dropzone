@@ -7,9 +7,12 @@ module.exports = (grunt) ->
     stylus:
       options:
         compress: false
-      default:
+      basic:
         files: [
           "downloads/css/basic.css": "downloads/css/stylus/basic.styl"
+        ]
+      dropzone:
+        files: [
           "downloads/css/dropzone.css": "downloads/css/stylus/dropzone.styl"
         ]
 
@@ -24,7 +27,7 @@ module.exports = (grunt) ->
     componentbuild:
       options:
         standalone: "Dropzone"
-        
+
       app:
         # output: "build/"
         name: "build"
