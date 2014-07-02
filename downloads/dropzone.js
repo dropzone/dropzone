@@ -55,7 +55,7 @@ require.define = function (name, exports) {
     exports: exports
   };
 };
-require.register("component~emitter@1.1.2", function (exports, module) {
+require.register("component~emitter@1.1.3", function (exports, module) {
 
 /**
  * Expose `Emitter`.
@@ -267,7 +267,7 @@ require.register("dropzone/lib/dropzone.js", function (exports, module) {
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     __slice = [].slice;
 
-  Em = typeof Emitter !== "undefined" && Emitter !== null ? Emitter : require("component~emitter@1.1.2");
+  Em = typeof Emitter !== "undefined" && Emitter !== null ? Emitter : require("component~emitter@1.1.3");
 
   noop = function() {};
 
@@ -1471,6 +1471,8 @@ require.register("dropzone/lib/dropzone.js", function (exports, module) {
                 formData.append(inputName, option.value);
               }
             }
+          } else if (inputName === null) {
+
           } else if (!inputType || ((_ref4 = inputType.toLowerCase()) !== "checkbox" && _ref4 !== "radio") || input.checked) {
             formData.append(inputName, input.value);
           }
