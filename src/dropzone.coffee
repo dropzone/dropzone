@@ -886,6 +886,13 @@ class Dropzone extends Em
     fileReader = new FileReader
 
     fileReader.onload = =>
+
+      # Don't bother creating a thumbnail for SVG images since they're vector
+      if file.type == "image/svg+xml"
+        @emit "thumbnail", file, fileReader.result
+        callback() if callback?
+        return
+
       # Not using `new Image` here because of a bug in latest Chrome versions.
       # See https://github.com/enyo/dropzone/pull/226
       img = document.createElement "img"
