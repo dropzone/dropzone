@@ -220,9 +220,9 @@ Emitter.prototype.hasListeners = function(event){
 
     /*
     This is a list of all available events you can register on a dropzone object.
-    
+
     You can register an event handler like this:
-    
+
         dropzone.on("dragEnter", function() { });
      */
 
@@ -236,6 +236,7 @@ Emitter.prototype.hasListeners = function(event){
       uploadMultiple: false,
       maxFilesize: 256,
       paramName: "file",
+      inputId: null,
       createImageThumbnails: true,
       maxThumbnailFilesize: 10,
       thumbnailWidth: 100,
@@ -639,6 +640,9 @@ Emitter.prototype.hasListeners = function(event){
             }
             _this.hiddenFileInput = document.createElement("input");
             _this.hiddenFileInput.setAttribute("type", "file");
+            if (_this.options.inputId != null) {
+              _this.hiddenFileInput.id = _this.options.inputId;
+            }
             if ((_this.options.maxFiles == null) || _this.options.maxFiles > 1) {
               _this.hiddenFileInput.setAttribute("multiple", "multiple");
             }
@@ -1692,7 +1696,7 @@ Emitter.prototype.hasListeners = function(event){
 
 
   /*
-  
+
   Bugfix for iOS 6 and 7
   Source: http://stackoverflow.com/questions/11929099/html5-canvas-drawimage-ratio-bug-ios
   based on the work of https://github.com/stomita/ios-imagefile-megapixel
