@@ -9,9 +9,7 @@
     "upload"
   ],
   "homepage": "http://www.dropzonejs.com",
-  "main": [
-    "./lib/dropzone.js"
-  ],
+  "main": "./lib/dropzone.js",
   "maintainers": [
     {
       "name": "Matias Meno",
