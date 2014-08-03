@@ -1080,6 +1080,10 @@ class Dropzone extends Em
     if @element.tagName == "FORM"
       for input in @element.querySelectorAll "input, textarea, select, button"
         inputName = input.getAttribute "name"
+        
+        if inputName == @options.paramName or inputName == @options.paramName + '[]'
+          continue
+        
         inputType = input.getAttribute "type"
 
         if input.tagName == "SELECT" and input.hasAttribute "multiple"
