@@ -67,6 +67,7 @@ class Dropzone extends Em
     "reset"
     "maxfilesexceeded"
     "maxfilesreached"
+    "queuecomplete"
   ]
 
 
@@ -344,7 +345,7 @@ class Dropzone extends Em
     error: (file, message) ->
       if file.previewElement
         file.previewElement.classList.add "dz-error"
-        message = message.error if typeof message != "String" and message.error
+        message = message.error if typeof message != "string" and message.error
         node.textContent = message for node in file.previewElement.querySelectorAll("[data-dz-errormessage]")
 
     errormultiple: noop
@@ -400,6 +401,8 @@ class Dropzone extends Em
     maxfilesexceeded: noop
 
     maxfilesreached: noop
+
+    queuecomplete: noop
 
 
 
