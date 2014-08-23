@@ -57,5 +57,9 @@
     "mocha": "^1.18.2",
     "mocha-phantomjs": "^3.3.2",
     "sinon": "1.9.1"
+  },
+  "jam": {
+    "dependencies": {},
+    "main": "./lib/dropzone.js"
   }
 }
