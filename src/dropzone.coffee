@@ -1064,7 +1064,7 @@ class Dropzone extends Em
 
     extend headers, @options.headers if @options.headers
 
-    xhr.setRequestHeader headerName, headerValue for headerName, headerValue of headers
+    xhr.setRequestHeader headerName, headerValue for headerName, headerValue of headers when headerValue
 
     formData = new FormData()
 
