@@ -138,7 +138,11 @@ class Dropzone extends Em
     previewsContainer: null
 
     # If null, no capture type will be specified
-    # If camera, .
+    # If camera, mobile devices will skip the file selection and choose camera
+    # If microphone, mobile devices will skip the file selection and choose the microphone
+    # If camcorder, mobile devices will skip the file selection and choose the camera in video mode
+    # On apple devices multiple must be set to false.  AcceptedFiles may need to
+    # be set to an appropriate mime type (e.g. "image/*", "audio/*", or "video/*").
     capture: null
 
     # Dictionary
