@@ -137,6 +137,9 @@ class Dropzone extends Em
     # If false, previews won't be rendered.
     previewsContainer: null
 
+    # If null, no capture type will be specified
+    # If camera, .
+    capture: null
 
     # Dictionary
 
@@ -523,6 +526,7 @@ class Dropzone extends Em
         @hiddenFileInput.className = "dz-hidden-input"
 
         @hiddenFileInput.setAttribute "accept", @options.acceptedFiles if @options.acceptedFiles?
+        @hiddenFileInput.setAttribute "capture", @options.capture if @options.capture?
 
         # Not setting `display="none"` because some browsers don't accept clicks
         # on elements that aren't displayed.
