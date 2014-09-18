@@ -6,6 +6,8 @@
   "homepage": "http://www.dropzonejs.com",
   "main": [
     "downloads/css/dropzone.css",
+    "downloads/images/spritemap.png",
+    "downloads/images/spritemap@2x.png",
     "downloads/dropzone.min.js"
   ],
   "ignore": [
