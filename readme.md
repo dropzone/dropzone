@@ -6,7 +6,7 @@
 
 ![Build status](https://travis-ci.org/enyo/dropzone.png?branch=master)  
 
-![Bounty](https://www.bountysource.com/badge/tracker?tracker_id=283989)
+[![Bounty](https://www.bountysource.com/badge/tracker?tracker_id=283989)](https://www.bountysource.com/trackers/283989-enyo-dropzone?utm_source=283989&utm_medium=shield&utm_campaign=TRACKER_BADGE)
 
 Dropzone.js is a light weight JavaScript library that turns an HTML element into a dropzone.
 This means that a user can drag and drop a file onto it, and the file gets uploaded to the server via AJAX.
