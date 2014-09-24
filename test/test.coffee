@@ -1145,7 +1145,12 @@ describe "Dropzone", ->
 
         dropzone.removeFile.callCount.should.eql 2
 
-
+      describe "putFile()", ->
+        it "should properly set the status of the file", ->
+          doneFunction = null
+          dropzone.accept = (file, done) -> doneFunction = done
+          dropzone.putFile mockFile
+          mockFile.status.should.eql Dropzone.SUCCESS
 
       describe "thumbnails", ->
         it "should properly queue the thumbnail creation", (done) ->
