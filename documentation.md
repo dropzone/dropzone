@@ -62,7 +62,7 @@ The valid options are:
 | `method`                | Defaults to `"post"` and can be changed to `"put"` if necessary.
 | `parallelUploads`       | How many file uploads to process in parallel (See the *Enqueuing file uploads* section for more info)
 | `maxFilesize`           | in MB
-| `paramName`             | The name of the file param that gets transferred. Defaults to `file`.
+| `paramName`             | The name of the file param that gets transferred. Can be a function returning a string. Defaults to `file`.
 | `dictDefaultMessage`    | The message that gets displayed before any files are dropped. This is normally replaced by an image but defaults to "Drop files here to upload"
 | `dictFallbackMessage`   | If the browser is not supported, the default message will be replaced with this text. Defaults to "Your browser does not support drag'n'drop file uploads."
 | `dictFallbackText`      | This will be added before the file input files. If you provide a fallback element yourself, or if this option is `null` this will be ignored. Defaults to "Please use the fallback form below to upload your files like in the olden days."
