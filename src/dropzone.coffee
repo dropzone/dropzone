@@ -67,6 +67,8 @@ class Dropzone extends Em
     "reset"
     "maxfilesexceeded"
     "maxfilesreached"
+
+    "filesadded"
   ]
 
 
@@ -408,6 +410,7 @@ class Dropzone extends Em
 
     maxfilesreached: noop
 
+    filesadded: noop
 
 
     # This template will be chosen when a new file is dropped.
@@ -541,9 +544,11 @@ class Dropzone extends Em
         @hiddenFileInput.style.height = "0"
         @hiddenFileInput.style.width = "0"
         document.body.appendChild @hiddenFileInput
+        self = this
         @hiddenFileInput.addEventListener "change", =>
           files = @hiddenFileInput.files
           @addFile file for file in files if files.length
+          self.emit "filesadded", files
           setupHiddenFileInput()
       setupHiddenFileInput()
 
@@ -747,6 +752,7 @@ class Dropzone extends Em
     @emit "drop", e
 
     files = e.dataTransfer.files
+    @emit "filesadded", files
 
     # Even if it's a folder, files.length will contain the folders.
     if files.length
