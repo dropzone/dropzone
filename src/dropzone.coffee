@@ -67,6 +67,7 @@ class Dropzone extends Em
     "reset"
     "maxfilesexceeded"
     "maxfilesreached"
+    "queuecomplete"
   ]
 
 
