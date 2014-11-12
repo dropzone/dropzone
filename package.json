@@ -9,9 +9,7 @@
     "upload"
   ],
   "homepage": "http://www.dropzonejs.com",
-  "main": [
-    "./lib/dropzone.js"
-  ],
+  "main": "./lib/dropzone.js",
   "maintainers": [
     {
       "name": "Matias Meno",
@@ -43,7 +41,9 @@
     "type": "git",
     "url": "https://github.com/enyo/dropzone.git"
   },
-  "dependencies": {},
+  "dependencies": {
+    "emitter-component": "^1.0.0"
+  },
   "devDependencies": {
     "chai": "1.7.x",
     "grunt": "^0.4.4",
