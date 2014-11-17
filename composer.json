@@ -1,0 +1,18 @@
+{
+	"name": "enyo/dropzone",
+	"description": "Handles drag and drop of files for you.",
+	"homepage": "http://www.dropzonejs.com",
+	"keywords": [
+		"dragndrop",
+		"drag and drop",
+		"file upload",
+		"upload"
+	],
+	"authors": [{
+		"name": "Matias Meno",
+		"email": "m@tias.me",
+		"homepage": "http://www.matiasmeno.com"
+	}],
+	"license": "MIT",
+	"minimum-stability": "dev"
+}
