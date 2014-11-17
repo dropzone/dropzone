@@ -371,7 +371,11 @@ class Dropzone extends Em
     # To get the total number of bytes of the file, use `file.size`
     uploadprogress: (file, progress, bytesSent) ->
       if file.previewElement
-        node.style.width = "#{progress}%" for node in file.previewElement.querySelectorAll("[data-dz-uploadprogress]")
+        for node in file.previewElement.querySelectorAll("[data-dz-uploadprogress]")
+          if node.nodeName is 'PROGRESS'
+            node.value = progress
+          else
+            node.style.width = "#{progress}%"
 
     # Called whenever the total upload progress gets updated.
     # Called with totalUploadProgress (0-100), totalBytes and totalBytesSent
