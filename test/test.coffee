@@ -1193,6 +1193,31 @@ describe "Dropzone", ->
 
           # dropzone.addFile mock1
 
+        describe "when file is SVG", ->
+          it "should use the SVG image itself", (done) ->
+
+            createBlob = (data, type) ->
+              try
+                new Blob([data], type: type)
+              catch e
+                BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder ||
+                    window.MozBlobBuilder || window.MSBlobBuilder
+                builder = new BlobBuilder()
+                builder.append(data.buffer || data)
+                builder.getBlob(type)
+
+            blob = createBlob('foo', 'image/svg+xml')
+
+            dropzone.on "thumbnail", (file, dataURI) ->
+              file.should.equal blob
+              fileReader = new FileReader
+              fileReader.onload = ->
+                fileReader.result.should.equal dataURI
+                done()
+              fileReader.readAsDataURL(file)
+
+            dropzone.createThumbnail(blob)
+
     describe "enqueueFile()", ->
       it "should be wrapped by enqueueFiles()", ->
         sinon.stub dropzone, "enqueueFile"
