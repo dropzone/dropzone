@@ -26,7 +26,7 @@
 
 
 # Dependencies
-Em = Emitter ? require "emitter" # Can't be the same name because it will lead to a local variable
+Em = Emitter ? require "emitter-component" # Can't be the same name because it will lead to a local variable
 
 noop = ->
 
