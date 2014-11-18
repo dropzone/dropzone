@@ -1397,7 +1397,7 @@
           return dropzone.removeFile.callCount.should.eql(2);
         });
         return describe("thumbnails", function() {
-          return it("should properly queue the thumbnail creation", function(done) {
+          it("should properly queue the thumbnail creation", function(done) {
             var ct_callback, ct_file, doneFunction, mock1, mock2, mock3;
             doneFunction = null;
             dropzone.accept = function(file, done) {
@@ -1435,6 +1435,37 @@
               mock3.should.equal(ct_file);
               return done();
             }), 10);
+          });
+          return describe("when file is SVG", function() {
+            return it("should use the SVG image itself", function(done) {
+              var blob, createBlob;
+              createBlob = function(data, type) {
+                var BlobBuilder, builder, e;
+                try {
+                  return new Blob([data], {
+                    type: type
+                  });
+                } catch (_error) {
+                  e = _error;
+                  BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder || window.MSBlobBuilder;
+                  builder = new BlobBuilder();
+                  builder.append(data.buffer || data);
+                  return builder.getBlob(type);
+                }
+              };
+              blob = createBlob('foo', 'image/svg+xml');
+              dropzone.on("thumbnail", function(file, dataURI) {
+                var fileReader;
+                file.should.equal(blob);
+                fileReader = new FileReader;
+                fileReader.onload = function() {
+                  fileReader.result.should.equal(dataURI);
+                  return done();
+                };
+                return fileReader.readAsDataURL(file);
+              });
+              return dropzone.createThumbnail(blob);
+            });
           });
         });
       });
