@@ -18,10 +18,10 @@ Try it out:
 
 * * *
 
-> If you are interested in my work, visit my website [www.colorglare.com](http://www.colorglare.com)
-> and subscribe to my [RSS feed](http://www.colorglare.com/feed.xml).
+> I just released a new article on my website [www.colorglare.com](http://www.colorglare.com/2014/11/24/stateless-html.html).
+> If you're interested in my work, please subscribe to my [RSS feed](http://www.colorglare.com/feed.xml).
 
-**We just released our latest album!** It's called «YES / NO» and is now available
+**We just released our latest album!** It's called «YES / NO» by *Gin Ga* and is now available
 in stores, on Spotify and [on iTunes](https://itunes.apple.com/at/album/yes-no/id722931771).
 You can see our [latest video clip on youtube](http://youtu.be/3EPWhYmgdJk).
 
@@ -53,9 +53,9 @@ Installation
 Download the standalone [dropzone.js](https://raw.github.com/enyo/dropzone/master/downloads/dropzone.js)
 and include it like this:
 
-```html
+{% highlight html %}
 <script src="./path/to/dropzone.js"></script>
-```
+{% endhighlight %}
 
 Dropzone is now activated and available as `window.Dropzone`.
 
@@ -120,11 +120,11 @@ Usage
 
 The typical way of using dropzone is by creating a form element with the class `dropzone`:
 
-```html
+{% highlight html %}
 <form action="/file-upload"
       class="dropzone"
       id="my-awesome-dropzone"></form>
-```
+{% endhighlight %}
 
 That's it. Dropzone will find all form elements with the class dropzone,
 automatically attach itself to it, and upload files dropped into it to the
@@ -149,13 +149,13 @@ browser doesn't support JavaScript, the form will stay as is)
 
 Typically this will look like this:
 
-```html
+{% highlight html %}
 <form action="/file-upload" class="dropzone">
   <div class="fallback">
     <input name="file" type="file" multiple />
   </div>
 </form>
-```
+{% endhighlight %}
 
 
 
@@ -165,17 +165,17 @@ Create dropzones programmatically
 Alternatively you can create dropzones programmaticaly (even on non `form`
 elements) by instantiating the `Dropzone` class
 
-```js
+{% highlight js %}
 // Dropzone class:
 var myDropzone = new Dropzone("div#myId", { url: "/file/post"});
-```
+{% endhighlight %}
 
 or if you use jQuery, you can use the jQuery plugin Dropzone ships with:
 
-```js
+{% highlight js %}
 // jQuery
 $("div#myId").dropzone({ url: "/file/post" });
-```
+{% endhighlight %}
 
 > Don't forget to specify an `url` option if you're not using a form element,
 > since Dropzone doesn't know where to post to without an `action` attribute.
@@ -188,11 +188,11 @@ Server side implementation
 Dropzone does *not* provide the server side implementation of handling the files,
 but the way files are uploaded is identical to simple file upload forms like this:
 
-```html
+{% highlight html %}
 <form action="" method="post" enctype="multipart/form-data">
   <input type="file" name="file" />
 </form>
-```
+{% endhighlight %}
 
 To handle basic file uploads on the server, please look at the corresponding
 documentation. Here are a few documentations, if you think I should add some,
@@ -523,14 +523,12 @@ reenable a Dropzone use `.enable()`.
 If you don't like the default browser modals for `confirm` calls,
 you can handle them yourself by overwriting `Dropzone.confirm`.
 
-```js
+{% highlight js %}
 Dropzone.confirm = function(question, accepted, rejected) {
   // Ask the question, and call accepted() or rejected() accordingly.
   // CAREFUL: rejected might not be defined. Do nothing in that case.
 };
-
-```
-
+{% endhighlight %}
 
 
 
@@ -662,33 +660,33 @@ still registers itself as a jQuery module if available.
 
 That means that creating your Dropzones like this still works:
 
-```js
+{% highlight js %}
 $("#my-dropzone").dropzone({ /* options */ });
-```
+{% endhighlight %}
 
 If you create your Dropzones with the normal constructor though, you have to
 pass either the raw HTMLElement, or a selector string. So those versions all
 work:
 
-```js
+{% highlight js %}
 // With jQuery
 new Dropzone($("#my-dropzone").get(0));
 // Without jQuery
 new Dropzone("#my-dropzone");
 new Dropzone(document.querySelector("#my-dropzone"));
-```
+{% endhighlight %}
 
 Another thing that changed, is that Dropzone no longer stores it's instances
 inside the element's data property. So to get a dropzone for an element do this
 now:
 
-```js
+{% highlight js %}
 // DEPRECATED, do not use:
 $("#my-dropzone").data("dropzone"); // won't work anymore
 // Do this now:
 Dropzone.forElement(element); // Providing a raw HTMLElement
 // or
 Dropzone.forElement("#my-dropzone"); // Providing a selector string.
-```
+{% endhighlight %}
 
 </section>
