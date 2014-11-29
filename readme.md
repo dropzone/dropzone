@@ -2,7 +2,7 @@
   <img alt="Dropzone.js" src="http://www.dropzonejs.com/images/logo.png" />
 </h1>
 
-*Version 3.11.2*
+*Version 3.11.3*
 
 ![Build status](https://travis-ci.org/enyo/dropzone.png?branch=master) [![Bounty](https://www.bountysource.com/badge/tracker?tracker_id=283989)](https://www.bountysource.com/trackers/283989-enyo-dropzone?utm_source=283989&utm_medium=shield&utm_campaign=TRACKER_BADGE)
 
