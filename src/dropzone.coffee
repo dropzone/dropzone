@@ -75,7 +75,7 @@ class Emitter
 
     # remove specific handler
     for callback, i in callbacks
-      if callback == fn || callback.fn == fn
+      if callback == fn
         callbacks.splice i, 1
         break
 
