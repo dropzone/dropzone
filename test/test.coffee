@@ -14,6 +14,120 @@ describe "Dropzone", ->
   xhr = null
   beforeEach -> xhr = sinon.useFakeXMLHttpRequest()
 
+  describe "Emitter", ->
+
+    emitter = null
+    beforeEach -> emitter = new Dropzone::Emitter()
+
+
+    it ".on() should return the object itself", ->
+      (emitter.on "test", ->).should.equal emitter
+
+    it ".on() should properly register listeners", ->
+      (emitter._callbacks == undefined).should.be.true
+      callback = ->
+      callback2 = ->
+      emitter.on "test", callback
+      emitter.on "test", callback2
+      emitter.on "test2", callback
+      emitter._callbacks.test.length.should.equal 2
+      emitter._callbacks.test[0].should.equal callback
+      emitter._callbacks.test[1].should.equal callback2
+      emitter._callbacks.test2.length.should.equal 1
+      emitter._callbacks.test2[0].should.equal callback
+
+    it ".emit() should return the object itself", ->
+      emitter.emit('test').should.equal emitter
+
+    it ".emit() should properly invoke all registered callbacks with arguments", ->
+      callCount1 = 0
+      callCount12 = 0
+      callCount2 = 0
+      callback1 = (var1, var2) ->
+        callCount1++
+        var1.should.equal 'callback1 var1'
+        var2.should.equal 'callback1 var2'
+      callback12 = (var1, var2) ->
+        callCount12++
+        var1.should.equal 'callback1 var1'
+        var2.should.equal 'callback1 var2'
+      callback2 = (var1, var2) ->
+        callCount2++
+        var1.should.equal 'callback2 var1'
+        var2.should.equal 'callback2 var2'
+
+      emitter.on "test1", callback1
+      emitter.on "test1", callback12
+      emitter.on "test2", callback2
+
+      callCount1.should.equal 0
+      callCount12.should.equal 0
+      callCount2.should.equal 0
+
+      emitter.emit "test1", "callback1 var1", "callback1 var2"
+
+      callCount1.should.equal 1
+      callCount12.should.equal 1
+      callCount2.should.equal 0
+
+      emitter.emit "test2", "callback2 var1", "callback2 var2"
+
+      callCount1.should.equal 1
+      callCount12.should.equal 1
+      callCount2.should.equal 1
+
+      emitter.emit "test1", "callback1 var1", "callback1 var2"
+
+      callCount1.should.equal 2
+      callCount12.should.equal 2
+      callCount2.should.equal 1
+
+    describe ".off()", ->
+
+      callback1 = ->
+      callback2 = ->
+      callback3 = ->
+      callback4 = ->
+
+      beforeEach ->
+        emitter._callbacks =
+          'test1': [ callback1, callback2 ]
+          'test2': [ callback3 ]
+          'test3': [ callback1, callback4 ]
+          'test4': [ ]
+
+      it "should work without any listeners", ->
+        emitter._callbacks = undefined
+        emt = emitter.off()
+        emitter._callbacks.should.eql {}
+        emt.should.equal emitter
+
+      it "should properly remove all event listeners", ->
+        emt = emitter.off()
+        emitter._callbacks.should.eql {}
+        emt.should.equal emitter
+
+      it "should properly remove all event listeners for specific event", ->
+        emitter.off "test1"
+        (emitter._callbacks["test1"] == undefined).should.be.true
+        emitter._callbacks["test2"].length.should.equal 1
+        emitter._callbacks["test3"].length.should.equal 2
+        emt = emitter.off "test2"
+        (emitter._callbacks["test2"] == undefined).should.be.true
+        emt.should.equal emitter
+
+      it "should properly remove specific event listener", ->
+        emitter.off "test1", callback1
+        emitter._callbacks["test1"].length.should.equal 1
+        emitter._callbacks["test1"][0].should.equal callback2
+        emitter._callbacks["test3"].length.should.equal 2
+        emt = emitter.off "test3", callback4
+        emitter._callbacks["test3"].length.should.equal 1
+        emitter._callbacks["test3"][0].should.equal callback1
+        emt.should.equal emitter
+
+
+
 
   describe "static functions", ->
 

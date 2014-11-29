@@ -25,12 +25,66 @@
 ###
 
 
-# Dependencies
-Em = Emitter ? require "emitter-component" # Can't be the same name because it will lead to a local variable
-
 noop = ->
 
-class Dropzone extends Em
+
+# The Emitter class provides the ability to call `.on()` on Dropzone to listen
+# to events.
+# It is strongly based on component's emitter class, and I removed the
+# functionality because of the dependency hell with different frameworks.
+class Emitter
+
+  # Add an event listener for given event
+  addEventListener: @::on
+  on: (event, fn) ->
+    @_callbacks = @_callbacks || {}
+    # Create namespace for this event
+    @_callbacks[event] = [] unless @_callbacks[event]
+    @_callbacks[event].push fn
+    return @
+
+
+  emit: (event, args...) ->
+    @_callbacks = @_callbacks || {}
+    callbacks = @_callbacks[event]
+
+    if callbacks
+      callback.apply @, args for callback in callbacks
+
+    return @
+
+  # Remove event listener for given event. If fn is not provided, all event
+  # listeners for that event will be removed. If neither is provided, all
+  # event listeners will be removed.
+  removeListener: @::off
+  removeAllListeners: @::off
+  removeEventListener: @::off
+  off: (event, fn) ->
+    if !@_callbacks || arguments.length == 0
+      @_callbacks = {}
+      return @
+
+    # specific event
+    callbacks = @_callbacks[event]
+    return @ unless callbacks
+
+    # remove all handlers
+    if arguments.length == 1
+      delete @_callbacks[event]
+      return @
+
+    # remove specific handler
+    for callback, i in callbacks
+      if callback == fn || callback.fn == fn
+        callbacks.splice i, 1
+        break
+
+    return @
+
+class Dropzone extends Emitter
+
+  # Exposing the emitter class, mainly for tests
+  Emitter: Emitter
 
   ###
   This is a list of all available events you can register on a dropzone object.
@@ -1351,8 +1405,6 @@ Dropzone.PROCESSING = Dropzone.UPLOADING # alias
 Dropzone.CANCELED = "canceled"
 Dropzone.ERROR = "error"
 Dropzone.SUCCESS = "success"
-
-
 
 
 
