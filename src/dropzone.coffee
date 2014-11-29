@@ -1056,6 +1056,11 @@ class Dropzone extends Emitter
 
     @processQueue() if @options.autoProcessQueue
 
+  resolveOption = (option, args...) ->
+    if typeof option == 'function'
+      return option.apply(@, args)
+    option
+
   # Wrapper for uploadFiles()
   uploadFile: (file) -> @uploadFiles [ file ]
 
@@ -1065,7 +1070,9 @@ class Dropzone extends Emitter
     # Put the xhr object in the file objects to be able to reference it later.
     file.xhr = xhr for file in files
 
-    xhr.open @options.method, @options.url, true
+    method = resolveOption @options.method, files
+    url = resolveOption @options.url, files
+    xhr.open method, url, true
 
     # Has to be after `.open()`. See https://github.com/enyo/dropzone/issues/179
     xhr.withCredentials = !!@options.withCredentials

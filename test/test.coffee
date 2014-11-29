@@ -1391,6 +1391,37 @@ describe "Dropzone", ->
         dropzone.uploadFiles.callCount.should.equal 1
         dropzone.uploadFiles.calledWith([ mockFile ]).should.be.ok
 
+      it "should use url options if strings", (done) ->
+
+        dropzone.addFile mockFile
+
+        setTimeout ->
+          expect(requests.length).to.equal 1
+          expect(requests[0].url).to.equal dropzone.options.url
+          expect(requests[0].method).to.equal dropzone.options.method
+          done()
+        , 10
+
+      it "should call url options if functions", (done) ->
+        method = "PUT"
+        url = "/custom/upload/url"
+
+        dropzone.options.method = sinon.stub().returns method
+        dropzone.options.url = sinon.stub().returns url
+
+        dropzone.addFile mockFile
+
+        setTimeout ->
+          dropzone.options.method.callCount.should.equal 1
+          dropzone.options.url.callCount.should.equal 1
+          sinon.assert.calledWith dropzone.options.method, [mockFile]
+          sinon.assert.calledWith dropzone.options.url, [mockFile]
+          expect(requests.length).to.equal 1
+          expect(requests[0].url).to.equal url
+          expect(requests[0].method).to.equal method
+          done()
+        , 10
+
       it "should ignore the onreadystate callback if readyState != 4", (done) ->
         dropzone.addFile mockFile
 
