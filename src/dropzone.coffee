@@ -466,6 +466,8 @@ class Dropzone extends Emitter
     maxfilesexceeded: noop
 
     maxfilesreached: noop
+    
+    queuecomplete: noop
 
 
 
