@@ -13,16 +13,19 @@ This means that a user can drag and drop a file onto it, and the file gets uploa
 
 * * *
 
-> If you want support, please use [stackoverflow](http://stackoverflow.com/) with the `dropzone.js` tag and not the
-> GitHub issues tracker. Only post an issue here if you think you discovered a bug or have a feature request.
+_If you want support, please use [stackoverflow](http://stackoverflow.com/) with the `dropzone.js` tag and not the
+GitHub issues tracker. Only post an issue here if you think you discovered a bug or have a feature request._
 
 * * *
 
 **Please read the [contributing guidelines](CONTRIBUTING.md) before you start working on Dropzone!**
 
+<br>
 <div align="center">
-  <a href="https://github.com/enyo/dropzone/releases/latest"><strong>Download</strong></a>
+  <a href="https://github.com/enyo/dropzone/releases/latest"><strong>&gt;&gt; Download &lt;&lt;</strong></a>
 </div>
+<br>
+<br>
 
 
 Starting with version 2.0.0 this library does no longer depend on jQuery (but
