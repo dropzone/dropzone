@@ -1,4 +1,3 @@
-
 ;(function(){
 
 /**
@@ -345,7 +344,7 @@ require.register("dropzone/lib/dropzone.js", function (exports, module) {
  */
 
 (function() {
-  var Dropzone, Em, camelize, contentLoaded, detectVerticalSquash, drawImageIOSFix, noop, without,
+  var Dropzone, Em, camelize, contentLoaded, detectVerticalSquash, noop, without,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     __slice = [].slice;
@@ -1305,8 +1304,9 @@ require.register("dropzone/lib/dropzone.js", function (exports, module) {
     Dropzone.prototype.createThumbnail = function(file, callback) {
       var fileReader;
       fileReader = new FileReader;
-      fileReader.onload = (function(_this) {
+      fileReader.onloadend = (function(_this) {
         return function() {
+
           var img;
           if (file.type === "image/svg+xml") {
             _this.emit("thumbnail", file, fileReader.result);
@@ -1317,26 +1317,75 @@ require.register("dropzone/lib/dropzone.js", function (exports, module) {
           }
           img = document.createElement("img");
           img.onload = function() {
-            var canvas, ctx, resizeInfo, thumbnail, _ref, _ref1, _ref2, _ref3;
-            file.width = img.width;
-            file.height = img.height;
-            resizeInfo = _this.options.resize.call(_this, file);
-            if (resizeInfo.trgWidth == null) {
-              resizeInfo.trgWidth = resizeInfo.optWidth;
-            }
-            if (resizeInfo.trgHeight == null) {
-              resizeInfo.trgHeight = resizeInfo.optHeight;
-            }
-            canvas = document.createElement("canvas");
-            ctx = canvas.getContext("2d");
-            canvas.width = resizeInfo.trgWidth;
-            canvas.height = resizeInfo.trgHeight;
-            drawImageIOSFix(ctx, img, (_ref = resizeInfo.srcX) != null ? _ref : 0, (_ref1 = resizeInfo.srcY) != null ? _ref1 : 0, resizeInfo.srcWidth, resizeInfo.srcHeight, (_ref2 = resizeInfo.trgX) != null ? _ref2 : 0, (_ref3 = resizeInfo.trgY) != null ? _ref3 : 0, resizeInfo.trgWidth, resizeInfo.trgHeight);
-            thumbnail = canvas.toDataURL("image/png");
-            _this.emit("thumbnail", file, thumbnail);
-            if (callback != null) {
-              return callback();
-            }
+
+            //fix ios rotate problem
+            $(img).exifLoadFromDataURL(function() {
+
+              var orientation = $(img).exif('Orientation')[0] || 1;
+              orientation = rotate(orientation,0);
+
+
+              // CW or CCW ? replace width and height
+              var size = (orientation >= 5 && orientation <= 8)
+                      ? newsize(img.height, img.width, 300, 200, false)
+                      : newsize(img.width, img.height, 300, 200, false);
+
+              var iw = img.width, ih = img.height;
+              var width = size.width, height = size.height;
+
+              //console.log(iw, ih, size.width, size.height, orientation);
+
+              var canvas = document.createElement("canvas");
+              var ctx = canvas.getContext("2d");
+              ctx.save();
+              transformCoordinate(canvas, width, height, orientation);
+
+              // over image size
+              if (detectSubsampling(img)) {
+                  iw /= 2;
+                  ih /= 2;
+              }
+              var d = 1024; // size of tiling canvas
+              var tmpCanvas = document.createElement('canvas');
+              tmpCanvas.width = tmpCanvas.height = d;
+              var tmpCtx = tmpCanvas.getContext('2d');
+              var vertSquashRatio = detectVerticalSquash(img, iw, ih);
+              var sy = 0;
+              while (sy < ih) {
+                  var sh = sy + d > ih ? ih - sy : d;
+                  var sx = 0;
+                  while (sx < iw) {
+                      var sw = sx + d > iw ? iw - sx : d;
+                      tmpCtx.clearRect(0, 0, d, d);
+                      tmpCtx.drawImage(img, -sx, -sy);
+                      var dx = Math.floor(sx * width / iw);
+                      var dw = Math.ceil(sw * width / iw);
+                      var dy = Math.floor(sy * height / ih / vertSquashRatio);
+                      var dh = Math.ceil(sh * height / ih / vertSquashRatio);
+                      ctx.drawImage(tmpCanvas, 0, 0, sw, sh, dx, dy, dw, dh);
+                      sx += d;
+                  }
+                  sy += d;
+              }
+              ctx.restore();
+              tmpCanvas = tmpCtx = null;
+
+              // if cropped or rotated width and height data replacing issue 
+              var newcanvas = document.createElement('canvas');
+              newcanvas.width = size.cropped === 'h' ? height : width;
+              newcanvas.height = size.cropped === 'w' ? width : height;
+              var x = size.cropped === 'h' ? (height - width) * .5 : 0;
+              var y = size.cropped === 'w' ? (width - height) * .5 : 0;
+              newctx = newcanvas.getContext('2d');
+              newctx.drawImage(canvas, x, y, width, height);
+              
+              thumbnail = canvas.toDataURL("image/png");
+              _this.emit("thumbnail", file, thumbnail);
+              if (callback != null) {
+                return callback();
+              }
+            });
+
           };
           return img.src = fileReader.result;
         };
@@ -1817,6 +1866,7 @@ require.register("dropzone/lib/dropzone.js", function (exports, module) {
     return false;
   };
 
+
   if (typeof jQuery !== "undefined" && jQuery !== null) {
     jQuery.fn.dropzone = function(options) {
       return this.each(function() {
@@ -1849,48 +1899,168 @@ require.register("dropzone/lib/dropzone.js", function (exports, module) {
 
 
   /*
-  
-  Bugfix for iOS 6 and 7
-  Source: http://stackoverflow.com/questions/11929099/html5-canvas-drawimage-ratio-bug-ios
-  based on the work of https://github.com/stomita/ios-imagefile-megapixel
+   * Bugfix for iOS
+   *
+   * based on:
+   * https://github.com/gokercebeci/canvasResize
+   * http://stackoverflow.com/questions/11929099/html5-canvas-drawimage-ratio-bug-ios
+   * https://github.com/stomita/ios-imagefile-megapixel
+   * 
+   * Tested on:
+   * Chromium (24.0.1312.56)
+   * Google Chrome (25.0.1364.68 beta)
+   * Opera (12.14)
+   * IOS 6.1.2
+   * 
+   * Demo:
+   * http://gokercebeci.com/dev/canvasresize
    */
 
-  detectVerticalSquash = function(img) {
-    var alpha, canvas, ctx, data, ey, ih, iw, py, ratio, sy;
-    iw = img.naturalWidth;
-    ih = img.naturalHeight;
-    canvas = document.createElement("canvas");
+
+  detectVerticalSquash = function(img, iw, ih) {
+    var canvas = document.createElement('canvas');
     canvas.width = 1;
     canvas.height = ih;
-    ctx = canvas.getContext("2d");
+    var ctx = canvas.getContext('2d');
     ctx.drawImage(img, 0, 0);
-    data = ctx.getImageData(0, 0, 1, ih).data;
-    sy = 0;
-    ey = ih;
-    py = ih;
+    var data = ctx.getImageData(0, 0, 1, ih).data;
+    // search image edge pixel position in case it is squashed vertically.
+    var sy = 0;
+    var ey = ih;
+    var py = ih;
     while (py > sy) {
-      alpha = data[(py - 1) * 4 + 3];
-      if (alpha === 0) {
-        ey = py;
+        var alpha = data[(py - 1) * 4 + 3];
+        if (alpha === 0) {
+            ey = py;
+        } else {
+            sy = py;
+        }
+        py = (ey + sy) >> 1;
+    }
+    var ratio = py / ih;
+    return ratio === 0 ? 1 : ratio;
+  };
+
+detectSubsampling = function(img) {
+  var iw = img.width, ih = img.height;
+  if (iw * ih > 1048576) { // subsampling may happen over megapixel image
+      var canvas = document.createElement('canvas');
+      canvas.width = canvas.height = 1;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, -iw + 1, 0);
+      // subsampled image becomes half smaller in rendering size.
+      // check alpha channel value to confirm image is covering edge pixel or not.
+      // if alpha value is 0 image is not covering, hence subsampled.
+      return ctx.getImageData(0, 0, 1, 1).data[3] === 0;
+  } else {
+      return false;
+  }
+};
+
+transformCoordinate = function(canvas, width, height, orientation) {
+  //console.log(width, height);
+  switch (orientation) {
+      case 5:
+      case 6:
+      case 7:
+      case 8:
+          canvas.width = height;
+          canvas.height = width;
+          break;
+      default:
+          canvas.width = width;
+          canvas.height = height;
+  }
+  var ctx = canvas.getContext('2d');
+  switch (orientation) {
+      case 1:
+          // nothing
+          break;
+      case 2:
+          // horizontal flip
+          ctx.translate(width, 0);
+          ctx.scale(-1, 1);
+          break;
+      case 3:
+          // 180 rotate left
+          ctx.translate(width, height);
+          ctx.rotate(Math.PI);
+          break;
+      case 4:
+          // vertical flip
+          ctx.translate(0, height);
+          ctx.scale(1, -1);
+          break;
+      case 5:
+          // vertical flip + 90 rotate right
+          ctx.rotate(0.5 * Math.PI);
+          ctx.scale(1, -1);
+          break;
+      case 6:
+          // 90 rotate right
+          ctx.rotate(0.5 * Math.PI);
+          ctx.translate(0, -height);
+          break;
+      case 7:
+          // horizontal flip + 90 rotate right
+          ctx.rotate(0.5 * Math.PI);
+          ctx.translate(width, -height);
+          ctx.scale(-1, 1);
+          break;
+      case 8:
+          // 90 rotate left
+          ctx.rotate(-0.5 * Math.PI);
+          ctx.translate(-width, 0);
+          break;
+      default:
+          break;
+  }
+};
+
+newsize= function(w, h, W, H, C) {
+  var c = C ? 'h' : '';
+  if ((W && w > W) || (H && h > H)) {
+      var r = w / h;
+      if ((r >= 1 || H === 0) && W && !C) {
+          w = W;
+          h = (W / r) >> 0;
+      } else if (C && r <= (W / H)) {
+          w = W;
+          h = (W / r) >> 0;
+          c = 'w';
       } else {
-        sy = py;
+          w = (H * r) >> 0;
+          h = H;
       }
-      py = (ey + sy) >> 1;
-    }
-    ratio = py / ih;
-    if (ratio === 0) {
-      return 1;
-    } else {
-      return ratio;
-    }
+  }
+  return {
+      'width': w,
+      'height': h,
+      'cropped': c
   };
+};
 
-  drawImageIOSFix = function(ctx, img, sx, sy, sw, sh, dx, dy, dw, dh) {
-    var vertSquashRatio;
-    vertSquashRatio = detectVerticalSquash(img);
-    return ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh / vertSquashRatio);
+rotate = function(orientation, angle) {
+  var o = {
+      // nothing
+      1: {90: 6, 180: 3, 270: 8},
+      // horizontal flip
+      2: {90: 7, 180: 4, 270: 5},
+      // 180 rotate left
+      3: {90: 8, 180: 1, 270: 6},
+      // vertical flip
+      4: {90: 5, 180: 2, 270: 7},
+      // vertical flip + 90 rotate right
+      5: {90: 2, 180: 7, 270: 4},
+      // 90 rotate right
+      6: {90: 3, 180: 8, 270: 1},
+      // horizontal flip + 90 rotate right
+      7: {90: 4, 180: 5, 270: 2},
+      // 90 rotate left
+      8: {90: 1, 180: 6, 270: 3}
   };
-
+  return o[orientation][angle] ? o[orientation][angle] : orientation;
+};
 
   /*
    * contentloaded.js
@@ -1905,6 +2075,7 @@ require.register("dropzone/lib/dropzone.js", function (exports, module) {
    * http://javascript.nwbox.com/ContentLoaded/
    * http://javascript.nwbox.com/ContentLoaded/MIT-LICENSE
    */
+
 
   contentLoaded = function(win, fn) {
     var add, doc, done, init, poll, pre, rem, root, top;
