@@ -16,6 +16,121 @@
     beforeEach(function() {
       return xhr = sinon.useFakeXMLHttpRequest();
     });
+    describe("Emitter", function() {
+      var emitter;
+      emitter = null;
+      beforeEach(function() {
+        return emitter = new Dropzone.prototype.Emitter();
+      });
+      it(".on() should return the object itself", function() {
+        return (emitter.on("test", function() {})).should.equal(emitter);
+      });
+      it(".on() should properly register listeners", function() {
+        var callback, callback2;
+        (emitter._callbacks === void 0).should.be["true"];
+        callback = function() {};
+        callback2 = function() {};
+        emitter.on("test", callback);
+        emitter.on("test", callback2);
+        emitter.on("test2", callback);
+        emitter._callbacks.test.length.should.equal(2);
+        emitter._callbacks.test[0].should.equal(callback);
+        emitter._callbacks.test[1].should.equal(callback2);
+        emitter._callbacks.test2.length.should.equal(1);
+        return emitter._callbacks.test2[0].should.equal(callback);
+      });
+      it(".emit() should return the object itself", function() {
+        return emitter.emit('test').should.equal(emitter);
+      });
+      it(".emit() should properly invoke all registered callbacks with arguments", function() {
+        var callCount1, callCount12, callCount2, callback1, callback12, callback2;
+        callCount1 = 0;
+        callCount12 = 0;
+        callCount2 = 0;
+        callback1 = function(var1, var2) {
+          callCount1++;
+          var1.should.equal('callback1 var1');
+          return var2.should.equal('callback1 var2');
+        };
+        callback12 = function(var1, var2) {
+          callCount12++;
+          var1.should.equal('callback1 var1');
+          return var2.should.equal('callback1 var2');
+        };
+        callback2 = function(var1, var2) {
+          callCount2++;
+          var1.should.equal('callback2 var1');
+          return var2.should.equal('callback2 var2');
+        };
+        emitter.on("test1", callback1);
+        emitter.on("test1", callback12);
+        emitter.on("test2", callback2);
+        callCount1.should.equal(0);
+        callCount12.should.equal(0);
+        callCount2.should.equal(0);
+        emitter.emit("test1", "callback1 var1", "callback1 var2");
+        callCount1.should.equal(1);
+        callCount12.should.equal(1);
+        callCount2.should.equal(0);
+        emitter.emit("test2", "callback2 var1", "callback2 var2");
+        callCount1.should.equal(1);
+        callCount12.should.equal(1);
+        callCount2.should.equal(1);
+        emitter.emit("test1", "callback1 var1", "callback1 var2");
+        callCount1.should.equal(2);
+        callCount12.should.equal(2);
+        return callCount2.should.equal(1);
+      });
+      return describe(".off()", function() {
+        var callback1, callback2, callback3, callback4;
+        callback1 = function() {};
+        callback2 = function() {};
+        callback3 = function() {};
+        callback4 = function() {};
+        beforeEach(function() {
+          return emitter._callbacks = {
+            'test1': [callback1, callback2],
+            'test2': [callback3],
+            'test3': [callback1, callback4],
+            'test4': []
+          };
+        });
+        it("should work without any listeners", function() {
+          var emt;
+          emitter._callbacks = void 0;
+          emt = emitter.off();
+          emitter._callbacks.should.eql({});
+          return emt.should.equal(emitter);
+        });
+        it("should properly remove all event listeners", function() {
+          var emt;
+          emt = emitter.off();
+          emitter._callbacks.should.eql({});
+          return emt.should.equal(emitter);
+        });
+        it("should properly remove all event listeners for specific event", function() {
+          var emt;
+          emitter.off("test1");
+          (emitter._callbacks["test1"] === void 0).should.be["true"];
+          emitter._callbacks["test2"].length.should.equal(1);
+          emitter._callbacks["test3"].length.should.equal(2);
+          emt = emitter.off("test2");
+          (emitter._callbacks["test2"] === void 0).should.be["true"];
+          return emt.should.equal(emitter);
+        });
+        return it("should properly remove specific event listener", function() {
+          var emt;
+          emitter.off("test1", callback1);
+          emitter._callbacks["test1"].length.should.equal(1);
+          emitter._callbacks["test1"][0].should.equal(callback2);
+          emitter._callbacks["test3"].length.should.equal(2);
+          emt = emitter.off("test3", callback4);
+          emitter._callbacks["test3"].length.should.equal(1);
+          emitter._callbacks["test3"][0].should.equal(callback1);
+          return emt.should.equal(emitter);
+        });
+      });
+    });
     describe("static functions", function() {
       describe("Dropzone.createElement()", function() {
         var element;
