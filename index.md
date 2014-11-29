@@ -268,8 +268,8 @@ The valid options are:
 
 | Option                  | Description
 |-------------------------|-------------
-| `url`                   | Has to be specified on elements other than form (or when the form doesn't have an `action` attribute)
-| `method`                | Defaults to `"post"` and can be changed to `"put"` if necessary.
+| `url`                   | Has to be specified on elements other than form (or when the form doesn't have an `action` attribute). You can also provide a function that will be called with `files` and must return the url (since `v3.12.0`)
+| `method`                | Defaults to `"post"` and can be changed to `"put"` if necessary. You can also provide a function that will be called with `files` and must return the method (since `v3.12.0`)
 | `parallelUploads`       | How many file uploads to process in parallel (See the *Enqueuing file uploads* section for more info)
 | `maxFilesize`           | in MB
 | `paramName`             | The name of the file param that gets transferred. Defaults to `file`. **NOTE**: If you have the option `uploadMultiple` set to `true`, then Dropzone will append `[]` to the name.
