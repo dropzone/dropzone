@@ -1642,6 +1642,33 @@
           dropzone.uploadFiles.callCount.should.equal(1);
           return dropzone.uploadFiles.calledWith([mockFile]).should.be.ok;
         });
+        it("should use url options if strings", function(done) {
+          dropzone.addFile(mockFile);
+          return setTimeout(function() {
+            expect(requests.length).to.equal(1);
+            expect(requests[0].url).to.equal(dropzone.options.url);
+            expect(requests[0].method).to.equal(dropzone.options.method);
+            return done();
+          }, 10);
+        });
+        it("should call url options if functions", function(done) {
+          var method, url;
+          method = "PUT";
+          url = "/custom/upload/url";
+          dropzone.options.method = sinon.stub().returns(method);
+          dropzone.options.url = sinon.stub().returns(url);
+          dropzone.addFile(mockFile);
+          return setTimeout(function() {
+            dropzone.options.method.callCount.should.equal(1);
+            dropzone.options.url.callCount.should.equal(1);
+            sinon.assert.calledWith(dropzone.options.method, [mockFile]);
+            sinon.assert.calledWith(dropzone.options.url, [mockFile]);
+            expect(requests.length).to.equal(1);
+            expect(requests[0].url).to.equal(url);
+            expect(requests[0].method).to.equal(method);
+            return done();
+          }, 10);
+        });
         it("should ignore the onreadystate callback if readyState != 4", function(done) {
           dropzone.addFile(mockFile);
           return setTimeout(function() {
