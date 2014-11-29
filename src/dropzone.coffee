@@ -121,6 +121,7 @@ class Dropzone extends Emitter
     "reset"
     "maxfilesexceeded"
     "maxfilesreached"
+    "queuecomplete"
   ]
 
 
