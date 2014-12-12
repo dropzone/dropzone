@@ -17,7 +17,7 @@ $text-color: #646C7F;
 html, body {
   font-family: Roboto, "Open Sans", sans-serif;
   font-size: 20px;
-  font-weight: 200;
+  font-weight: 300;
   line-height: $lh;
   background: #F3F4F5;
   color: $text-color;
@@ -58,7 +58,7 @@ em {
 
 
 code {
-  font-family: "Inconsolata", monospace;
+  font-family: Inconsolata, monospace;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -79,7 +79,17 @@ hr {
   }
 }
 
-
+ul {
+  li {
+    list-style-type: disc;
+    padding-top: $lh/2;
+    padding-bottom: $lh/2;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    &:last-of-type {
+      border: none;
+    }
+  }
+}
 
 
 
