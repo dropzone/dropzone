@@ -168,6 +168,12 @@ $("div#myId").dropzone({ url: "/file/post" });
 
 
 
+</section>
+
+
+<section markdown="1">
+
+
 Server side implementation
 --------------------------
 
@@ -207,8 +213,8 @@ you need more information.
 <section markdown="1">
 
 
-Configure
-=========
+Configuration
+=============
 
 There are two ways to configure dropzones.
 
@@ -252,330 +258,7 @@ Dropzone.autoDiscover = false;
 {% endhighlight %}
 
 
-
-<table><thead>
-
-  <tr><th class="title" colspan="2"><h1>Configuration options</h1></th></tr>
-  <tr><th>Option</th><th>Description</th></tr>
-
-</thead>
-<tbody>
-  <tr>
-    <td><code>url</code></td>
-    <td>
-
-      Has to be specified on elements other than form (or when the form
-      doesn't have an <code>action</code> attribute). You can also
-      provide a function that will be called with <code>files</code> and
-      must return the url (since <code>v3.12.0</code>)
-
-    </td>
-  </tr><tr>
-    <td><code>method</code></td>
-    <td>
-
-      Defaults to <code>"post"</code> and can be changed to
-      <code>"put"</code> if necessary. You can also provide a function
-      that will be called with <code>files</code> and must return the
-      method (since <code>v3.12.0</code>)
-
-     </td>
-  </tr><tr>
-    <td><code>parallelUploads</code></td>
-    <td>
-
-      How many file uploads to process in parallel (See the
-      <em>Enqueuing file uploads</em> section for more info)
-
-    </td>
-  </tr><tr>
-    <td><code>maxFilesize</code></td>
-    <td>in MB</td>
-  </tr><tr>
-    <td><code>paramName</code></td>
-    <td>
-
-      The name of the file param that gets transferred. Defaults to
-      <code>file</code>. <strong>NOTE</strong>: If you have the option
-      <code>uploadMultiple</code> set to <code>true</code>, then
-      Dropzone will append <code>[]</code> to the name.
-
-    </td>
-  </tr><tr>
-    <td><code>uploadMultiple</code></td>
-    <td>
-
-      Whether Dropzone should send multiple files in one request. If
-      this it set to true, then the fallback file input element will
-      have the <code>multiple</code> attribute as well. This option will
-      also trigger additional events (like
-      <code>processingmultiple</code>). See the events section for more
-      information.
-
-    </td>
-  </tr><tr>
-    <td><code>headers</code></td>
-    <td>
-
-      An object to send additional headers to the server. Eg:
-      <code>headers: { "My-Awesome-Header": "header value" }</code>
-
-    </td>
-  </tr><tr>
-    <td><code>addRemoveLinks</code></td>
-    <td>
-  
-      This will add a link to every file preview to remove or cancel (if
-      already uploading) the file. The <code>dictCancelUpload</code>,
-      <code>dictCancelUploadConfirmation</code> and
-      <code>dictRemoveFile</code> options are used for the wording.
-  
-    </td>
-  </tr><tr>
-    <td><code>previewsContainer</code></td>
-    <td>
-
-      defines where to display the file previews – if <code>null</code> the
-      Dropzone element is used. Can be a plain HTMLElement or a CSS
-      selector. The element should have the <code>dropzone-previews</code> class so
-      the previews are displayed properly.
-    
-    </td>
-  </tr><tr>
-    <td><code>clickable</code></td>
-    <td>
-
-      If <code>true</code>, the dropzone element itself will be
-      clickable, if <code>false</code> nothing will be clickable.
-      Otherwise you can pass an HTML element, a CSS selector (for
-      multiple elements) or an array of those.
-     
-    </td>
-  </tr><tr>
-    <td><code>createImageThumbnails</code></td>
-    <td></td>
-  </tr><tr>
-    <td><code>maxThumbnailFilesize</code></td>
-    <td>
-    
-      in MB. When the filename exceeds this limit, the thumbnail will
-      not be generated
-    
-    </td>
-  </tr><tr>
-    <td><code>thumbnailWidth</code></td>
-    <td>
-    
-      if <code>null</code>, the ratio of the image will be used to
-      calculate it.
-    
-    </td>
-  </tr><tr>
-    <td><code>thumbnailHeight</code></td>
-    <td>
-
-      the same as <code>thumbnailWidth</code>. If both are null, images
-      will not be resized.
-    
-    </td>
-  </tr><tr>
-    <td><code>maxFiles</code></td>
-    <td>
-
-      if not <code>null</code> defines how many files this Dropzone
-      handles. If it exceeds, the event <code>maxfilesexceeded</code>
-      will be called. The dropzone element gets the class <code>dz-max-
-      files-reached</code> accordingly so you can provided visual
-      feedback.
-    
-    </td>
-  </tr><tr>
-    <td><code>resize</code></td>
-    <td>
-
-      is the function that gets called to create the resize information.
-      It gets the <code>file</code> as first parameter and must return
-      an object with <code>srcX</code>, <code>srcY</code>,
-      <code>srcWidth</code> and <code>srcHeight</code> and the same for
-      <code>trg*</code>. Those values are going to be used by
-      <code>ctx.drawImage()</code>.
-    
-    </td>
-  </tr><tr>
-    <td><code>init</code></td>
-    <td>
-
-      is a function that gets called when Dropzone is initialized. You
-      can setup event listeners inside this function.
-    
-    </td>
-  </tr><tr>
-    <td><strike><code>acceptedMimeTypes</code></strike></td>
-    <td>
-      Deprecated in favor of <code>acceptedFiles</code>
-    </td>
-  </tr><tr>
-    <td><code>acceptedFiles</code></td>
-    <td>
-    
-      The default implementation of <code>accept</code> checks the
-      file's mime type or extension against this list. This is a comma
-      separated list of mime types or file extensions. Eg.:
-      <code>image/*,application/pdf,.psd</code>. If the Dropzone is
-      <code>clickable</code> this option will be used as
-      [<code>accept</code>](https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-accept)
-      parameter on the hidden
-      file input as well.
-    
-    </td>
-  </tr><tr>
-    <td><code>accept</code></td>
-    <td>
-    
-      is a function that gets a
-      [file](https://developer.mozilla.org/en-US/docs/DOM/File)
-      and a <code>done</code> function as parameter.
-      If the done function is invoked without a parameter, the file will
-      be processed. If you pass an error message it will be displayed
-      and the file will not be uploaded. This function will not be
-      called if the file is too big or doesn't match the mime types.
-    
-    </td>
-  </tr><tr>
-    <td>
-      <strike><code>enqueueForUpload</code></strike> 
-    </td>
-    <td>
-      Deprecated in favor of <code>autoProcessQueue</code>.
-    </td>
-  </tr><tr>
-    <td><code>autoProcessQueue</code></td>
-    <td>
-    
-      When set to <code>false</code> you have to call
-      <code>myDropzone.processQueue()</code> yourself in order to upload
-      the dropped files. See below for more information on handling
-      queues.
-    
-    </td>
-  </tr><tr>
-    <td><code>previewTemplate</code></td>
-    <td>
-      
-      is a string that contains the template used for each dropped
-      image. Change it to fulfill your needs but make sure to properly
-      provide all elements.
-    
-    </td>
-  </tr><tr>
-    <td><code>forceFallback</code></td>
-    <td>
-    
-      defaults to <code>false</code>. If <code>true</code> the fallback
-      will be forced. This is very useful to test your server
-      implementations first and make sure that everything works as
-      expected without dropzone if you experience problems, and to test
-      how your fallbacks will look.
-    
-    </td>
-  </tr><tr>
-    <td><code>fallback</code></td>
-    <td>
-    
-      is a function that gets called when the browser is not supported.
-      The default implementation shows the fallback input field and adds
-      a text.
-    
-    </td>
-
-
-  </tr><tr>
-    <td class="separator" colspan="2">to translate dropzone, you can also provide these options:</td>
-  </tr><tr>
-
-    <td><code>dictDefaultMessage</code></td>
-    <td>
-
-      The message that gets displayed before any files are dropped. This
-      is normally replaced by an image but defaults to "Drop files here
-      to upload"
-
-    </td>
-  </tr><tr>
-    <td><code>dictFallbackMessage</code></td>
-    <td>
-
-      If the browser is not supported, the default message will be
-      replaced with this text. Defaults to "Your browser does not
-      support drag'n'drop file uploads."
-
-    </td>
-  </tr><tr>
-    <td><code>dictFallbackText</code></td>
-    <td>
-
-      This will be added before the file input files. If you provide a
-      fallback element yourself, or if this option is <code>null</code> this will
-      be ignored. Defaults to "Please use the fallback form below to
-      upload your files like in the olden days."
-
-    </td>
-  </tr><tr>
-    <td><code>dictInvalidFileType</code></td>
-    <td>
-
-      Shown as error message if the file doesn't match the file type.
-
-    </td>
-  </tr><tr>
-    <td><code>dictFileTooBig</code></td>
-    <td>
-
-      Shown when the file is too big. <code>{% raw %}{{filesize}}{% endraw %}</code> and
-      <code>{% raw %}{{maxFilesize}}{% endraw %}</code>will be replaced.
-
-    </td>
-  </tr><tr>
-    <td><code>dictResponseError</code></td>
-    <td>
-
-      Shown as error message if the server response was invalid.
-      <code>{% raw %}{{statusCode}}{% endraw %}</code> will be replaced with the servers status code.
-
-    </td>
-  </tr><tr>
-    <td><code>dictCancelUpload</code></td>
-    <td>
-
-      If <code>addRemoveLinks</code> is true, the text to be used for the cancel upload link.
-
-    </td>
-  </tr><tr>
-    <td><code>dictCancelUploadConfirmation</code></td>
-    <td>
-
-      f <code>addRemoveLinks</code> is true, the text to be used for confirmation when cancelling upload.
-
-    </td>
-  </tr><tr>
-    <td><code>dictRemoveFile</code></td>
-    <td>
-
-      If <code>addRemoveLinks</code> is true, the text to be used to remove a file.
-
-    </td>
-  </tr><tr>
-    <td><code>dictMaxFilesExceeded</code></td>
-    <td>
-
-      If <code>maxFiles</code> is set, this will be the error message when it's exceeded.
-
-    </td>
-  </tr>
-</tbody>
-</table>
-
-
+{% include configuration-options.html %}
 
 
 > You can also overwrite all default event actions in the options. So if you provide the option `drop` you can overwrite the default `drop` event handler.
@@ -598,6 +281,12 @@ If you set `autoProcessQueue` to `false`, then `.processQueue()` is never called
 implicitly. This means that you have to call it yourself when you want to
 upload all files currently queued.
 
+
+
+</section>
+
+
+<section markdown="1">
 
 ## Listen to Events
 
@@ -639,232 +328,7 @@ $(function() {
 {% endhighlight %}
 
 
-
-<table><thead>
-
-  <tr><th class="title" colspan="2">
-    <h1>Event list</h1>
-    <p>
-      Do <strong>not</strong> overwrite those as configuration options,
-      unless you know what you're doing.
-    </p>
-  </th></tr>
-  <tr><th>Parameter</th><th>Description</th></tr>
-
-</thead>
-<tbody>
-  <tr>
-    <td class="separator" colspan="2">
-
-      All of these receive the
-      <a href="https://developer.mozilla.org/en-US/docs/DOM/event">event</a>
-      as first parameter:
-
-    </td>
-  </tr><tr>
-    <td><code>dictDefaultMessage</code></td>
-    <td>
-
-      The message that gets displayed before any files are dropped. This
-      is normally replaced by an image but defaults to "Drop files here
-      to upload"
-
-    </td>
-  </tr><tr>
-    <td><code>drop</code></td>
-    <td>The user dropped something onto the dropzone</td>
-  </tr><tr>
-    <td><code>dragstart</code></td>
-    <td>The user started to drag anywhere</td>
-  </tr><tr>
-    <td><code>dragend</code></td>
-    <td>Dragging has ended</td>
-  </tr><tr>
-    <td><code>dragenter</code></td>
-    <td>The user dragged a file onto the Dropzone</td>
-  </tr><tr>
-    <td><code>dragover</code></td>
-    <td>The user is dragging a file over the Dropzone</td>
-  </tr><tr>
-    <td><code>dragleave</code></td>
-    <td>The user dragged a file out of the Dropzone</td>
-  </tr><tr>
-    <td class="separator" colspan="2">
-
-      All of these receive the
-      <a href="https://developer.mozilla.org/en-US/docs/DOM/File">file</a>
-      as first parameter:
-
-    </td>
-  </tr><tr>
-    <td><code>addedfile</code></td>
-    <td>
-
-      When a file is added to the list
-
-    </td>
-  </tr><tr>
-    <td><code>removedfile</code></td>
-    <td>
-
-      Called whenever a file is removed from the list. You can listen to
-      this and delete the file from your server if you want to.
-
-    </td>
-  </tr><tr>
-    <td><code>thumbnail</code></td>
-    <td>
-
-      When the thumbnail has been generated. Receives the
-      <a href="http://en.wikipedia.org/wiki/Data_URI_scheme">dataUrl</a> as
-      second parameter.
-
-    </td>
-  </tr><tr>
-    <td><code>error</code></td>
-    <td>
-
-      An error occured. Receives the <code>errorMessage</code> as
-      second parameter and if the error was due to the XMLHttpRequest
-      the xhr object as third.
-
-    </td>
-  </tr><tr>
-    <td><code>processing</code></td>
-    <td>
-
-      When a file gets processed (since there is a queue not all files
-      are processed immediately). This event was called <code>processingfile</code>
-      previously.
-
-    </td>
-  </tr><tr>
-    <td><code>uploadprogress</code></td>
-    <td>
-
-      Gets called periodically whenever the file upload progress
-      changes.<br />
-
-      Gets the <code>progress</code> parameter as second parameter which
-      is a percentage (0-100) and the <code>bytesSent</code> parameter
-      as third which is the number of the bytes that have been sent to
-      the server.<br />
-
-      When an upload finishes dropzone <em>ensures</em> that
-      uploadprogress will be called with a percentage of 100 <em>at
-      least</em> once.<br />
-
-      <strong class="warning">Warning:</strong> This function can potentially be called
-      with the same progress multiple times.
-
-    </td>
-  </tr><tr>
-    <td><code>sending</code></td>
-    <td>
-
-      Called just before each file is sent. Gets the xhr object and the
-      <a href="https://developer.mozilla.org/en-US/docs/DOM/XMLHttpRequest/FormData">formData</a>
-      objects as second and third parameters, so you can modify them
-      (for example to add a CSRF token) or add additional data.
-
-    </td>
-  </tr><tr>
-    <td><code>success</code></td>
-    <td>
-
-      The file has been uploaded successfully. Gets the server response
-      as second argument. (This event was called <code>finished</code>
-      previously)
-
-    </td>
-  </tr><tr>
-    <td><code>complete</code></td>
-    <td>
-
-      Called when the upload was either successful or erroneous.
-
-    </td>
-  </tr><tr>
-    <td><code>canceled</code></td>
-    <td>
-
-      Called when a file upload gets canceled.
-
-    </td>
-  </tr><tr>
-    <td><code>maxfilesreached</code></td>
-    <td>
-
-      Called when the number of files accepted reached the
-      <code>maxFiles</code> limit.
-
-    </td>
-  </tr><tr>
-    <td><code>maxfilesexceeded</code></td>
-    <td>
-
-      Called for each file that has been rejected because the number of
-      files exceeds the <code>maxFiles</code> limit.
-
-    </td>
-  </tr><tr>
-    <td class="separator" colspan="2">
-
-      All of these receive a list of files as first parameter and are
-      only called if the <code>uploadMultiple</code> option is true:
-
-    </td>
-  </tr><tr>
-    <td><code>processingmultiple</code></td>
-    <td>See <code>processing</code> for description.</td>
-  </tr><tr>
-    <td><code>sendingmultiple</code></td>
-    <td>See <code>sending</code> for description.</td>
-  </tr><tr>
-    <td><code>successmultiple</code></td>
-    <td>See <code>success</code> for description.</td>
-  </tr><tr>
-    <td><code>completemultiple</code></td>
-    <td>See <code>complete</code> for description.</td>
-  </tr><tr>
-    <td><code>canceledmultiple</code></td>
-    <td>See <code>canceled</code> for description.</td>
-  </tr><tr>
-    <td class="separator" colspan="2">
-
-      Special events:
-
-    </td>
-  </tr><tr>
-    <td><code>totaluploadprogress</code></td>
-    <td>
-
-      Called with the total <code>uploadProgress</code> (0-100), the
-      <code>totalBytes</code> and the <code>totalBytesSent</code>. This
-      event can be used to show the overall upload progress of all
-      files.
-
-    </td>
-  </tr><tr>
-    <td><code>reset</code></td>
-    <td>
-
-      Called when all files in the list are removed and the dropzone is
-      reset to initial state.
-
-    </td>
-  </tr><tr>
-    <td><code>queuecomplete</code></td>
-    <td>
-
-      Called when all files in the queue finished uploading.
-
-    </td>
-  </tr>
-</tbody>
-</table>
-
-
+{% include event-list.html %}
 
 ## Layout
 
@@ -974,8 +438,11 @@ Dropzone.confirm = function(question, accepted, rejected) {
 {% endhighlight %}
 
 
+</section>
 
-## Tips
+<section markdown="1">
+
+# Tips
 
 If your dropzone is rather square than a wide horizontal bar, you can add the class
 `square` to your dropzone and it will create the default message in three lines

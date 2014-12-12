@@ -6,9 +6,15 @@
 
 
 
+$base-font-size: 20px;
 $lh: 1.5rem;
 $main-color: #0087F7;
 $text-color: #646C7F;
+
+
+$main-width: 720px;
+$nav-width: 220px;
+
 
 *, *:before, *:after {
   box-sizing: border-box;
@@ -16,7 +22,7 @@ $text-color: #646C7F;
 
 html, body {
   font-family: Roboto, "Open Sans", sans-serif;
-  font-size: 20px;
+  font-size: $base-font-size;
   font-weight: 300;
   line-height: $lh;
   background: #F3F4F5;
@@ -127,19 +133,73 @@ body > header {
 }
 
 
+body > nav {
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: $nav-width;
+  background: #028AF4;
+  padding: $lh 0;
+
+  overflow: scroll;
+
+  display: none;
+
+  a {
+    display: block;
+    line-height: $lh;
+    color: rgba(255, 255, 255, 0.9);
+    border: none;
+    padding: $lh / 2 $lh;
+    font-size: 0.8rem;
+    -webkit-font-smoothing: subpixel-antialiased;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border: none;
+    }
+
+    &.level-0 {
+      font-weight: 400;
+    }
+    &.level-1 {
+      padding-left: $lh + 0.5rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    &.level-2 {
+      padding-left: $lh + 1rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+  }
+
+}
+
+@media (min-width: $nav-width + $main-width) {
+  main {
+    padding-left: $nav-width;
+  }
+  body > nav {
+    display: block;
+  }
+}
+
+
 
 main {
+
 
   section {
 
     padding: $lh $lh 2*$lh $lh;
 
     > * {
-      max-width: 35rem;
+      max-width: $main-width;
       margin-left: auto;
       margin-right: auto;
       &.highlight {
-        max-width: 35rem + 6*$lh;
+        max-width: $main-width + 180px;
       }
     }
     > table {
