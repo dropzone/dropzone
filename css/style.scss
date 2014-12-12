@@ -1,0 +1,177 @@
+---
+---
+
+@import "reset";
+@import "pygments";
+
+
+
+$lh: 1.5rem;
+$main-color: #0087F7;
+$text-color: #646C7F;
+
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: Roboto, "Open Sans", sans-serif;
+  font-size: 20px;
+  font-weight: 200;
+  line-height: $lh;
+  background: #F3F4F5;
+  color: $text-color;
+}
+
+
+h1, h2, table th {
+  font-size: 1.8rem;
+  color: $main-color;
+  -webkit-font-smoothing: antialiased;
+  line-height: 2rem;
+  margin-top: 2 * $lh;
+  margin-bottom: $lh;
+}
+table th {
+  font-size: 1.4rem;
+}
+
+
+a {
+  color: $main-color;
+  text-decoration: none;
+  &:hover {
+    border-bottom: 2px solid $main-color;
+  }
+}
+
+p {
+  margin: $lh 0;
+}
+
+strong {
+  font-weight: 400;
+}
+em {
+  font-style: italic;
+}
+
+
+code {
+  font-family: "Inconsolata", monospace;
+  -webkit-font-smoothing: antialiased;
+}
+
+
+hr {
+  border: none;
+  background: none;
+  position: relative;
+  height: 2*$lh;
+  &:after {
+    content: "";
+    position: absolute;
+    top: $lh;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.1);
+  }
+}
+
+
+
+
+
+.highlight {
+  padding: $lh;
+  background: rgba(255, 255, 255, 0.2);
+  // box-shadow: inset 0 0 0 1px $main-color;
+  overflow: scroll;
+  border-top: 1px solid $main-color;
+  border-bottom: 1px solid $main-color;
+}
+
+
+
+body > header {
+
+  padding: 4*$lh;
+
+  > * {
+    max-width: 700px;
+  }
+
+  h1 {
+    span { display: none; }
+    margin-bottom: 2*$lh;
+  }
+
+}
+
+
+
+main {
+
+  section {
+
+    padding: $lh $lh 2*$lh $lh;
+
+    > * {
+      max-width: 35rem;
+      margin-left: auto;
+      margin-right: auto;
+      &.highlight {
+        max-width: 35rem + 6*$lh;
+      }
+    }
+    > table {
+      max-width: 80rem;
+    }
+
+    &:nth-child(odd) {
+      background: #E8E9EC;
+    }
+    &:nth-child(even) {
+      background: #F3F4F5;
+    }
+
+
+    &.news {
+      background: #646C7F;
+      color: white;
+      h1, h2 {
+        color: white;
+        -webkit-font-smoothing: subpixel-antialiased;
+
+      }
+      a {
+        color: #C0E3FE;
+      }
+    }
+
+  }
+
+
+  table {
+    border: 2px solid $main-color;
+    border-width-bottom: 1px;
+    th:first-of-type,
+    td:first-of-type {
+      text-align: right;
+    }
+    th, td {
+      text-align: left;
+      border-bottom: 1px solid $main-color;
+      padding: $lh/2 $lh;
+    }
+    td:first-of-type, th:first-of-type {
+      border-right: 1px solid $main-color;
+    }
+    td:first-of-type {
+      font-weight: bold;
+      color: $main-color;
+    }
+  }
+
+}
