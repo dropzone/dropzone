@@ -24,7 +24,7 @@ html, body {
 }
 
 
-h1, h2, table th {
+h1, h2, h3, table th {
   font-size: 1.8rem;
   color: $main-color;
   -webkit-font-smoothing: antialiased;
@@ -34,6 +34,7 @@ h1, h2, table th {
 }
 table th {
   font-size: 1.4rem;
+  color: $text-color;
 }
 
 
@@ -93,15 +94,21 @@ ul {
 
 
 
+// Code highlighting
 .highlight {
   padding: $lh;
-  background: rgba(255, 255, 255, 0.2);
-  // box-shadow: inset 0 0 0 1px $main-color;
   overflow: scroll;
-  border-top: 1px solid $main-color;
-  border-bottom: 1px solid $main-color;
+  background: rgba(100, 108, 128, 0.03);
 }
 
+blockquote {
+  color: $main-color;
+  font-size: 1.2rem;
+  line-height: 2rem;
+  -webkit-font-smoothing: antialiased;
+  margin-top: 2*$lh;
+  margin-bottom: 2*$lh;
+}
 
 
 body > header {
@@ -141,9 +148,16 @@ main {
 
     &:nth-child(odd) {
       background: #E8E9EC;
+
+      .highlight {
+        // background: #e3e3e7;
+      }
     }
     &:nth-child(even) {
       background: #F3F4F5;
+      .highlight {
+        // background: #eeeef1;
+      }
     }
 
 
@@ -164,6 +178,8 @@ main {
 
 
   table {
+    margin-top: 3*$lh;
+    margin-bottom: 3*$lh;
     $border-color: #38A0FE;
     border: 1px solid $border-color;
     background: white;
@@ -182,6 +198,22 @@ main {
     td:first-of-type {
       font-weight: bold;
       color: $main-color;
+    }
+    th.title {
+      text-align: center;
+      padding-top: 2*$lh;
+      padding-bottom: 2*$lh;
+      h1 {
+        margin: 0;
+      }
+      p {
+        margin-bottom: 0;
+      }
+    }
+    td.separator {
+      font-weight: normal;
+      text-align: left;
+      color: $text-color;
     }
   }
 
