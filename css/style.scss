@@ -164,19 +164,20 @@ main {
 
 
   table {
-    border: 2px solid $main-color;
-    border-width-bottom: 1px;
+    $border-color: #38A0FE;
+    border: 1px solid $border-color;
+    background: white;
     th:first-of-type,
     td:first-of-type {
       text-align: right;
     }
     th, td {
       text-align: left;
-      border-bottom: 1px solid $main-color;
+      border-bottom: 1px solid $border-color;
       padding: $lh/2 $lh;
     }
     td:first-of-type, th:first-of-type {
-      border-right: 1px solid $main-color;
+      border-right: 1px solid $border-color;
     }
     td:first-of-type {
       font-weight: bold;
