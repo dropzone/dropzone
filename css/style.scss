@@ -14,7 +14,7 @@ $text-color: #646C7F;
 
 $main-width: 720px;
 $nav-width: 220px;
-
+$header-background: #F3F4F5;
 
 *, *:before, *:after {
   box-sizing: border-box;
@@ -25,7 +25,7 @@ html, body {
   font-size: $base-font-size;
   font-weight: 300;
   line-height: $lh;
-  background: #F3F4F5;
+  background: $header-background;
   color: $text-color;
 }
 
@@ -119,7 +119,9 @@ blockquote {
 
 body > header {
 
+  position: relative;
   padding: 4*$lh;
+  background: $header-background;
 
   > * {
     max-width: 700px;
@@ -130,12 +132,18 @@ body > header {
     margin-bottom: 2*$lh;
   }
 
+  z-index: 1000;
+
 }
 
 
-body > nav {
+main > nav {
 
-  position: fixed;
+  position: absolute;
+
+  &.fixed {
+    position: fixed;
+  }
   top: 0;
   left: 0;
   bottom: 0;
@@ -143,6 +151,7 @@ body > nav {
   background: #028AF4;
   padding: $lh 0;
 
+  z-index: 100;
   overflow: scroll;
 
   display: none;
@@ -179,9 +188,9 @@ body > nav {
 @media (min-width: $nav-width + $main-width) {
   main {
     padding-left: $nav-width;
-  }
-  body > nav {
-    display: block;
+    > nav {
+      display: block;
+    }
   }
 }
 
@@ -189,6 +198,7 @@ body > nav {
 
 main {
 
+  position: relative;
 
   section {
 
@@ -238,6 +248,7 @@ main {
 
 
   table {
+    font-size: 0.8rem;
     margin-top: 3*$lh;
     margin-bottom: 3*$lh;
     $border-color: #38A0FE;

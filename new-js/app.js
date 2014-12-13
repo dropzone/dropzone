@@ -2,12 +2,19 @@
 function init() {
 
   var sections = [],
-      navElement = document.querySelector('body > nav');
+      navElement = document.querySelector('main > nav'),
+      headerElement = document.querySelector('body > header'),
+      windowHeight = window.innerHeight;
 
-  function Section(name, id, level) {
-    this.name = name;
-    this.id = id;
-    this.level = level;
+  function Section(element) {
+    this.element = element;
+    this.name = element.innerHTML;
+    this.id = element.id;
+    this.level = parseInt(element.tagName.substr(1)) - 1;
+    this.updatePosition();
+  }
+  Section.prototype.updatePosition = function() {
+    this.top = this.element.offsetTop;
   }
 
   function parseSections() {
@@ -15,7 +22,7 @@ function init() {
 
     for (var i = 0; i < headlines.length; i++) {
       var headline = headlines[i];
-      sections.push(new Section(headline.innerHTML, headline.id, parseInt(headline.tagName.substr(1)) - 1));
+      sections.push(new Section(headline));
     }
   }
 
@@ -27,12 +34,41 @@ function init() {
     return element;
   }
 
+  function updateSectionPositions() {
+    for (var i = 0; i < sections.length; i++) {
+      sections[i].updatePosition();
+    }
+  }
+
 
   parseSections();
 
   for (var i = 0; i < sections.length; i++) {
     navElement.appendChild(getSectionHtml(sections[i]));
   }
+
+  function setHeaderSize() {
+    headerElement.style.height = window.innerHeight + 'px';
+  }
+  window.addEventListener('resize', setHeaderSize);
+  setHeaderSize();
+
+
+  var fixed = false;
+  window.addEventListener('scroll', function(evt) {
+    if (window.pageYOffset >= window.innerHeight) {
+      if (!fixed) {
+        fixed = true;
+        navElement.classList.add('fixed');
+      }
+    }
+    else {
+      if (fixed) {
+        fixed = false;
+        navElement.classList.remove('fixed');
+      }
+    }
+  });
 
 
 }
