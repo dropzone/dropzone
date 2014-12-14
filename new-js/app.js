@@ -65,7 +65,7 @@ function init() {
   window.addEventListener('scroll', handleScroll);
 
   function handleScroll() {
-    if (window.pageYOffset > 50) {
+    if (window.pageYOffset > 0) {
       headerElement.classList.add('disappear');
     }
     else {
