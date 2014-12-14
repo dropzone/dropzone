@@ -5,7 +5,8 @@ title: Dropzone.js
 
 <section markdown="1">
 
-<h1>Try it out!</h1>
+Try it out!
+===========
 
 <div id="dropzone"><form action="http://www.torrentplease.com/dropzone.php" class="dropzone" id="demo-upload">
 </form></div>
@@ -19,7 +20,8 @@ title: Dropzone.js
 
 <section class="news" markdown="1">
 
-<h1>News</h1>
+News
+====
 
 I just released a new article on my website [www.colorglare.com](http://www.colorglare.com/2014/11/24/stateless-html.html).
 If you're interested in my work, please subscribe to my [RSS feed](http://www.colorglare.com/feed.xml).
@@ -534,7 +536,8 @@ use IE8 is beyond me.)
 
 <section markdown="1">
 
-<h1>Support</h1>
+Support
+=======
 
 Please consider donating if you like this project. I've put a lot of my free
 time into this project and donations help to justify it.

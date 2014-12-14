@@ -205,6 +205,11 @@ main {
 
     padding: $lh $lh 2*$lh $lh;
 
+    h1, h2 {
+      margin-top: 0;
+      padding-top: 2 * $lh;
+    }
+
     > * {
       max-width: $main-width;
       margin-left: auto;
