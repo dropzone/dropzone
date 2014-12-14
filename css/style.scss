@@ -120,20 +120,51 @@ blockquote {
 
 body > header {
 
-  position: relative;
-  padding: 4*$lh;
-  background: $header-background;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
 
-  > * {
-    max-width: 700px;
+  &.disappear {
+    .content {
+      transform: translateY(-40px);
+      -webkit-transform: translateY(-40px);
+      -moz-transform: translateY(-40px);
+      opacity: 0.4;
+    }
   }
 
-  h1 {
-    span { display: none; }
-    margin-bottom: 2*$lh;
+  perspective: 1000px;
+
+  .content {
+
+    opacity: 1;
+    height: 13 * $lh;
+
+    transition: all 0.5s ease-in-out;
+    transform-origin: top center;
+
+    background: $header-background;
+    position: absolute;
+    top: 50%;
+    left: 15%;
+    // margin-left: -(700px/2);
+    margin-top: -(2rem + 13*$lh/2);
+
+    > * {
+      max-width: 700px;
+    }
+
+    h1 {
+      span { display: none; }
+      margin-bottom: 2*$lh;
+      margin-top: 0;
+    }
+    z-index: 10;
   }
 
-  z-index: 1000;
+  z-index: 10;
 
 }
 
@@ -152,7 +183,7 @@ main > nav {
   background: #028AF4;
   padding: $lh 0;
 
-  z-index: 100;
+  z-index: 200;
   overflow: auto;
 
   display: none;
@@ -206,6 +237,7 @@ form.donate {
 main {
 
   position: relative;
+  z-index: 100;
 
   section {
 
