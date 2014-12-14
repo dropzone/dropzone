@@ -229,17 +229,10 @@ main {
     }
 
     &:nth-child(odd) {
-      background: #E8E9EC;
-
-      .highlight {
-        // background: #e3e3e7;
-      }
+      background: #F3F4F5;
     }
     &:nth-child(even) {
-      background: #F3F4F5;
-      .highlight {
-        // background: #eeeef1;
-      }
+      background: #E8E9EC;
     }
 
 
@@ -253,6 +246,7 @@ main {
       }
       a {
         color: #C0E3FE;
+        border-color: #C0E3FE;
       }
     }
 
