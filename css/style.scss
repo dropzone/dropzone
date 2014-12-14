@@ -104,7 +104,7 @@ ul {
 // Code highlighting
 .highlight {
   padding: $lh;
-  overflow: scroll;
+  overflow: auto;
   background: rgba(100, 108, 128, 0.03);
 }
 
@@ -153,7 +153,7 @@ main > nav {
   padding: $lh 0;
 
   z-index: 100;
-  overflow: scroll;
+  overflow: auto;
 
   display: none;
 
