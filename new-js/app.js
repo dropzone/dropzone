@@ -4,7 +4,9 @@ function init() {
   var sections = [],
       navElement = document.querySelector('main > nav'),
       headerElement = document.querySelector('body > header'),
-      windowHeight = window.innerHeight;
+      windowHeight = getWindowHeight();
+
+  function getWindowHeight() { return document.body.getBoundingClientRect().height; }
 
   function Section(element) {
     this.element = element;
@@ -48,15 +50,18 @@ function init() {
   }
 
   function setHeaderSize() {
-    headerElement.style.height = window.innerHeight + 'px';
+    headerElement.style.height = windowHeight + 'px';
   }
-  window.addEventListener('resize', setHeaderSize);
+  window.addEventListener('resize', function() {
+    windowHeight = getWindowHeight();
+    setHeaderSize();
+  });
   setHeaderSize();
 
 
   var fixed = false;
   window.addEventListener('scroll', function(evt) {
-    if (window.pageYOffset >= window.innerHeight) {
+    if (window.pageYOffset >= windowHeight) {
       if (!fixed) {
         fixed = true;
         navElement.classList.add('fixed');
