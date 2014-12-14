@@ -501,8 +501,11 @@ I'll add more examples soon (How to add delete/download buttons when an upload f
 how to add file previews on your own, etc...). In the meantime you can look at
 the [github wiki](https://github.com/enyo/dropzone/wiki) for some information.
 
-Don't hesitate to create an issue on github if you're stuck or think a feature
-is missing.
+If you have any problems using Dropzone, please try to find help on
+[stackoverflow.com](http://stackoverflow.com/) by using the `dropzone.js`
+tag.
+Only create an issue on Github when you think you found a bug or want to
+suggest a new feature.
 
 </section>
 
