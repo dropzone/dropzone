@@ -195,7 +195,13 @@ main > nav {
   }
 }
 
-
+form.donate {
+  display: inline-block;
+  vertical-align: bottom;
+  position: relative;
+  top: 0.25em;
+  margin: 0 0em 0 0.2em;
+}
 
 main {
 
