@@ -3,6 +3,8 @@
 .dropzone *,
 .dropzone-previews,
 .dropzone-previews * {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 .dropzone {
@@ -23,6 +25,8 @@
 }
 .dropzone .dz-message {
   opacity: 1;
+  -ms-filter: none;
+  filter: none;
 }
 .dropzone.dz-drag-hover {
   border-color: rgba(0,0,0,0.15);
@@ -61,13 +65,17 @@
 }
 .dropzone .dz-preview .dz-details img,
 .dropzone-previews .dz-preview .dz-details img {
-  absolute: top left;
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100px;
   height: 100px;
 }
 .dropzone .dz-preview .dz-details .dz-size,
 .dropzone-previews .dz-preview .dz-details .dz-size {
-  absolute: bottom -28px left 3px;
+  position: absolute;
+  bottom: -28px;
+  left: 3px;
   height: 28px;
   line-height: 28px;
 }
@@ -131,7 +139,9 @@
 .dropzone .dz-preview .dz-error-message,
 .dropzone-previews .dz-preview .dz-error-message {
   display: none;
-  absolute: top -5px left -20px;
+  position: absolute;
+  top: -5px;
+  left: -20px;
   background: rgba(245,245,245,0.8);
   padding: 8px 10px;
   color: #800;
@@ -171,7 +181,7 @@
   top: 50%;
   left: 50%;
 }
-@media all and (-webkit-min-device-pixel-ratio:1.5),(min--moz-device-pixel-ratio:1.5),(-o-min-device-pixel-ratio:1.5/1),(min-device-pixel-ratio:1.5),(min-resolution:138dpi),(min-resolution:1.5dppx) {
+@media all and (-webkit-min-device-pixel-ratio: 1.5), (min--moz-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 1.5/1), (min-device-pixel-ratio: 1.5), (min-resolution: 138dpi), (min-resolution: 1.5dppx) {
   .dropzone .dz-default.dz-message {
     background-image: url("../images/spritemap@2x.png");
     -webkit-background-size: 428px 406px;
@@ -245,7 +255,7 @@
   background-image: url("../images/spritemap.png");
   background-repeat: no-repeat;
 }
-@media all and (-webkit-min-device-pixel-ratio:1.5),(min--moz-device-pixel-ratio:1.5),(-o-min-device-pixel-ratio:1.5/1),(min-device-pixel-ratio:1.5),(min-resolution:138dpi),(min-resolution:1.5dppx) {
+@media all and (-webkit-min-device-pixel-ratio: 1.5), (min--moz-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 1.5/1), (min-device-pixel-ratio: 1.5), (min-resolution: 138dpi), (min-resolution: 1.5dppx) {
   .dropzone .dz-preview .dz-error-mark,
   .dropzone-previews .dz-preview .dz-error-mark,
   .dropzone .dz-preview .dz-success-mark,
@@ -293,7 +303,7 @@
   background-repeat: repeat-x;
   background-position: 0px -400px;
 }
-@media all and (-webkit-min-device-pixel-ratio:1.5),(min--moz-device-pixel-ratio:1.5),(-o-min-device-pixel-ratio:1.5/1),(min-device-pixel-ratio:1.5),(min-resolution:138dpi),(min-resolution:1.5dppx) {
+@media all and (-webkit-min-device-pixel-ratio: 1.5), (min--moz-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 1.5/1), (min-device-pixel-ratio: 1.5), (min-resolution: 138dpi), (min-resolution: 1.5dppx) {
   .dropzone .dz-preview .dz-progress .dz-upload,
   .dropzone-previews .dz-preview .dz-progress .dz-upload {
     background-image: url("../images/spritemap@2x.png");
