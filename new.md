@@ -270,7 +270,7 @@ Dropzone.autoDiscover = false;
 
 ## Enqueuing file uploads
 
-When a file gets added to the dropzone, it's `status` gets set to `Dropzone.QUEUED`
+When a file gets added to the dropzone, its `status` gets set to `Dropzone.QUEUED`
 (after the `accept` function check passes) which means that the file is now
 in the queue.
 
@@ -617,7 +617,7 @@ new Dropzone("#my-dropzone");
 new Dropzone(document.querySelector("#my-dropzone"));
 {% endhighlight %}
 
-Another thing that changed, is that Dropzone no longer stores it's instances
+Another thing that changed, is that Dropzone no longer stores its instances
 inside the element's data property. So to get a dropzone for an element do this
 now:
 
