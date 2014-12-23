@@ -50,11 +50,6 @@ Dropzone is now activated and available as `window.Dropzone`.
 > Dropzone does *not* handle your file uploads on the server. You have to implement
 > the code to receive and store the file yourself.
 
-</section>
-
-
-
-<section markdown="1">
 
 With component
 --------------
@@ -168,12 +163,6 @@ $("div#myId").dropzone({ url: "/file/post" });
 > Don't forget to specify an `url` option if you're not using a form element,
 > since Dropzone doesn't know where to post to without an `action` attribute.
 
-
-
-</section>
-
-
-<section markdown="1">
 
 
 Server side implementation
@@ -510,32 +499,6 @@ suggest a new feature.
 </section>
 
 
-<section markdown="1">
-
-
-Browser Support
-===============
-
-- Chrome 7+
-- Firefox 4+
-- IE 10+
-- Opera 12+ (Version 12 for MacOS is disabled because their API is buggy)
-- Safari 6+
-
-For all the other browsers, dropzone provides an oldschool file input fallback.
-
-As a side note: I have received various «complaints» about not supporting
-earlier versions of Internet Explorer – some even called me an IE hater. Although
-I don't really object to that, the reason I do not support earlier versions of
-IE is very simple: IE up until version 10 does not provide the required APIs
-to implement only a fraction of what Dropzone aspires to do. If I were an IE
-hater, I wouldn't implement IE10 either. But IE10 actually supports the APIs
-Dropzone requires, so it's supported. It's as simple as that. (The same goes
-for earlier versions of Firefox, Opera and Safari but those browsers have a
-good conversion rate and nobody uses Firefox 3.5 anymore. Why some people still
-use IE8 is beyond me.)
-
-</section>
 
 <section markdown="1">
 
@@ -558,7 +521,7 @@ Use the Paypal
 
 button, <a href="http://tiptheweb.org/">tiptheweb</a> or my
 <a href="http://bitcoin.org/">Bitcoin</a> address:
-<code>19k17pTRGS1ykZaL7Qeju2HgXnoPXceQme</code>.
+<div class="highlight"><code>19k17pTRGS1ykZaL7Qeju2HgXnoPXceQme</code></div>.
 </div>
 
 </section>
@@ -566,26 +529,37 @@ button, <a href="http://tiptheweb.org/">tiptheweb</a> or my
 
 <section markdown="1">
 
-Why?
-====
+Compatibility
+=============
 
-I realize that there
-[are](http://valums.com/ajax-upload/)
-[already](http://tutorialzine.com/2011/09/html5-file-upload-jquery-php/)
-[other](http://code.google.com/p/html5uploader/)
-[libraries](http://blueimp.github.com/jQuery-File-Upload/)
-out there but the reasons I decided to write my own are the following:
+This section describes compatibility with browsers and older versions of
+Dropzone.
 
-- I didn't want it to be too big, and too cumbersome to dive into.
-- I want it to work without frameworks (like jQuery)
-- I want to design my own elements. I only want to register callbacks so I can update my elements accordingly.
-- Big files should get uploaded without a problem.
-- I wanted a callback for image previews, that don't kill the browser if too many too big images are viewed.
-- I want to use the latest API of browsers. I don't care if it falls back to the normal upload form if the browser is too old.
+Browser Support
+---------------
+
+- Chrome 7+
+- Firefox 4+
+- IE 10+
+- Opera 12+ (Version 12 for MacOS is disabled because their API is buggy)
+- Safari 6+
+
+For all the other browsers, dropzone provides an oldschool file input fallback.
+
+As a side note: I have received various «complaints» about not supporting
+earlier versions of Internet Explorer – some even called me an IE hater. Although
+I don't really object to that, the reason I do not support earlier versions of
+IE is very simple: IE up until version 10 does not provide the required APIs
+to implement only a fraction of what Dropzone aspires to do. If I were an IE
+hater, I wouldn't implement IE10 either. But IE10 actually supports the APIs
+Dropzone requires, so it's supported. It's as simple as that. (The same goes
+for earlier versions of Firefox, Opera and Safari but those browsers have a
+good conversion rate and nobody uses Firefox 3.5 anymore. Why some people still
+use IE8 is beyond me.)
 
 
 Version 3.0
-===========
+-----------
 
 - All classes are prefixed with `dz-` now to prevent clashing with other CSS definitions
 - The way `previewTemplate` is defined has changed. You have to provide `data-dz-*` elements now
@@ -594,7 +568,7 @@ Version 3.0
 - Lots of minor fixes and changes
 
 Version 2.0
-===========
+-----------
 
 Starting with version 2.0, Dropzone no longer depends on jQuery, but Dropzone
 still registers itself as a jQuery module if available.

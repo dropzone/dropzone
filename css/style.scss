@@ -7,7 +7,7 @@
 
 
 $base-font-size: 20px;
-$lh: 1.5rem;
+$lh: 1.4rem;
 $main-color: #0087F7;
 $text-color: #646C7F;
 
@@ -28,6 +28,12 @@ html, body {
   line-height: $lh;
   background: $header-background;
   color: $text-color;
+  @media (max-width: 600px) {
+    font-size: $base-font-size - 2px;
+  }
+  @media (max-width: 400px) {
+    font-size: $base-font-size - 4px;
+  }
 }
 
 
@@ -35,9 +41,14 @@ h1, h2, h3, table th {
   font-size: 1.8rem;
   color: $main-color;
   -webkit-font-smoothing: antialiased;
-  line-height: 2rem;
+  line-height: 2.2rem;
+}
+h1, h2, h3 {
   margin-top: 2 * $lh;
-  margin-bottom: $lh;
+  margin-bottom: $lh;  
+}
+h2 {
+  font-size: 1.4rem;
 }
 table th {
   font-size: 1.4rem;
@@ -105,7 +116,7 @@ ul {
 .highlight {
   padding: $lh;
   overflow: auto;
-  background: rgba(100, 108, 128, 0.03);
+  background: rgba(100, 108, 128, 0.04);
 }
 
 blockquote {
@@ -120,48 +131,59 @@ blockquote {
 
 body > header {
 
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
+  position: relative;
+  @media (min-width: 700px) {
+    height: 100vh;
 
-  &.disappear {
     .content {
-      transform: translateY(-40px);
-      -webkit-transform: translateY(-40px);
-      -moz-transform: translateY(-40px);
-      opacity: 0.4;
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);    
+      -webkit-transform: translateY(-50%);
+      -moz-transform: translateY(-50%);
     }
   }
+  @media (min-width: 900px) {
+    padding-left: 15%;
+  }
 
-  perspective: 1000px;
+  // &.disappear {
+  //   .content {
+  //     transform: translateY(-40px);
+  //     -webkit-transform: translateY(-40px);
+  //     -moz-transform: translateY(-40px);
+  //     opacity: 0.4;
+  //   }
+  // }
+
+  padding: 2*$lh $lh;
+
+  // perspective: 1000px;
 
   .content {
 
     opacity: 1;
-    height: 13 * $lh;
+    // height: 13 * $lh;
 
-    transition: all 0.5s ease-in-out;
-    transform-origin: top center;
+    // transition: all 0.5s ease-in-out;
+    // transform-origin: top center;
 
     background: $header-background;
-    position: absolute;
-    top: 50%;
-    left: 15%;
-    // margin-left: -(700px/2);
-    margin-top: -(2rem + 13*$lh/2);
 
     > * {
       max-width: 700px;
     }
 
     h1 {
+      img {
+        max-width: 100%;
+      }
       span { display: none; }
       margin-bottom: 2*$lh;
       margin-top: 0;
     }
     z-index: 10;
+
   }
 
   z-index: 10;
@@ -188,7 +210,13 @@ main > nav {
 
   display: none;
 
-  a {
+  img {
+    margin: 0 0 $lh $lh;
+    width: 58px;
+    height: 58px;
+  }
+
+  a:not(.logo) {
     display: block;
     line-height: $lh;
     color: rgba(255, 255, 255, 0.9);
@@ -206,10 +234,12 @@ main > nav {
       font-weight: 400;
     }
     &.level-1 {
+      display: none;
       padding-left: $lh + 0.5rem;
       color: rgba(255, 255, 255, 0.7);
     }
     &.level-2 {
+      display: none;
       padding-left: $lh + 1rem;
       color: rgba(255, 255, 255, 0.7);
     }
@@ -286,11 +316,12 @@ main {
 
 
   table {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     margin-top: 3*$lh;
     margin-bottom: 3*$lh;
     $border-color: #38A0FE;
     border: 1px solid $border-color;
+    border-bottom: none;
     background: white;
     th:first-of-type,
     td:first-of-type {
@@ -325,6 +356,60 @@ main {
       text-align: left;
       color: $text-color;
     }
+
+    @media (max-width: 600px) {
+      table, tbody, thead, tr, td, th {
+        display: block;
+      }
+      td, th {
+        &:first-of-type {
+          text-align: left;
+          border-right: none;
+        }
+        overflow: auto;
+      }
+      th.title {
+        padding-top: $lh;
+        padding-bottom: $lh;
+      }
+
+      th:not(.title) {
+        display: none;
+      }
+    }
+  }
+
+}
+
+footer {
+  background: #2D3038;
+  z-index: 5000;
+  position: relative;
+  display: block;
+  padding: $lh $lh 2*$lh $lh;
+
+
+  color: white;
+  * {
+    color: white;
+  }
+
+  > * {
+    max-width: $main-width;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+
+  @media (min-width: $main-width) {
+    .license {
+      text-align: justify;
+    }
+  }
+
+  .logo {
+    margin: 2*$lh 0;
+    width: 270px;
   }
 
 }

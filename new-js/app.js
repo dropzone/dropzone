@@ -51,14 +51,14 @@ function init() {
   }
 
   function setHeaderSize() {
-    headerElement.style.height = mainElement.style.marginTop = windowHeight + 'px';
+    // headerElement.style.height = mainElement.style.marginTop = windowHeight + 'px';
   }
   window.addEventListener('resize', function() {
     windowHeight = getWindowHeight();
-    setHeaderSize();
+    // setHeaderSize();
     handleScroll();
   });
-  setHeaderSize();
+  // setHeaderSize();
 
 
   var fixed = false;
