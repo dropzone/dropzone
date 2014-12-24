@@ -521,7 +521,7 @@ Use the Paypal
 
 button, <a href="http://tiptheweb.org/">tiptheweb</a> or my
 <a href="http://bitcoin.org/">Bitcoin</a> address:
-<div class="highlight"><code>19k17pTRGS1ykZaL7Qeju2HgXnoPXceQme</code></div>.
+<div class="bitcoin"><code>19k17pTRGS1ykZaL7Qeju2HgXnoPXceQme</code></div>.
 </div>
 
 </section>

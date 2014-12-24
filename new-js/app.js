@@ -1,7 +1,8 @@
 
 function init() {
 
-  var sections = [],
+  var allSections = [],
+      sections = [],
       navElement = document.querySelector('main > nav'),
       mainElement = document.querySelector('main'),
       headerElement = document.querySelector('body > header'),
@@ -11,30 +12,86 @@ function init() {
 
   function Section(element) {
     this.element = element;
+    this.navElement = null;
+    this.parent = null;
+    this.subSections = [];
     this.name = element.innerHTML;
     this.id = element.id;
     this.level = parseInt(element.tagName.substr(1)) - 1;
     this.updatePosition();
   }
-  Section.prototype.updatePosition = function() {
-    this.top = this.element.offsetTop;
+  Section.prototype.addSubSection = function(subSection) {
+    this.subSections.push(subSection);
+    subSection.parent = this;
   }
+  Section.prototype.updatePosition = function() {
+    var top = 0,
+        obj = this.element;
+
+    do {
+      top += obj.offsetTop;
+    } while (obj = obj.offsetParent);
+    this.top = top;
+  }
+  Section.prototype.getHtml = function() {
+    var element = document.createElement('div');
+    element.classList.add('level-' + this.level);
+
+    var link = document.createElement('a');
+    link.href = '#' + this.id;
+    link.innerHTML = this.name;
+
+    element.appendChild(link);
+
+    if (this.subSections.length > 0) {
+      var subSectionsElement = document.createElement('div');
+      subSectionsElement.classList.add('sub-sections');
+
+      for (var i = 0; i < this.subSections.length; i++) {
+        subSectionsElement.appendChild(this.subSections[i].getHtml());
+      }
+
+      element.appendChild(subSectionsElement);
+    }
+
+    this.navElement = element;
+    return element;
+  }
+  Section.prototype.highlight = function(dontUnset) {
+    if (!dontUnset) {
+      for (var i = 0; i < allSections.length; i ++) {
+        if (allSections[i] !== this) {
+          allSections[i].downlight();
+        }
+      }
+    }
+    this.navElement.classList.add('visible');
+    if (this.parent) this.parent.highlight(true);
+  }
+  // He he, funny name
+  Section.prototype.downlight = function() {
+    this.navElement.classList.remove('visible');
+  }
+
+
 
   function parseSections() {
     var headlines = document.querySelectorAll('main > section > h1, main > section > h2');
+    var lastSection;
 
     for (var i = 0; i < headlines.length; i++) {
       var headline = headlines[i];
-      sections.push(new Section(headline));
-    }
-  }
+      var section = new Section(headline);
+      if (section.level == 0) {
+        lastSection = section;
+        sections.push(section);
+      }
+      else {
+        lastSection.addSubSection(section);
+      }
 
-  function getSectionHtml(section) {
-    var element = document.createElement('a');
-    element.href = '#' + section.id;
-    element.innerHTML = section.name;
-    element.classList.add('level-' + section.level);
-    return element;
+      allSections.push(section);
+    }
   }
 
   function updateSectionPositions() {
@@ -47,7 +104,7 @@ function init() {
   parseSections();
 
   for (var i = 0; i < sections.length; i++) {
-    navElement.appendChild(getSectionHtml(sections[i]));
+    navElement.appendChild(sections[i].getHtml());
   }
 
   function setHeaderSize() {
@@ -83,6 +140,29 @@ function init() {
         navElement.classList.remove('fixed');
       }
     }
+
+    highlightCurrentSection();
+  }
+
+  function highlightCurrentSection() {
+    var scrollTop = window.pageYOffset,
+        scrollMiddle = scrollTop + windowHeight / 2;
+
+    var highlightedSection = allSections[0];
+
+    console.log(scrollMiddle);
+    for (var i = 0; i < allSections.length; i++) {
+      var section = allSections[i];
+      console.log('section', section.top);
+      if (section.top < scrollMiddle) {
+        highlightedSection = section;
+      }
+      else {
+        break;
+      }
+    }
+
+    highlightedSection.highlight();
   }
 
 

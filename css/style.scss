@@ -118,7 +118,9 @@ ul {
   overflow: auto;
   background: rgba(100, 108, 128, 0.04);
 }
-
+.bitcoin {
+  overflow: auto;
+}
 blockquote {
   color: $main-color;
   font-size: 1.2rem;
@@ -188,6 +190,10 @@ body > header {
 
   z-index: 10;
 
+  .scroll-invitation {
+    margin-top: 3*$lh;
+  }
+
 }
 
 
@@ -227,20 +233,34 @@ main > nav {
 
     &:hover {
       background: rgba(255, 255, 255, 0.3);
-      border: none;
     }
+  }
 
-    &.level-0 {
+  .sub-sections {
+    display: none;
+  }
+  .visible {
+    .sub-sections {
+      display: block;
+    }
+  }
+
+  .level-0 {
+    &.visible > a {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    > a {
       font-weight: 400;
     }
-    &.level-1 {
-      display: none;
-      padding-left: $lh + 0.5rem;
-      color: rgba(255, 255, 255, 0.7);
+  }
+
+  .level-1 {
+    &.visible a {
+      background: rgba(255, 255, 255, 0.2);
     }
-    &.level-2 {
-      display: none;
-      padding-left: $lh + 1rem;
+    > a {
+      // display: none;
+      padding-left: $lh + 0.5rem;
       color: rgba(255, 255, 255, 0.7);
     }
   }
