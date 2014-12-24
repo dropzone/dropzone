@@ -417,6 +417,9 @@ footer {
   * {
     color: white;
   }
+  a:hover {
+    border-color: white;
+  }
 
   > * {
     max-width: $main-width;
