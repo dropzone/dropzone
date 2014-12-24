@@ -152,10 +152,8 @@ function init() {
 
     var highlightedSection = allSections[0];
 
-    console.log(scrollMiddle);
     for (var i = 0; i < allSections.length; i++) {
       var section = allSections[i];
-      console.log('section', section.top);
       if (section.top < scrollMiddle) {
         highlightedSection = section;
       }
