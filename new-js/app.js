@@ -114,6 +114,7 @@ function init() {
     windowHeight = getWindowHeight();
     // setHeaderSize();
     handleScroll();
+    updateSectionPositions();
   });
   // setHeaderSize();
 
@@ -122,6 +123,7 @@ function init() {
   window.addEventListener('scroll', handleScroll);
 
   function handleScroll() {
+    updateSectionPositions();
     if (window.pageYOffset > 0) {
       headerElement.classList.add('disappear');
     }
