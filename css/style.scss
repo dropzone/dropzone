@@ -55,6 +55,13 @@ table th {
   color: $text-color;
 }
 
+ul, ol {
+  list-style-position: inside;
+  li {
+    // padding-left: $lh;
+  }
+}
+
 
 a {
   color: $main-color;
@@ -412,6 +419,7 @@ footer {
   display: block;
   padding: $lh $lh 2*$lh $lh;
 
+  font-size: 0.9rem;
 
   color: white;
   * {
