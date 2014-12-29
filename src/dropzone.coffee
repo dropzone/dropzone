@@ -223,6 +223,9 @@ class Dropzone extends Emitter
 
     # If used, the text to be used for the cancel upload link.
     dictCancelUpload: "Cancel upload"
+    
+    # If used, the text to be used for the cancel event.
+    dictUploadCanceled: "Upload canceled."
 
     # If used, the text to be used for confirmation when cancelling upload.
     dictCancelUploadConfirmation: "Are you sure you want to cancel this upload?"
@@ -460,7 +463,7 @@ class Dropzone extends Emitter
     successmultiple: noop
 
     # When the upload is canceled.
-    canceled: (file) -> @emit "error", file, "Upload canceled."
+    canceled: (file) -> @emit "error", file, @options.dictUploadCanceled
 
     canceledmultiple: noop
 
