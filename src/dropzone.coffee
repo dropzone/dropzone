@@ -806,7 +806,7 @@ class Dropzone extends Emitter
     else
       size = size * 10
       string = @options.dictFileBUnitFormat
-    "<strong>#{formatNumber(size, 2, @options.dictFileThousandsSeparator, @options.dictFileDecimalSeparator)}</strong> #{string}"
+    "<strong>#{formatNumber(size / 10, 2, @options.dictFileThousandsSeparator, @options.dictFileDecimalSeparator)}</strong> #{string}"
 
 
   # Adds or removes the `dz-max-files-reached` class from the form.
