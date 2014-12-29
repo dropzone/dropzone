@@ -119,6 +119,7 @@ class Dropzone extends Emitter
     "complete"
     "completemultiple"
     "reset"
+    "beforemaxfilesexceeded"
     "maxfilesexceeded"
     "maxfilesreached"
     "queuecomplete"
@@ -470,6 +471,8 @@ class Dropzone extends Emitter
       file._removeLink.textContent = @options.dictRemoveFile if file._removeLink
 
     completemultiple: noop
+
+    beforemaxfilesexceeded: noop
 
     maxfilesexceeded: noop
 
@@ -908,6 +911,9 @@ class Dropzone extends Emitter
     @files.push file
 
     file.status = Dropzone.ADDED
+
+    if @options.maxFiles? and @getAcceptedFiles().length >= @options.maxFiles
+      @emit "beforemaxfilesexceeded", file
 
     @emit "addedfile", file
 
