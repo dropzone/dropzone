@@ -55,15 +55,17 @@ function init() {
     }
 
     this.navElement = element;
+    this.linkElement = link;
     return element;
   }
-  Section.prototype.highlight = function(dontUnset) {
-    if (!dontUnset) {
+  Section.prototype.highlight = function(notCurrentSection) {
+    if (!notCurrentSection) {
       for (var i = 0; i < allSections.length; i ++) {
         if (allSections[i] !== this) {
           allSections[i].downlight();
         }
       }
+      this.linkElement.classList.add('current');
     }
     this.navElement.classList.add('visible');
     if (this.parent) this.parent.highlight(true);
@@ -71,6 +73,7 @@ function init() {
   // He he, funny name
   Section.prototype.downlight = function() {
     this.navElement.classList.remove('visible');
+    this.linkElement.classList.remove('current');
   }
 
 
@@ -82,6 +85,7 @@ function init() {
     for (var i = 0; i < headlines.length; i++) {
       var headline = headlines[i];
       var section = new Section(headline);
+      if (section.id == 'try-it-out') continue;
       if (section.level == 0) {
         lastSection = section;
         sections.push(section);

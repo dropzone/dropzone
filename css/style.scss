@@ -247,24 +247,23 @@ main > nav {
     display: none;
   }
   .visible {
+    background: rgba(255, 255, 255, 0.13);
     .sub-sections {
       display: block;
     }
   }
 
+  a.current {
+    background: #4DADF7;
+  }
+
   .level-0 {
-    &.visible > a {
-      background: rgba(255, 255, 255, 0.3);
-    }
     > a {
       font-weight: 400;
     }
   }
 
   .level-1 {
-    &.visible a {
-      background: rgba(255, 255, 255, 0.2);
-    }
     > a {
       // display: none;
       padding-left: $lh + 0.5rem;
