@@ -9,10 +9,13 @@ Try it out!
 ===========
 
 <div id="dropzone"><form action="http://www.torrentplease.com/dropzone.php" class="dropzone" id="demo-upload">
+
+  <div class="dz-message">
+    Drop files here or click to upload.<br>
+    <span class="note">(This is just a demo dropzone. Uploaded files are <strong>not</strong> stored.)</span>
+  </div>
+
 </form></div>
-
-
-(This is just a demo dropzone. Uploaded files are **not** stored.)
 
 </section>
 

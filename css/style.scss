@@ -3,6 +3,7 @@
 
 @import "reset";
 @import "pygments";
+@import "dropzone";
 
 
 
@@ -15,6 +16,24 @@ $text-color: #646C7F;
 $main-width: 720px;
 $nav-width: 220px;
 $header-background: #F3F4F5;
+
+
+.dropzone {
+  border: 2px dashed $main-color;
+  border-radius: 5px;
+  background: white;
+
+  .dz-message { 
+    font-weight: 400;
+    .note {
+      font-size: 0.8em;
+      font-weight: 200;
+      display: block;
+      margin-top: $lh;
+    }
+  }
+}
+
 
 *, *:before, *:after {
   box-sizing: border-box;

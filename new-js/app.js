@@ -170,6 +170,15 @@ function init() {
   }
 
 
+
+  var drop = new Dropzone('#demo-upload', {
+    previewTemplate: document.querySelector('#preview-template').innerHTML,
+    parallelUploads: 1
+  });
+  drop.on('complete', function(file) {
+    file.previewElement.classList.add('dz-complete');
+  });
+
 }
 
 
