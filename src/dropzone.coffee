@@ -237,6 +237,14 @@ class Dropzone extends Emitter
     # You can use {{maxFiles}} here, which will be replaced by the option.
     dictMaxFilesExceeded: "You can not upload any more files."
 
+    dictFileTiBUnitFormat: "TiB"
+    dictFileGiBUnitFormat: "GiB"
+    dictFileMiBUnitFormat: "MiB"
+    dictFileKiBUnitFormat: "KiB"
+    dictFileBUnitFormat: "b"
+    dictFileThousandsSeparator: ","
+    dictFileDecimalSeparator: "."
+
 
     # If `done()` is called without argument the file is accepted
     # If you call it with an error message, the file is rejected
@@ -775,22 +783,30 @@ class Dropzone extends Emitter
 
   # Returns a nicely formatted filesize
   filesize: (size) ->
+    formatNumber = (n, dp, thousandsSep, decimalSep) ->
+      s = "" + (Math.floor(n))
+      d = n % 1
+      i = s.length
+      r = ""
+      r = thousandsSep + s.substr(i, 3) + r  while (i -= 3) > 0
+      s.substr(0, i + 3) + r + ((if d then decimalSep + Math.round(d * Math.pow(10, dp)) else ""))
+    
     if      size >= 1024 * 1024 * 1024 * 1024 / 10
       size = size / (1024 * 1024 * 1024 * 1024 / 10)
-      string = "TiB"
+      string = @options.dictFileTiBUnitFormat
     else if size >= 1024 * 1024 * 1024 / 10
       size = size / (1024 * 1024 * 1024 / 10)
-      string = "GiB"
+      string = @options.dictFileGiBUnitFormat
     else if size >= 1024 * 1024 / 10
       size = size / (1024 * 1024 / 10)
-      string = "MiB"
+      string = @options.dictFileMiBUnitFormat
     else if size >= 1024 / 10
       size = size / (1024 / 10)
-      string = "KiB"
+      string = @options.dictFileKiBUnitFormat
     else
       size = size * 10
-      string = "b"
-    "<strong>#{Math.round(size)/10}</strong> #{string}"
+      string = @options.dictFileBUnitFormat
+    "<strong>#{formatNumber(size, 2, @options.dictFileThousandsSeparator, @options.dictFileDecimalSeparator)}</strong> #{string}"
 
 
   # Adds or removes the `dz-max-files-reached` class from the form.
