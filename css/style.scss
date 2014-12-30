@@ -47,6 +47,7 @@ html, body {
   line-height: $lh;
   background: $header-background;
   color: $text-color;
+  text-rendering: optimizeLegibility;
   @media (max-width: 600px) {
     font-size: $base-font-size - 2px;
   }
