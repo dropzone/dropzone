@@ -86,14 +86,9 @@ in the downloads folder.
 
 * * *
 
-This is all you need to get dropzone up and running. But if you want it to look
-as cool as my dropzone, you'll need to **download the css/dropzone.css,
-images/spritemap.png and images/spritemap@2x.png** as well from the
-[downloads folder](https://github.com/enyo/dropzone/tree/master/downloads).
-
-If you change the folder names make sure you adjust the paths in the css.
-
-The `@2x.png` spritemap is to support high density (retina) displays.
+This is all you need to get dropzone up and running, but if you want it to look
+like the dropzone on this page, you'll need to **download the css/dropzone.css**
+from the [downloads folder](https://github.com/enyo/dropzone/tree/master/downloads).
 
 
 </section>
@@ -502,34 +497,6 @@ suggest a new feature.
 </section>
 
 
-
-<section markdown="1">
-
-Donate
-======
-
-Please consider donating if you like this project. I've put a lot of my free
-time into this project and donations help to justify it.
-
-
-<div>
-Use the Paypal
-
-<form class="donate" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-<input type="hidden" name="cmd" value="_s-xclick">
-<input type="hidden" name="hosted_button_id" value="CA598M5X362GQ">
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-<img alt="" border="0" src="https://www.paypalobjects.com/de_DE/i/scr/pixel.gif" width="1" height="1">
-</form>
-
-button, <a href="http://tiptheweb.org/">tiptheweb</a> or my
-<a href="http://bitcoin.org/">Bitcoin</a> address:
-<div class="bitcoin"><code>19k17pTRGS1ykZaL7Qeju2HgXnoPXceQme</code></div>.
-</div>
-
-</section>
-
-
 <section markdown="1">
 
 Compatibility
@@ -608,3 +575,32 @@ Dropzone.forElement("#my-dropzone"); // Providing a selector string.
 {% endhighlight %}
 
 </section>
+
+
+
+<section markdown="1">
+
+Donate
+======
+
+Please consider donating if you like this project. I've put a lot of my free
+time into this project and donations help to justify it.
+
+
+<div>
+Use the Paypal
+
+<form class="donate" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="CA598M5X362GQ">
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypalobjects.com/de_DE/i/scr/pixel.gif" width="1" height="1">
+</form>
+
+button, <a href="http://tiptheweb.org/">tiptheweb</a> or my
+<a href="http://bitcoin.org/">Bitcoin</a> address:
+<div class="bitcoin"><code>19k17pTRGS1ykZaL7Qeju2HgXnoPXceQme</code></div>.
+</div>
+
+</section>
+

@@ -85,7 +85,7 @@ function init() {
     for (var i = 0; i < headlines.length; i++) {
       var headline = headlines[i];
       var section = new Section(headline);
-      if (section.id == 'try-it-out') continue;
+      if (section.id == 'try-it-out' || section.id == 'news') continue;
       if (section.level == 0) {
         lastSection = section;
         sections.push(section);
@@ -152,21 +152,32 @@ function init() {
 
   function highlightCurrentSection() {
     var scrollTop = window.pageYOffset,
+        scrollBottom = scrollTop + windowHeight,
         scrollMiddle = scrollTop + windowHeight / 2;
 
     var highlightedSection = allSections[0];
 
-    for (var i = 0; i < allSections.length; i++) {
-      var section = allSections[i];
-      if (section.top < scrollMiddle) {
-        highlightedSection = section;
+    if (highlightedSection.top > scrollMiddle) {
+      // The page is scrolled to the top, so the first section is not visible
+      for (var i = 0; i < allSections.length; i++) {
+        allSections[i].downlight();
       }
-      else {
-        break;
+      
+    }
+    else {
+      for (var i = 0; i < allSections.length; i++) {
+        var section = allSections[i];
+        if (section.top < scrollMiddle) {
+          highlightedSection = section;
+        }
+        else {
+          break;
+        }
       }
+
+      highlightedSection.highlight();
     }
 
-    highlightedSection.highlight();
   }
 
 
