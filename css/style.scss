@@ -154,6 +154,9 @@ blockquote {
   -webkit-font-smoothing: antialiased;
   margin-top: 2*$lh;
   margin-bottom: 2*$lh;
+  a {
+    border-bottom: 1px solid $main-color;
+  }
 }
 
 

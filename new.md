@@ -12,7 +12,7 @@ Try it out!
 
   <div class="dz-message">
     Drop files here or click to upload.<br>
-    <span class="note">(This is just a demo dropzone. Uploaded files are <strong>not</strong> stored.)</span>
+    <span class="note">(This is just a demo dropzone. Selected files are <strong>not</strong> actually uploaded.)</span>
   </div>
 
 </form></div>
@@ -51,7 +51,12 @@ and include it like this:
 Dropzone is now activated and available as `window.Dropzone`.
 
 > Dropzone does *not* handle your file uploads on the server. You have to implement
-> the code to receive and store the file yourself.
+> the code to receive and store the file yourself. See the section
+> [Server side implementation](#server-side-implementation) for more information.
+
+This is all you need to get dropzone up and running, but if you want it to look
+like the dropzone on this page, you'll need to **download the css/dropzone.css**
+from the [downloads folder](https://github.com/enyo/dropzone/tree/master/downloads).
 
 
 With component
@@ -82,13 +87,6 @@ for [RequireJS](http://requirejs.org).
 
 You can find the [dropzone-amd-module](https://raw.github.com/enyo/dropzone/master/downloads/dropzone-amd-module.js)
 in the downloads folder.
-
-
-* * *
-
-This is all you need to get dropzone up and running, but if you want it to look
-like the dropzone on this page, you'll need to **download the css/dropzone.css**
-from the [downloads folder](https://github.com/enyo/dropzone/tree/master/downloads).
 
 
 </section>

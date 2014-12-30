@@ -18,13 +18,25 @@
 }
 
 
+
 .dropzone, .dropzone * {
   box-sizing: border-box;
 }
 .dropzone {
 
+  $image-size: 100px;
+
   &.dz-clickable {
     cursor: pointer;
+
+    * {
+      cursor: default;
+    }
+    .dz-message {
+      &, * {
+        cursor: pointer;
+      }
+    }
   }
 
   min-height: 150px;
@@ -37,9 +49,18 @@
       display: none;
     }
   }
+
+  &.dz-drag-hover {
+    border-style: solid;
+    .dz-message {
+      opacity: 0.5;
+    }
+  }
   .dz-message {
     text-align: center;
     margin: 2em 0;
+
+
   }
 
 
@@ -47,15 +68,102 @@
     position: relative;
     display: inline-block;
 
-    margin: 15px;
+    $preview-padding: 15px;
 
-    .dz-details { display: none; }
+    // Rather going for padding instead of margin, so when
+    // hovering the details, there isn't a gap.
+    padding: $preview-padding;
+    min-height: 100px;
+
+    &:hover {
+      // Making sure that always the hovered preview element is on top
+      z-index: 1000;
+      .dz-details {
+        opacity: 1;
+      }
+    }
+
+    &.dz-file-preview {
+      .dz-details {
+        opacity: 1;
+        top: $preview-padding;
+        bottom: $preview-padding;
+        left: $preview-padding;
+        min-width: $image-size;
+        max-width: $image-size;
+        background: linear-gradient(to bottom, #ccc, #bbb);
+        padding-top: 20px;
+
+        &:hover {
+          box-shadow: 2px 2px 10px rgba(100, 100, 100, 0.3);
+        }
+
+        .dz-size {
+          // Giving enough space to the progress bar
+          margin-top: 15px;
+        }
+
+        &:after {
+          display: none;
+        }
+      }
+    }
+
+    &.dz-image-preview {
+      .dz-details {
+        transition: opacity 0.2s linear;
+      }
+    }
+    .dz-details {
+      $background-color: #444;
+
+      z-index: 100;
+
+      opacity: 0;
+
+      font-size: 13px;
+      background: $background-color;
+      background: linear-gradient(to bottom, $background-color, darken($background-color, 10%));
+
+      $width: 120px;
+      min-width: $width;
+      max-width: $width;
+      position: absolute;
+      top: 110px + $preview-padding;
+      left: -10px + $preview-padding;
+      border-radius: 6px;
+      color: white;
+      padding: 0.5em 1em;
+      line-height: 180%;
+
+      &:hover {
+        max-width: 300px;
+      }
+      .dz-filename {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      // The triangle pointing up
+      &:after {
+        content: '';
+        position: absolute;
+        top: -6px;
+        left: $width / 2 - 6px;
+        width: 0; 
+        height: 0; 
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-bottom: 6px solid $background-color;
+      }
+    }
 
     .dz-image {
       border-radius: 8px;
       overflow: hidden;
-      width: 100px;
-      height: 100px;
+      width: $image-size;
+      height: $image-size;
       background: #999;
       position: relative;
       display: block;
@@ -88,7 +196,10 @@
       $image-height: 54px;
       $image-width: 54px;
 
+      pointer-events: none;
+
       opacity: 0;
+      z-index: 500;
 
       position: absolute;
       display: block;
@@ -116,7 +227,9 @@
     .dz-progress {
 
       opacity: 1;
+      z-index: 1000;
 
+      pointer-events: none;
       position: absolute;
       height: 16px;
       left: 50%;
@@ -145,7 +258,7 @@
         left: 0;
         bottom: 0;
         width: 0;
-        transition: width 100ms linear;
+        transition: width 300ms ease-in-out;
       }
 
     }
