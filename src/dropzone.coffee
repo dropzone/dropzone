@@ -150,6 +150,8 @@ class Dropzone extends Emitter
     # If true, the dropzone will present a file selector when clicked.
     clickable: yes
 
+    preventDropOutside: no
+
     # Whether hidden files in directories should be ignored.
     ignoreHiddenFiles: yes
 
@@ -553,7 +555,16 @@ class Dropzone extends Emitter
       else
         @clickableElements = Dropzone.getElements @options.clickable, "clickable"
 
-
+    if @options.preventDropOutside
+      disableDrop = (e) ->
+        e.stopPropagation()
+        e.preventDefault()
+        false
+      document.addEventListener('drop', disableDrop, false)
+      document.addEventListener('dragenter', disableDrop, false)
+      document.addEventListener('dragover', disableDrop, false)
+      document.addEventListener('dragleave', disableDrop, false)
+      
     @init()
 
 
