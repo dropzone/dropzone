@@ -187,7 +187,7 @@ function init() {
     parallelUploads: 2,
     thumbnailHeight: 120,
     thumbnailWidth: 120,
-    maxFilesize: 0.1,
+    maxFilesize: 1,
     thumbnail: function(file, dataUrl) {
       if (file.previewElement) {
         file.previewElement.classList.remove("dz-file-preview");
@@ -206,8 +206,6 @@ function init() {
       maxSteps = 60,
       timeBetweenSteps = 100,
       bytesPerStep = 100000;
-
-  timeBetweenSteps *= 15;
 
   dropzone.uploadFiles = function(files) {
     var self = this;

@@ -341,6 +341,7 @@
     .dz-error-message {
       $width: $image-size + 20px;
       $color: rgb(190, 38, 38);
+      z-index: 1000;
       position: absolute;
       display: block;
       opacity: 0;
