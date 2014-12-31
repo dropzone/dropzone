@@ -187,7 +187,7 @@ function init() {
     parallelUploads: 2,
     thumbnailHeight: 120,
     thumbnailWidth: 120,
-    maxFilesize: 1,
+    maxFilesize: 3,
     thumbnail: function(file, dataUrl) {
       if (file.previewElement) {
         file.previewElement.classList.remove("dz-file-preview");

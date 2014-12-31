@@ -179,7 +179,8 @@
       max-width: 100%;
       padding: 1em;
       // padding-bottom: 1.5em;
-      color: rgba(0, 0, 0, 0.8);
+      color: rgba(0, 0, 0, 0.9);
+      text-shadow: 1px 1px 20px rgba(255, 255, 255, 1);
       // background: $background-color;
       // background: linear-gradient(to bottom, $background-color, darken($background-color, 10%));
 
@@ -215,7 +216,7 @@
 
     &:hover {
       .dz-image {
-        opacity: 0.4;
+        opacity: 0.8;
         img {
           -webkit-filter: blur(6px);// brightness(1.4);
         }
@@ -334,17 +335,27 @@
 
     }
 
-    &.dz-error:hover .dz-error-message {
-      opacity: 1;
+    &.dz-error {
+      .dz-error-message {
+        display: block;
+      }
+      &:hover .dz-error-message {
+        opacity: 1;
+        pointer-events: auto;
+      }
     }
 
     .dz-error-message {
       $width: $image-size + 20px;
       $color: rgb(190, 38, 38);
+
+      pointer-events: none;
       z-index: 1000;
       position: absolute;
       display: block;
+      display: none;
       opacity: 0;
+      transition: opacity 0.3s ease;
       border-radius: 8px;
       font-size: 13px;
       top: $image-size + 10px;
@@ -352,7 +363,7 @@
       width: $width;
       background: $color;
       background: linear-gradient(to bottom, $color, darken($color, 5%));
-      padding: 0.5em 1em;
+      padding: 0.5em 1.2em;
       color: white;
 
       // The triangle pointing up
