@@ -538,7 +538,8 @@ each file, you can register for the [`sending`](#event-sending) event:
 
 {% highlight js %}
 myDropzone.on("sending", function(file, xhr, formData) {
-  formData.append("filesize", file.size); // Will send the filesize along with the file as POST data.
+  // Will send the filesize along with the file as POST data.
+  formData.append("filesize", file.size);
 });
 {% endhighlight %}
 
