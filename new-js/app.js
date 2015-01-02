@@ -247,11 +247,10 @@ function init() {
     for (var i = 0; i < units.length; i++) {
       var unit = units[i],
           cutoff = Math.pow(this.options.filesizeBase, 4 - i) / 10;
-      console.log(selectedUnit, size, cutoff);
+
       if (size >= cutoff) {
         selectedSize = size / Math.pow(this.options.filesizeBase, 4 - i);
         selectedUnit = unit;
-        console.log(selectedUnit, size, cutoff);
         break;
       }
     }
