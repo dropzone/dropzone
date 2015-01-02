@@ -143,6 +143,11 @@ class Dropzone extends Emitter
     # by this Dropzone
     maxFiles: null
 
+    # The base used to calculate filesizes. 1024 is technically incorrect,
+    # because `1024 bytes` are `1 kibibyte` not `1 kilobyte`.
+    # You can change this to `1024` if you don't care about validity.
+    filesizeBase: 1000
+
     # Can be an object of additional parameters to transfer to the server.
     # This is the same as adding hidden input fields in the form element.
     params: { }
@@ -775,22 +780,20 @@ class Dropzone extends Emitter
 
   # Returns a nicely formatted filesize
   filesize: (size) ->
-    if      size >= 1024 * 1024 * 1024 * 1024 / 10
-      size = size / (1024 * 1024 * 1024 * 1024 / 10)
-      string = "TiB"
-    else if size >= 1024 * 1024 * 1024 / 10
-      size = size / (1024 * 1024 * 1024 / 10)
-      string = "GiB"
-    else if size >= 1024 * 1024 / 10
-      size = size / (1024 * 1024 / 10)
-      string = "MiB"
-    else if size >= 1024 / 10
-      size = size / (1024 / 10)
-      string = "KiB"
-    else
-      size = size * 10
-      string = "b"
-    "<strong>#{Math.round(size)/10}</strong> #{string}"
+    units = [ 'TB', 'GB', 'MB', 'KB', 'b' ]
+    selectedSize = selectedUnit = null
+
+    for unit, i in units
+      cutoff = Math.pow(@options.filesizeBase, 4 - i) / 10
+
+      if size >= cutoff
+        selectedSize = size / Math.pow(@options.filesizeBase, 4 - i)
+        selectedUnit = unit
+        break
+
+    selectedSize = Math.round(10 * selectedSize) / 10 # Cutting of digits
+
+    "<strong>#{selectedSize}</strong> #{selectedUnit}"
 
 
   # Adds or removes the `dz-max-files-reached` class from the form.
