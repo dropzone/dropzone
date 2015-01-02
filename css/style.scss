@@ -158,6 +158,8 @@ ul {
   padding: $lh;
   overflow: auto;
   background: rgba(100, 108, 128, 0.04);
+  margin-top: 2*$lh;
+  margin-bottom: 2*$lh;
 }
 .bitcoin {
   overflow: auto;
