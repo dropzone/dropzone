@@ -1,58 +1,72 @@
 
-@-webkit-keyframes passing-through {
+
+@mixin keyframes($name) {
+  @-webkit-keyframes #{$name} {
+    @content; 
+  }
+  @-moz-keyframes #{$name} {
+    @content;
+  }
+  @keyframes #{$name} {
+    @content;
+  } 
+}
+
+
+@mixin prefix($map, $vendors: webkit moz ms o) {
+  @each $prop, $value in $map {
+    @if $vendors {
+      @each $vendor in $vendors {
+        #{"-" + $vendor + "-" + $prop}: #{$value};
+      }
+    }
+    // Dump regular property anyway
+    #{$prop}: #{$value};
+  }
+}
+
+
+@include keyframes(passing-through) {
   
   0% {
     opacity: 0;
-    transform: translateY(40px);
+    @include prefix((transform: translateY(40px)));
   }
 
   30%, 70% {
     opacity: 1;
-    transform: translateY(0px);
+    @include prefix((transform: translateY(0px)));
   }
 
   100% {
     opacity: 0;
-    transform: translateY(-40px);
+    @include prefix((transform: translateY(0px)));
   }
 }
 
 
-@-webkit-keyframes slide-in {
+@include keyframes(slide-in) {
   
   0% {
     opacity: 0;
-    transform: translateY(40px);
+    @include prefix((transform: translateY(40px)));
   }
 
   30% {
     opacity: 1;
-    transform: translateY(0);
+    @include prefix((transform: translateY(0px)));
   }
 }
 
 
 
+@include keyframes(pulse) {
+  
+  0% { @include prefix((transform: scale(1))); }
+  10% { @include prefix((transform: scale(1.1))); }
+  20% { @include prefix((transform: scale(1))); }
 
-
-
-@-webkit-keyframes pulse {
-  0%{transform: scale(1);}
-  10%{transform: scale(1.1);}
-  20%{transform: scale(1);}
 }
-@-moz-keyframes pulse {
-  0%{transform: scale(1);}
-  10%{transform: scale(1.1);}
-  20%{transform: scale(1);}
-}
-@keyframes pulse { 
-  0%{transform: scale(1);}
-  10%{transform: scale(1.1);}
-  20%{transform: scale(1);}
-}
-
-
 
 
 
@@ -154,7 +168,7 @@
     &.dz-image-preview {
       background: white;
       .dz-details {
-        transition: opacity 0.2s linear;
+        @include prefix((transition: opacity 0.2s linear));
       }
     }
 
@@ -240,8 +254,8 @@
       .dz-image {
         // opacity: 0.8;
         img {
-          transform: scale(1.05, 1.05); // Getting rid of that white bleed-in
-          -webkit-filter: blur(8px);// brightness(1.4);
+          @include prefix((transform: scale(1.05, 1.05))); // Getting rid of that white bleed-in
+          @include prefix((filter: blur(8px)), webkit); // Getting rid of that white bleed-in
         }
       }
     }
@@ -262,17 +276,20 @@
 
     &.dz-success {
       .dz-success-mark {
-        -webkit-animation-duration: 3s;
-        -webkit-animation-name: passing-through;
-        -webkit-animation-timing-function: cubic-bezier(0.770, 0.000, 0.175, 1.000);//ease-in-out;
+        @include prefix((animation: passing-through 3s cubic-bezier(0.770, 0.000, 0.175, 1.000)));
+
+        // -webkit-animation-duration: 3s;
+        // -webkit-animation-name: passing-through;
+        // -webkit-animation-timing-function: cubic-bezier(0.770, 0.000, 0.175, 1.000);//ease-in-out;
       }
     }
     &.dz-error {
       .dz-error-mark {
         opacity: 1;
-        -webkit-animation-duration: 3s;
-        -webkit-animation-name: slide-in;
-        -webkit-animation-timing-function: cubic-bezier(0.770, 0.000, 0.175, 1.000);//ease-in-out;
+        @include prefix((animation: slide-in 3s cubic-bezier(0.770, 0.000, 0.175, 1.000)));
+        // -webkit-animation-duration: 3s;
+        // -webkit-animation-name: slide-in;
+        // -webkit-animation-timing-function: cubic-bezier(0.770, 0.000, 0.175, 1.000);//ease-in-out;
       }
     }
 
@@ -304,20 +321,17 @@
       
     &.dz-processing .dz-progress {
       opacity: 1;
-      transition: all 0.2s linear;
+      @include prefix((transition: all 0.2s linear));
     }
     &.dz-complete .dz-progress {
       opacity: 0;
-      transition: opacity 0.4s ease-in;
+      @include prefix((transition: opacity 0.4s ease-in));
     }
 
     &:not(.dz-processing) {
       .dz-progress {
-        -webkit-animation: pulse 6s ease infinite;
-        -moz-animation: pulse 6s ease infinite;
-        animation: pulse 6s ease infinite;
+        @include prefix((animation: pulse 6s ease infinite));
       }
-
     }
     .dz-progress {
 
@@ -353,7 +367,7 @@
         left: 0;
         bottom: 0;
         width: 0;
-        transition: width 300ms ease-in-out;
+        @include prefix((transition: width 300ms ease-in-out));
       }
 
     }
@@ -378,7 +392,7 @@
       display: block;
       display: none;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      @include prefix((transition: opacity 0.3s ease));
       border-radius: 8px;
       font-size: 13px;
       top: $image-size + 10px;

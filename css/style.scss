@@ -1,8 +1,8 @@
 ---
 ---
 
-@import "reset";
-@import "pygments";
+@import "_reset";
+@import "_pygments";
 @import "dropzone";
 
 
@@ -17,6 +17,10 @@ $main-width: 720px;
 $nav-width: 220px;
 $header-background: #F3F4F5;
 
+
+#dropzone {
+  margin-bottom: 3rem;
+}
 
 .dropzone {
   border: 2px dashed $main-color;
@@ -105,7 +109,7 @@ em {
 
 code {
   font-family: Inconsolata, monospace;
-  background: rgba(0 , 135, 247 , 0.03);
+  background: rgba(0 , 135, 247 , 0.04);
   padding: 0.2em 0.4em;
 }
 .highlight code, td:first-child  code {
