@@ -177,10 +177,11 @@
       font-size: 13px;
       min-width: 100%;
       max-width: 100%;
-      padding: 1em;
+      padding: 2em 1em;
+      text-align: center;
       // padding-bottom: 1.5em;
       color: rgba(0, 0, 0, 0.9);
-      text-shadow: 1px 1px 20px rgba(255, 255, 255, 1);
+      // text-shadow: 1px 1px 20px rgba(255, 255, 255, 1);
       // background: $background-color;
       // background: linear-gradient(to bottom, $background-color, darken($background-color, 10%));
 
@@ -200,25 +201,47 @@
         // border-bottom: 1px solid silver;
         // border-right: 1px solid silver;
       }
-      .dz-filename {
-        overflow: hidden;
-        // white-space: nowrap;
-        text-overflow: ellipsis;
-        max-height: 4em;
-      }
-
       .dz-size {
         margin-bottom: 1em;
-        font-size: 14px;
+        font-size: 16px;
+      }
+
+      .dz-filename {
+
+        white-space: nowrap;
+
+        &:hover {
+          span {
+            border: 1px solid rgba(200, 200, 200, 0.8);
+            background-color: rgba(255, 255, 255, 0.8);
+          }
+        }
+        &:not(:hover) {
+          span {
+            border: 1px solid transparent;
+          }
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+      }
+
+      .dz-filename, .dz-size {
+        span {
+          background-color: rgba(255, 255, 255, 0.4);
+          padding: 0 0.4em;
+          border-radius: 3px;
+        }
       }
 
     }
 
     &:hover {
       .dz-image {
-        opacity: 0.8;
+        // opacity: 0.8;
         img {
-          -webkit-filter: blur(6px);// brightness(1.4);
+          transform: scale(1.05, 1.05); // Getting rid of that white bleed-in
+          -webkit-filter: blur(8px);// brightness(1.4);
         }
       }
     }
