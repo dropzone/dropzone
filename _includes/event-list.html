@@ -4,7 +4,7 @@
   <thead>
 
     <tr><th class="title" colspan="2">
-      <h1>Event list</h1>
+      <div class="header" id="event-list">Event list</div>
       <p>
         Do <strong>not</strong> overwrite those as configuration options,
         unless you know what you're doing.
@@ -22,32 +22,23 @@
         as first parameter:
 
       </td>
-    </tr><tr>
-      <td><code>dictDefaultMessage</code></td>
-      <td>
-
-        The message that gets displayed before any files are dropped. This
-        is normally replaced by an image but defaults to "Drop files here
-        to upload"
-
-      </td>
-    </tr><tr>
-      <td><code>drop</code></td>
+    </tr><tr id="event-drop">
+      <td><a href="#event-drop"><code>drop</code></a></td>
       <td>The user dropped something onto the dropzone</td>
-    </tr><tr>
-      <td><code>dragstart</code></td>
+    </tr><tr id="event-dragstart">
+      <td><a href="#event-dragstart"><code>dragstart</code></a></td>
       <td>The user started to drag anywhere</td>
-    </tr><tr>
-      <td><code>dragend</code></td>
+    </tr><tr id="event-dragend">
+      <td><a href="#event-dragend"><code>dragend</code></a></td>
       <td>Dragging has ended</td>
-    </tr><tr>
-      <td><code>dragenter</code></td>
+    </tr><tr id="event-dragenter">
+      <td><a href="#event-dragenter"><code>dragenter</code></a></td>
       <td>The user dragged a file onto the Dropzone</td>
-    </tr><tr>
-      <td><code>dragover</code></td>
+    </tr><tr id="event-dragover">
+      <td><a href="#event-dragover"><code>dragover</code></a></td>
       <td>The user is dragging a file over the Dropzone</td>
-    </tr><tr>
-      <td><code>dragleave</code></td>
+    </tr><tr id="event-dragleave">
+      <td><a href="#event-dragleave"><code>dragleave</code></a></td>
       <td>The user dragged a file out of the Dropzone</td>
     </tr><tr>
       <td class="separator" colspan="2">
@@ -57,23 +48,23 @@
         as first parameter:
 
       </td>
-    </tr><tr>
-      <td><code>addedfile</code></td>
+    </tr><tr id="event-addedfile">
+      <td><a href="#event-addedfile"><code>addedfile</code></a></td>
       <td>
 
         When a file is added to the list
 
       </td>
-    </tr><tr>
-      <td><code>removedfile</code></td>
+    </tr><tr id="event-removedfile">
+      <td><a href="#event-removedfile"><code>removedfile</code></a></td>
       <td>
 
         Called whenever a file is removed from the list. You can listen to
         this and delete the file from your server if you want to.
 
       </td>
-    </tr><tr>
-      <td><code>thumbnail</code></td>
+    </tr><tr id="event-thumbnail">
+      <td><a href="#event-thumbnail"><code>thumbnail</code></a></td>
       <td>
 
         When the thumbnail has been generated. Receives the
@@ -81,8 +72,8 @@
         second parameter.
 
       </td>
-    </tr><tr>
-      <td><code>error</code></td>
+    </tr><tr id="event-error">
+      <td><a href="#event-error"><code>error</code></a></td>
       <td>
 
         An error occured. Receives the <code>errorMessage</code> as
@@ -90,8 +81,8 @@
         the xhr object as third.
 
       </td>
-    </tr><tr>
-      <td><code>processing</code></td>
+    </tr><tr id="event-processing">
+      <td><a href="#event-processing"><code>processing</code></a></td>
       <td>
 
         When a file gets processed (since there is a queue not all files
@@ -99,8 +90,8 @@
         previously.
 
       </td>
-    </tr><tr>
-      <td><code>uploadprogress</code></td>
+    </tr><tr id="event-uploadprogress">
+      <td><a href="#event-uploadprogress"><code>uploadprogress</code></a></td>
       <td>
 
         Gets called periodically whenever the file upload progress
@@ -119,8 +110,8 @@
         with the same progress multiple times.
 
       </td>
-    </tr><tr>
-      <td><code>sending</code></td>
+    </tr><tr id="event-sending">
+      <td><a href="#event-sending"><code>sending</code></a></td>
       <td>
 
         Called just before each file is sent. Gets the xhr object and the
@@ -129,8 +120,8 @@
         (for example to add a CSRF token) or add additional data.
 
       </td>
-    </tr><tr>
-      <td><code>success</code></td>
+    </tr><tr id="event-success">
+      <td><a href="#event-success"><code>success</code></a></td>
       <td>
 
         The file has been uploaded successfully. Gets the server response
@@ -138,30 +129,30 @@
         previously)
 
       </td>
-    </tr><tr>
-      <td><code>complete</code></td>
+    </tr><tr id="event-complete">
+      <td><a href="#event-complete"><code>complete</code></a></td>
       <td>
 
         Called when the upload was either successful or erroneous.
 
       </td>
-    </tr><tr>
-      <td><code>canceled</code></td>
+    </tr><tr id="event-canceled">
+      <td><a href="#event-canceled"><code>canceled</code></a></td>
       <td>
 
         Called when a file upload gets canceled.
 
       </td>
-    </tr><tr>
-      <td><code>maxfilesreached</code></td>
+    </tr><tr id="event-maxfilesreached">
+      <td><a href="#event-maxfilesreached"><code>maxfilesreached</code></a></td>
       <td>
 
         Called when the number of files accepted reaches the
         <code>maxFiles</code> limit.
 
       </td>
-    </tr><tr>
-      <td><code>maxfilesexceeded</code></td>
+    </tr><tr id="event-maxfilesexceeded">
+      <td><a href="#event-maxfilesexceeded"><code>maxfilesexceeded</code></a></td>
       <td>
 
         Called for each file that has been rejected because the number of
@@ -175,20 +166,20 @@
         only called if the <code>uploadMultiple</code> option is true:
 
       </td>
-    </tr><tr>
-      <td><code>processingmultiple</code></td>
+    </tr><tr id="event-processingmultiple">
+      <td><a href="#event-processingmultiple"><code>processingmultiple</code></a></td>
       <td>See <code>processing</code> for description.</td>
-    </tr><tr>
-      <td><code>sendingmultiple</code></td>
+    </tr><tr id="event-sendingmultiple">
+      <td><a href="#event-sendingmultiple"><code>sendingmultiple</code></a></td>
       <td>See <code>sending</code> for description.</td>
-    </tr><tr>
-      <td><code>successmultiple</code></td>
+    </tr><tr id="event-successmultiple">
+      <td><a href="#event-successmultiple"><code>successmultiple</code></a></td>
       <td>See <code>success</code> for description.</td>
-    </tr><tr>
-      <td><code>completemultiple</code></td>
+    </tr><tr id="event-completemultiple">
+      <td><a href="#event-completemultiple"><code>completemultiple</code></a></td>
       <td>See <code>complete</code> for description.</td>
-    </tr><tr>
-      <td><code>canceledmultiple</code></td>
+    </tr><tr id="event-canceledmultiple">
+      <td><a href="#event-canceledmultiple"><code>canceledmultiple</code></a></td>
       <td>See <code>canceled</code> for description.</td>
     </tr><tr>
       <td class="separator" colspan="2">
@@ -196,8 +187,8 @@
         Special events:
 
       </td>
-    </tr><tr>
-      <td><code>totaluploadprogress</code></td>
+    </tr><tr id="event-totaluploadprogress">
+      <td><a href="#event-totaluploadprogress"><code>totaluploadprogress</code></a></td>
       <td>
 
         Called with the total <code>uploadProgress</code> (0-100), the
@@ -206,16 +197,16 @@
         files.
 
       </td>
-    </tr><tr>
-      <td><code>reset</code></td>
+    </tr><tr id="event-reset">
+      <td><a href="#event-reset"><code>reset</code></a></td>
       <td>
 
         Called when all files in the list are removed and the dropzone is
         reset to initial state.
 
       </td>
-    </tr><tr>
-      <td><code>queuecomplete</code></td>
+    </tr><tr id="event-queuecomplete">
+      <td><a href="#event-queuecomplete"><code>queuecomplete</code></a></td>
       <td>
 
         Called when all files in the queue finish uploading.

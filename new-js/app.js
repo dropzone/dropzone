@@ -17,7 +17,7 @@ function init() {
     this.subSections = [];
     this.name = element.innerHTML;
     this.id = element.id;
-    this.level = parseInt(element.tagName.substr(1)) - 1;
+    this.level = element.tagName == 'DIV' ? '1' : parseInt(element.tagName.substr(1)) - 1;
     this.updatePosition();
   }
   Section.prototype.addSubSection = function(subSection) {
@@ -79,7 +79,7 @@ function init() {
 
 
   function parseSections() {
-    var headlines = document.querySelectorAll('main > section > h1, main > section > h2');
+    var headlines = document.querySelectorAll('main > section > h1, main > section > h2, .title > .header');
     var lastSection;
 
     for (var i = 0; i < headlines.length; i++) {
@@ -153,7 +153,7 @@ function init() {
   function highlightCurrentSection() {
     var scrollTop = window.pageYOffset,
         scrollBottom = scrollTop + windowHeight,
-        scrollMiddle = scrollTop + windowHeight / 2;
+        scrollMiddle = scrollTop + windowHeight / 3;
 
     var highlightedSection = allSections[0];
 

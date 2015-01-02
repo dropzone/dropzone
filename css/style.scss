@@ -57,7 +57,7 @@ html, body {
 }
 
 
-h1, h2, h3, table th {
+h1, h2, h3, table th, table th .header {
   font-size: 1.8rem;
   color: $main-color;
   -webkit-font-smoothing: antialiased;
@@ -105,6 +105,17 @@ em {
 
 code {
   font-family: Inconsolata, monospace;
+  background: rgba(0 , 135, 247 , 0.03);
+  padding: 0.2em 0.4em;
+}
+.highlight code, td:first-child  code {
+  background: none;
+  padding: 0;
+}
+
+aside {
+  font-size: 0.8em;
+  color: rgba(0, 0, 0, 0.4);
 }
 
 
@@ -395,10 +406,6 @@ main {
       text-align: center;
       padding-top: 2*$lh;
       padding-bottom: 2*$lh;
-      h1 {
-        margin: 0;
-        padding: 0;
-      }
       p {
         margin-bottom: 0;
       }
