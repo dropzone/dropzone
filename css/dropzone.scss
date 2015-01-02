@@ -40,7 +40,7 @@
 
   100% {
     opacity: 0;
-    @include prefix((transform: translateY(0px)));
+    @include prefix((transform: translateY(-40px)));
   }
 }
 
