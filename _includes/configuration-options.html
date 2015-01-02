@@ -39,9 +39,21 @@
       <td><code>maxFilesize</code></td>
       <td>in MB</td>
     </tr><tr>
+
+      <td><code>filesizeBase</code></td>
+      <td>
+        Defaults to <code>1000</code>. This defines whether a base of
+        <code>1000</code> or <code>1024</code> should be used to calculate
+        file sizes. <code>1000</code> is correct, because <code>1000 Bytes</code>
+        equal <code>1 Kilobyte</code>, and <code>1024 Bytes</code> equal
+        <code>1 Kibibyte</code>. You can change this to <code>1024</code> if
+        you don't care about validity.
+      </td>
+
+    </tr><tr>
+
       <td><code>paramName</code></td>
       <td>
-
         The name of the file param that gets transferred. Defaults to
         <code>file</code>. <strong>NOTE</strong>: If you have the option
         <code>uploadMultiple</code> set to <code>true</code>, then
