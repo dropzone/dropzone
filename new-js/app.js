@@ -1,5 +1,6 @@
 
 function init() {
+  FastClick.attach(document.body);
 
   var allSections = [],
       sections = [],
