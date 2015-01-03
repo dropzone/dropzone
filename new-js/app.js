@@ -179,6 +179,9 @@ function init() {
   var fixed = false;
   window.addEventListener('scroll', buffer(handleScroll));
   window.addEventListener('scroll', function() {
+
+    if (disableScrollEvents) return true;
+
     // Parallax header... can't be buffered
     var translate = 'translateY(' + Math.round(window.pageYOffset / 2) + 'px)';
     headerElement.style.WebkitTransform = translate;
@@ -261,6 +264,7 @@ function init() {
 
   // Mostly taken from: https://coderwall.com/p/hujlhg/smooth-scrolling-without-jquery
   var smoothScrollToStart = function() {
+
     var target = windowHeight;
     var duration = 600;
 
@@ -274,12 +278,21 @@ function init() {
     // supposed to be, based on what we're doing
     var previous_top = window.pageYOffset;
 
+    var done = function() {
+      // Setting the menu to fixed right away
+      fixed = true;
+      navElement.classList.add('fixed');
+
+      disableScrollEvents = false;
+
+    }
+
     // This is like a think function from a game loop
     var scroll_frame = function() {
-      if (window.pageYOffset != previous_top) {
-        disableScrollEvents = false;
-        return;
-      }
+      // if (window.pageYOffset != previous_top) {
+      //   disableScrollEvents = false;
+      //   return;
+      // }
 
       // set the scrollTop for this frame
       var now = Date.now();
@@ -289,7 +302,7 @@ function init() {
 
       // check if we're done!
       if(now >= end_time) {
-        disableScrollEvents = false;
+        done();
         return;
       }
 
@@ -298,7 +311,7 @@ function init() {
       // interrupted.
       if(window.pageYOffset === previous_top
         && window.pageYOffset !== frameTop) {
-        disableScrollEvents = false;
+        done();
         return;
       }
       previous_top = window.pageYOffset;
