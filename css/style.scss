@@ -7,6 +7,18 @@
 
 
 
+@mixin prefix($map, $vendors: webkit moz ms o) {
+  @each $prop, $value in $map {
+    @if $vendors {
+      @each $vendor in $vendors {
+        #{"-" + $vendor + "-" + $prop}: #{$value};
+      }
+    }
+    // Dump regular property anyway
+    #{$prop}: #{$value};
+  }
+}
+
 $base-font-size: 20px;
 $lh: 1.4rem;
 $main-color: #0087F7;
@@ -74,6 +86,17 @@ h1, h2, h3 {
 h2 {
   font-size: 1.4rem;
 }
+
+h1, h2 {
+  &.anchor {
+    margin: 0;
+    padding: 0;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+  }
+}
+
 table th {
   font-size: 1.4rem;
   color: $text-color;
@@ -283,7 +306,9 @@ main > nav {
   }
 
   .sub-sections {
-    display: none;
+    height: 0;
+    overflow: hidden;
+    @include prefix((transition: height 0.4s ease));
   }
   .visible {
     background: rgba(255, 255, 255, 0.13);
@@ -386,7 +411,7 @@ main {
 
   table {
     font-size: 0.9rem;
-    margin-top: 3*$lh;
+    margin-top: 1*$lh;
     margin-bottom: 3*$lh;
     $border-color: #38A0FE;
     border: 1px solid $border-color;

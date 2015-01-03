@@ -9,17 +9,53 @@ function init() {
       headerElement = document.querySelector('body > header'),
       windowHeight = getWindowHeight();
 
+
+  // Makes sure a function isn't called too often.
+  function buffer(callBack) {
+    var timeoutId, lastCall = 0, bufferSpan = 200;
+
+    var bufferedFunction = function() {
+      // Already buffered
+      if (timeoutId) return;
+
+      // Last call has been long ago enough
+      if (Date.now() - lastCall > bufferSpan) {
+        callBack();
+        lastCall = Date.now();
+      }
+      else {
+        timeoutId = setTimeout(function() {
+          timeoutId = null;
+          callBack();
+          lastCall = Date.now();
+        }, bufferSpan);        
+      }
+
+    }
+
+    return bufferedFunction;
+  }
+
+
   function getWindowHeight() { return document.body.getBoundingClientRect().height; }
 
   function Section(element) {
     this.element = element;
+    this.isCurrent = false;
     this.navElement = null;
     this.parent = null;
     this.subSections = [];
     this.name = element.innerHTML;
     this.id = element.id;
-    this.level = element.tagName == 'DIV' ? '1' : parseInt(element.tagName.substr(1)) - 1;
+    this.level = parseInt(element.tagName.substr(1)) - 1;
     this.updatePosition();
+  }
+  Section.prototype.getSubSectionsHeight = function() {
+    var height = 0;
+    for (var i = 0; i < this.subSections.length; i++) {
+      height += this.subSections[i].navElement.getBoundingClientRect().height;
+    }
+    return height;
   }
   Section.prototype.addSubSection = function(subSection) {
     this.subSections.push(subSection);
@@ -29,9 +65,11 @@ function init() {
     var top = 0,
         obj = this.element;
 
+
     do {
       top += obj.offsetTop;
     } while (obj = obj.offsetParent);
+
     this.top = top;
   }
   Section.prototype.getHtml = function() {
@@ -53,6 +91,7 @@ function init() {
       }
 
       element.appendChild(subSectionsElement);
+      this.subSectionsElement = subSectionsElement;
     }
 
     this.navElement = element;
@@ -61,6 +100,8 @@ function init() {
   }
   Section.prototype.highlight = function(notCurrentSection) {
     if (!notCurrentSection) {
+      if (this.isCurrent) return;
+      this.isCurrent = true;
       for (var i = 0; i < allSections.length; i ++) {
         if (allSections[i] !== this) {
           allSections[i].downlight();
@@ -70,17 +111,27 @@ function init() {
     }
     this.navElement.classList.add('visible');
     if (this.parent) this.parent.highlight(true);
+
+    if (this.level == 0 && this.subSectionsElement) {
+      var height = this.getSubSectionsHeight();
+      this.subSectionsElement.style.height = height + 'px';
+    }
   }
   // He he, funny name
   Section.prototype.downlight = function() {
+    this.isCurrent = false;
     this.navElement.classList.remove('visible');
     this.linkElement.classList.remove('current');
+
+    if (this.level == 0 && this.subSectionsElement) {
+      this.subSectionsElement.style.height = '0px';
+    }
+
   }
 
 
-
   function parseSections() {
-    var headlines = document.querySelectorAll('main > section > h1, main > section > h2, .title > .header');
+    var headlines = document.querySelectorAll('main > section > h1, main > section > h2');
     var lastSection;
 
     for (var i = 0; i < headlines.length; i++) {
@@ -100,8 +151,8 @@ function init() {
   }
 
   function updateSectionPositions() {
-    for (var i = 0; i < sections.length; i++) {
-      sections[i].updatePosition();
+    for (var i = 0; i < allSections.length; i++) {
+      allSections[i].updatePosition();
     }
   }
 
@@ -112,36 +163,31 @@ function init() {
     navElement.appendChild(sections[i].getHtml());
   }
 
+
   function setHeaderSize() {
     // headerElement.style.height = mainElement.style.marginTop = windowHeight + 'px';
   }
-  window.addEventListener('resize', function() {
+  window.addEventListener('resize', buffer(handleResize));
+  
+  function handleResize() {
     windowHeight = getWindowHeight();
-    // setHeaderSize();
     handleScroll();
     updateSectionPositions();
-  });
-  // setHeaderSize();
+  }
 
 
   var fixed = false;
-  window.addEventListener('scroll', handleScroll);
-
-  function handleScroll() {
-    updateSectionPositions();
-
+  window.addEventListener('scroll', buffer(handleScroll));
+  window.addEventListener('scroll', function() {
+    // Parallax header... can't be buffered
     var translate = 'translateY(' + Math.round(window.pageYOffset / 2) + 'px)';
     headerElement.style.WebkitTransform = translate;
     headerElement.style.transform = translate;
 
     headerElement.style.opacity = Math.max(0, windowHeight - window.pageYOffset) / windowHeight;
 
-    if (window.pageYOffset > 0) {
-      headerElement.classList.add('disappear');
-    }
-    else {
-      headerElement.classList.remove('disappear');
-    }
+
+
     if (window.pageYOffset >= windowHeight) {
       if (!fixed) {
         fixed = true;
@@ -155,6 +201,16 @@ function init() {
       }
     }
 
+
+  });
+
+
+
+  var disableScrollEvents = false;
+
+  function handleScroll() {
+    if (disableScrollEvents) return true;
+    updateSectionPositions();
     highlightCurrentSection();
   }
 
@@ -188,6 +244,92 @@ function init() {
 
   }
 
+
+
+
+
+  // Smoothscroll
+
+
+  // based on http://en.wikipedia.org/wiki/Smoothstep
+  var smoothStep = function(start, end, point) {
+      if(point <= start) { return 0; }
+      if(point >= end) { return 1; }
+      var x = (point - start) / (end - start); // interpolation
+      return x*x*(3 - 2*x);
+  }
+
+  // Mostly taken from: https://coderwall.com/p/hujlhg/smooth-scrolling-without-jquery
+  var smoothScrollToStart = function() {
+    var target = windowHeight;
+    var duration = 600;
+
+    var start_time = Date.now();
+    var end_time = start_time + duration;
+
+    var start_top = window.pageYOffset;
+    var distance = target - start_top;
+
+    // This is to keep track of where the scrollTop is
+    // supposed to be, based on what we're doing
+    var previous_top = window.pageYOffset;
+
+    // This is like a think function from a game loop
+    var scroll_frame = function() {
+      if (window.pageYOffset != previous_top) {
+        disableScrollEvents = false;
+        return;
+      }
+
+      // set the scrollTop for this frame
+      var now = Date.now();
+      var point = smoothStep(start_time, end_time, now);
+      var frameTop = Math.round(start_top + (distance * point));
+      window.scrollTo(0, frameTop);
+
+      // check if we're done!
+      if(now >= end_time) {
+        disableScrollEvents = false;
+        return;
+      }
+
+      // If we were supposed to scroll but didn't, then we
+      // probably hit the limit, so consider it done; not
+      // interrupted.
+      if(window.pageYOffset === previous_top
+        && window.pageYOffset !== frameTop) {
+        disableScrollEvents = false;
+        return;
+      }
+      previous_top = window.pageYOffset;
+
+      // schedule next frame for execution
+      setTimeout(scroll_frame, 0);
+    }
+
+    // Making sure it goes smoothly
+    disableScrollEvents = true;
+    // boostrap the animation process
+    setTimeout(scroll_frame, 0);
+  }
+
+  document.querySelector('.scroll-invitation a').addEventListener('click', function(e) {
+    e.preventDefault();
+    smoothScrollToStart();
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+  // Dropzone
 
 
   var dropzone = new Dropzone('#demo-upload', {
