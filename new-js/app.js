@@ -129,6 +129,13 @@ function init() {
 
   function handleScroll() {
     updateSectionPositions();
+
+    var translate = 'translateY(' + Math.round(window.pageYOffset / 2) + 'px)';
+    headerElement.style.WebkitTransform = translate;
+    headerElement.style.transform = translate;
+
+    headerElement.style.opacity = Math.max(0, windowHeight - window.pageYOffset) / windowHeight;
+
     if (window.pageYOffset > 0) {
       headerElement.classList.add('disappear');
     }
