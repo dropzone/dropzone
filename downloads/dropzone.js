@@ -1153,6 +1153,12 @@ require.register("dropzone/lib/dropzone.js", function (exports, module) {
           return img.src = fileReader.result;
         };
       })(this);
+      fileReader.onerror = (function(_this){
+        _this.emit("thumbnail", file, "");
+        if (callback != null) {
+          return callback();
+        }
+      })(this);
       return fileReader.readAsDataURL(file);
     };
 
