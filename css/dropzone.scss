@@ -124,10 +124,6 @@
 
     vertical-align: top;
 
-    border-radius: $image-border-radius;
-    background: #999;
-    background: linear-gradient(to bottom, #eee, #ddd);
-
     margin: 16px;
     min-height: 100px;
 
@@ -140,28 +136,15 @@
     }
 
     &.dz-file-preview {
+
+      .dz-image {
+        border-radius: $image-border-radius;
+        background: #999;
+        background: linear-gradient(to bottom, #eee, #ddd);
+      }
+
       .dz-details {
         opacity: 1;
-        // top: $preview-padding;
-        // bottom: $preview-padding;
-        // left: $preview-padding;
-        // min-width: $image-size;
-        // max-width: $image-size;
-        // background: linear-gradient(to bottom, #ccc, #bbb);
-        // padding-top: 20px;
-
-        // &:hover {
-        //   box-shadow: 1px 1px 3px rgba(100, 100, 100, 0.15);
-        // }
-
-        // .dz-size {
-        //   // Giving enough space to the progress bar
-        //   margin-top: 15px;
-        // }
-
-        // &:after {
-        //   display: none;
-        // }
       }
     }
 
@@ -169,6 +152,17 @@
       background: white;
       .dz-details {
         @include prefix((transition: opacity 0.2s linear));
+      }
+    }
+
+    .dz-remove {
+      font-size: 14px;
+      text-align: center;
+      display: block;
+      cursor: pointer;
+      border: none;
+      &:hover {
+        text-decoration: underline;
       }
     }
 
@@ -182,10 +176,8 @@
 
       position: absolute;
       top: 0;
-      bottom: 0;
       left: 0;
 
-      // padding: 1em;
       opacity: 0;
 
       font-size: 13px;
@@ -193,28 +185,12 @@
       max-width: 100%;
       padding: 2em 1em;
       text-align: center;
-      // padding-bottom: 1.5em;
       color: rgba(0, 0, 0, 0.9);
-      // text-shadow: 1px 1px 20px rgba(255, 255, 255, 1);
-      // background: $background-color;
-      // background: linear-gradient(to bottom, $background-color, darken($background-color, 10%));
 
       $width: 120px;
-      // min-width: $width;
-      // max-width: $width;
-      // position: absolute;
-      // top: 110px + $preview-padding;
-      // left: -10px + $preview-padding;
-      // border-radius: 6px;
-      // color: white;
-      // padding: 0.5em 1em;
+
       line-height: 150%;
 
-      &:hover {
-        // max-width: 300px;
-        // border-bottom: 1px solid silver;
-        // border-right: 1px solid silver;
-      }
       .dz-size {
         margin-bottom: 1em;
         font-size: 16px;
@@ -277,19 +253,12 @@
     &.dz-success {
       .dz-success-mark {
         @include prefix((animation: passing-through 3s cubic-bezier(0.770, 0.000, 0.175, 1.000)));
-
-        // -webkit-animation-duration: 3s;
-        // -webkit-animation-name: passing-through;
-        // -webkit-animation-timing-function: cubic-bezier(0.770, 0.000, 0.175, 1.000);//ease-in-out;
       }
     }
     &.dz-error {
       .dz-error-mark {
         opacity: 1;
         @include prefix((animation: slide-in 3s cubic-bezier(0.770, 0.000, 0.175, 1.000)));
-        // -webkit-animation-duration: 3s;
-        // -webkit-animation-name: slide-in;
-        // -webkit-animation-timing-function: cubic-bezier(0.770, 0.000, 0.175, 1.000);//ease-in-out;
       }
     }
 
