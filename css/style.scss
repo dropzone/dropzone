@@ -203,20 +203,6 @@ blockquote {
 body > header {
 
   position: relative;
-  @media (min-width: 700px) {
-    height: 100vh;
-
-    .content {
-      position: relative;
-      top: 50%;
-      transform: translateY(-50%);    
-      -webkit-transform: translateY(-50%);
-      -moz-transform: translateY(-50%);
-    }
-  }
-  @media (min-width: 900px) {
-    padding-left: 15%;
-  }
 
   // &.disappear {
   //   .content {
@@ -261,6 +247,43 @@ body > header {
 
   .scroll-invitation {
     margin-top: 3*$lh;
+  }
+
+
+  @media (min-width: 700px) {
+    height: 100vh;
+
+    .content {
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);    
+      -webkit-transform: translateY(-50%);
+      -moz-transform: translateY(-50%);
+    }
+  }
+  @media (min-width: 900px) {
+    padding-left: 15%;
+  }
+  @media (min-width: 1100px) {
+
+    h1 img {
+      width: 500px;
+    }
+
+    .content > * {
+      max-width: 900px;
+    }
+
+    h2 {
+      font-size: 1.6em;
+      line-height: 1.4em;
+    }
+    font-size: 1.2em;
+    line-height: 1.5em;
+
+    .scroll-invitation img {
+      width: 40px;
+    }
   }
 
 }
