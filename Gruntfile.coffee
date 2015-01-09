@@ -13,7 +13,7 @@ module.exports = (grunt) ->
         ]
       dropzone:
         files: [
-          "downloads/css/dropzone.css": "downloads/css/stylus/dropzone.styl"
+          "downloads/css/dropzone-theme-old.css": "downloads/css/stylus/dropzone-theme-old.styl"
         ]
 
     coffee:

@@ -1,42 +1,42 @@
 /* The MIT License */
-.dropzone,
-.dropzone *,
-.dropzone-previews,
-.dropzone-previews * {
+.dropzone.theme-old,
+.dropzone.theme-old *,
+.dropzone-previews.theme-old,
+.dropzone-previews.theme-old * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-.dropzone {
+.dropzone.theme-old {
   position: relative;
   border: 1px solid rgba(0,0,0,0.08);
   background: rgba(0,0,0,0.02);
   padding: 1em;
 }
-.dropzone.dz-clickable {
+.dropzone.theme-old.dz-clickable {
   cursor: pointer;
 }
-.dropzone.dz-clickable .dz-message,
-.dropzone.dz-clickable .dz-message span {
+.dropzone.theme-old.dz-clickable .dz-message,
+.dropzone.theme-old.dz-clickable .dz-message span {
   cursor: pointer;
 }
-.dropzone.dz-clickable * {
+.dropzone.theme-old.dz-clickable * {
   cursor: default;
 }
-.dropzone .dz-message {
+.dropzone.theme-old .dz-message {
   opacity: 1;
   -ms-filter: none;
   filter: none;
 }
-.dropzone.dz-drag-hover {
+.dropzone.theme-old.dz-drag-hover {
   border-color: rgba(0,0,0,0.15);
   background: rgba(0,0,0,0.04);
 }
-.dropzone.dz-started .dz-message {
+.dropzone.theme-old.dz-started .dz-message {
   display: none;
 }
-.dropzone .dz-preview,
-.dropzone-previews .dz-preview {
+.dropzone.theme-old .dz-preview,
+.dropzone-previews.theme-old .dz-preview {
   background: rgba(255,255,255,0.8);
   position: relative;
   display: inline-block;
@@ -45,12 +45,12 @@
   border: 1px solid #acacac;
   padding: 6px 6px 6px 6px;
 }
-.dropzone .dz-preview.dz-file-preview [data-dz-thumbnail],
-.dropzone-previews .dz-preview.dz-file-preview [data-dz-thumbnail] {
+.dropzone.theme-old .dz-preview.dz-file-preview [data-dz-thumbnail],
+.dropzone-previews.theme-old .dz-preview.dz-file-preview [data-dz-thumbnail] {
   display: none;
 }
-.dropzone .dz-preview .dz-details,
-.dropzone-previews .dz-preview .dz-details {
+.dropzone.theme-old .dz-preview .dz-details,
+.dropzone-previews.theme-old .dz-preview .dz-details {
   width: 100px;
   height: 100px;
   position: relative;
@@ -58,43 +58,43 @@
   padding: 5px;
   margin-bottom: 22px;
 }
-.dropzone .dz-preview .dz-details .dz-filename,
-.dropzone-previews .dz-preview .dz-details .dz-filename {
+.dropzone.theme-old .dz-preview .dz-details .dz-filename,
+.dropzone-previews.theme-old .dz-preview .dz-details .dz-filename {
   overflow: hidden;
   height: 100%;
 }
-.dropzone .dz-preview .dz-details img,
-.dropzone-previews .dz-preview .dz-details img {
+.dropzone.theme-old .dz-preview .dz-details img,
+.dropzone-previews.theme-old .dz-preview .dz-details img {
   position: absolute;
   top: 0;
   left: 0;
   width: 100px;
   height: 100px;
 }
-.dropzone .dz-preview .dz-details .dz-size,
-.dropzone-previews .dz-preview .dz-details .dz-size {
+.dropzone.theme-old .dz-preview .dz-details .dz-size,
+.dropzone-previews.theme-old .dz-preview .dz-details .dz-size {
   position: absolute;
   bottom: -28px;
   left: 3px;
   height: 28px;
   line-height: 28px;
 }
-.dropzone .dz-preview.dz-error .dz-error-mark,
-.dropzone-previews .dz-preview.dz-error .dz-error-mark {
+.dropzone.theme-old .dz-preview.dz-error .dz-error-mark,
+.dropzone-previews.theme-old .dz-preview.dz-error .dz-error-mark {
   display: block;
 }
-.dropzone .dz-preview.dz-success .dz-success-mark,
-.dropzone-previews .dz-preview.dz-success .dz-success-mark {
+.dropzone.theme-old .dz-preview.dz-success .dz-success-mark,
+.dropzone-previews.theme-old .dz-preview.dz-success .dz-success-mark {
   display: block;
 }
-.dropzone .dz-preview:hover .dz-details img,
-.dropzone-previews .dz-preview:hover .dz-details img {
+.dropzone.theme-old .dz-preview:hover .dz-details img,
+.dropzone-previews.theme-old .dz-preview:hover .dz-details img {
   display: none;
 }
-.dropzone .dz-preview .dz-success-mark,
-.dropzone-previews .dz-preview .dz-success-mark,
-.dropzone .dz-preview .dz-error-mark,
-.dropzone-previews .dz-preview .dz-error-mark {
+.dropzone.theme-old .dz-preview .dz-success-mark,
+.dropzone-previews.theme-old .dz-preview .dz-success-mark,
+.dropzone.theme-old .dz-preview .dz-error-mark,
+.dropzone-previews.theme-old .dz-preview .dz-error-mark {
   display: none;
   position: absolute;
   width: 40px;
@@ -104,16 +104,16 @@
   right: -10px;
   top: -10px;
 }
-.dropzone .dz-preview .dz-success-mark,
-.dropzone-previews .dz-preview .dz-success-mark {
+.dropzone.theme-old .dz-preview .dz-success-mark,
+.dropzone-previews.theme-old .dz-preview .dz-success-mark {
   color: #8cc657;
 }
-.dropzone .dz-preview .dz-error-mark,
-.dropzone-previews .dz-preview .dz-error-mark {
+.dropzone.theme-old .dz-preview .dz-error-mark,
+.dropzone-previews.theme-old .dz-preview .dz-error-mark {
   color: #ee162d;
 }
-.dropzone .dz-preview .dz-progress,
-.dropzone-previews .dz-preview .dz-progress {
+.dropzone.theme-old .dz-preview .dz-progress,
+.dropzone-previews.theme-old .dz-preview .dz-progress {
   position: absolute;
   top: 100px;
   left: 6px;
@@ -122,8 +122,8 @@
   background: #d7d7d7;
   display: none;
 }
-.dropzone .dz-preview .dz-progress .dz-upload,
-.dropzone-previews .dz-preview .dz-progress .dz-upload {
+.dropzone.theme-old .dz-preview .dz-progress .dz-upload,
+.dropzone-previews.theme-old .dz-preview .dz-progress .dz-upload {
   display: block;
   position: absolute;
   top: 0;
@@ -132,12 +132,12 @@
   width: 0%;
   background-color: #8cc657;
 }
-.dropzone .dz-preview.dz-processing .dz-progress,
-.dropzone-previews .dz-preview.dz-processing .dz-progress {
+.dropzone.theme-old .dz-preview.dz-processing .dz-progress,
+.dropzone-previews.theme-old .dz-preview.dz-processing .dz-progress {
   display: block;
 }
-.dropzone .dz-preview .dz-error-message,
-.dropzone-previews .dz-preview .dz-error-message {
+.dropzone.theme-old .dz-preview .dz-error-message,
+.dropzone-previews.theme-old .dz-preview .dz-error-message {
   display: none;
   position: absolute;
   top: -5px;
@@ -149,7 +149,7 @@
   max-width: 500px;
   z-index: 500;
 }
-.dropzone .dz-preview:hover.dz-error .dz-error-message,
-.dropzone-previews .dz-preview:hover.dz-error .dz-error-message {
+.dropzone.theme-old .dz-preview:hover.dz-error .dz-error-message,
+.dropzone-previews.theme-old .dz-preview:hover.dz-error .dz-error-message {
   display: block;
 }
