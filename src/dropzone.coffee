@@ -143,6 +143,11 @@ class Dropzone extends Emitter
     # by this Dropzone
     maxFiles: null
 
+    # The base used to calculate filesizes. 1024 is technically incorrect,
+    # because `1024 bytes` are `1 kibibyte` not `1 kilobyte`.
+    # You can change this to `1024` if you don't care about validity.
+    filesizeBase: 1000
+
     # Can be an object of additional parameters to transfer to the server.
     # This is the same as adding hidden input fields in the form element.
     params: { }
@@ -240,10 +245,10 @@ class Dropzone extends Emitter
     # You can use {{maxFiles}} here, which will be replaced by the option.
     dictMaxFilesExceeded: "You can not upload any more files."
 
-    dictFileTiBUnitFormat: "TiB"
-    dictFileGiBUnitFormat: "GiB"
-    dictFileMiBUnitFormat: "MiB"
-    dictFileKiBUnitFormat: "KiB"
+    dictFileTBUnitFormat: "TiB"
+    dictFileGBUnitFormat: "GiB"
+    dictFileMBUnitFormat: "MiB"
+    dictFileKBUnitFormat: "KiB"
     dictFileBUnitFormat: "b"
     dictFileThousandsSeparator: ","
     dictFileDecimalSeparator: "."
@@ -794,22 +799,27 @@ class Dropzone extends Emitter
       r = thousandsSep + s.substr(i, 3) + r  while (i -= 3) > 0
       s.substr(0, i + 3) + r + ((if d then decimalSep + Math.round(d * Math.pow(10, dp)) else ""))
     
-    if      size >= 1024 * 1024 * 1024 * 1024 / 10
-      size = size / (1024 * 1024 * 1024 * 1024 / 10)
-      string = @options.dictFileTiBUnitFormat
-    else if size >= 1024 * 1024 * 1024 / 10
-      size = size / (1024 * 1024 * 1024 / 10)
-      string = @options.dictFileGiBUnitFormat
-    else if size >= 1024 * 1024 / 10
-      size = size / (1024 * 1024 / 10)
-      string = @options.dictFileMiBUnitFormat
-    else if size >= 1024 / 10
-      size = size / (1024 / 10)
-      string = @options.dictFileKiBUnitFormat
-    else
-      size = size * 10
-      string = @options.dictFileBUnitFormat
-    "<strong>#{formatNumber(size / 10, 2, @options.dictFileThousandsSeparator, @options.dictFileDecimalSeparator)}</strong> #{string}"
+    units = [
+      @options.dictFileTBUnitFormat,
+      @options.dictFileGBUnitFormat,
+      @options.dictFileMBUnitFormat,
+      @options.dictFileKBUnitFormat,
+      @options.dictFileBUnitFormat
+    ]
+    selectedSize = selectedUnit = null
+
+    for unit, i in units
+      cutoffClean = Math.pow(@options.filesizeBase, 4 - i)
+      cutoff = cutoffClean / 10
+
+      if size >= cutoff
+        selectedSize = size / cutoffClean
+        selectedUnit = unit
+        break
+
+    selectedSize = Math.round(10 * selectedSize) / 10 # Cutting of digits
+
+    "<strong>#{formatNumber(selectedSize, 2, @options.dictFileThousandsSeparator, @options.dictFileDecimalSeparator)}</strong> #{selectedUnit}"
 
 
   # Adds or removes the `dz-max-files-reached` class from the form.
