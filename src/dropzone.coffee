@@ -245,10 +245,10 @@ class Dropzone extends Emitter
     # You can use {{maxFiles}} here, which will be replaced by the option.
     dictMaxFilesExceeded: "You can not upload any more files."
 
-    dictFileTBUnitFormat: "TiB"
-    dictFileGBUnitFormat: "GiB"
-    dictFileMBUnitFormat: "MiB"
-    dictFileKBUnitFormat: "KiB"
+    dictFileTBUnitFormat: "TB"
+    dictFileGBUnitFormat: "GB"
+    dictFileMBUnitFormat: "MB"
+    dictFileKBUnitFormat: "KB"
     dictFileBUnitFormat: "b"
     dictFileThousandsSeparator: ","
     dictFileDecimalSeparator: "."
