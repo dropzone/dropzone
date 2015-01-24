@@ -42,7 +42,6 @@
     "url": "https://github.com/enyo/dropzone.git"
   },
   "dependencies": {
-    "emitter-component": "^1.0.0"
   },
   "devDependencies": {
     "chai": "1.7.x",
