@@ -1389,7 +1389,7 @@
 
   })(Emitter);
 
-  Dropzone.version = "3.12.0";
+  Dropzone.version = "4.0.0";
 
   Dropzone.options = {};
 
