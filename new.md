@@ -26,10 +26,15 @@ Try it out!
 News
 ====
 
-I just released a new article on my website [www.colorglare.com](http://www.colorglare.com/2014/11/24/stateless-html.html).
+I just released Dropzone **v4.0.0**! It has been completely redesigned, and
+the website has been updated. Big thanks to [1910](http://www.weare1910.com)
+for designing the new logo and website! It looks fantastic. Check out their 
+work!
+
+My latest article on COLORGLARE: [Stop writing stateless HTML](http://www.colorglare.com/2014/11/24/stateless-html.html).
 If you’re interested in my work, please subscribe to my [RSS feed](http://www.colorglare.com/feed.xml).
 
-**My band, *Gin Ga*, just released our latest album!** It’s called «YES / NO» and is now available
+**My band, *Gin Ga*, recently released a new album!** It’s called «YES / NO» and is available
 in stores, on Spotify and [on iTunes](https://itunes.apple.com/at/album/yes-no/id722931771).
 You can see our [latest video clip on youtube](http://youtu.be/3EPWhYmgdJk).
 
@@ -41,7 +46,7 @@ You can see our [latest video clip on youtube](http://youtu.be/3EPWhYmgdJk).
 Installation
 ============
 
-Download the standalone [dropzone.js](https://raw.github.com/enyo/dropzone/master/downloads/dropzone.js)
+Download the standalone [dropzone.js](https://raw.github.com/enyo/dropzone/master/dist/dropzone.js)
 and include it like this:
 
 {% highlight html %}
@@ -55,8 +60,8 @@ Dropzone is now activated and available as `window.Dropzone`.
 > [Server side implementation](#server-side-implementation) for more information.
 
 This is all you need to get dropzone up and running, but if you want it to look
-like the dropzone on this page, you’ll need to **download the css/dropzone.css**
-from the [downloads folder](https://github.com/enyo/dropzone/tree/master/downloads).
+like the dropzone on this page, you’ll need to **download dropzone.css**
+from the [dist folder](https://github.com/enyo/dropzone/tree/master/dist).
 
 
 With component
@@ -85,7 +90,7 @@ With RequireJS
 Dropzone is also available as an [AMD module](https://github.com/amdjs/amdjs-api/wiki/AMD)
 for [RequireJS](http://requirejs.org).
 
-You can find the [dropzone-amd-module](https://raw.github.com/enyo/dropzone/master/downloads/dropzone-amd-module.js)
+You can find the [dropzone-amd-module](https://raw.github.com/enyo/dropzone/master/dist/dropzone-amd-module.js)
 in the downloads folder.
 
 
