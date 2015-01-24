@@ -89,7 +89,7 @@ or at the [source](https://github.com/enyo/dropzone/blob/master/src/dropzone.cof
 
 ### Register for events
 
-I use [emitter](https://github.com/component/emitter) to manage events. If you want to register to some event you can do so on the `dropzone` object itself:
+If you want to register to some event you can do so on the `dropzone` object itself:
 
 ```js
 Dropzone.options.myDropzone({
