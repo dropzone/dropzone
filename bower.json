@@ -1,18 +1,16 @@
 {
   "name": "dropzone",
   "location": "enyo/dropzone",
-  "version": "3.12.0",
+  "version": "4.0.0",
   "description": "Dropzone is an easy to use drag'n'drop library. It supports image previews and shows nice progress bars.",
   "homepage": "http://www.dropzonejs.com",
   "main": [
-    "downloads/css/dropzone.css",
-    "downloads/images/spritemap.png",
-    "downloads/images/spritemap@2x.png",
-    "downloads/dropzone.min.js"
+    "dist/min/dropzone.min.css",
+    "dist/min/dropzone.min.js"
   ],
   "ignore": [
     "*",
-    "!downloads",
-    "!downloads/**/*"
+    "!dist",
+    "!dist/**/*"
   ]
 }
