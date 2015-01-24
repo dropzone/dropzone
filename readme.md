@@ -25,8 +25,8 @@ GitHub issues tracker. Only post an issue here if you think you discovered a bug
 Starting with version 2.0.0 this library does no longer depend on jQuery (but
 it still works as a jQuery module).
 
-It is written as a [component](https://github.com/component/component) but
-there's a standalone version, and an [AMD](https://github.com/amdjs/amdjs-api/wiki/AMD)
+Dropzone is compatible with [component](https://github.com/component/component),
+there's a standalone version and an [AMD](https://github.com/amdjs/amdjs-api/wiki/AMD)
 module that's compatible with [RequireJS](http://requirejs.org) in the downloads
 folder.
 
