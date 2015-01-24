@@ -814,8 +814,8 @@
             return it("should properly return target dimensions", function() {
               var info;
               info = dropzone.options.resize.call(dropzone, file);
-              info.optWidth.should.eql(100);
-              return info.optHeight.should.eql(100);
+              info.optWidth.should.eql(120);
+              return info.optHeight.should.eql(120);
             });
           });
           return describe("with null thumbnail settings", function() {

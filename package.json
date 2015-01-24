@@ -9,7 +9,7 @@
     "upload"
   ],
   "homepage": "http://www.dropzonejs.com",
-  "main": "./lib/dropzone.js",
+  "main": "./dist/dropzone.js",
   "maintainers": [
     {
       "name": "Matias Meno",
@@ -41,16 +41,13 @@
     "type": "git",
     "url": "https://github.com/enyo/dropzone.git"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "chai": "1.7.x",
     "grunt": "^0.4.4",
-    "grunt-component-build": "^0.5.0",
     "grunt-contrib-coffee": "^0.10.1",
     "grunt-contrib-concat": "^0.4.0",
-    "grunt-contrib-copy": "^0.5.0",
-    "grunt-contrib-stylus": "^0.20.0",
+    "grunt-contrib-sass": "^0.8.1",
     "grunt-contrib-uglify": "^0.4.0",
     "grunt-contrib-watch": "^0.6.1",
     "mocha": "^1.18.2",
