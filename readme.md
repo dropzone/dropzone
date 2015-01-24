@@ -30,7 +30,7 @@ there's a standalone version, and an [AMD](https://github.com/amdjs/amdjs-api/wi
 module that's compatible with [RequireJS](http://requirejs.org) in the downloads
 folder.
 
-<img slt="Dropzone Screenshot" style="width: 585px;" src="http://i.imgur.com/Xf7QvVG.png" />
+<img slt="Dropzone Screenshot" width="585" src="http://i.imgur.com/Xf7QvVG.png" />
 
 
 
