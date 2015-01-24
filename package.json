@@ -25,7 +25,7 @@
     }
   ],
   "scripts": {
-    "test": "./setup_test.sh && ./test.sh"
+    "test": "./test.sh"
   },
   "bugs": {
     "email": "m@tias.me",

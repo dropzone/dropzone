@@ -1,3 +1,11 @@
 language: node_js
 node_js:
   - 0.10
+before_install:
+  - npm install -g grunt-cli
+  - npm install -g component
+install: npm install
+before_script:
+  - grunt build
+  - component build --standalone Dropzone
+script: ./test.sh compiled
