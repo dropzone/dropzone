@@ -28,7 +28,7 @@ News
 
 I just released Dropzone **v4.0.0**! It has been completely redesigned, and
 the website has been updated. Big thanks to [1910](http://www.weare1910.com)
-for designing the new logo and website! It looks fantastic. Check out their 
+for designing the new logo and website. It looks fantastic. Check out their 
 work!
 
 My latest article on COLORGLARE: [Stop writing stateless HTML](http://www.colorglare.com/2014/11/24/stateless-html.html).
