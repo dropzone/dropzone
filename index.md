@@ -31,7 +31,7 @@ the website has been updated. Big thanks to [1910](http://www.weare1910.com)
 for designing the new logo and website! It looks fantastic. Check out their 
 work!
 
-My latest article on COLORGLARE: [Stop writing stateless HTML](http://www.colorglare.com/2014/11/24/stateless-html.html).
+My latest article on COLORGLARE: [Stop writing stateful HTML](http://www.colorglare.com/2014/11/24/stateless-html.html).
 If you’re interested in my work, please subscribe to my [RSS feed](http://www.colorglare.com/feed.xml).
 
 **My band, *Gin Ga*, recently released a new album!** It’s called «YES / NO» and is available
