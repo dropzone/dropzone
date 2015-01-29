@@ -1,72 +1,4 @@
 
-;(function(){
-
-/**
- * Require the module at `name`.
- *
- * @param {String} name
- * @return {Object} exports
- * @api public
- */
-
-function require(name) {
-  var module = require.modules[name];
-  if (!module) throw new Error('failed to require "' + name + '"');
-
-  if (!('exports' in module) && typeof module.definition === 'function') {
-    module.client = module.component = true;
-    module.definition.call(this, module.exports = {}, module);
-    delete module.definition;
-  }
-
-  return module.exports;
-}
-
-/**
- * Registered modules.
- */
-
-require.modules = {};
-
-/**
- * Register module at `name` with callback `definition`.
- *
- * @param {String} name
- * @param {Function} definition
- * @api private
- */
-
-require.register = function (name, definition) {
-  require.modules[name] = {
-    definition: definition
-  };
-};
-
-/**
- * Define a module's exports immediately with `exports`.
- *
- * @param {String} name
- * @param {Generic} exports
- * @api private
- */
-
-require.define = function (name, exports) {
-  require.modules[name] = {
-    exports: exports
-  };
-};
-require.register("dropzone", function (exports, module) {
-
-
-/**
- * Exposing dropzone
- */
-module.exports = require("dropzone/lib/dropzone.js");
-
-});
-
-require.register("dropzone/lib/dropzone.js", function (exports, module) {
-
 /*
  *
  * More info at [www.dropzonejs.com](http://www.dropzonejs.com)
@@ -93,7 +25,7 @@ require.register("dropzone/lib/dropzone.js", function (exports, module) {
  *
  */
 
-(function() {
+(function () {
   var Dropzone, Emitter, camelize, contentLoaded, detectVerticalSquash, drawImageIOSFix, noop, without,
     __slice = [].slice,
     __hasProp = {}.hasOwnProperty,
@@ -1150,15 +1082,28 @@ require.register("dropzone/lib/dropzone.js", function (exports, module) {
               return callback();
             }
           };
-          return img.src = fileReader.result;
+          img.src = fileReader.result;
+
+          if(EXIF){
+            EXIF.getData(img, function(){
+              file.orientation = EXIF.getTag(this, "Orientation");
+            });
+          }
+          return; 
         };
       })(this);
+
+      // Thumb generation error
       fileReader.onerror = (function(_this){
-        _this.emit("thumbnail", file, "");
-        if (callback != null) {
-          return callback();
+        return function(){
+          _this.emit("thumbnail", file, "");
+          if (callback != null) {
+            return callback();
+          }
         }
+        };
       })(this);
+      
       return fileReader.readAsDataURL(file);
     };
 
@@ -1788,14 +1733,3 @@ require.register("dropzone/lib/dropzone.js", function (exports, module) {
   contentLoaded(window, Dropzone._autoDiscoverFunction);
 
 }).call(this);
-
-});
-
-if (typeof exports == "object") {
-  module.exports = require("dropzone");
-} else if (typeof define == "function" && define.amd) {
-  define([], function(){ return require("dropzone"); });
-} else {
-  this["Dropzone"] = require("dropzone");
-}
-})()
