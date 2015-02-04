@@ -244,8 +244,21 @@ body > header {
 
   z-index: 10;
 
+  #social-buttons {
+    padding-top: 1px;
+    .social-button {
+      display: inline-block;
+      &.facebook-social-button {
+        .fb-like > span {
+          vertical-align: top !important;
+          top: 1px;
+        }
+      }
+    }
+  }
+
   .scroll-invitation {
-    margin-top: 3*$lh;
+    margin-top: 1*$lh;
   }
 
 
@@ -296,7 +309,7 @@ body > header {
     line-height: 1.5em;
 
     .scroll-invitation img {
-      margin-top: 4*$lh;
+      margin-top: 2*$lh;
       width: 40px;
     }
   }
