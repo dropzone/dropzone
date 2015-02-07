@@ -46,6 +46,12 @@ You can see our [latest video clip on youtube](http://youtu.be/3EPWhYmgdJk).
 Installation
 ============
 
+You probably only need to look at the [simple example](examples/simple.html) ([source](https://github.com/enyo/dropzone/blob/gh-pages/examples/simple.html))
+to get started. Continue reading for step by step instructions and different
+installation approaches.
+
+* * *
+
 Download the standalone [dropzone.js](https://raw.github.com/enyo/dropzone/master/dist/dropzone.js)
 and include it like this:
 
