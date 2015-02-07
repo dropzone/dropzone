@@ -245,7 +245,17 @@ body > header {
   z-index: 10;
 
   #social-buttons {
-    padding-top: 1px;
+    @media (min-width: 700px) {
+      display: inline-block;
+      position: absolute;
+      top: 0.5em;
+      right: 0;
+      opacity: 0.5;
+      @include prefix((transition: opacity 0.2s ease));
+      &:hover {
+        opacity: 1;
+      }
+    }
     .social-button {
       display: inline-block;
       &.facebook-social-button {
