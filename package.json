@@ -35,6 +35,7 @@
   ],
   "devDependencies": {
     "stylus": "*",
-    "nib": "*"
+    "nib": "*",
+    "grunt": "^0.4.4"
   }
 }
