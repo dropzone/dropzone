@@ -259,6 +259,21 @@ body > header {
 
   .scroll-invitation {
     margin-top: 1*$lh;
+
+    a {
+      display: block;
+      width: 56px;
+      height: 56px;
+      background: url('../images/arrow.svg') no-repeat;
+      &:hover {
+        text-decoration: none;
+        border: none;
+        background-image: url('../images/arrow-hover.svg');
+      }
+      span {
+        display: none;
+      }      
+    }
   }
 
 
