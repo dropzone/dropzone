@@ -268,7 +268,11 @@ body > header {
   }
 
   .scroll-invitation {
-    margin-top: 1*$lh;
+    margin-top: 2*$lh;
+
+    // To separate from social icons
+    // Gets removed when a certain size is reached
+    margin-bottom: 2*$lh;
 
     a {
       display: block;
@@ -289,6 +293,7 @@ body > header {
 
   @media (min-width: 700px) {
     height: 100vh;
+    margin-bottom: 0;
 
     .content {
       position: relative;
@@ -333,9 +338,8 @@ body > header {
     font-size: 1em;
     line-height: 1.5em;
 
-    .scroll-invitation img {
-      margin-top: 2*$lh;
-      width: 40px;
+    .scroll-invitation {
+      margin-top: 4*$lh;
     }
   }
 
