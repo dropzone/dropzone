@@ -1130,7 +1130,7 @@ class Dropzone extends Emitter
       unless 200 <= xhr.status < 300
         handleError()
       else
-        @_finished files, response, e
+        @_finished files, response, e, xhr
 
     xhr.onerror = =>
       return if files[0].status == Dropzone.CANCELED
@@ -1182,10 +1182,10 @@ class Dropzone extends Emitter
 
   # Called internally when processing is finished.
   # Individual callbacks have to be called in the appropriate sections.
-  _finished: (files, responseText, e) ->
+  _finished: (files, responseText, e, xhr) ->
     for file in files
       file.status = Dropzone.SUCCESS
-      @emit "success", file, responseText, e
+      @emit "success", file, responseText, e, xhr
       @emit "complete", file
     if @options.uploadMultiple
       @emit "successmultiple", files, responseText, e
