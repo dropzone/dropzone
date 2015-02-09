@@ -987,37 +987,40 @@ class Dropzone extends Emitter
         callback() if callback?
         return
 
-      # Not using `new Image` here because of a bug in latest Chrome versions.
-      # See https://github.com/enyo/dropzone/pull/226
-      img = document.createElement "img"
-
-      img.onload = =>
-        file.width = img.width
-        file.height = img.height
-
-        resizeInfo = @options.resize.call @, file
-
-        resizeInfo.trgWidth ?= resizeInfo.optWidth
-        resizeInfo.trgHeight ?= resizeInfo.optHeight
-
-        canvas = document.createElement "canvas"
-        ctx = canvas.getContext "2d"
-        canvas.width = resizeInfo.trgWidth
-        canvas.height = resizeInfo.trgHeight
-
-        # This is a bugfix for iOS' scaling bug.
-        drawImageIOSFix ctx, img, resizeInfo.srcX ? 0, resizeInfo.srcY ? 0, resizeInfo.srcWidth, resizeInfo.srcHeight, resizeInfo.trgX ? 0, resizeInfo.trgY ? 0, resizeInfo.trgWidth, resizeInfo.trgHeight
-
-        thumbnail = canvas.toDataURL "image/png"
-
-        @emit "thumbnail", file, thumbnail
-        callback() if callback?
-        
-      img.onerror = callback
-
-      img.src = fileReader.result
+      @createThumbnailFromUrl file, fileReader.result, callback
 
     fileReader.readAsDataURL file
+
+  createThumbnailFromUrl: (file, imageUrl, callback) ->
+    # Not using `new Image` here because of a bug in latest Chrome versions.
+    # See https://github.com/enyo/dropzone/pull/226
+    img = document.createElement "img"
+
+    img.onload = =>
+      file.width = img.width
+      file.height = img.height
+
+      resizeInfo = @options.resize.call @, file
+
+      resizeInfo.trgWidth ?= resizeInfo.optWidth
+      resizeInfo.trgHeight ?= resizeInfo.optHeight
+
+      canvas = document.createElement "canvas"
+      ctx = canvas.getContext "2d"
+      canvas.width = resizeInfo.trgWidth
+      canvas.height = resizeInfo.trgHeight
+
+      # This is a bugfix for iOS' scaling bug.
+      drawImageIOSFix ctx, img, resizeInfo.srcX ? 0, resizeInfo.srcY ? 0, resizeInfo.srcWidth, resizeInfo.srcHeight, resizeInfo.trgX ? 0, resizeInfo.trgY ? 0, resizeInfo.trgWidth, resizeInfo.trgHeight
+
+      thumbnail = canvas.toDataURL "image/png"
+
+      @emit "thumbnail", file, thumbnail
+      callback() if callback?
+      
+    img.onerror = callback if callback?
+
+    img.src = imageUrl
 
 
   # Goes through the queue and processes files if there aren't too many already.
