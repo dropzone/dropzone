@@ -38,17 +38,17 @@ This will install all the tools you need to compile the source files and to test
 the library.
 
 
-Coffeescript & Stylus (-> Javascript & CSS)
+Coffeescript & Sass (-> Javascript & CSS)
 ------------------------------------------
 
 Dropzone is written in [Coffeescript](http://coffeescript.org) and
-[Stylus](http://learnboost.github.com/stylus/) so *do not* make
+[Sass](http://sass-lang.com/) so *do not* make
 changes to the Javascript or CSS files
 
 **I will not merge requests written in Javascript or CSS.**
 
 Please don't include compiled `.js` or `.css` files in your pull requests but only
-`.coffee` or `.styl` files. That way pull requests aren't polluted and I can see
+`.coffee` or `.scss` files. That way pull requests aren't polluted and I can see
 immediately what you changed.
 
 

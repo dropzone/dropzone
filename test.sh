@@ -11,6 +11,5 @@ if [ $# -gt 0 ]
     fi
 else
   grunt
-  component build --standalone Dropzone
 fi
 ./node_modules/mocha-phantomjs/bin/mocha-phantomjs test/test.html
