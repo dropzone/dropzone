@@ -7,31 +7,25 @@
       ]
     },
     {
-      "name": "lib/dropzone.js",
+      "name": "dist/dropzone.js",
       "regexs": [
         "version = \"###\""
       ]
     },
     {
-      "name": "downloads/dropzone.js",
-      "regexs": [
-        "version = \"###\""
-      ]
-    },
-    {
-      "name": "downloads/dropzone.min.js",
+      "name": "dist/min/dropzone.min.js",
       "regexs": [
         "version=\"###\""
       ]
     },
     {
-      "name": "downloads/dropzone-amd-module.js",
+      "name": "dist/dropzone-amd-module.js",
       "regexs": [
         "version = \"###\""
       ]
     },
     {
-      "name": "downloads/dropzone-amd-module.min.js",
+      "name": "dist/min/dropzone-amd-module.min.js",
       "regexs": [
         "version=\"###\""
       ]
@@ -52,12 +46,6 @@
       "name": "bower.json",
       "regexs": [
         "\"version\": \"###\""
-      ]
-    },
-    {
-      "name": "readme.md",
-      "regexs": [
-        "\\*Version ###\\*"
       ]
     }
   ]
