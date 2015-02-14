@@ -1,0 +1,78 @@
+/*
+ * The MIT License
+ * Copyright (c) 2012 Matias Meno <m@tias.me>
+ */
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy of
+// this software and associated documentation files (the "Software"), to deal in
+// the Software without restriction, including without limitation the rights to
+// use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+// of the Software, and to permit persons to whom the Software is furnished to do
+// so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+.dropzone, .dropzone * {
+  box-sizing: border-box;
+}
+.dropzone {
+
+  position: relative;
+
+  .dz-preview {
+    position: relative;
+    display: inline-block;
+    width: 120px;
+    margin: 0.5em;
+
+    .dz-progress {
+      display: block;
+      height: 15px;
+      border: 1px solid #aaa;
+      .dz-upload {
+        display: block;
+        height: 100%;
+        width: 0;
+        background: green;
+      }
+    }
+
+    .dz-error-message {
+      color: red;
+      display: none;
+    }
+    &.dz-error {
+      .dz-error-message, .dz-error-mark {
+        display: block;
+      }
+    }
+    &.dz-success {
+      .dz-success-mark {
+        display: block;
+      }
+    }
+
+    .dz-error-mark, .dz-success-mark {
+      position: absolute;
+      display: none;
+      left: 30px;
+      top: 30px;
+      width: 54px;
+      height: 58px;
+      left: 50%;
+      margin-left: -(54px/2);
+    }
+
+
+  }
+
+}

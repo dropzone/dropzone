@@ -4,53 +4,39 @@ module.exports = (grunt) ->
     pkg: grunt.file.readJSON "package.json"
 
 
-    stylus:
+    sass:
       options:
-        compress: false
-      basic:
+        sourcemap: 'none'
+        
+      default:
         files: [
-          "downloads/css/basic.css": "downloads/css/stylus/basic.styl"
+          "dist/basic.css": "src/basic.scss"
+          "dist/dropzone.css": "src/dropzone.scss"
         ]
-      dropzone:
+      compressed:
+        options:
+          style: 'compressed'
         files: [
-          "downloads/css/dropzone.css": "downloads/css/stylus/dropzone.styl"
+          "dist/min/basic.min.css": "src/basic.scss"
+          "dist/min/dropzone.min.css": "src/dropzone.scss"
         ]
 
     coffee:
       default:
         files:
-          "lib/dropzone.js": "src/dropzone.coffee"
+          "dist/dropzone.js": "src/dropzone.coffee"
       test:
         files:
           "test/test.js": "test/*.coffee"
-
-    componentbuild:
-      options:
-        standalone: "Dropzone"
-
-      app:
-        # output: "build/"
-        name: "build"
-        src: "."
-        dest: "./build"
-        # config: "component.json"
-        # styles: false
-        # scripts: true
-
-    copy:
-      component:
-        src: "build/build.js"
-        dest: "downloads/dropzone.js"
 
     concat:
       amd:
         src: [
           "AMD_header"
-          "components/component-emitter/index.js"
-          "lib/dropzone.js"
+          "dist/dropzone.js"
           "AMD_footer"
         ]
-        dest: "downloads/dropzone-amd-module.js"
+        dest: "dist/dropzone-amd-module.js"
 
     watch:
       js:
@@ -67,7 +53,7 @@ module.exports = (grunt) ->
         options: nospawn: on
       css:
         files: [
-          "downloads/css/stylus/*.styl"
+          "src/*.scss"
         ]
         tasks: [ "css" ]
         options: nospawn: on
@@ -75,16 +61,14 @@ module.exports = (grunt) ->
     uglify:
       js:
         files: [
-          "downloads/dropzone-amd-module.min.js": "downloads/dropzone-amd-module.js"
-          "downloads/dropzone.min.js": "downloads/dropzone.js"
+          "dist/min/dropzone-amd-module.min.js": "dist/dropzone-amd-module.js"
+          "dist/min/dropzone.min.js": "dist/dropzone.js"
         ]
 
 
 
   grunt.loadNpmTasks "grunt-contrib-coffee"
-  grunt.loadNpmTasks "grunt-component-build"
-  grunt.loadNpmTasks "grunt-contrib-stylus"
-  grunt.loadNpmTasks "grunt-contrib-copy"
+  grunt.loadNpmTasks "grunt-contrib-sass"
   grunt.loadNpmTasks "grunt-contrib-concat"
   grunt.loadNpmTasks "grunt-contrib-watch"
   grunt.loadNpmTasks "grunt-contrib-uglify"
@@ -92,8 +76,8 @@ module.exports = (grunt) ->
   # Default tasks
   grunt.registerTask "default", [ "downloads" ]
 
-  grunt.registerTask "css", "Compile the stylus files to css", [ "stylus" ]
+  grunt.registerTask "css", "Compile the sass files to css", [ "sass" ]
 
-  grunt.registerTask "js", "Compile coffeescript", [ "coffee", "componentbuild", "copy", "concat" ]
+  grunt.registerTask "js", "Compile coffeescript", [ "coffee", "concat" ]
 
   grunt.registerTask "downloads", "Compile all stylus and coffeescript files and generate the download files", [ "js", "css", "uglify" ]
