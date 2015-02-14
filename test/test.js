@@ -772,7 +772,7 @@
           return it("should properly create the previewElement", function() {
             file.previewElement.should.be["instanceof"](Element);
             file.previewElement.querySelector("[data-dz-name]").innerHTML.should.eql("test name");
-            return file.previewElement.querySelector("[data-dz-size]").innerHTML.should.eql("<strong>2</strong> MiB");
+            return file.previewElement.querySelector("[data-dz-size]").innerHTML.should.eql("<strong>2.1</strong> MB");
           });
         });
         describe(".error()", function() {
@@ -814,8 +814,8 @@
             return it("should properly return target dimensions", function() {
               var info;
               info = dropzone.options.resize.call(dropzone, file);
-              info.optWidth.should.eql(100);
-              return info.optHeight.should.eql(100);
+              info.optWidth.should.eql(120);
+              return info.optHeight.should.eql(120);
             });
           });
           return describe("with null thumbnail settings", function() {
@@ -1119,10 +1119,20 @@
         });
       });
       describe(".filesize()", function() {
-        return it("should convert to KiloBytes, etc.. not KibiBytes", function() {
-          dropzone.filesize(2 * 1024 * 1024).should.eql("<strong>2</strong> MiB");
-          dropzone.filesize(2 * 1000 * 1000 * 1000).should.eql("<strong>1.9</strong> GiB");
-          return dropzone.filesize(2 * 1024 * 1024 * 1024).should.eql("<strong>2</strong> GiB");
+        it("should convert to KiloBytes, etc..", function() {
+          dropzone.options.filesizeBase.should.eql(1000);
+          dropzone.filesize(2 * 1000 * 1000).should.eql("<strong>2</strong> MB");
+          dropzone.filesize(2 * 1024 * 1024).should.eql("<strong>2.1</strong> MB");
+          dropzone.filesize(2 * 1000 * 1000 * 1000).should.eql("<strong>2</strong> GB");
+          dropzone.filesize(2 * 1024 * 1024 * 1024).should.eql("<strong>2.1</strong> GB");
+          dropzone.filesize(2.5111 * 1000 * 1000 * 1000).should.eql("<strong>2.5</strong> GB");
+          dropzone.filesize(1.1 * 1000).should.eql("<strong>1.1</strong> KB");
+          return dropzone.filesize(999 * 1000).should.eql("<strong>1</strong> MB");
+        });
+        return it("should convert to KibiBytes, etc.. when the filesizeBase is changed to 1024", function() {
+          dropzone.options.filesizeBase = 1024;
+          dropzone.filesize(2 * 1024 * 1024).should.eql("<strong>2</strong> MB");
+          return dropzone.filesize(2 * 1000 * 1000).should.eql("<strong>1.9</strong> MB");
         });
       });
       describe("._updateMaxFilesReachedClass()", function() {

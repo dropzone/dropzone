@@ -590,8 +590,8 @@ describe "Dropzone", ->
 
             info = dropzone.options.resize.call dropzone, file
 
-            info.optWidth.should.eql 100
-            info.optHeight.should.eql 100
+            info.optWidth.should.eql 120
+            info.optHeight.should.eql 120
 
         describe "with null thumbnail settings", ->
           it "should properly return target dimensions", ->
