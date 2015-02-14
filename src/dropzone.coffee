@@ -254,8 +254,9 @@ class Dropzone extends Emitter
     dictFileMBUnitFormat: "MB"
     dictFileKBUnitFormat: "KB"
     dictFileBUnitFormat: "b"
-    dictFileThousandsSeparator: ","
-    dictFileDecimalSeparator: "."
+    dictNumberPrecision: 1
+    dictNumberDelimiter: ","
+    dictNumberSeparator: "."
 
 
     # If `done()` is called without argument the file is accepted
@@ -813,13 +814,13 @@ class Dropzone extends Emitter
 
   # Returns a nicely formatted filesize
   filesize: (size) ->
-    formatNumber = (n, dp, thousandsSep, decimalSep) ->
+    numberWithDelimiter = (n, dp, delimiter, separator) ->
       s = "" + (Math.floor(n))
       d = n % 1
       i = s.length
       r = ""
-      r = thousandsSep + s.substr(i, 3) + r  while (i -= 3) > 0
-      s.substr(0, i + 3) + r + ((if d then decimalSep + Math.round(d * Math.pow(10, dp)) else ""))
+      r = delimiter + s.substr(i, 3) + r  while (i -= 3) > 0
+      s.substr(0, i + 3) + r + ((if d then separator + Math.round(d * Math.pow(10, dp)) else ""))
     
     units = [
       @options.dictFileTBUnitFormat,
@@ -841,7 +842,7 @@ class Dropzone extends Emitter
 
     selectedSize = Math.round(10 * selectedSize) / 10 # Cutting of digits
 
-    "<strong>#{formatNumber(selectedSize, 2, @options.dictFileThousandsSeparator, @options.dictFileDecimalSeparator)}</strong> #{selectedUnit}"
+    '<strong>' + numberWithDelimiter(selectedSize, @options.dictNumberPrecision, @options.dictNumberDelimiter, @options.dictNumberSeparator) + '</strong> ' + selectedUnit
 
 
   # Adds or removes the `dz-max-files-reached` class from the form.
