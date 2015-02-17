@@ -196,6 +196,9 @@ class Dropzone extends Emitter
     # See dictCancelUpload and dictRemoveFile to use different words.
     addRemoveLinks: no
 
+    # if true, discard file if mime type is invalid or max files is reached, addedfile and removedfile events wont be fired Default is false.
+    autoRemove: no
+
     # A CSS selector or HTML element for the file previews container.
     # If null, the dropzone element itself will be used.
     # If false, previews won't be rendered.
@@ -909,6 +912,9 @@ class Dropzone extends Emitter
       @options.accept.call this, file, done
 
   addFile: (file) ->
+    if @options.autoRemove
+      if (!Dropzone.isValidFile file, @options.acceptedFiles) or (@options.maxFiles? and @getAcceptedFiles().length >= @options.maxFiles)
+        return
     file.upload =
       progress: 0
       # Setting the total upload size to file.size for the beginning

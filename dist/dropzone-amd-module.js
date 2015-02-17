@@ -148,6 +148,7 @@
       autoProcessQueue: true,
       autoQueue: true,
       addRemoveLinks: false,
+      autoRemove: false,
       previewsContainer: null,
       capture: null,
       dictDefaultMessage: "Drop files here to upload",
@@ -959,6 +960,11 @@
     };
 
     Dropzone.prototype.addFile = function(file) {
+      if (this.options.autoRemove) {
+        if ((!Dropzone.isValidFile(file, this.options.acceptedFiles)) || ((this.options.maxFiles != null) && this.getAcceptedFiles().length >= this.options.maxFiles)) {
+          return;
+        }
+      }
       file.upload = {
         progress: 0,
         total: file.size,
