@@ -1,6 +1,7 @@
 {
 	"name": "enyo/dropzone",
 	"description": "Handles drag and drop of files for you.",
+	"type": "component",
 	"homepage": "http://www.dropzonejs.com",
 	"keywords": [
 		"dragndrop",
