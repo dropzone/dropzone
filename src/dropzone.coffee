@@ -120,7 +120,7 @@ class Dropzone extends Emitter
     "completemultiple"
     "reset"
     "maxfilesexceeded"
-    "maxfilesreached"
+    "maxfilesreached",
     "queuecomplete"
   ]
 
@@ -900,6 +900,7 @@ class Dropzone extends Emitter
     if file.size > @options.maxFilesize * 1024 * 1024
       done @options.dictFileTooBig.replace("{{filesize}}", Math.round(file.size / 1024 / 10.24) / 100).replace("{{maxFilesize}}", @options.maxFilesize)
     else unless Dropzone.isValidFile file, @options.acceptedFiles
+      @emit "invalidmimetype", file
       done @options.dictInvalidFileType
     else if @options.maxFiles? and @getAcceptedFiles().length >= @options.maxFiles
       done @options.dictMaxFilesExceeded.replace "{{maxFiles}}", @options.maxFiles
@@ -964,7 +965,6 @@ class Dropzone extends Emitter
   removeFile: (file) ->
     @cancelUpload file if file.status == Dropzone.UPLOADING
     @files = without @files, file
-
     @emit "removedfile", file
     @emit "reset" if @files.length == 0
 
