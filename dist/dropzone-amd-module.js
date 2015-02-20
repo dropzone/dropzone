@@ -1342,7 +1342,7 @@
         this.emit("sendingmultiple", files, xhr, formData);
       }
       if (this.element.tagName === "FORM") {
-        _ref2 = this.element.querySelectorAll("input, textarea, select, button");
+        _ref2 = this.element.querySelectorAll("input, textarea, select");
         for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
           input = _ref2[_k];
           inputName = input.getAttribute("name");

@@ -1197,7 +1197,7 @@ class Dropzone extends Emitter
 
     # Take care of other input elements
     if @element.tagName == "FORM"
-      for input in @element.querySelectorAll "input, textarea, select, button"
+      for input in @element.querySelectorAll "input, textarea, select"
         inputName = input.getAttribute "name"
         inputType = input.getAttribute "type"
 
