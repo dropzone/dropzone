@@ -304,17 +304,19 @@ class Dropzone extends Emitter
 
       info.optWidth = @options.thumbnailWidth
       info.optHeight = @options.thumbnailHeight
+      trgRatio = srcRatio
 
       # automatically calculate dimensions if not specified
       if !info.optWidth? and !info.optHeight?
         info.optWidth = info.srcWidth
         info.optHeight = info.srcHeight
+        
+        # ratio has changed, calculate the new one
+        trgRatio = info.optWidth / info.optHeight
       else if !info.optWidth?
         info.optWidth = srcRatio * info.optHeight
       else if !info.optHeight?
         info.optHeight = (1/srcRatio) * info.optWidth
-
-      trgRatio = info.optWidth / info.optHeight
 
       if file.height < info.optHeight or file.width < info.optWidth
         # This image is smaller than the canvas
@@ -326,7 +328,7 @@ class Dropzone extends Emitter
         if srcRatio > trgRatio
           info.srcHeight = file.height
           info.srcWidth = info.srcHeight * trgRatio
-        else
+        else if srcRatio < trgRatio
           info.srcWidth = file.width
           info.srcHeight = info.srcWidth / trgRatio
 
