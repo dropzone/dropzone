@@ -310,13 +310,15 @@ class Dropzone extends Emitter
       if !info.optWidth? and !info.optHeight?
         info.optWidth = info.srcWidth
         info.optHeight = info.srcHeight
-        
+      else
         # ratio has changed, calculate the new one
         trgRatio = info.optWidth / info.optHeight
-      else if !info.optWidth?
-        info.optWidth = srcRatio * info.optHeight
-      else if !info.optHeight?
-        info.optHeight = (1/srcRatio) * info.optWidth
+        
+        if !info.optWidth?
+          info.optWidth = srcRatio * info.optHeight
+        else if !info.optHeight?
+          info.optHeight = (1/srcRatio) * info.optWidth
+
 
       if file.height < info.optHeight or file.width < info.optWidth
         # This image is smaller than the canvas
