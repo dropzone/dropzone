@@ -803,7 +803,8 @@ class Dropzone extends Emitter
   # Returns a nicely formatted filesize
   filesize: (size) ->
     units = [ 'TB', 'GB', 'MB', 'KB', 'b' ]
-    selectedSize = selectedUnit = null
+    selectedSize = null
+    selectedUnit = units[units.length - 1]
 
     for unit, i in units
       cutoff = Math.pow(@options.filesizeBase, 4 - i) / 10
