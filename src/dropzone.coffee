@@ -369,7 +369,11 @@ class Dropzone extends Emitter
       @element.classList.add "dz-started" if @element == @previewsContainer
 
       if @previewsContainer
-        file.previewElement = Dropzone.createElement @options.previewTemplate.trim()
+        if typeof @options.previewTemplate is "function"
+          file.previewElement = @options.previewTemplate()
+        else
+          file.previewElement = Dropzone.createElement @options.previewTemplate.trim()
+
         file.previewTemplate = file.previewElement # Backwards compatibility
 
         @previewsContainer.appendChild file.previewElement
