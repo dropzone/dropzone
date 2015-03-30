@@ -139,10 +139,6 @@ class Dropzone extends Emitter
     thumbnailWidth: 120
     thumbnailHeight: 120
 
-    # The base that is used to calculate the filesize. You can change this to
-    # 1024 if you would rather display kibibytes, mebibytes, etc...
-    filesizeBase: 1000
-
     # Can be used to limit the maximum number of files that will be handled
     # by this Dropzone
     maxFiles: null
