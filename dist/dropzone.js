@@ -137,6 +137,7 @@
       autoQueue: true,
       addRemoveLinks: false,
       previewsContainer: null,
+      disablePreview: false,
       capture: null,
       dictDefaultMessage: "Drop files here to upload",
       dictFallbackMessage: "Your browser does not support drag'n'drop file uploads.",
@@ -248,7 +249,7 @@
         if (this.element === this.previewsContainer) {
           this.element.classList.add("dz-started");
         }
-        if (this.previewsContainer) {
+        if (this.previewsContainer && !this.options.disablePreview) {
           file.previewElement = Dropzone.createElement(this.options.previewTemplate.trim());
           file.previewTemplate = file.previewElement;
           this.previewsContainer.appendChild(file.previewElement);
