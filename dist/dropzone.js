@@ -1592,7 +1592,7 @@
     };
   }
 
-  if (typeof module !== "undefined" && module !== null) {
+  if ((typeof module !== "undefined" && module !== null) && module !== window.module) {
     module.exports = Dropzone;
   } else {
     window.Dropzone = Dropzone;

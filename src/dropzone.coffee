@@ -1422,7 +1422,7 @@ if jQuery?
 
 
 
-if module?
+if module? && module != window.module
   module.exports = Dropzone
 else
   window.Dropzone = Dropzone
