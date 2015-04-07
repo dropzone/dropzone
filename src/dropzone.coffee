@@ -969,10 +969,15 @@ class Dropzone extends Emitter
     @emit "reset" if @files.length == 0
 
   # Removes all files that aren't currently processed from the list
-  removeAllFiles: (cancelIfNecessary = off) ->
+  removeAllFiles: (cancelIfNecessary = off, cancelAddedIfNecessary = on) ->
     # Create a copy of files since removeFile() changes the @files array.
     for file in @files.slice()
-      @removeFile file if file.status != Dropzone.UPLOADING || cancelIfNecessary
+      if file.status == Dropzone.UPLOADING
+        @removeFile(file) if cancelIfNecessary
+      else if file.status == Dropzone.ADDED or file.status == Dropzone.QUEUED
+        @removeFile(file) if cancelIfNecessary or cancelAddedIfNecessary
+      else
+        @removeFile file 
     return null
 
   createThumbnail: (file, callback) ->
