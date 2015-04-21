@@ -598,6 +598,8 @@ class Dropzone extends Emitter
 
   getUploadingFiles: -> @getFilesWithStatus Dropzone.UPLOADING
 
+  getAddedFiles: -> @getFilesWithStatus Dropzone.ADDED
+
   # Files that are either queued or uploading
   getActiveFiles: -> file for file in @files when file.status == Dropzone.UPLOADING or file.status == Dropzone.QUEUED
 
@@ -651,7 +653,7 @@ class Dropzone extends Emitter
 
     # Emit a `queuecomplete` event if all files finished uploading.
     @on "complete", (file) =>
-      if @getUploadingFiles().length == 0 and @getQueuedFiles().length == 0
+      if @getAddedFiles().length == 0 and @getUploadingFiles().length == 0 and @getQueuedFiles().length == 0
         # This needs to be deferred so that `queuecomplete` really triggers after `complete`
         setTimeout (=> @emit "queuecomplete"), 0
 
