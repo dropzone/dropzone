@@ -1697,7 +1697,7 @@ describe "Dropzone", ->
             @_finished files, null, null
           ), 1
 
-        completedFiles = 0        
+        completedFiles = 0
         dropzone.on "complete", (file) ->
           completedFiles++
 
