@@ -5,6 +5,3 @@ node_modules
 .sass-cache
 _site
 _config.yaml
-*.iml
-.idea
-npm-debug.log
