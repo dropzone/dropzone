@@ -415,7 +415,7 @@ class Dropzone extends Emitter
     error: (file, message) ->
       if file.previewElement
         file.previewElement.classList.add "dz-error"
-        message = message.error if typeof message != "String" and message.error
+        message = message.error if message and message.error
         node.textContent = message for node in file.previewElement.querySelectorAll("[data-dz-errormessage]")
 
     errormultiple: noop
