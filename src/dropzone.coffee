@@ -1179,7 +1179,8 @@ class Dropzone extends Emitter
 
     extend headers, @options.headers if @options.headers
 
-    xhr.setRequestHeader headerName, headerValue for headerName, headerValue of headers
+    for headerName, headerValue of headers
+      xhr.setRequestHeader headerName, headerValue if headerValue
 
     formData = new FormData()
 
