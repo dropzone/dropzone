@@ -1214,7 +1214,10 @@ class Dropzone extends Emitter
     # last parameter
     formData.append @_getParamName(i), files[i], files[i].name for i in [0..files.length-1]
 
-    xhr.send formData
+    if xhr.readyState == 1
+      xhr.send formData
+    else
+      xhr
 
 
   # Called internally when processing is finished.
