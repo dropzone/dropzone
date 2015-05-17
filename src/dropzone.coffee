@@ -148,11 +148,6 @@ class Dropzone extends Emitter
     # by this Dropzone
     maxFiles: null
 
-    # The base used to calculate filesizes. 1024 is technically incorrect,
-    # because `1024 bytes` are `1 kibibyte` not `1 kilobyte`.
-    # You can change this to `1024` if you don't care about validity.
-    filesizeBase: 1000
-
     # Can be an object of additional parameters to transfer to the server.
     # This is the same as adding hidden input fields in the form element.
     params: { }
