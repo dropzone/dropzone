@@ -1650,6 +1650,25 @@ describe "Dropzone", ->
           , 10
 
 
+      it "should not change the file name if the options.renameFilename is not set", (done) ->
+        mockFilename = 'T3sT ;:_-.,!¨@&%&'
+
+        renamedFilename = dropzone._renameFilename(mockFilename)
+
+        setTimeout ->
+          renamedFilename.should.equal mockFilename
+          done()
+        , 10
+
+      it "should rename the file name if options.renamedFilename is set", (done) ->
+        dropzone.options.renameFilename = (name) ->
+          name.toLowerCase().replace(/[^\w]/gi, '')
+        renamedFilename = dropzone._renameFilename('T3sT ;:_-.,!¨@&%&')
+        setTimeout ->
+          renamedFilename.should.equal 't3st_'
+          done()
+        , 10
+
       describe "should properly set status of file", ->
         it "should correctly set `withCredentials` on the xhr object", (done) ->
           dropzone.addFile mockFile
