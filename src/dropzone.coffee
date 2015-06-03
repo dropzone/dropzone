@@ -441,6 +441,7 @@ class Dropzone extends Emitter
             node.value = progress
           else
             node.style.width = "#{progress}%"
+            node.className = node.className.replace( /progress([^\s]+)/g , '' ).trim() + " progress-#{progress}"
 
     # Called whenever the total upload progress gets updated.
     # Called with totalUploadProgress (0-100), totalBytes and totalBytesSent
