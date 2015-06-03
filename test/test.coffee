@@ -573,15 +573,19 @@ describe "Dropzone", ->
           thumbnail.alt.should.eql "test name"
 
       describe ".uploadprogress()", ->
-        it "should properly set the width", ->
+        it "should properly set the width and update the className", ->
           dropzone.options.uploadprogress.call dropzone, file, 0
           file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql "0%"
+          file.previewElement.querySelector("[data-dz-uploadprogress]").className.should.contain "progress-0"
           dropzone.options.uploadprogress.call dropzone, file, 80
           file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql "80%"
+          file.previewElement.querySelector("[data-dz-uploadprogress]").className.should.contain "progress-80"
           dropzone.options.uploadprogress.call dropzone, file, 90
           file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql "90%"
+          file.previewElement.querySelector("[data-dz-uploadprogress]").className.should.contain "progress-90"
           dropzone.options.uploadprogress.call dropzone, file, 100
           file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql "100%"
+          file.previewElement.querySelector("[data-dz-uploadprogress]").className.should.contain "progress-100"
 
       describe ".resize()", ->
 

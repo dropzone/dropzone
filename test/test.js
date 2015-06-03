@@ -798,15 +798,19 @@
           });
         });
         describe(".uploadprogress()", function() {
-          return it("should properly set the width", function() {
+          return it("should properly set the width and update the className", function() {
             dropzone.options.uploadprogress.call(dropzone, file, 0);
             file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql("0%");
+            file.previewElement.querySelector("[data-dz-uploadprogress]").className.should.contain("progress-0");
             dropzone.options.uploadprogress.call(dropzone, file, 80);
             file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql("80%");
+            file.previewElement.querySelector("[data-dz-uploadprogress]").className.should.contain("progress-80");
             dropzone.options.uploadprogress.call(dropzone, file, 90);
             file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql("90%");
+            file.previewElement.querySelector("[data-dz-uploadprogress]").className.should.contain("progress-90");
             dropzone.options.uploadprogress.call(dropzone, file, 100);
-            return file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql("100%");
+            file.previewElement.querySelector("[data-dz-uploadprogress]").style.width.should.eql("100%");
+            return file.previewElement.querySelector("[data-dz-uploadprogress]").className.should.contain("progress-100");
           });
         });
         return describe(".resize()", function() {
@@ -1790,6 +1794,13 @@
             };
             dropzone.uploadFile(mockFile);
             return requests[0].requestHeaders["Foo-Header"].should.eql('foobar');
+          });
+          it("should not set headers on the xhr object that are empty", function() {
+            dropzone.options.headers = {
+              "X-Requested-With": null
+            };
+            dropzone.uploadFile(mockFile);
+            return Object.keys(requests[0].requestHeaders).should.not.contain("X-Requested-With");
           });
           it("should properly use the paramName without [n] as file upload if uploadMultiple is false", function(done) {
             var formData, mock1, mock2, sendingCount;
