@@ -1791,6 +1791,13 @@
             dropzone.uploadFile(mockFile);
             return requests[0].requestHeaders["Foo-Header"].should.eql('foobar');
           });
+          it("should not set headers on the xhr object that are empty", function() {
+            dropzone.options.headers = {
+              "X-Requested-With": null
+            };
+            dropzone.uploadFile(mockFile);
+            return Object.keys(requests[0].requestHeaders).should.not.contain("X-Requested-With");
+          });
           it("should properly use the paramName without [n] as file upload if uploadMultiple is false", function(done) {
             var formData, mock1, mock2, sendingCount;
             dropzone.options.uploadMultiple = false;
