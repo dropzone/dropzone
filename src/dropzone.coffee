@@ -274,7 +274,11 @@ class Dropzone extends Emitter
         @element.appendChild messageElement
 
       span = messageElement.getElementsByTagName("span")[0]
-      span.textContent = @options.dictFallbackMessage if span
+      if span
+        if span.textContent?
+          span.textContent = @options.dictFallbackMessage
+        else if span.innerText?
+          span.innerText = @options.dictFallbackMessage
 
       @element.appendChild @getFallbackForm()
 
