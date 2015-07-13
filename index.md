@@ -8,7 +8,7 @@ title: Dropzone.js
 Try it out!
 ===========
 
-<div id="dropzone"><form action="http://www.torrentplease.com/dropzone.php" class="dropzone" id="demo-upload">
+<div id="dropzone"><form action="/upload" class="dropzone" id="demo-upload">
 
   <div class="dz-message">
     Drop files here or click to upload.<br>
