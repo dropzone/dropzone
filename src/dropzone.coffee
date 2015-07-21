@@ -1212,8 +1212,10 @@ class Dropzone extends Emitter
     # last parameter
     formData.append @_getParamName(i), files[i], files[i].name for i in [0..files.length-1]
 
-    xhr.send formData
+    @submitRequest xhr, formData, files
 
+  submitRequest: (xhr, formData, files) ->
+    xhr.send formData
 
   # Called internally when processing is finished.
   # Individual callbacks have to be called in the appropriate sections.
