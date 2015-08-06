@@ -188,6 +188,7 @@ To handle basic file uploads on the server, please look at the corresponding
 documentation. Here are a few documentations, if you think I should add some,
 please contact me.
 
+- [AngularJS and Spring](http://www.cantangosolutions.com/blog/Easy-File-Upload-Using-DropzoneJS-AngularJs-And-Spring)
 - [NodeJS with express](http://howtonode.org/really-simple-file-uploads)
 - [Ruby on rails](http://guides.rubyonrails.org/form_helpers.html#uploading-files)
 - [Complete PHP tutorial](http://www.startutorial.com/articles/view/how-to-build-a-file-upload-form-using-dropzonejs-and-php) by startutorial.com
