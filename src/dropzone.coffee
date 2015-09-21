@@ -614,31 +614,7 @@ class Dropzone extends Emitter
       @element.appendChild Dropzone.createElement """<div class="dz-default dz-message"><span>#{@options.dictDefaultMessage}</span></div>"""
 
     if @clickableElements.length
-      setupHiddenFileInput = =>
-        document.body.removeChild @hiddenFileInput if @hiddenFileInput
-        @hiddenFileInput = document.createElement "input"
-        @hiddenFileInput.setAttribute "type", "file"
-        @hiddenFileInput.setAttribute "multiple", "multiple" if !@options.maxFiles? || @options.maxFiles > 1
-        @hiddenFileInput.className = "dz-hidden-input"
-
-        @hiddenFileInput.setAttribute "accept", @options.acceptedFiles if @options.acceptedFiles?
-        @hiddenFileInput.setAttribute "capture", @options.capture if @options.capture?
-
-        # Not setting `display="none"` because some browsers don't accept clicks
-        # on elements that aren't displayed.
-        @hiddenFileInput.style.visibility = "hidden"
-        @hiddenFileInput.style.position = "absolute"
-        @hiddenFileInput.style.top = "0"
-        @hiddenFileInput.style.left = "0"
-        @hiddenFileInput.style.height = "0"
-        @hiddenFileInput.style.width = "0"
-        document.body.appendChild @hiddenFileInput
-        @hiddenFileInput.addEventListener "change", =>
-          files = @hiddenFileInput.files
-          @addFile file for file in files if files.length
-          @emit "addedfiles", files
-          setupHiddenFileInput()
-      setupHiddenFileInput()
+      @setupHiddenFileInput()
 
     @URL = window.URL ? window.webkitURL
 
@@ -702,15 +678,7 @@ class Dropzone extends Emitter
       }
     ]
 
-    @clickableElements.forEach (clickableElement) =>
-      @listeners.push
-        element: clickableElement
-        events:
-          "click": (evt) =>
-            # Only the actual dropzone or the message element should trigger file selection
-            if (clickableElement != @element) or (evt.target == @element or Dropzone.elementInside evt.target, @element.querySelector ".dz-message")
-              @hiddenFileInput.click() # Forward the click
-
+    @updateClickableListeners()
 
     @enable()
 
@@ -804,6 +772,52 @@ class Dropzone extends Emitter
   enable: ->
     @clickableElements.forEach (element) -> element.classList.add "dz-clickable"
     @setupEventListeners()
+
+  setupHiddenFileInput: ->
+    document.body.removeChild @hiddenFileInput if @hiddenFileInput
+    @hiddenFileInput = document.createElement "input"
+    @hiddenFileInput.setAttribute "type", "file"
+    @hiddenFileInput.setAttribute "multiple", "multiple" if !@options.maxFiles? || @options.maxFiles > 1
+    @hiddenFileInput.className = "dz-hidden-input"
+
+    @hiddenFileInput.setAttribute "accept", @options.acceptedFiles if @options.acceptedFiles?
+    @hiddenFileInput.setAttribute "capture", @options.capture if @options.capture?
+
+    # Not setting `display="none"` because some browsers don't accept clicks
+    # on elements that aren't displayed.
+    @hiddenFileInput.style.visibility = "hidden"
+    @hiddenFileInput.style.position = "absolute"
+    @hiddenFileInput.style.top = "0"
+    @hiddenFileInput.style.left = "0"
+    @hiddenFileInput.style.height = "0"
+    @hiddenFileInput.style.width = "0"
+    document.body.appendChild @hiddenFileInput
+    @hiddenFileInput.addEventListener "change", =>
+      files = @hiddenFileInput.files
+      @addFile file for file in files if files.length
+      @emit "addedfiles", files
+      @setupHiddenFileInput()
+
+  updateClickableSelector: (clickableSelector) ->
+    @clickableElements = Dropzone.getElements clickableSelector, "clickable";
+    if @clickableElements.length
+      @setupHiddenFileInput();
+      @removeEventListeners();
+      @updateClickableListeners();
+      @setupEventListeners();
+
+  updateClickableListeners: ->
+    for elementListeners in @listeners by -1
+      if elementListeners.events.hasOwnProperty('click')
+        @listeners.splice(@listeners.indexOf(elementListeners), 1);
+    @clickableElements.forEach (clickableElement) =>
+      @listeners.push
+        element: clickableElement
+        events:
+          "click": (evt) =>
+            # Only the actual dropzone or the message element should trigger file selection
+            if (clickableElement != @element) or (evt.target == @element or Dropzone.elementInside evt.target, @element.querySelector ".dz-message")
+              @hiddenFileInput.click() # Forward the click
 
   # Returns a nicely formatted filesize
   filesize: (size) ->
