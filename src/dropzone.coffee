@@ -139,7 +139,11 @@ class Dropzone extends Emitter
     maxThumbnailFilesize: 10 # in MB. When the filename exceeds this limit, the thumbnail will not be generated.
     thumbnailWidth: 120
     thumbnailHeight: 120
-
+    #The default values for the clientSide resize. Set resizeImage to false to disable it
+    resizeImage: true
+    resizeHeight : 1024
+    resizeWidth : 1024
+    resizeQuality: 0.8
     # The base that is used to calculate the filesize. You can change this to
     # 1024 if you would rather display kibibytes, mebibytes, etc...
     # 1024 is technically incorrect,
@@ -296,7 +300,7 @@ class Dropzone extends Emitter
     #
     #  srcX, srcy, trgX and trgY can be omitted (in which case 0 is assumed).
     #  trgWidth and trgHeight can be omitted (in which case the options.thumbnailWidth / options.thumbnailHeight are used)
-    resize: (file) ->
+    resize: (file, type) ->
       info =
         srcX: 0
         srcY: 0
@@ -305,8 +309,12 @@ class Dropzone extends Emitter
 
       srcRatio = file.width / file.height
 
-      info.optWidth = @options.thumbnailWidth
-      info.optHeight = @options.thumbnailHeight
+      if type == "imageResize"
+        info.optWidth = @options.resizeWidth
+        info.optHeight = @options.resizeHeight
+      else
+        info.optWidth = @options.thumbnailWidth
+        info.optHeight = @options.thumbnailHeight
 
       # automatically calculate dimensions if not specified
       if !info.optWidth? and !info.optHeight?
@@ -323,15 +331,15 @@ class Dropzone extends Emitter
         # This image is smaller than the canvas
         info.trgHeight = info.srcHeight
         info.trgWidth = info.srcWidth
-
       else
         # Image is bigger and needs rescaling
-        if srcRatio > trgRatio
-          info.srcHeight = file.height
-          info.srcWidth = info.srcHeight * trgRatio
+        if (srcRatio > 1) #horizontal
+          info.trgWidth = info.optWidth
+          info.trgHeight = info.optHeight / srcRatio
         else
-          info.srcWidth = file.width
-          info.srcHeight = info.srcWidth / trgRatio
+          info.trgWidth = info.optWidth * srcRatio
+          info.trgHeight = info.optHeight
+              
 
       info.srcX = (file.width - info.srcWidth) / 2
       info.srcY = (file.height - info.srcHeight) / 2
@@ -920,20 +928,34 @@ class Dropzone extends Emitter
     else
       @options.accept.call this, file, done
 
+  
   addFile: (file) ->
+    if @options.resizeImage
+      reader = new FileReader
+      _this = this
+      reader.onload = (e) =>
+        _this.resizeImg this.result, (_file) =>
+          _this._processFileUpload _file
+
+      reader.readAsDataURL file
+    else
+      @_processFileUpload file
+
+  _processFileUpload: (file) ->
     file.upload =
       progress: 0
       # Setting the total upload size to file.size for the beginning
       # It's actual different than the size to be transmitted.
       total: file.size
       bytesSent: 0
+    
+    @_enqueueThumbnail file
+
     @files.push file
 
     file.status = Dropzone.ADDED
 
     @emit "addedfile", file
-
-    @_enqueueThumbnail file
 
     @accept file, (error) =>
       if error
@@ -944,6 +966,62 @@ class Dropzone extends Emitter
         @enqueueFile file if @options.autoQueue # Will set .accepted = true
       @_updateMaxFilesReachedClass()
 
+  resizeImg: (file, callback) ->
+        
+    img = document.createElement "img"
+    _this = this
+    img.onload = =>
+      file.width = img.width
+      file.height = img.height
+
+      resizeInfo = @options.resize.call @, file, "imageResize"
+
+      resizeInfo.trgWidth ?= resizeInfo.optWidth
+      resizeInfo.trgHeight ?= resizeInfo.optHeight
+
+      canvas = document.createElement "canvas"
+      ctx = canvas.getContext "2d"
+      canvas.width = resizeInfo.trgWidth
+      canvas.height = resizeInfo.trgHeight
+
+      # This is a bugfix for iOS' scaling bug.
+      drawImageIOSFix ctx, img, cX ? 0, resizeInfo.srcY ? 0, resizeInfo.srcWidth, resizeInfo.srcHeight, resizeInfo.trgX ? 0, resizeInfo.trgY ? 0, resizeInfo.trgWidth, resizeInfo.trgHeight
+
+      image = canvas.toDataURL "image/png", @options.imageQuality
+      file = _this.dataUriToBlob image
+
+      callback() if callback?
+
+    img.src = file
+
+  dataUriToBlob: (dataURI) ->
+    byteString = if dataURI.split(',')[0].indexOf('base64') >= 0 then atob dataURI.split(',')[1] else unescape dataURI.split(',')[1]
+    mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+
+    ab = new ArrayBuffer byteString.length
+    ia = new Uint8Array ab
+
+    i = 0
+    while i < byteString.length
+      ia[i] = byteString.charCodeAt(i)
+      i++
+
+    dataView = new DataView(ab)
+    blob = new Blob([ ia ], type: mimeString)
+    
+    blob
+
+
+  compareWidthHeight : (width, height) ->
+    diff = []
+    if width > height
+      diff[0] = width - height
+      diff[1] = 0
+    else
+      diff[0] = 0
+      diff[1] = height - width
+    
+    diff
 
   # Wrapper for enqueueFile
   enqueueFiles: (files) -> @enqueueFile file for file in files; null
@@ -955,7 +1033,6 @@ class Dropzone extends Emitter
         setTimeout (=> @processQueue()), 0 # Deferring the call
     else
       throw new Error "This file can't be queued because it has already been processed or was rejected."
-
 
   _thumbnailQueue: [ ]
   _processingThumbnail: no
@@ -1025,6 +1102,11 @@ class Dropzone extends Emitter
 
       # This is a bugfix for iOS' scaling bug.
       drawImageIOSFix ctx, img, resizeInfo.srcX ? 0, resizeInfo.srcY ? 0, resizeInfo.srcWidth, resizeInfo.srcHeight, resizeInfo.trgX ? 0, resizeInfo.trgY ? 0, resizeInfo.trgWidth, resizeInfo.trgHeight
+
+      #I have this code in JS, don't know how to write in coffee, but the thumbnail drawing seems to perform better this way
+      #var diff = [0, 0];
+      #diff = _this.compareWidthHeight(img.width, img.height);
+      #drawImageIOSFix(ctx, img, (_ref = diff[0] / 2) != null ? _ref : 0, (_ref1 = diff[1] / 2) != null ? _ref1 : 0, img.width - diff[0], img.height - diff[1], (_ref2 = resizeInfo.trgX) != null ? _ref2 : 0, (_ref3 = resizeInfo.trgY) != null ? _ref3 : 0, resizeInfo.trgWidth, resizeInfo.trgHeight);
 
       thumbnail = canvas.toDataURL "image/png"
 
