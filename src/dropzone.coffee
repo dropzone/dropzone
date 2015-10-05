@@ -130,6 +130,7 @@ class Dropzone extends Emitter
   defaultOptions:
     url: null
     method: "post"
+    sendDataAsBody: no
     withCredentials: no
     parallelUploads: 2
     uploadMultiple: no # Whether to send multiple files in one request.
@@ -1220,11 +1221,17 @@ class Dropzone extends Emitter
     # Has to be last because some servers (eg: S3) expect the file to be the
     # last parameter
     formData.append @_getParamName(i), files[i], files[i].name for i in [0..files.length-1]
-
-    @submitRequest xhr, formData, files
+    
+    if options.sendDataAsBody
+      @submitRequestAsBody xhr, formData, files
+    else
+      @submitRequest xhr, formData, files
 
   submitRequest: (xhr, formData, files) ->
     xhr.send formData
+  
+  submitRequestAsBody: (xhr, formData, files) ->
+    xhr.send files[0]
 
   # Called internally when processing is finished.
   # Individual callbacks have to be called in the appropriate sections.
