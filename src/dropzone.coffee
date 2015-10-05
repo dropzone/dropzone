@@ -1222,7 +1222,7 @@ class Dropzone extends Emitter
     # last parameter
     formData.append @_getParamName(i), files[i], files[i].name for i in [0..files.length-1]
     
-    if options.sendDataAsBody
+    if @options.sendDataAsBody
       @submitRequestAsBody xhr, formData, files
     else
       @submitRequest xhr, formData, files
