@@ -818,18 +818,21 @@ class Dropzone extends Emitter
 
   # Returns a nicely formatted filesize
   filesize: (size) ->
-    units = [ 'TB', 'GB', 'MB', 'KB', 'b' ]
-    selectedSize = selectedUnit = null
+    selectedSize = 0
+    selectedUnit = "b"
 
-    for unit, i in units
-      cutoff = Math.pow(@options.filesizeBase, 4 - i) / 10
+    if size > 0
+      units = [ 'TB', 'GB', 'MB', 'KB', 'b' ]
 
-      if size >= cutoff
-        selectedSize = size / Math.pow(@options.filesizeBase, 4 - i)
-        selectedUnit = unit
-        break
+      for unit, i in units
+        cutoff = Math.pow(@options.filesizeBase, 4 - i) / 10
 
-    selectedSize = Math.round(10 * selectedSize) / 10 # Cutting of digits
+        if size >= cutoff
+          selectedSize = size / Math.pow(@options.filesizeBase, 4 - i)
+          selectedUnit = unit
+          break
+
+      selectedSize = Math.round(10 * selectedSize) / 10 # Cutting of digits
 
     "<strong>#{selectedSize}</strong> #{selectedUnit}"
 

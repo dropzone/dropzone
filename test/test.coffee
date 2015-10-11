@@ -871,6 +871,9 @@ describe "Dropzone", ->
 
     describe ".filesize()", ->
 
+      it "should handle files with 0 size properly", ->
+        dropzone.filesize(0).should.eql "<strong>0</strong> b"
+
       it "should convert to KiloBytes, etc..", ->
 
         dropzone.options.filesizeBase.should.eql 1000 # Just making sure the default config is correct
