@@ -129,12 +129,15 @@
       maxFiles: null,
       params: {},
       clickable: true,
+	  HiddenFilesPath : 'body',
       ignoreHiddenFiles: true,
       acceptedFiles: null,
       acceptedMimeTypes: null,
       autoProcessQueue: true,
       autoQueue: true,
       addRemoveLinks: false,
+	  RemoveLinkTemplate : '',
+	  renderMethod: 'append',	  
       previewsContainer: null,
       capture: null,
       dictDefaultMessage: "Drop files here to upload",
@@ -254,7 +257,11 @@
         if (this.previewsContainer) {
           file.previewElement = Dropzone.createElement(this.options.previewTemplate.trim());
           file.previewTemplate = file.previewElement;
-          this.previewsContainer.appendChild(file.previewElement);
+		  if(this.options.renderMethod === 'prepend'){
+          $(file.previewElement).prependTo(this.previewsContainer);
+		  } else {
+          this.previewsContainer.appendChild(file.previewElement);		
+		  }
           _ref = file.previewElement.querySelectorAll("[data-dz-name]");
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             node = _ref[_i];
@@ -265,10 +272,19 @@
             node = _ref1[_j];
             node.innerHTML = this.filesize(file.size);
           }
+
           if (this.options.addRemoveLinks) {
-            file._removeLink = Dropzone.createElement("<a class=\"dz-remove\" href=\"javascript:undefined;\" data-dz-remove>" + this.options.dictRemoveFile + "</a>");
-            file.previewElement.appendChild(file._removeLink);
-          }
+			  
+			  if(this.options.RemoveLinkTemplate.length > 0){				 
+              var remove_link = Dropzone.createElement(this.options.RemoveLinkTemplate);
+			  file.previewElement.appendChild(remove_link);
+			  } else {
+              file._removeLink = Dropzone.createElement("<a class=\"dz-remove\" href=\"javascript:undefined;\" data-dz-remove>" + this.options.dictRemoveFile + "</a>");
+			  file.previewElement.appendChild(file._removeLink);
+			  }
+
+          }		  
+		  
           removeFileEvent = (function(_this) {
             return function(e) {
               e.preventDefault();
@@ -542,9 +558,11 @@
           return function() {
             if (_this.hiddenFileInput) {
               document.body.removeChild(_this.hiddenFileInput);
+			  $(_this.hiddenFileInput).remove();
             }
             _this.hiddenFileInput = document.createElement("input");
             _this.hiddenFileInput.setAttribute("type", "file");
+			_this.hiddenFileInput.setAttribute("name", _this.options.paramName);			
             if ((_this.options.maxFiles == null) || _this.options.maxFiles > 1) {
               _this.hiddenFileInput.setAttribute("multiple", "multiple");
             }
@@ -555,13 +573,9 @@
             if (_this.options.capture != null) {
               _this.hiddenFileInput.setAttribute("capture", _this.options.capture);
             }
-            _this.hiddenFileInput.style.visibility = "hidden";
-            _this.hiddenFileInput.style.position = "absolute";
-            _this.hiddenFileInput.style.top = "0";
-            _this.hiddenFileInput.style.left = "0";
-            _this.hiddenFileInput.style.height = "0";
-            _this.hiddenFileInput.style.width = "0";
-            document.body.appendChild(_this.hiddenFileInput);
+
+            _this.hiddenFileInput.style.display = "none";
+            $(_this.options.HiddenFilesPath).append(_this.hiddenFileInput);			
             return _this.hiddenFileInput.addEventListener("change", function() {
               var file, files, _i, _len;
               files = _this.hiddenFileInput.files;
