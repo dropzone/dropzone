@@ -136,6 +136,7 @@
       autoQueue: true,
       addRemoveLinks: false,
       previewsContainer: null,
+      hiddenInputContainer: "body",
       capture: null,
       dictDefaultMessage: "Drop files here to upload",
       dictFallbackMessage: "Your browser does not support drag'n'drop file uploads.",
@@ -541,7 +542,7 @@
         setupHiddenFileInput = (function(_this) {
           return function() {
             if (_this.hiddenFileInput) {
-              document.body.removeChild(_this.hiddenFileInput);
+              _this.hiddenFileInput.parentNode.removeChild(_this.hiddenFileInput);
             }
             _this.hiddenFileInput = document.createElement("input");
             _this.hiddenFileInput.setAttribute("type", "file");
@@ -561,7 +562,7 @@
             _this.hiddenFileInput.style.left = "0";
             _this.hiddenFileInput.style.height = "0";
             _this.hiddenFileInput.style.width = "0";
-            document.body.appendChild(_this.hiddenFileInput);
+            document.querySelector(_this.options.hiddenInputContainer).appendChild(_this.hiddenFileInput);
             return _this.hiddenFileInput.addEventListener("change", function() {
               var file, files, _i, _len;
               files = _this.hiddenFileInput.files;
@@ -1081,9 +1082,12 @@
       return fileReader.readAsDataURL(file);
     };
 
-    Dropzone.prototype.createThumbnailFromUrl = function(file, imageUrl, callback) {
+    Dropzone.prototype.createThumbnailFromUrl = function(file, imageUrl, callback, crossOrigin) {
       var img;
       img = document.createElement("img");
+      if (crossOrigin) {
+        img.crossOrigin = crossOrigin;
+      }
       img.onload = (function(_this) {
         return function() {
           var canvas, ctx, resizeInfo, thumbnail, _ref, _ref1, _ref2, _ref3;
@@ -1405,7 +1409,7 @@
 
   })(Emitter);
 
-  Dropzone.version = "4.1.1";
+  Dropzone.version = "4.2.0";
 
   Dropzone.options = {};
 
