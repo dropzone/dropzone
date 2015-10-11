@@ -8,11 +8,11 @@ title: Dropzone.js
 Try it out!
 ===========
 
-<div id="dropzone"><form action="/upload" class="dropzone" id="demo-upload">
+<div id="dropzone"><form action="/upload" class="dropzone needsclick" id="demo-upload">
 
-  <div class="dz-message">
+  <div class="dz-message needsclick">
     Drop files here or click to upload.<br>
-    <span class="note">(This is just a demo dropzone. Selected files are <strong>not</strong> actually uploaded.)</span>
+    <span class="note needsclick">(This is just a demo dropzone. Selected files are <strong>not</strong> actually uploaded.)</span>
   </div>
 
 </form></div>

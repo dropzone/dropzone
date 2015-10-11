@@ -148,10 +148,10 @@
 				var adv = Node.prototype.addEventListener;
 				if (type === 'click') {
 					adv.call(layer, type, callback.hijacked || (callback.hijacked = function(event) {
-						if (!event.propagationStopped) {
-							callback(event);
-						}
-					}), capture);
+								if (!event.propagationStopped) {
+									callback(event);
+								}
+							}), capture);
 				} else {
 					adv.call(layer, type, callback, capture);
 				}
@@ -174,10 +174,10 @@
 	}
 
 	/**
-	* Windows Phone 8.1 fakes user agent string to look like Android and iPhone.
-	*
-	* @type boolean
-	*/
+	 * Windows Phone 8.1 fakes user agent string to look like Android and iPhone.
+	 *
+	 * @type boolean
+	 */
 	var deviceIsWindowsPhone = navigator.userAgent.indexOf("Windows Phone") >= 0;
 
 	/**
@@ -205,11 +205,11 @@
 
 
 	/**
-	 * iOS 6.0(+?) requires the target element to be manually derived
+	 * iOS 6.0-7.* requires the target element to be manually derived
 	 *
 	 * @type boolean
 	 */
-	var deviceIsIOSWithBadTarget = deviceIsIOS && (/OS ([6-9]|\d{2})_\d/).test(navigator.userAgent);
+	var deviceIsIOSWithBadTarget = deviceIsIOS && (/OS [6-7]_\d/).test(navigator.userAgent);
 
 	/**
 	 * BlackBerry requires exceptions.
@@ -227,27 +227,27 @@
 	FastClick.prototype.needsClick = function(target) {
 		switch (target.nodeName.toLowerCase()) {
 
-		// Don't send a synthetic click to disabled inputs (issue #62)
-		case 'button':
-		case 'select':
-		case 'textarea':
-			if (target.disabled) {
+			// Don't send a synthetic click to disabled inputs (issue #62)
+			case 'button':
+			case 'select':
+			case 'textarea':
+				if (target.disabled) {
+					return true;
+				}
+
+				break;
+			case 'input':
+
+				// File inputs need real clicks on iOS 6 due to a browser bug (issue #68)
+				if ((deviceIsIOS && target.type === 'file') || target.disabled) {
+					return true;
+				}
+
+				break;
+			case 'label':
+			case 'iframe': // iOS8 homescreen apps can prevent events bubbling into frames
+			case 'video':
 				return true;
-			}
-
-			break;
-		case 'input':
-
-			// File inputs need real clicks on iOS 6 due to a browser bug (issue #68)
-			if ((deviceIsIOS && target.type === 'file') || target.disabled) {
-				return true;
-			}
-
-			break;
-		case 'label':
-		case 'iframe': // iOS8 homescreen apps can prevent events bubbling into frames
-		case 'video':
-			return true;
 		}
 
 		return (/\bneedsclick\b/).test(target.className);
@@ -262,25 +262,25 @@
 	 */
 	FastClick.prototype.needsFocus = function(target) {
 		switch (target.nodeName.toLowerCase()) {
-		case 'textarea':
-			return true;
-		case 'select':
-			return !deviceIsAndroid;
-		case 'input':
-			switch (target.type) {
-			case 'button':
-			case 'checkbox':
-			case 'file':
-			case 'image':
-			case 'radio':
-			case 'submit':
-				return false;
-			}
+			case 'textarea':
+				return true;
+			case 'select':
+				return !deviceIsAndroid;
+			case 'input':
+				switch (target.type) {
+					case 'button':
+					case 'checkbox':
+					case 'file':
+					case 'image':
+					case 'radio':
+					case 'submit':
+						return false;
+				}
 
-			// No point in attempting to focus disabled inputs
-			return !target.disabled && !target.readOnly;
-		default:
-			return (/\bneedsfocus\b/).test(target.className);
+				// No point in attempting to focus disabled inputs
+				return !target.disabled && !target.readOnly;
+			default:
+				return (/\bneedsfocus\b/).test(target.className);
 		}
 	};
 
@@ -735,6 +735,7 @@
 		var metaViewport;
 		var chromeVersion;
 		var blackberryVersion;
+		var firefoxVersion;
 
 		// Devices that don't support touch don't need FastClick
 		if (typeof window.ontouchstart === 'undefined') {
@@ -760,7 +761,7 @@
 					}
 				}
 
-			// Chrome desktop doesn't need FastClick (issue #15)
+				// Chrome desktop doesn't need FastClick (issue #15)
 			} else {
 				return true;
 			}
@@ -787,14 +788,26 @@
 			}
 		}
 
-		// IE10 with -ms-touch-action: none, which disables double-tap-to-zoom (issue #97)
-		if (layer.style.msTouchAction === 'none') {
+		// IE10 with -ms-touch-action: none or manipulation, which disables double-tap-to-zoom (issue #97)
+		if (layer.style.msTouchAction === 'none' || layer.style.touchAction === 'manipulation') {
 			return true;
+		}
+
+		// Firefox version - zero for other browsers
+		firefoxVersion = +(/Firefox\/([0-9]+)/.exec(navigator.userAgent) || [,0])[1];
+
+		if (firefoxVersion >= 27) {
+			// Firefox 27+ does not have tap delay if the content is not zoomable - https://bugzilla.mozilla.org/show_bug.cgi?id=922896
+
+			metaViewport = document.querySelector('meta[name=viewport]');
+			if (metaViewport && (metaViewport.content.indexOf('user-scalable=no') !== -1 || document.documentElement.scrollWidth <= window.outerWidth)) {
+				return true;
+			}
 		}
 
 		// IE11: prefixed -ms-touch-action is no longer supported and it's recomended to use non-prefixed version
 		// http://msdn.microsoft.com/en-us/library/windows/apps/Hh767313.aspx
-		if (layer.style.touchAction === 'none') {
+		if (layer.style.touchAction === 'none' || layer.style.touchAction === 'manipulation') {
 			return true;
 		}
 
@@ -813,7 +826,7 @@
 	};
 
 
-	if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
+	if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) {
 
 		// AMD. Register as an anonymous module.
 		define(function() {

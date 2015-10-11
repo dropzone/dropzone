@@ -366,6 +366,11 @@ function init() {
     }
 
   });
+
+
+  // Now fake the file upload, since GitHub does not handle file uploads
+  // and returns a 404
+
   var minSteps = 6,
       maxSteps = 60,
       timeBetweenSteps = 100,
@@ -401,49 +406,6 @@ function init() {
       }
     }
   }
-
-
-  Dropzone.prototype.filesize = function(size) {
-    var units = [ 'TB', 'GB', 'MB', 'KB', 'b' ],
-        selectedSize, selectedUnit;
-
-    for (var i = 0; i < units.length; i++) {
-      var unit = units[i],
-          cutoff = Math.pow(this.options.filesizeBase, 4 - i) / 10;
-
-      if (size >= cutoff) {
-        selectedSize = size / Math.pow(this.options.filesizeBase, 4 - i);
-        selectedUnit = unit;
-        break;
-      }
-    }
-
-    selectedSize = Math.round(10 * selectedSize) / 10;
-
-    return '<strong>' + selectedSize + '</strong> ' + selectedUnit;
-
-  }
-  // filesize: (size) ->
-  //   if      size >= 1024 * 1024 * 1024 * 1024 / 10
-  //     size = size / (1024 * 1024 * 1024 * 1024 / 10)
-  //     string = "TiB"
-  //   else if size >= 1024 * 1024 * 1024 / 10
-  //     size = size / (1024 * 1024 * 1024 / 10)
-  //     string = "GiB"
-  //   else if size >= 1024 * 1024 / 10
-  //     size = size / (1024 * 1024 / 10)
-  //     string = "MiB"
-  //   else if size >= 1024 / 10
-  //     size = size / (1024 / 10)
-  //     string = "KiB"
-  //   else
-  //     size = size * 10
-  //     string = "b"
-  //   "<strong>#{Math.round(size)/10}</strong> #{string}"
-
-  dropzone.on('complete', function(file) {
-    file.previewElement.classList.add('dz-complete');
-  });
 
 }
 
