@@ -1119,6 +1119,9 @@
         });
       });
       describe(".filesize()", function() {
+        it("should handle files with 0 size properly", function() {
+          return dropzone.filesize(0).should.eql("<strong>0</strong> b");
+        });
         it("should convert to KiloBytes, etc..", function() {
           dropzone.options.filesizeBase.should.eql(1000);
           dropzone.filesize(2 * 1000 * 1000).should.eql("<strong>2</strong> MB");
