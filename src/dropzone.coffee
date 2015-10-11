@@ -1010,6 +1010,8 @@ class Dropzone extends Emitter
     # See https://github.com/enyo/dropzone/pull/226
     img = document.createElement "img"
 
+    img.crossOrigin = file.crossOrigin if file.crossOrigin
+
     img.onload = =>
       file.width = img.width
       file.height = img.height
