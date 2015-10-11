@@ -716,12 +716,7 @@ class Dropzone extends Emitter
             # Only the actual dropzone or the message element should trigger file selection
             if (clickableElement != @element) or (evt.target == @element or Dropzone.elementInside evt.target, @element.querySelector ".dz-message")
               @hiddenFileInput.click() # Forward the click
-          "touchstart": (evt) =>
-            noPropagation evt
-            # Only the actual dropzone or the message element should trigger file selection
-            if (clickableElement != @element) or (evt.target == @element or Dropzone.elementInside evt.target, @element.querySelector ".dz-message")
-              @hiddenFileInput.click() # Forward the click
-
+            return true
 
     @enable()
 
