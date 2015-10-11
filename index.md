@@ -452,7 +452,7 @@ of every Dropzone and can be overwritten, thus replacing the default behavior
 with your own event callback.
 
 You should only do this when you really know how Dropzone works, and when you
-want to [completely theme your Dropzone](#theming-dropzone)
+want to [completely theme your Dropzone](#theming)
 
 
 {% include event-list.html %}
