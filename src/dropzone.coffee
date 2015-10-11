@@ -200,6 +200,9 @@ class Dropzone extends Emitter
     # If false, previews won't be rendered.
     previewsContainer: null
 
+    # Selector for hidden input container
+    hiddenInputContainer: "body"
+
     # If null, no capture type will be specified
     # If camera, mobile devices will skip the file selection and choose camera
     # If microphone, mobile devices will skip the file selection and choose the microphone
@@ -478,7 +481,7 @@ class Dropzone extends Emitter
     maxfilesexceeded: noop
 
     maxfilesreached: noop
-    
+
     queuecomplete: noop
 
     addedfiles: noop
@@ -617,7 +620,7 @@ class Dropzone extends Emitter
 
     if @clickableElements.length
       setupHiddenFileInput = =>
-        document.body.removeChild @hiddenFileInput if @hiddenFileInput
+        @hiddenFileInput.parentNode.removeChild @hiddenFileInput if @hiddenFileInput
         @hiddenFileInput = document.createElement "input"
         @hiddenFileInput.setAttribute "type", "file"
         @hiddenFileInput.setAttribute "multiple", "multiple" if !@options.maxFiles? || @options.maxFiles > 1
@@ -634,7 +637,7 @@ class Dropzone extends Emitter
         @hiddenFileInput.style.left = "0"
         @hiddenFileInput.style.height = "0"
         @hiddenFileInput.style.width = "0"
-        document.body.appendChild @hiddenFileInput
+        document.querySelector(@options.hiddenInputContainer).appendChild @hiddenFileInput
         @hiddenFileInput.addEventListener "change", =>
           files = @hiddenFileInput.files
           @addFile file for file in files if files.length
@@ -1028,7 +1031,7 @@ class Dropzone extends Emitter
 
       @emit "thumbnail", file, thumbnail
       callback() if callback?
-      
+
     img.onerror = callback if callback?
 
     img.src = imageUrl
