@@ -898,6 +898,8 @@ class Dropzone extends Emitter
             @addFile file
         else if entry.isDirectory
           @_addFilesFromDirectory entry, "#{path}/#{entry.name}"
+      if entries.length
+        dirReader.readEntries entriesReader, (error) -> console?.log? error
       return
 
     dirReader.readEntries entriesReader, (error) -> console?.log? error
