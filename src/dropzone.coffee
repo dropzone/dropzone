@@ -1005,12 +1005,12 @@ class Dropzone extends Emitter
 
     fileReader.readAsDataURL file
 
-  createThumbnailFromUrl: (file, imageUrl, callback) ->
+  createThumbnailFromUrl: (file, imageUrl, callback, crossOrigin) ->
     # Not using `new Image` here because of a bug in latest Chrome versions.
     # See https://github.com/enyo/dropzone/pull/226
     img = document.createElement "img"
 
-    img.crossOrigin = file.crossOrigin if file.crossOrigin
+    img.crossOrigin = crossOrigin if crossOrigin
 
     img.onload = =>
       file.width = img.width
