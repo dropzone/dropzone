@@ -889,18 +889,28 @@ class Dropzone extends Emitter
   _addFilesFromDirectory: (directory, path) ->
     dirReader = directory.createReader()
 
-    entriesReader = (entries) =>
-      for entry in entries
-        if entry.isFile
-          entry.file (file) =>
-            return if @options.ignoreHiddenFiles and file.name.substring(0, 1) is '.'
-            file.fullPath = "#{path}/#{file.name}"
-            @addFile file
-        else if entry.isDirectory
-          @_addFilesFromDirectory entry, "#{path}/#{entry.name}"
-      return
+    errorHandler = (error) -> console?.log? error
 
-    dirReader.readEntries entriesReader, (error) -> console?.log? error
+    readEntries = () =>
+      dirReader.readEntries (entries) =>
+        if entries.length > 0
+          for entry in entries
+            if entry.isFile
+              entry.file (file) =>
+                return if @options.ignoreHiddenFiles and file.name.substring(0, 1) is '.'
+                file.fullPath = "#{path}/#{file.name}"
+                @addFile file
+            else if entry.isDirectory
+              @_addFilesFromDirectory entry, "#{path}/#{entry.name}"
+
+          # Recursively call readEntries() again, since browser only handle
+          # the first 100 entries.
+          # See: https://developer.mozilla.org/en-US/docs/Web/API/DirectoryReader#readEntries
+          readEntries()
+        return null
+      , errorHandler
+
+    readEntries()
 
 
 
