@@ -138,6 +138,7 @@
       previewsContainer: null,
       hiddenInputContainer: "body",
       capture: null,
+      ignoreMoreFiles: false,
       dictDefaultMessage: "Drop files here to upload",
       dictFallbackMessage: "Your browser does not support drag'n'drop file uploads.",
       dictFallbackText: "Please use the fallback form below to upload your files like in the olden days.",
@@ -961,6 +962,7 @@
     };
 
     Dropzone.prototype.addFile = function(file) {
+      if (this.options.ignoreMoreFiles && this.getAcceptedFiles().length > (this.options.maxFiles - 1)) return false;
       file.upload = {
         progress: 0,
         total: file.size,
