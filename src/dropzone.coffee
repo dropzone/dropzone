@@ -392,7 +392,10 @@ class Dropzone extends Emitter
           if file.status == Dropzone.UPLOADING
             Dropzone.confirm @options.dictCancelUploadConfirmation, => @removeFile file
           else
-            Dropzone.confirm @options.dictRemoveFileConfirmation, => @removeFile file
+            if @options.dictRemoveFileConfirmation
+              Dropzone.confirm @options.dictRemoveFileConfirmation, => @removeFile file
+            else
+              @removeFile file
 
         removeLink.addEventListener "click", removeFileEvent for removeLink in file.previewElement.querySelectorAll("[data-dz-remove]")
 
@@ -1412,7 +1415,7 @@ Dropzone.getElements = (els, name) ->
 # The default implementation just uses `window.confirm` and then calls the
 # appropriate callback.
 Dropzone.confirm = (question, accepted, rejected) ->
-  if !question || window.confirm question
+  if window.confirm question
     accepted()
   else if rejected?
     rejected()
