@@ -1234,7 +1234,7 @@ class Dropzone extends Emitter
     # Has to be last because some servers (eg: S3) expect the file to be the
     # last parameter
     formData.append @_getParamName(i), files[i], files[i].name for i in [0..files.length-1]
-    
+
     if @options.sendDataAsBody
       @submitRequestAsBody xhr, formData, files
     else
@@ -1242,7 +1242,7 @@ class Dropzone extends Emitter
 
   submitRequest: (xhr, formData, files) ->
     xhr.send formData
-  
+
   submitRequestAsBody: (xhr, formData, files) ->
     xhr.send files[0]
 
