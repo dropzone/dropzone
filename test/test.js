@@ -1119,6 +1119,9 @@
         });
       });
       describe(".filesize()", function() {
+        it("should handle files with 0 size properly", function() {
+          return dropzone.filesize(0).should.eql("<strong>0</strong> b");
+        });
         it("should convert to KiloBytes, etc..", function() {
           dropzone.options.filesizeBase.should.eql(1000);
           dropzone.filesize(2 * 1000 * 1000).should.eql("<strong>2</strong> MB");
@@ -1790,6 +1793,13 @@
             };
             dropzone.uploadFile(mockFile);
             return requests[0].requestHeaders["Foo-Header"].should.eql('foobar');
+          });
+          it("should not set headers on the xhr object that are empty", function() {
+            dropzone.options.headers = {
+              "X-Requested-With": null
+            };
+            dropzone.uploadFile(mockFile);
+            return Object.keys(requests[0].requestHeaders).should.not.contain("X-Requested-With");
           });
           it("should properly use the paramName without [n] as file upload if uploadMultiple is false", function(done) {
             var formData, mock1, mock2, sendingCount;
