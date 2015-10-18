@@ -201,6 +201,9 @@ class Dropzone extends Emitter
     # If false, previews won't be rendered.
     previewsContainer: null
 
+    # Selector for hidden input container
+    hiddenInputContainer: "body"
+
     # If null, no capture type will be specified
     # If camera, mobile devices will skip the file selection and choose camera
     # If microphone, mobile devices will skip the file selection and choose the microphone
@@ -479,7 +482,7 @@ class Dropzone extends Emitter
     maxfilesexceeded: noop
 
     maxfilesreached: noop
-    
+
     queuecomplete: noop
 
     addedfiles: noop
@@ -618,7 +621,7 @@ class Dropzone extends Emitter
 
     if @clickableElements.length
       setupHiddenFileInput = =>
-        document.body.removeChild @hiddenFileInput if @hiddenFileInput
+        @hiddenFileInput.parentNode.removeChild @hiddenFileInput if @hiddenFileInput
         @hiddenFileInput = document.createElement "input"
         @hiddenFileInput.setAttribute "type", "file"
         @hiddenFileInput.setAttribute "multiple", "multiple" if !@options.maxFiles? || @options.maxFiles > 1
@@ -635,7 +638,7 @@ class Dropzone extends Emitter
         @hiddenFileInput.style.left = "0"
         @hiddenFileInput.style.height = "0"
         @hiddenFileInput.style.width = "0"
-        document.body.appendChild @hiddenFileInput
+        document.querySelector(@options.hiddenInputContainer).appendChild @hiddenFileInput
         @hiddenFileInput.addEventListener "change", =>
           files = @hiddenFileInput.files
           @addFile file for file in files if files.length
@@ -713,12 +716,7 @@ class Dropzone extends Emitter
             # Only the actual dropzone or the message element should trigger file selection
             if (clickableElement != @element) or (evt.target == @element or Dropzone.elementInside evt.target, @element.querySelector ".dz-message")
               @hiddenFileInput.click() # Forward the click
-          "touchstart": (evt) =>
-            noPropagation evt
-            # Only the actual dropzone or the message element should trigger file selection
-            if (clickableElement != @element) or (evt.target == @element or Dropzone.elementInside evt.target, @element.querySelector ".dz-message")
-              @hiddenFileInput.click() # Forward the click
-
+            return true
 
     @enable()
 
@@ -815,18 +813,21 @@ class Dropzone extends Emitter
 
   # Returns a nicely formatted filesize
   filesize: (size) ->
-    units = [ 'TB', 'GB', 'MB', 'KB', 'b' ]
-    selectedSize = selectedUnit = null
+    selectedSize = 0
+    selectedUnit = "b"
 
-    for unit, i in units
-      cutoff = Math.pow(@options.filesizeBase, 4 - i) / 10
+    if size > 0
+      units = [ 'TB', 'GB', 'MB', 'KB', 'b' ]
 
-      if size >= cutoff
-        selectedSize = size / Math.pow(@options.filesizeBase, 4 - i)
-        selectedUnit = unit
-        break
+      for unit, i in units
+        cutoff = Math.pow(@options.filesizeBase, 4 - i) / 10
 
-    selectedSize = Math.round(10 * selectedSize) / 10 # Cutting of digits
+        if size >= cutoff
+          selectedSize = size / Math.pow(@options.filesizeBase, 4 - i)
+          selectedUnit = unit
+          break
+
+      selectedSize = Math.round(10 * selectedSize) / 10 # Cutting of digits
 
     "<strong>#{selectedSize}</strong> #{selectedUnit}"
 
@@ -889,18 +890,28 @@ class Dropzone extends Emitter
   _addFilesFromDirectory: (directory, path) ->
     dirReader = directory.createReader()
 
-    entriesReader = (entries) =>
-      for entry in entries
-        if entry.isFile
-          entry.file (file) =>
-            return if @options.ignoreHiddenFiles and file.name.substring(0, 1) is '.'
-            file.fullPath = "#{path}/#{file.name}"
-            @addFile file
-        else if entry.isDirectory
-          @_addFilesFromDirectory entry, "#{path}/#{entry.name}"
-      return
+    errorHandler = (error) -> console?.log? error
 
-    dirReader.readEntries entriesReader, (error) -> console?.log? error
+    readEntries = () =>
+      dirReader.readEntries (entries) =>
+        if entries.length > 0
+          for entry in entries
+            if entry.isFile
+              entry.file (file) =>
+                return if @options.ignoreHiddenFiles and file.name.substring(0, 1) is '.'
+                file.fullPath = "#{path}/#{file.name}"
+                @addFile file
+            else if entry.isDirectory
+              @_addFilesFromDirectory entry, "#{path}/#{entry.name}"
+
+          # Recursively call readEntries() again, since browser only handle
+          # the first 100 entries.
+          # See: https://developer.mozilla.org/en-US/docs/Web/API/DirectoryReader#readEntries
+          readEntries()
+        return null
+      , errorHandler
+
+    readEntries()
 
 
 
@@ -1005,10 +1016,12 @@ class Dropzone extends Emitter
 
     fileReader.readAsDataURL file
 
-  createThumbnailFromUrl: (file, imageUrl, callback) ->
+  createThumbnailFromUrl: (file, imageUrl, callback, crossOrigin) ->
     # Not using `new Image` here because of a bug in latest Chrome versions.
     # See https://github.com/enyo/dropzone/pull/226
     img = document.createElement "img"
+
+    img.crossOrigin = crossOrigin if crossOrigin
 
     img.onload = =>
       file.width = img.width
@@ -1031,7 +1044,7 @@ class Dropzone extends Emitter
 
       @emit "thumbnail", file, thumbnail
       callback() if callback?
-      
+
     img.onerror = callback if callback?
 
     img.src = imageUrl
@@ -1261,7 +1274,7 @@ class Dropzone extends Emitter
 
 
 
-Dropzone.version = "4.0.1"
+Dropzone.version = "4.2.0"
 
 
 # This is a map of options for your different dropzones. Add configurations
