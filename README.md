@@ -103,7 +103,7 @@ myDropzone.on("error", function(file, message) { alert(message); });
 ```
 
 For a list of all events, please look at the chapter 
-[»listen to events«](http://www.dropzonejs.com/#listen_to_events) in the documentation
+[»Events«](http://www.dropzonejs.com/#events) in the documentation
 or at the [source](src/dropzone.coffee#L43).
 
 
