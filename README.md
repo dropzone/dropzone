@@ -121,7 +121,7 @@ For all the other browsers, dropzone provides an oldschool file input fallback.
 
 I realize that there [are](http://valums.com/ajax-upload/) [already](http://tutorialzine.com/2011/09/html5-file-upload-jquery-php/) [other](http://code.google.com/p/html5uploader/) [libraries](http://blueimp.github.com/jQuery-File-Upload/) out there but the reason I decided to write my own are the following:
 
-- I didn't want it to be too big, and to cumbersome to dive into.
+- I didn't want it to be too big, or too cumbersome to dive into.
 - I want to design my own elements. I only want to register callbacks so I can update my elements accordingly.
 - Big files should get uploaded without a problem.
 - I wanted a callback for image previews, that don't kill the browser if too many too big images are viewed.
