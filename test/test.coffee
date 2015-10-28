@@ -475,7 +475,16 @@ describe "Dropzone", ->
           dropzone.clickableElements.should.eql [ document.body, clickableElement ]
         it "should throw an exception if the element is invalid", ->
           expect(-> dropzone = new Dropzone element, clickable: ".some-invalid-clickable").to.throw "Invalid `clickable` option provided. Please provide a CSS selector, a plain HTML element or a list of those."
-
+        it "should emit a 'click' event when element is clicked", ->
+          dropzone = new Dropzone element, clickable: clickableElement
+          callbackCount = 0
+          callback = (evt) ->
+            callbackCount++
+          dropzone.on "click", callback
+          event = document.createEvent "HTMLEvents"
+          event.initEvent "click", true, true
+          clickableElement.dispatchEvent event
+          callbackCount.should.eql 1
 
 
 

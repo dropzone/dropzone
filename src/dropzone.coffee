@@ -123,6 +123,7 @@ class Dropzone extends Emitter
     "maxfilesexceeded"
     "maxfilesreached"
     "queuecomplete"
+    "click"
   ]
 
 
@@ -362,6 +363,7 @@ class Dropzone extends Emitter
     dragover: (e) -> @element.classList.add "dz-drag-hover"
     dragleave: (e) -> @element.classList.remove "dz-drag-hover"
 
+    click: noop
     paste: noop
 
     # Called whenever there are no files left in the dropzone anymore, and the
@@ -714,6 +716,7 @@ class Dropzone extends Emitter
           "click": (evt) =>
             # Only the actual dropzone or the message element should trigger file selection
             if (clickableElement != @element) or (evt.target == @element or Dropzone.elementInside evt.target, @element.querySelector ".dz-message")
+              @emit "click", evt
               @hiddenFileInput.click() # Forward the click
             return true
 
