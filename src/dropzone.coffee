@@ -210,6 +210,9 @@ class Dropzone extends Emitter
     # On apple devices multiple must be set to false.  AcceptedFiles may need to
     # be set to an appropriate mime type (e.g. "image/*", "audio/*", or "video/*").
     capture: null
+    
+    # Whether to append or prepend to the Dropzone preview container
+    childrenDirection: "append"
 
     # Dictionary
 
@@ -378,7 +381,12 @@ class Dropzone extends Emitter
         file.previewElement = Dropzone.createElement @options.previewTemplate.trim()
         file.previewTemplate = file.previewElement # Backwards compatibility
 
-        @previewsContainer.appendChild file.previewElement
+        switch @options.childrenDirection
+          when "append" then @previewsContainer.appendChild file.previewElement
+          when "prepend" then @previewsContainer.insertBefore file.previewElement, @previewsContainer.firstChild
+          else throw new Error "Invalid childrenDirection value. Use 'append' or 'prepend'"
+          
+  
         node.textContent = file.name for node in file.previewElement.querySelectorAll("[data-dz-name]")
         node.innerHTML = @filesize file.size for node in file.previewElement.querySelectorAll("[data-dz-size]")
 
