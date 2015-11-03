@@ -384,7 +384,7 @@ class Dropzone extends Emitter
         switch @options.childrenDirection
           when "append" then @previewsContainer.appendChild file.previewElement
           when "prepend" then @previewsContainer.insertBefore file.previewElement, @previewsContainer.firstChild
-          else throw new Error "Invalid childrenDirection value. Use 'append' or 'prepend'"
+          else throw new Error "Invalid value for childrenDirection. Use either 'append' or 'prepend'"
           
   
         node.textContent = file.name for node in file.previewElement.querySelectorAll("[data-dz-name]")
