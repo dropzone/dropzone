@@ -140,6 +140,9 @@ class Dropzone extends Emitter
     thumbnailWidth: 120
     thumbnailHeight: 120
 
+    # Setting this to true will skip image resizing all together
+    thumbnailUseRaw: false
+
     # The base that is used to calculate the filesize. You can change this to
     # 1024 if you would rather display kibibytes, mebibytes, etc...
     # 1024 is technically incorrect,
@@ -212,7 +215,7 @@ class Dropzone extends Emitter
     capture: null
     
     # Whether to append or prepend to the Dropzone preview container
-    childrenDirection: "append"
+    childrenDirection: "prepend"
 
     # Dictionary
 
@@ -1014,7 +1017,7 @@ class Dropzone extends Emitter
     fileReader.onload = =>
 
       # Don't bother creating a thumbnail for SVG images since they're vector
-      if file.type == "image/svg+xml"
+      if file.type == "image/svg+xml" or @options.thumbnailUseRaw
         @emit "thumbnail", file, fileReader.result
         callback() if callback?
         return
