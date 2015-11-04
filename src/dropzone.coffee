@@ -158,6 +158,10 @@ class Dropzone extends Emitter
     # If true, the dropzone will present a file selector when clicked.
     clickable: yes
 
+    # If true, and the dropzone is clickable the dropzone will present a folder selector when clicked.
+    # Only partial browser support
+    chooseFolder: no
+
     # Whether hidden files in directories should be ignored.
     ignoreHiddenFiles: yes
 
@@ -628,6 +632,10 @@ class Dropzone extends Emitter
 
         @hiddenFileInput.setAttribute "accept", @options.acceptedFiles if @options.acceptedFiles?
         @hiddenFileInput.setAttribute "capture", @options.capture if @options.capture?
+
+        if @options.chooseFolder
+          @hiddenFileInput.setAttribute "webkitdirectory", ""
+          @hiddenFileInput.setAttribute "directory", ""
 
         # Not setting `display="none"` because some browsers don't accept clicks
         # on elements that aren't displayed.
