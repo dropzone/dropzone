@@ -623,6 +623,7 @@ class Dropzone extends Emitter
         @hiddenFileInput.parentNode.removeChild @hiddenFileInput if @hiddenFileInput
         @hiddenFileInput = document.createElement "input"
         @hiddenFileInput.setAttribute "type", "file"
+        @hiddenFileInput.setAttribute "name", @options.paramName
         @hiddenFileInput.setAttribute "multiple", "multiple" if !@options.maxFiles? || @options.maxFiles > 1
         @hiddenFileInput.className = "dz-hidden-input"
 
