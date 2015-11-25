@@ -615,7 +615,7 @@ class Dropzone extends Emitter
     # In case it isn't set already
     @element.setAttribute("enctype", "multipart/form-data") if @element.tagName == "form"
 
-    if @element.classList.contains("dropzone") and !@element.querySelector(".dz-message")
+    if !@element.querySelector(".dz-message")
       @element.appendChild Dropzone.createElement """<div class="dz-default dz-message"><span>#{@options.dictDefaultMessage}</span></div>"""
 
     if @clickableElements.length
