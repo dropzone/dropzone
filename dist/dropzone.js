@@ -302,8 +302,8 @@
         var _ref;
         if (file.previewElement) {
           if ((_ref = file.previewElement) != null) {
-          	if(file.previewElement.parentNode) {
-            	_ref.parentNode.removeChild(file.previewElement);
+            if(file.previewElement.parentNode) {
+              _ref.parentNode.removeChild(file.previewElement);
             }
           }
         }
