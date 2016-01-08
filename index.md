@@ -196,6 +196,7 @@ please contact me.
 - [Tutorial for Dropzone and Lavarel (PHP)](http://maxoffsky.com/code-blog/howto-ajax-multiple-file-upload-in-laravel/) written by Maksim Surguy
 - [Symfony2 and Amazon S3](http://www.jesuisundev.fr/upload-drag-drop-via-dropzonejs-symfony2-on-cloud-amazon-s3/)
 - [File upload in ASP.NET MVC using Dropzone JS and HTML5](http://venkatbaggu.com/file-upload-in-asp-net-mvc-using-dropzone-js-and-html5/)
+- [Servicestack and Dropzone](http://www.buildclassifieds.com/2016/01/08/uploading-images-servicestack-and-dropzone/)
 
 Paid documentations:
 
