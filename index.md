@@ -26,17 +26,24 @@ Try it out!
 News
 ====
 
-I just released Dropzone **v4.0.0**! It has been completely redesigned, and
+I'll be releasing my Solo EP called **Flashlights** this Friday on all major Streaming and Music platforms! It will
+consist of 5 songs, and you'll definitely like it.
+To keep updated, you can already like my brand-new [Facebook artist page](https://www.facebook.com/thisismeno/):
+
+<div style="text-align: center;">
+  <div class="fb-like"
+    data-href="https://www.facebook.com/thisismeno/"
+    data-layout="button"
+    data-action="like"
+    data-show-faces="false"
+    data-share="false"
+    data-colorscheme="dark"></div></div>
+
+
+<!--Dropzone **v4.0.0** is released! It has been completely redesigned, and
 the website has been updated. Big thanks to [1910](http://www.weare1910.com)
 for designing the new logo and website. It looks fantastic. Check out their 
-work!
-
-My latest article on COLORGLARE: [Stop writing stateful HTML](http://www.colorglare.com/2014/11/24/stateless-html.html).
-If you’re interested in my work, please subscribe to my [RSS feed](http://www.colorglare.com/feed.xml).
-
-**My band, *Gin Ga*, recently released a new album!** It’s called «YES / NO» and is available
-in stores, on Spotify and [on iTunes](https://itunes.apple.com/at/album/yes-no/id722931771).
-You can see our [latest video clip on youtube](http://youtu.be/3EPWhYmgdJk).
+work!-->
 
 </section>
 
