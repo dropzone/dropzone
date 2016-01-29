@@ -464,6 +464,18 @@ main {
       max-width: 80rem;
     }
 
+    .embedded-video {
+      max-width: 100%;
+      @media (max-width: 600px) {
+        width: 450px;
+        height: 253px;
+      }
+      @media (max-width: 500px) {
+        width: 275px;
+        height: 155px;
+      }
+    }
+
     &:nth-child(odd) {
       background: #F3F4F5;
     }
