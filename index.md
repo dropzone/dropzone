@@ -29,7 +29,7 @@ News
 I just released my Solo EP called **Meno - Flashlights** on all major Streaming and Music platforms!
 
 <div style="text-align: center">
-  <iframe class="embedded-video" style="margin: 0 auto;" width="560" height="315" src="https://www.youtube.com/embed/sFBFkZYGgcE?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>
+  <iframe class="embedded-video" style="margin: 0 auto;" width="560" height="315" src="https://www.youtube.com/embed/sFBFkZYGgcE?rel=0&amp;showinfo=1" frameborder="0" allowfullscreen></iframe>
 
   <br>
   Here is the <em>full</em> Desktop experience: <a href="http://www.meno.fm/flashlights">www.meno.fm/flashlights</a>.
