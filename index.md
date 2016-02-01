@@ -395,7 +395,18 @@ Dropzone.confirm = function(question, accepted, rejected) {
 };
 {% endhighlight %}
 
+* * *
 
+If you want Dropzone to download a file from your server and display it,
+you can use
+
+{% highlight js %}
+// callback and crossOrigin are optional
+myDropzone.createThumbnailFromUrl(file, imageUrl, callback, crossOrigin);
+{% endhighlight %}
+
+See the FAQ on [How to show files stored on server](https://github.com/enyo/dropzone/wiki/FAQ#how-to-show-files-already-stored-on-server)
+ for more information.
 
 
 </section>
