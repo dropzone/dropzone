@@ -26,17 +26,33 @@ Try it out!
 News
 ====
 
-I just released Dropzone **v4.0.0**! It has been completely redesigned, and
+I just released my Solo EP called **Meno - Flashlights** on all major Streaming and Music platforms!
+
+<div style="text-align: center">
+  <iframe class="embedded-video" style="margin: 0 auto;" width="560" height="315" src="https://www.youtube.com/embed/sFBFkZYGgcE?rel=0&amp;showinfo=1" frameborder="0" allowfullscreen></iframe>
+
+  <br>
+  Here is the <em>full</em> Desktop experience: <a href="http://www.meno.fm/flashlights">www.meno.fm/flashlights</a>.
+
+<br><br>
+</div>
+
+Purchase my EP on
+[Google Play](https://play.google.com/store/music/album/Meno_Flashlights?id=Bvkm477idlkjw6joacowb7aa4he),
+[Amazon Music](https://www.amazon.com/gp/product/B01AP3ETYO?ie=UTF8&keywords=meno%20flashlights&qid=1454067033&ref_=sr_1_3&s=dmusic&sr=8-3)
+or [iTunes](https://itunes.apple.com/at/album/flashlights-ep/id1075875101?l=en) –
+or stream it on [Spotify](https://open.spotify.com/album/14y7LCmuPCBAZqrvc6uqkd).
+
+<div>
+  To keep updated like my <a href="https://www.facebook.com/thisismeno/">Facebook artist page</a>.
+  <div style="display: inline-block; position: relative; top: -0.2em; margin-left: 0.4em;"><div class="fb-like" data-href="https://www.facebook.com/thisismeno/" data-layout="button" data-action="like" data-show-faces="false" data-share="false" data-colorscheme="dark"></div></div>
+</div>
+
+
+<!--Dropzone **v4.0.0** is released! It has been completely redesigned, and
 the website has been updated. Big thanks to [1910](http://www.weare1910.com)
 for designing the new logo and website. It looks fantastic. Check out their 
-work!
-
-My latest article on COLORGLARE: [Stop writing stateful HTML](http://www.colorglare.com/2014/11/24/stateless-html.html).
-If you’re interested in my work, please subscribe to my [RSS feed](http://www.colorglare.com/feed.xml).
-
-**My band, *Gin Ga*, recently released a new album!** It’s called «YES / NO» and is available
-in stores, on Spotify and [on iTunes](https://itunes.apple.com/at/album/yes-no/id722931771).
-You can see our [latest video clip on youtube](http://youtu.be/3EPWhYmgdJk).
+work!-->
 
 </section>
 
@@ -196,6 +212,7 @@ please contact me.
 - [Tutorial for Dropzone and Lavarel (PHP)](http://maxoffsky.com/code-blog/howto-ajax-multiple-file-upload-in-laravel/) written by Maksim Surguy
 - [Symfony2 and Amazon S3](http://www.jesuisundev.fr/upload-drag-drop-via-dropzonejs-symfony2-on-cloud-amazon-s3/)
 - [File upload in ASP.NET MVC using Dropzone JS and HTML5](http://venkatbaggu.com/file-upload-in-asp-net-mvc-using-dropzone-js-and-html5/)
+- [Servicestack and Dropzone](http://www.buildclassifieds.com/2016/01/08/uploading-images-servicestack-and-dropzone/)
 
 Paid documentations:
 
