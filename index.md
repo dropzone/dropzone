@@ -28,25 +28,30 @@ News
 
 I just released my Solo EP called **Meno - Flashlights** on all major Streaming and Music platforms!
 
-<div style="text-align: center">
-  <iframe class="embedded-video" style="margin: 0 auto;" width="560" height="315" src="https://www.youtube.com/embed/sFBFkZYGgcE?rel=0&amp;showinfo=1" frameborder="0" allowfullscreen></iframe>
+<div>
+  <div class="embedded-video">
+    <iframe style="margin: 0 auto;" width="560" height="315" src="https://www.youtube.com/embed/sFBFkZYGgcE?rel=0&amp;showinfo=1" frameborder="0" allowfullscreen></iframe>
+  </div>
+</div>
 
-  <br>
-  Here is the <em>full</em> Desktop experience: <a href="http://www.meno.fm/flashlights">www.meno.fm/flashlights</a>.
+Here is the <em>full</em> Desktop experience: <a href="http://www.meno.fm/flashlights">www.meno.fm/flashlights</a>.
+<br>
 
-<br><br>
+<div>
+  To keep updated like my <a href="https://www.facebook.com/thisismeno/">Facebook artist page</a>.
+  <div style="display: inline-block; position: relative; top: -0.2em; margin-left: 0.4em;"><div class="fb-like" data-href="https://www.facebook.com/thisismeno/" data-layout="button" data-action="like" data-show-faces="false" data-share="false" data-colorscheme="dark"></div></div>
 </div>
 
 Purchase my EP on
 [Google Play](https://play.google.com/store/music/album/Meno_Flashlights?id=Bvkm477idlkjw6joacowb7aa4he),
 [Amazon Music](https://www.amazon.com/gp/product/B01AP3ETYO?ie=UTF8&keywords=meno%20flashlights&qid=1454067033&ref_=sr_1_3&s=dmusic&sr=8-3)
 or [iTunes](https://itunes.apple.com/at/album/flashlights-ep/id1075875101?l=en) –
-or stream it on [Spotify](https://open.spotify.com/album/14y7LCmuPCBAZqrvc6uqkd).
+or stream it on [Spotify](https://open.spotify.com/album/14y7LCmuPCBAZqrvc6uqkd):
 
 <div>
-  To keep updated like my <a href="https://www.facebook.com/thisismeno/">Facebook artist page</a>.
-  <div style="display: inline-block; position: relative; top: -0.2em; margin-left: 0.4em;"><div class="fb-like" data-href="https://www.facebook.com/thisismeno/" data-layout="button" data-action="like" data-show-faces="false" data-share="false" data-colorscheme="dark"></div></div>
+    <iframe style="display: block; width: 300px; margin: 0 auto;" src="https://embed.spotify.com/?uri=spotify%3Aalbum%3A14y7LCmuPCBAZqrvc6uqkd&theme=white&view=coverart" width="300" height="80" frameborder="0" allowtransparency="true"></iframe>
 </div>
+
 
 
 <!--Dropzone **v4.0.0** is released! It has been completely redesigned, and
