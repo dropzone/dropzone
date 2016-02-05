@@ -35,6 +35,7 @@ I just released my Solo EP called **Meno - Flashlights** on all major Streaming 
 </div>
 
 Here is the <em>full</em> Desktop experience: <a href="http://www.meno.fm/flashlights">www.meno.fm/flashlights</a>.
+I wrote a [**COLORGLARE** post about the build process](http://www.colorglare.com/2016/02/05/flashlights.html). 
 <br>
 
 <div>
