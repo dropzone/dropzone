@@ -211,6 +211,10 @@ class Dropzone extends Emitter
     # be set to an appropriate mime type (e.g. "image/*", "audio/*", or "video/*").
     capture: null
 
+    # Before the file is appended to the formData, the function _renameFilename is performed for file.name
+    # which executes the function defined in renameFilename
+    renameFilename: null
+
     # Dictionary
 
     # The text used before any files are dropped
@@ -379,7 +383,7 @@ class Dropzone extends Emitter
         file.previewTemplate = file.previewElement # Backwards compatibility
 
         @previewsContainer.appendChild file.previewElement
-        node.textContent = file.name for node in file.previewElement.querySelectorAll("[data-dz-name]")
+        node.textContent = @_renameFilename(file.name) for node in file.previewElement.querySelectorAll("[data-dz-name]")
         node.innerHTML = @filesize file.size for node in file.previewElement.querySelectorAll("[data-dz-size]")
 
         if @options.addRemoveLinks
@@ -755,6 +759,12 @@ class Dropzone extends Emitter
       @options.paramName n
     else
       "#{@options.paramName}#{if @options.uploadMultiple then "[#{n}]" else ""}"
+
+  # If @options.renameFilename is a function,
+  # the function will be used to rename the file.name before appending it to the formData
+  _renameFilename: (name) ->
+    return name unless typeof @options.renameFilename is "function"
+    @options.renameFilename name
 
   # Returns a form that can be used as fallback if the browser does not support DragnDrop
   #
@@ -1232,7 +1242,7 @@ class Dropzone extends Emitter
     # Finally add the file
     # Has to be last because some servers (eg: S3) expect the file to be the
     # last parameter
-    formData.append @_getParamName(i), files[i], files[i].name for i in [0..files.length-1]
+    formData.append @_getParamName(i), files[i], @_renameFilename(files[i].name) for i in [0..files.length-1]
 
     @submitRequest xhr, formData, files
 
