@@ -1856,6 +1856,26 @@
             }, 10);
           });
         });
+        it("should not change the file name if the options.renameFilename is not set", function(done) {
+          var mockFilename, renamedFilename;
+          mockFilename = 'T3sT ;:_-.,!¨@&%&';
+          renamedFilename = dropzone._renameFilename(mockFilename);
+          return setTimeout(function() {
+            renamedFilename.should.equal(mockFilename);
+            return done();
+          }, 10);
+        });
+        it("should rename the file name if options.renamedFilename is set", function(done) {
+          var renamedFilename;
+          dropzone.options.renameFilename = function(name) {
+            return name.toLowerCase().replace(/[^\w]/gi, '');
+          };
+          renamedFilename = dropzone._renameFilename('T3sT ;:_-.,!¨@&%&');
+          return setTimeout(function() {
+            renamedFilename.should.equal('t3st_');
+            return done();
+          }, 10);
+        });
         return describe("should properly set status of file", function() {
           return it("should correctly set `withCredentials` on the xhr object", function(done) {
             dropzone.addFile(mockFile);
