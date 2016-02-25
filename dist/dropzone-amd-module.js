@@ -1682,7 +1682,7 @@
     canvas.height = ih;
     ctx = canvas.getContext("2d");
     ctx.drawImage(img, 0, 0);
-    data = ctx.getImageData(0, 0, 1, ih).data;
+    data = ctx.getImageData(1, 0, 1, ih).data;
     sy = 0;
     ey = ih;
     py = ih;
