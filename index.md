@@ -26,8 +26,6 @@ Try it out!
 News
 ====
 
-Thank me for Dropzone, by helping me out and vote my single into the austrian radio charts! [Scroll down, and vote for Meno – Flashlights](http://fm4.orf.at/stories/1767587/).
-
 I just released my Solo EP called **Meno - Flashlights** on all major Streaming and Music platforms!
 
 <div>
