@@ -252,7 +252,9 @@ class Dropzone extends Emitter
     # You can use {{maxFiles}} here, which will be replaced by the option.
     dictMaxFilesExceeded: "You can not upload any more files."
 
-
+    # Used to auto discover dropzone elements
+    default_selector: "dropzone"
+    
     # If `done()` is called without argument the file is accepted
     # If you call it with an error message, the file is rejected
     # (This allows for asynchronous validation).
@@ -619,7 +621,7 @@ class Dropzone extends Emitter
     # In case it isn't set already
     @element.setAttribute("enctype", "multipart/form-data") if @element.tagName == "form"
 
-    if @element.classList.contains("dropzone") and !@element.querySelector(".dz-message")
+    if @element.classList.contains(@default_selector) and !@element.querySelector(".dz-message")
       @element.appendChild Dropzone.createElement """<div class="dz-default dz-message"><span>#{@options.dictDefaultMessage}</span></div>"""
 
     if @clickableElements.length
