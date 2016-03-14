@@ -23,14 +23,14 @@
 
 @mixin keyframes($name) {
   @-webkit-keyframes #{$name} {
-    @content; 
+    @content;
   }
   @-moz-keyframes #{$name} {
     @content;
   }
   @keyframes #{$name} {
     @content;
-  } 
+  }
 }
 
 
@@ -48,7 +48,7 @@
 
 
 @include keyframes(passing-through) {
-  
+
   0% {
     opacity: 0;
     @include prefix((transform: translateY(40px)));
@@ -67,7 +67,7 @@
 
 
 @include keyframes(slide-in) {
-  
+
   0% {
     opacity: 0;
     @include prefix((transform: translateY(40px)));
@@ -82,7 +82,7 @@
 
 
 @include keyframes(pulse) {
-  
+
   0% { @include prefix((transform: scale(1))); }
   10% { @include prefix((transform: scale(1.1))); }
   20% { @include prefix((transform: scale(1))); }
@@ -307,8 +307,8 @@
         height: $image-height;
       }
     }
-    
-      
+
+
     &.dz-processing .dz-progress {
       opacity: 1;
       @include prefix((transition: all 0.2s linear));
@@ -399,8 +399,8 @@
         position: absolute;
         top: -6px;
         left: $width / 2 - 6px;
-        width: 0; 
-        height: 0; 
+        width: 0;
+        height: 0;
         border-left: 6px solid transparent;
         border-right: 6px solid transparent;
         border-bottom: 6px solid $color;
@@ -409,5 +409,3 @@
 
   }
 }
-
-
