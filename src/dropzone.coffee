@@ -856,8 +856,7 @@ class Dropzone extends Emitter
     @emit "drop", e
 
     files = e.dataTransfer.files
-    @emit "addedfiles", files
-
+    
     # Even if it's a folder, files.length will contain the folders.
     if files.length
       items = e.dataTransfer.items
@@ -866,6 +865,8 @@ class Dropzone extends Emitter
         @_addFilesFromItems items
       else
         @handleFiles files
+        
+    @emit "addedfiles", files
     return
 
   paste: (e) ->
