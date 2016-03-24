@@ -709,6 +709,23 @@ describe "Dropzone", ->
           done()
         , 10
 
+      it "should check if the file is part of the collection", (done) ->
+        mockFile = getMockFile()
+        dropzone.uploadFile = (file) ->
+        dropzone.accept = (file, done) -> done()
+
+        sinon.stub dropzone, "cancelUpload"
+
+        dropzone.addFile mockFile
+        setTimeout ->
+          dropzone.cancelUpload.callCount.should.equal 0
+          dropzone.removeFile mockFile
+          dropzone.cancelUpload.callCount.should.equal 1
+          dropzone.removeFile mockFile
+          dropzone.cancelUpload.callCount.should.equal 1
+          done()
+        , 10
+
     describe ".cancelUpload()", ->
       it "should properly cancel upload if file currently uploading", (done) ->
         mockFile = getMockFile()

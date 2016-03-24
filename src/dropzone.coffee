@@ -996,6 +996,8 @@ class Dropzone extends Emitter
 
   # Can be called by the user to remove a file
   removeFile: (file) ->
+    if file not in @files
+      return
     @cancelUpload file if file.status == Dropzone.UPLOADING
     @files = without @files, file
 
