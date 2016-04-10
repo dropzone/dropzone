@@ -195,10 +195,16 @@ class Dropzone extends Emitter
     # See dictCancelUpload and dictRemoveFile to use different words.
     addRemoveLinks: no
 
+	# Remove Link Template
+    RemoveLinkTemplate: ""
+
     # A CSS selector or HTML element for the file previews container.
     # If null, the dropzone element itself will be used.
     # If false, previews won't be rendered.
     previewsContainer: null
+
+    # Append Preview Image Before or After Uploader
+    renderMethod: "append"
 
     # Selector for hidden input container
     hiddenInputContainer: "body"
@@ -382,13 +388,21 @@ class Dropzone extends Emitter
         file.previewElement = Dropzone.createElement @options.previewTemplate.trim()
         file.previewTemplate = file.previewElement # Backwards compatibility
 
-        @previewsContainer.appendChild file.previewElement
+        if @options.renderMethod = 'prepend'
+           @previewsContainer.insertBefore(file.previewElement,@previewsContainer.firstChild)
+        else
+           @previewsContainer.appendChild file.previewElement
         node.textContent = @_renameFilename(file.name) for node in file.previewElement.querySelectorAll("[data-dz-name]")
         node.innerHTML = @filesize file.size for node in file.previewElement.querySelectorAll("[data-dz-size]")
 
         if @options.addRemoveLinks
-          file._removeLink = Dropzone.createElement """<a class="dz-remove" href="javascript:undefined;" data-dz-remove>#{@options.dictRemoveFile}</a>"""
-          file.previewElement.appendChild file._removeLink
+
+          if @options.RemoveLinkTemplate.length > 0
+             file._remove_Link = Dropzone.createElement(@options.RemoveLinkTemplate);
+             file.previewElement.appendChild file._remove_Link
+          else
+             file._removeLink = Dropzone.createElement """<a class="dz-remove" href="javascript:undefined;" data-dz-remove>#{@options.dictRemoveFile}</a>"""
+             file.previewElement.appendChild file._removeLink
 
         removeFileEvent = (e) =>
           e.preventDefault()
