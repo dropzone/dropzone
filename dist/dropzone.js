@@ -581,6 +581,7 @@
         setupHiddenFileInput();
       }
       this.URL = (_ref = window.URL) != null ? _ref : window.webkitURL;
+      this.allfiles = '';
       _ref1 = this.events;
       for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
         eventName = _ref1[_i];
@@ -700,7 +701,7 @@
       totalBytes = 0;
       activeFiles = this.getActiveFiles();
       if (activeFiles.length) {
-        _ref = this.getActiveFiles();
+        _ref = this.allfiles;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           file = _ref[_i];
           totalBytesSent += file.upload.bytesSent;
@@ -1007,6 +1008,7 @@
         file = files[_i];
         this.enqueueFile(file);
       }
+      this.allfiles = this.getQueuedFiles();
       return null;
     };
 
