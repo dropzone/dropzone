@@ -131,7 +131,7 @@ class Dropzone extends Emitter
     url: null
     method: "post"
     withCredentials: no
-    async: true
+    asyncXhr: true # Used as the async parameter when opening the xhr request.
     parallelUploads: 2
     uploadMultiple: no # Whether to send multiple files in one request.
     maxFilesize: 256 # in MB
@@ -1139,7 +1139,7 @@ class Dropzone extends Emitter
 
     method = resolveOption @options.method, files
     url = resolveOption @options.url, files
-    xhr.open method, url, @options.async
+    xhr.open method, url, @options.asyncXhr
 
     # Has to be after `.open()`. See https://github.com/enyo/dropzone/issues/179
     xhr.withCredentials = !!@options.withCredentials
