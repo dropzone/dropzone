@@ -477,7 +477,7 @@ class Dropzone extends Emitter
     # When the upload is finished, either with success or an error.
     # Receives `file`
     complete: (file) ->
-      file._removeLink.textContent = @options.dictRemoveFile if file._removeLink
+      file._removeLink.innerHTML = @options.dictRemoveFile if file._removeLink
       file.previewElement.classList.add "dz-complete" if file.previewElement
 
     completemultiple: noop
