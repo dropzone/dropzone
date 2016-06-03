@@ -1231,7 +1231,9 @@ class Dropzone extends Emitter
       for input in @element.querySelectorAll "input, textarea, select, button"
         inputName = input.getAttribute "name"
         inputType = input.getAttribute "type"
-
+        
+        if inputName === null
+          continue
         if input.tagName == "SELECT" and input.hasAttribute "multiple"
           # Possibly multiple values
           formData.append inputName, option.value for option in input.options when option.selected
