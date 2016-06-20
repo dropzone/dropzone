@@ -139,6 +139,7 @@ class Dropzone extends Emitter
     maxThumbnailFilesize: 10 # in MB. When the filename exceeds this limit, the thumbnail will not be generated.
     thumbnailWidth: 120
     thumbnailHeight: 120
+    duplicate: true
 
     # The base that is used to calculate the filesize. You can change this to
     # 1024 if you would rather display kibibytes, mebibytes, etc...
@@ -232,6 +233,9 @@ class Dropzone extends Emitter
 
     # If the file doesn't match the file type.
     dictInvalidFileType: "You can't upload files of this type."
+
+    # If not allow file name duplicate
+    dictDuplicateName: "Not allow duplicate file name"
 
     # If the server response was invalid.
     dictResponseError: "Server responded with {{statusCode}} code."
@@ -938,6 +942,17 @@ class Dropzone extends Emitter
     else if @options.maxFiles? and @getAcceptedFiles().length >= @options.maxFiles
       done @options.dictMaxFilesExceeded.replace "{{maxFiles}}", @options.maxFiles
       @emit "maxfilesexceeded", file
+    else if !@options.duplicate and @getAcceptedFiles().length > 0
+      ready_file = @getAcceptedFiles()
+      ready_file_name = []
+      i = 0
+      while i < ready_file.length
+        ready_file_name.push ready_file[i].name
+        i++
+      if ready_file_name.indexOf(file.name) > -1
+        done @options.dictDuplicateName
+      else
+        @options.accept.call this, file, done
     else
       @options.accept.call this, file, done
 
