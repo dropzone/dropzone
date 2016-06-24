@@ -604,3 +604,22 @@ footer {
   }
 
 }
+
+
+
+.for-hire {
+  text-align: center;
+  padding: 1em 2em;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 0.3rem;
+  line-height: 1.5em;
+
+  h1 {
+    padding: 0;
+    margin: 1.5rem 0 3rem;
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+  }
+}
