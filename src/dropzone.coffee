@@ -1211,7 +1211,7 @@ class Dropzone extends Emitter
       "Cache-Control": "no-cache",
       "X-Requested-With": "XMLHttpRequest",
 
-    extend headers, @options.headers if @options.headers
+    extend headers, resolveOption @options.headers if @options.headers
 
     for headerName, headerValue of headers
       xhr.setRequestHeader headerName, headerValue if headerValue
