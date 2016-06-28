@@ -486,8 +486,8 @@ describe "Dropzone", ->
         "using acceptedFiles": new Dropzone(Dropzone.createElement("""<form action="/"></form>"""), { clickable: yes, acceptedFiles: "audio/*,video/*" })
         "using acceptedMimeTypes": new Dropzone(Dropzone.createElement("""<form action="/"></form>"""), { clickable: yes, acceptedMimeTypes: "audio/*,video/*" })
 
-      it "should not add an accept attribute if no acceptParameter", ->
-        dropzone = new Dropzone (Dropzone.createElement """<form action="/"></form>"""), clickable: yes, acceptParameter: null, acceptedMimeTypes: null
+      it "should not add an accept attribute if no acceptedFiles and no acceptedMimeTypes", ->
+        dropzone = new Dropzone (Dropzone.createElement """<form action="/"></form>"""), clickable: yes, acceptedFiles: null, acceptedMimeTypes: null
         dropzone.hiddenFileInput.hasAttribute("accept").should.be.false
 
 
@@ -498,7 +498,7 @@ describe "Dropzone", ->
               dropzone.hiddenFileInput.should.be.ok
               dropzone.hiddenFileInput.tagName.should.equal "INPUT"
 
-            it "should use the acceptParameter", ->
+            it "should add an accept attribute if either acceptedFiles or acceptedMimeTypes is set", ->
               dropzone.hiddenFileInput.getAttribute("accept").should.equal "audio/*,video/*"
 
             it "should create a new input element when something is selected to reset the input field", ->
@@ -512,7 +512,7 @@ describe "Dropzone", ->
 
     it "should create a .dz-message element", ->
       element = Dropzone.createElement """<form class="dropzone" action="/"></form>"""
-      dropzone = new Dropzone element, clickable: yes, acceptParameter: null, acceptedMimeTypes: null
+      dropzone = new Dropzone element, clickable: yes, acceptedFiles: null, acceptedMimeTypes: null
       element.querySelector(".dz-message").should.be.instanceof Element
 
     it "should not create a .dz-message element if there already is one", ->
@@ -520,7 +520,7 @@ describe "Dropzone", ->
       msg = Dropzone.createElement """<div class="dz-message">TEST</div>"""
       element.appendChild msg
 
-      dropzone = new Dropzone element, clickable: yes, acceptParameter: null, acceptedMimeTypes: null
+      dropzone = new Dropzone element, clickable: yes, acceptedFiles: null, acceptedMimeTypes: null
       element.querySelector(".dz-message").should.equal msg
 
       element.querySelectorAll(".dz-message").length.should.equal 1
