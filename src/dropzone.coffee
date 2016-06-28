@@ -165,7 +165,7 @@ class Dropzone extends Emitter
     #
     # The default implementation of the `accept()` function will check this
     # property, and if the Dropzone is clickable this will be used as
-    # `accept` attribute.
+    # `accept` attribute (unless addAcceptAttribute is set to false).
     #
     # This is a comma separated list of mime types or extensions. E.g.:
     #
@@ -178,6 +178,17 @@ class Dropzone extends Emitter
     # @deprecated
     # Use acceptedFiles instead.
     acceptedMimeTypes: null
+
+    # If this property is set to false, the accept property will not be created from
+    # the acceptedFiles property, but dropzone will still check all files which are
+    # attempted to be uploaded.
+    # Said differently: if the user clicks on the upload button the user will have
+    # the opportunity to select any file.
+    # This functionality has been implemented, because some browsers misinterpret
+    # the "accept" attribute in a way where the user is prohibited to select any file.
+    #
+    # For details see http://caniuse.com/#feat=input-file-accept
+    addAcceptAttribute: true
 
     # If false, files will be added to the queue but the queue will not be
     # processed automatically.
@@ -630,7 +641,7 @@ class Dropzone extends Emitter
         @hiddenFileInput.setAttribute "multiple", "multiple" if !@options.maxFiles? || @options.maxFiles > 1
         @hiddenFileInput.className = "dz-hidden-input"
 
-        @hiddenFileInput.setAttribute "accept", @options.acceptedFiles if @options.acceptedFiles?
+        @hiddenFileInput.setAttribute "accept", @options.acceptedFiles if @options.addAcceptAttribute and @options.acceptedFiles?
         @hiddenFileInput.setAttribute "capture", @options.capture if @options.capture?
 
         # Not setting `display="none"` because some browsers don't accept clicks
