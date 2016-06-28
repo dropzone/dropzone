@@ -486,10 +486,14 @@ describe "Dropzone", ->
         "using acceptedFiles": new Dropzone(Dropzone.createElement("""<form action="/"></form>"""), { clickable: yes, acceptedFiles: "audio/*,video/*" })
         "using acceptedMimeTypes": new Dropzone(Dropzone.createElement("""<form action="/"></form>"""), { clickable: yes, acceptedMimeTypes: "audio/*,video/*" })
 
+
       it "should not add an accept attribute if no acceptedFiles and no acceptedMimeTypes", ->
         dropzone = new Dropzone (Dropzone.createElement """<form action="/"></form>"""), clickable: yes, acceptedFiles: null, acceptedMimeTypes: null
         dropzone.hiddenFileInput.hasAttribute("accept").should.be.false
 
+      it "should not add an accept attribute if addAcceptAttribute is false, despite having acceptedFiles", ->
+        dropzone = new Dropzone (Dropzone.createElement """<form action="/"></form>"""), clickable: yes, addAcceptAttribute: false, acceptedFiles: "audio/*,video/*" , acceptedMimeTypes: null
+        dropzone.hiddenFileInput.hasAttribute("accept").should.be.false
 
       for name, dropzone of dropzones
         describe name, ->

@@ -680,11 +680,21 @@
             acceptedMimeTypes: "audio/*,video/*"
           })
         };
-        it("should not add an accept attribute if no acceptParameter", function() {
+        it("should not add an accept attribute if no acceptedFiles and no acceptedMimeTypes", function() {
           var dropzone;
           dropzone = new Dropzone(Dropzone.createElement("<form action=\"/\"></form>"), {
             clickable: true,
-            acceptParameter: null,
+            acceptedFiles: null,
+            acceptedMimeTypes: null
+          });
+          return dropzone.hiddenFileInput.hasAttribute("accept").should.be["false"];
+        });
+        it("should not add an accept attribute if addAcceptAttribute is false, despite having acceptedFiles", function() {
+          var dropzone;
+          dropzone = new Dropzone(Dropzone.createElement("<form action=\"/\"></form>"), {
+            clickable: true,
+            addAcceptAttribute: false,
+            acceptedFiles: "audio/*,video/*",
             acceptedMimeTypes: null
           });
           return dropzone.hiddenFileInput.hasAttribute("accept").should.be["false"];
@@ -698,7 +708,7 @@
                 dropzone.hiddenFileInput.should.be.ok;
                 return dropzone.hiddenFileInput.tagName.should.equal("INPUT");
               });
-              it("should use the acceptParameter", function() {
+              it("should add an accept attribute if either acceptedFiles or acceptedMimeTypes is set", function() {
                 return dropzone.hiddenFileInput.getAttribute("accept").should.equal("audio/*,video/*");
               });
               return it("should create a new input element when something is selected to reset the input field", function() {
@@ -724,7 +734,7 @@
         element = Dropzone.createElement("<form class=\"dropzone\" action=\"/\"></form>");
         dropzone = new Dropzone(element, {
           clickable: true,
-          acceptParameter: null,
+          acceptedFiles: null,
           acceptedMimeTypes: null
         });
         return element.querySelector(".dz-message").should.be["instanceof"](Element);
@@ -736,7 +746,7 @@
         element.appendChild(msg);
         dropzone = new Dropzone(element, {
           clickable: true,
-          acceptParameter: null,
+          acceptedFiles: null,
           acceptedMimeTypes: null
         });
         element.querySelector(".dz-message").should.equal(msg);
