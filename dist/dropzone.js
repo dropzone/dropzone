@@ -105,9 +105,9 @@
 
     /*
     This is a list of all available events you can register on a dropzone object.
-    
+
     You can register an event handler like this:
-    
+
         dropzone.on("dragEnter", function() { });
      */
 
@@ -1120,6 +1120,7 @@
           canvas.width = resizeInfo.trgWidth;
           canvas.height = resizeInfo.trgHeight;
           drawImageIOSFix(ctx, img, (_ref = resizeInfo.srcX) != null ? _ref : 0, (_ref1 = resizeInfo.srcY) != null ? _ref1 : 0, resizeInfo.srcWidth, resizeInfo.srcHeight, (_ref2 = resizeInfo.trgX) != null ? _ref2 : 0, (_ref3 = resizeInfo.trgY) != null ? _ref3 : 0, resizeInfo.trgWidth, resizeInfo.trgHeight);
+
           thumbnail = canvas.toDataURL("image/png");
           _this.emit("thumbnail", file, thumbnail);
           if (callback != null) {
@@ -1655,7 +1656,7 @@
 
 
   /*
-  
+
   Bugfix for iOS 6 and 7
   Source: http://stackoverflow.com/questions/11929099/html5-canvas-drawimage-ratio-bug-ios
   based on the work of https://github.com/stomita/ios-imagefile-megapixel
@@ -1692,11 +1693,62 @@
   };
 
   drawImageIOSFix = function(ctx, img, sx, sy, sw, sh, dx, dy, dw, dh) {
+
     var vertSquashRatio;
     vertSquashRatio = detectVerticalSquash(img);
-    return ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh / vertSquashRatio);
+
+    return ctx.drawImage(stepDown(img, dw, dh / vertSquashRatio, sx, sy, sw, sh), 0, 0, dw, dh / vertSquashRatio);
   };
 
+  /**
+   * Pre-processes the image before drawImageIOSFix() crops it to provide better anti-aliasing.
+   * Works by resizing by 50% until the image is close enough to the target size, then does a final resize.
+   *
+   * @see: http://jsfiddle.net/AbdiasSoftware/M4cTx/
+   */
+  stepDown = function(img, tw, th, sx, sy, sw, sh) {
+
+    var steps,
+        oc = document.createElement('canvas'),
+        ctx = oc.getContext('2d'),
+        fc = document.createElement('canvas'),
+        w = img.width,
+        h = img.height;
+
+    oc.width = w;
+    oc.height = h;
+
+    fc.width = tw;
+    fc.height = th;
+
+    if ((w / tw) > (h / th)) {
+      steps = Math.ceil(Math.log(w / tw) / Math.log(2));
+    } else {
+      steps = Math.ceil(Math.log(h / th) / Math.log(2));
+    }
+
+    if (steps <= 1) {
+      ctx = fc.getContext('2d');
+      ctx.drawImage(img, 0, 0, tw, th);
+
+      return fc;
+    }
+
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, w, h);
+    steps--;
+
+    while (steps > 0) {
+      w *= 0.5;
+      h *= 0.5;
+      ctx.drawImage(oc, 0, 0, w * 2, h * 2, 0, 0, w, h);
+      steps--;
+    }
+
+    ctx = fc.getContext('2d'),
+    ctx.drawImage(oc, 0, 0, w, h, 0, 0, tw, th);
+
+    return fc;
+  },
 
   /*
    * contentloaded.js
