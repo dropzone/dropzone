@@ -26,23 +26,9 @@ Try it out!
 News
 ====
 
-<div markdown="1" class="for-hire">
-
-<!--# ![Available for hire](images/available-for-hire@2x.png)-->
-
-# <img alt="Available for hire" src="images/available-for-hire@2x.png" width="396" height="83">
-
-If you need a website or my help integrating dropzone in one of your projects, just drop me a line at [m@tias.me](mailto:m@tias.me)
-
-On the server side, I can help out in Node.js, Dart or even PHP.<br>
-(I can also code in Java, but in my experience it often takes too much time
-to get acquainted with a Java project to be cost-efficient).
-
-* * *
-
-This is a limited time offer.
-
-</div>
+{% comment %}
+{% include _for_hire.html %}
+{% endcomment %}
 
 * * *
 
