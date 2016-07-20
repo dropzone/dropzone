@@ -30,24 +30,19 @@ News
 {% include _for_hire.html %}
 {% endcomment %}
 
-**PayPal closed my account because they think dropzonejs.com is a file sharing website.**
+**Update on my closed PayPal account**
 
-I'm serious, this isn't a joke. I have now tried to get them to unfreeze my account for over 6 weeks now to no avail.
-They believe that dropzonejs.com is used to upload and share files and have asked me to fill out a
-questionaire related to websites of this kind. Which I did. And since then they are "processing" my request.
+PayPal recently closed my account because they mistook this website for
+a file sharing service. This is why I couldn't receive donations for about
+7 weeks now (yes... it took them **7 weeks** to rectify their mistake).
 
-**That's the reason donations didn't work during the last few weeks.**
+They finally enabled the account now, so feel free to donate again.
 
-I hope that this issue will be resolved soon. Thanks for all of you who tried to
-donate and who notified me of the problem as well.
-
-(If you'd like to have some fun, you can read the 
-[questionnaire I had to send them twice on reddit](https://www.reddit.com/r/paypal/comments/4sni93/paypal_wont_unfreeze_my_account_because_they/?ref=share&ref_source=link)
-)
+Thanks
 
 * * *
 
-I just released my Solo EP called **Meno - Flashlights** on all major Streaming and Music platforms!
+I recently released my Solo EP called **Meno - Flashlights** on all major Streaming and Music platforms!
 
 <div>
   <div class="embedded-video">
