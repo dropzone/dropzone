@@ -30,6 +30,19 @@ News
 {% include _for_hire.html %}
 {% endcomment %}
 
+**Build the Stackoverflow documentation with me**
+
+Hey you! If you have already answered a question about dropzone on
+stackoverflow, you could help build the documentation on the new
+**stackoverflow documentation beta**. To get this project started, we need
+at least 5 "committers" to support the project - then I could lay the
+ground work.
+
+If you would like to see this project happen, please [click the "commit"
+button on the stackoverflow documentation page](http://stackoverflow.com/documentation/dropzone.js).
+
+Thanks!
+
 **Update on my closed PayPal account**
 
 PayPal recently closed my account because they mistook this website for
