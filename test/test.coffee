@@ -1242,7 +1242,7 @@ describe "Dropzone", ->
         dropzone.options.previewTemplate = """
                                             <div class="dz-preview dz-file-preview">
                                               <div class="dz-details">
-                                                <div class="dz-filename"><span data-dz-name></span></div>
+                                                <div class="dz-filename"><a href="#"><span data-dz-name></span></a></div>
                                                 <div class="dz-size" data-dz-size></div>
                                                 <img data-dz-thumbnail />
                                               </div>
