@@ -620,7 +620,7 @@ class Dropzone extends Emitter
     @element.setAttribute("enctype", "multipart/form-data") if @element.tagName == "form"
 
     if @element.classList.contains("dropzone") and !@element.querySelector(".dz-message")
-      @element.appendChild Dropzone.createElement """<div class="dz-default dz-message"><span>#{@options.dictDefaultMessage}</span></div>"""
+      @element.appendChild Dropzone.createElement """<div class="dz-default dz-message"><a href="#"><span>#{@options.dictDefaultMessage}</span></a></div>"""
 
     if @clickableElements.length
       setupHiddenFileInput = =>
