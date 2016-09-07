@@ -41,29 +41,21 @@ ground work.
 If you would like to see this project happen, please [click the "commit"
 button on the stackoverflow documentation page](http://stackoverflow.com/documentation/dropzone.js).
 
+**Only one person is missing!**
+
 Thanks!
-
-**Update on my closed PayPal account**
-
-PayPal recently closed my account because they mistook this website for
-a file sharing service. This is why I couldn't receive donations for about
-7 weeks now (yes... it took them **7 weeks** to rectify their mistake).
-
-They finally enabled the account now, so feel free to donate again.
-
-Thanks
 
 * * *
 
-I recently released my Solo EP called **Meno - Flashlights** on all major Streaming and Music platforms!
+**Checkout my new video for ANIMAL**
 
 <div>
   <div class="embedded-video">
-    <iframe style="margin: 0 auto;" width="560" height="315" src="https://www.youtube.com/embed/sFBFkZYGgcE?rel=0&amp;showinfo=1" frameborder="0" allowfullscreen></iframe>
+    <iframe style="margin: 0 auto;" width="560" height="315" src="https://www.youtube.com/embed/z-OUBkuDzv4?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>
   </div>
 </div>
 
-Here is the <em>full</em> Desktop experience: <a href="http://www.meno.fm/flashlights">www.meno.fm/flashlights</a>.
+For the video before that, including a full desktop experience, visit <a href="http://www.meno.fm/flashlights">www.meno.fm/flashlights</a>.
 I wrote a [**COLORGLARE** post about the build process](http://www.colorglare.com/2016/02/05/flashlights.html). 
 <br>
 
