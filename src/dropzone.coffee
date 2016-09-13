@@ -394,12 +394,9 @@ class Dropzone extends Emitter
           e.preventDefault()
           e.stopPropagation()
           if file.status == Dropzone.UPLOADING
-            Dropzone.confirm @options.dictCancelUploadConfirmation, => @removeFile file
+            Dropzone.confirm (Dropzone.prepareFileConfirmQuestion @options.dictCancelUploadConfirmation, file), => @removeFile file
           else
-            if @options.dictRemoveFileConfirmation
-              Dropzone.confirm @options.dictRemoveFileConfirmation, => @removeFile file
-            else
-              @removeFile file
+            Dropzone.confirm (Dropzone.prepareFileConfirmQuestion @options.dictRemoveFileConfirmation, file), => @removeFile file
 
         removeLink.addEventListener "click", removeFileEvent for removeLink in file.previewElement.querySelectorAll("[data-dz-remove]")
 
@@ -1425,10 +1422,16 @@ Dropzone.getElements = (els, name) ->
 # The default implementation just uses `window.confirm` and then calls the
 # appropriate callback.
 Dropzone.confirm = (question, accepted, rejected) ->
-  if window.confirm question
+  if !question || window.confirm question
     accepted()
   else if rejected?
     rejected()
+
+Dropzone.prepareFileConfirmQuestion = (question, file) ->
+  if question && question.call?
+    return question(file)
+  else
+    return question
 
 # Validates the mime type like this:
 #
