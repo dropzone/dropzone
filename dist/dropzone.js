@@ -125,6 +125,10 @@
       maxThumbnailFilesize: 10,
       thumbnailWidth: 120,
       thumbnailHeight: 120,
+      generateFullURI: false,
+      generatePreviewURI: false,
+      previewWidth: 600,
+      previewHeight: 600,
       filesizeBase: 1000,
       maxFiles: null,
       params: {},
@@ -183,7 +187,7 @@
         }
         return this.element.appendChild(this.getFallbackForm());
       },
-      resize: function(file) {
+      resize: function(file,targetWidth,targetHeight) {
         var info, srcRatio, trgRatio;
         info = {
           srcX: 0,
@@ -194,6 +198,8 @@
         srcRatio = file.width / file.height;
         info.optWidth = this.options.thumbnailWidth;
         info.optHeight = this.options.thumbnailHeight;
+        info.optWidth = targetWidth;
+        info.optHeight = targetHeight;
         if ((info.optWidth == null) && (info.optHeight == null)) {
           info.optWidth = info.srcWidth;
           info.optHeight = info.srcHeight;
@@ -1108,7 +1114,7 @@
           var canvas, ctx, resizeInfo, thumbnail, _ref, _ref1, _ref2, _ref3;
           file.width = img.width;
           file.height = img.height;
-          resizeInfo = _this.options.resize.call(_this, file);
+          resizeInfo = _this.options.resize.call(_this, file, _this.options.thumbnailWidth, _this.options.thumbnailHeight);
           if (resizeInfo.trgWidth == null) {
             resizeInfo.trgWidth = resizeInfo.optWidth;
           }
@@ -1121,8 +1127,16 @@
           canvas.height = resizeInfo.trgHeight;
           drawImageIOSFix(ctx, img, (_ref = resizeInfo.srcX) != null ? _ref : 0, (_ref1 = resizeInfo.srcY) != null ? _ref1 : 0, resizeInfo.srcWidth, resizeInfo.srcHeight, (_ref2 = resizeInfo.trgX) != null ? _ref2 : 0, (_ref3 = resizeInfo.trgY) != null ? _ref3 : 0, resizeInfo.trgWidth, resizeInfo.trgHeight);
           thumbnail = canvas.toDataURL("image/png");
-    	  fullIMGDataUrl = _this.createImageFromUrl(img,file);
-          _this.emit("thumbnail", file, thumbnail, fullIMGDataUrl);
+		  
+		  var fullIMGDataUrl = false;
+		  if (_this.options.generateFullURI) {
+			fullIMGDataUrl = _this.createImageFromUrl(img,file);
+		  }
+		  var previewIMGDataUrl = false;
+		  if (_this.options.generatePreviewURI) {
+			previewIMGDataUrl = _this.createImageFromUrlSized(img, file, _this.options.previewWidth, _this.options.previewHeight);
+		  }
+          _this.emit("thumbnail", file, thumbnail, fullIMGDataUrl, previewIMGDataUrl);
           if (callback != null) {
             return callback();
           }
@@ -1133,7 +1147,7 @@
       }
       return img.src = imageUrl;
     };
-	
+
     Dropzone.prototype.createImageFromUrl = function(img, file) {
       canvas = document.createElement("canvas");
       ctx = canvas.getContext("2d");
@@ -1142,6 +1156,24 @@
       ctx.drawImage(img,0,0);
       fullIMGDataUrl = canvas.toDataURL(file.type);
       return fullIMGDataUrl;
+    };
+	
+    Dropzone.prototype.createImageFromUrlSized = function(img, file, width, height) {
+	  resizeInfo = this.options.resize.call(this, file, width, height);
+	  if (resizeInfo.trgWidth == null) {
+		resizeInfo.trgWidth = resizeInfo.optWidth;
+	  }
+	  if (resizeInfo.trgHeight == null) {
+		resizeInfo.trgHeight = resizeInfo.optHeight;
+	  }
+	  canvas = document.createElement("canvas");
+	  ctx = canvas.getContext("2d");
+	  canvas.width = resizeInfo.trgWidth;
+	  canvas.height = resizeInfo.trgHeight;
+	  drawImageIOSFix(ctx, img, (_ref = resizeInfo.srcX) != null ? _ref : 0, (_ref1 = resizeInfo.srcY) != null ? _ref1 : 0, resizeInfo.srcWidth, resizeInfo.srcHeight, (_ref2 = resizeInfo.trgX) != null ? _ref2 : 0, (_ref3 = resizeInfo.trgY) != null ? _ref3 : 0, resizeInfo.trgWidth, resizeInfo.trgHeight);
+	  thumbnail = canvas.toDataURL("image/png");
+      var sizedIMGDataUrl = canvas.toDataURL(file.type);
+      return sizedIMGDataUrl;
     };
 
     Dropzone.prototype.processQueue = function() {
