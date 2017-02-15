@@ -5,3 +5,4 @@ node_modules
 .sass-cache
 _site
 _config.yaml
+.idea
