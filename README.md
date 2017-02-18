@@ -28,7 +28,7 @@ there's a standalone version and an [AMD](https://github.com/amdjs/amdjs-api/wik
 module that's compatible with [RequireJS](http://requirejs.org) in the downloads
 folder.
 
-<img slt="Dropzone Screenshot" width="585" src="http://i.imgur.com/Xf7QvVG.png" />
+<img alt="Dropzone Screenshot" width="585" src="http://i.imgur.com/Xf7QvVG.png" />
 
 
 
