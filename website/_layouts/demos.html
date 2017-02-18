@@ -1,0 +1,56 @@
+<!doctype html>
+<!--[if lt IE 7]> <html class="lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>    <html class="lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>    <html class="lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-ie"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+  <!-- tiptheweb.org -->
+  <meta name="ttw" content="dt7xvsr" />
+
+  <title>{{ page.title }}</title>
+
+  <meta name="description" value="DropzoneJS is an open source library that provides beautiful and easy to use drag'n'drop file uploads with image previews." />
+  <meta name="keywords" value="javascript dragndrop drag and drop drag'n'drop file upload image preview coffeescript" />
+
+  <link rel="stylesheet" href="/css/demos.css?v=7" />
+
+  <!--[if lt IE 9]>
+    <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-34027655-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+  <script src="/js/build/build.js?v=4"></script>
+  <script>
+    require("boot");
+    Dropzone = require("enyo-dropzone");
+  </script>
+
+</head>
+<body>
+
+  <article>
+
+    {{ content }}
+
+  </article>
+
+</body>
+</html>

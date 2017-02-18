@@ -1,0 +1,13 @@
+safe: false # A hack as environment variable (https://github.com/plusjade/jekyll-bootstrap/issues/84)
+permalink: none
+highlighter: pygments
+#markdown: redcarpet
+markdown: kramdown
+
+exclude: [ "Gruntfile.coffee", "node_modules", "CNAME", "package.json", "js/components" ]
+redcarpet:
+  extensions: [ "tables", "with_toc_data" ]
+
+
+sass:
+  sass_dir: css/

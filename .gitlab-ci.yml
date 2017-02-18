@@ -10,3 +10,25 @@ test:
   stage: test
   script:
   - npm run test
+
+release:
+  stage: deploy
+  script:
+  - grunt
+  artifacts:
+    paths:
+    - dist
+    name: "dist"
+  only:
+  - master
+
+pages:
+  stage: deploy
+  script:
+  - gem install jekyll pygments.rb
+  - jekyll build -s website -d public
+  artifacts:
+    paths:
+    - public
+  only:
+  - master

@@ -1,0 +1,41 @@
+{
+  "name": "dropzone-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Handles drag and drop of files for you.",
+  "homepage": "http://www.dropzonejs.com",
+  "maintainers": [
+    {
+      "name": "Matias Meno",
+      "email": "m@tias.me",
+      "web": "http://www.matiasmeno.com"
+    } 
+  ],
+  "contributors": [
+    {
+      "name": "Matias Meno",
+      "email": "m@tias.me",
+      "web": "http://www.matiasmeno.com"
+    } 
+  ],
+  "bugs": {
+    "mail": "m@tias.me"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/MIT" 
+    } 
+  ],
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/enyo/dropzone.git" 
+    } 
+  ],
+  "devDependencies": {
+    "stylus": "*",
+    "nib": "*",
+    "grunt": "^0.4.4"
+  }
+}

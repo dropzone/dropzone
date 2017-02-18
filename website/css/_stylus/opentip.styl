@@ -1,0 +1,127 @@
+@import "nib"
+
+
+@keyframes otloading
+  from
+    transform rotate(0deg)
+  to
+    transform rotate(360deg)
+
+
+.opentip-container, .opentip-container *
+  box-sizing border-box
+
+.opentip-container
+  position absolute
+  max-width 300px
+  z-index 100
+  transition transform 1s ease-in-out
+  pointer-events none
+  transform translateX(0) translateY(0)
+
+
+
+  &.ot-fixed
+    &.ot-hidden
+    &.ot-going-to-show
+    &.ot-hiding
+      &.stem-top.stem-center
+        transform translateY(-5px) 
+      &.stem-top.stem-right
+        transform translateY(-5px) translateX(5px)
+      &.stem-middle.stem-right
+        transform translateX(5px)
+      &.stem-bottom.stem-right
+        transform translateY(5px) translateX(5px)
+      &.stem-bottom.stem-center
+        transform translateY(5px)
+      &.stem-bottom.stem-left
+        transform translateY(5px) translateX(-5px)
+      &.stem-middle.stem-left
+        transform translateX(-5px)
+      &.stem-top.stem-left
+        transform translateY(-5px) translateX(-5px)
+
+  &.ot-fixed
+    // When it's fixed, the close button, and links inside the tooltip should
+    // be clickable
+    .opentip
+      pointer-events auto
+
+  &.ot-hidden
+    display none
+
+  .opentip
+    position relative
+    font-size 13px
+    line-height 120%
+    padding 9px 14px
+    color #4F4B47
+    text-shadow -1px -1px 0px rgba(255, 255, 255, 0.2)
+
+    .header
+      margin 0
+      padding 0
+
+    .ot-close
+      pointer-events auto
+      display block
+      absolute top -12px left 60px
+      color rgba(0, 0, 0, 0.5)
+      background rgba(0, 0, 0, 0) // So IE9 renders this as clickable
+      text-decoration none
+
+      span
+        display none
+
+    .ot-loading-indicator
+      display none
+
+  &.ot-loading
+    .ot-loading-indicator
+      width 30px
+      height @width
+      font-size @width
+      line-height @width
+      font-weight bold
+      display block
+      span
+        display block
+        animation otloading 2s linear infinite
+        text-align center
+
+
+
+  // Styles
+  // ======
+  &.style-dark
+  &.style-alert
+    .opentip
+      color #f8f8f8
+      text-shadow 1px 1px 0px rgba(0, 0, 0, 0.2)
+
+  &.style-glass
+    .opentip
+      padding 15px 25px
+      color #317CC5
+      text-shadow 1px 1px 8px rgba(0, 94, 153, 0.3)
+
+
+  // Effects
+  // =======
+  &.ot-hide-effect-fade
+    transition transform 0.5s ease-in-out, opacity 1s ease-in-out
+    opacity 1
+    &.ot-hiding
+      opacity 0
+
+  &.ot-show-effect-appear
+    &.ot-going-to-show
+    &.ot-showing
+      transition transform 0.5s ease-in-out, opacity 1s ease-in-out
+    &.ot-going-to-show
+      opacity 0
+    &.ot-showing
+      opacity 1
+    &.ot-visible
+      opacity 1

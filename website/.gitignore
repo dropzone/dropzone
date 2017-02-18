@@ -1,0 +1,4 @@
+_site
+.*
+!.gitignore
+node_modules

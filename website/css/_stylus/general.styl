@@ -1,0 +1,44 @@
+@import "nib"
+@import "ci"
+
+
+@font-face
+  font-family 'League Gothic'
+  font-style normal
+  font-weight 500
+  src local('League Gothic'),
+      url("../fonts/league-gothic.woff") format('woff'),
+      url("../fonts/league-gothic.ttf") format('ttf'),
+      url("../fonts/league-gothic.eot") format('embedded-opentype'),
+      url("../fonts/league-gothic.svg") format('svg')
+
+
+h1#project
+  padding-bottom 100px
+  background url("../images/dropzonejs.png") no-repeat center bottom
+
+
+@import "dropzone"
+
+
+#dropzone
+  margin 30px 0
+  box-shadow 0 0 50px rgba(0, 0, 0, 0.13)
+  padding 4px
+  border-radius 3px
+  .dropzone
+    box-shadow none
+
+
+
+// Make the dropzone text square when the screen is too small
+@media screen and (max-width: 37.5em)
+  .dropzone
+    .dz-default.dz-message
+      background-position 0 -123px
+      width 268px
+      margin-left -(@width / 2)
+      height 174px
+      margin-top -(@height / 2)
+
+@import "opentip"

@@ -1,0 +1,218 @@
+<h2 class="anchor" id="event-list">Event List</h2>
+<table>
+
+  <thead>
+
+    <tr><th class="title" colspan="2">
+      <div class="header">Event list</div>
+      <p>
+        Do <strong>not</strong> overwrite those as configuration options,
+        unless you know what you're doing.
+      </p>
+    </th></tr>
+    <tr><th>Parameter</th><th>Description</th></tr>
+
+  </thead>
+  <tbody>
+    <tr>
+      <td class="separator" colspan="2">
+
+        All of these receive the
+        <a href="https://developer.mozilla.org/en-US/docs/DOM/event">event</a>
+        as first parameter:
+
+      </td>
+    </tr><tr id="event-drop">
+      <td><a href="#event-drop"><code>drop</code></a></td>
+      <td>The user dropped something onto the dropzone</td>
+    </tr><tr id="event-dragstart">
+      <td><a href="#event-dragstart"><code>dragstart</code></a></td>
+      <td>The user started to drag anywhere</td>
+    </tr><tr id="event-dragend">
+      <td><a href="#event-dragend"><code>dragend</code></a></td>
+      <td>Dragging has ended</td>
+    </tr><tr id="event-dragenter">
+      <td><a href="#event-dragenter"><code>dragenter</code></a></td>
+      <td>The user dragged a file onto the Dropzone</td>
+    </tr><tr id="event-dragover">
+      <td><a href="#event-dragover"><code>dragover</code></a></td>
+      <td>The user is dragging a file over the Dropzone</td>
+    </tr><tr id="event-dragleave">
+      <td><a href="#event-dragleave"><code>dragleave</code></a></td>
+      <td>The user dragged a file out of the Dropzone</td>
+    </tr><tr>
+      <td class="separator" colspan="2">
+
+        All of these receive the
+        <a href="https://developer.mozilla.org/en-US/docs/DOM/File">file</a>
+        as first parameter:
+
+      </td>
+    </tr><tr id="event-addedfile">
+      <td><a href="#event-addedfile"><code>addedfile</code></a></td>
+      <td>
+
+        When a file is added to the list
+
+      </td>
+    </tr><tr id="event-removedfile">
+      <td><a href="#event-removedfile"><code>removedfile</code></a></td>
+      <td>
+
+        Called whenever a file is removed from the list. You can listen to
+        this and delete the file from your server if you want to.
+
+      </td>
+    </tr><tr id="event-thumbnail">
+      <td><a href="#event-thumbnail"><code>thumbnail</code></a></td>
+      <td>
+
+        When the thumbnail has been generated. Receives the
+        <a href="http://en.wikipedia.org/wiki/Data_URI_scheme">dataUrl</a> as
+        second parameter.
+
+      </td>
+    </tr><tr id="event-error">
+      <td><a href="#event-error"><code>error</code></a></td>
+      <td>
+
+        An error occured. Receives the <code>errorMessage</code> as
+        second parameter and if the error was due to the XMLHttpRequest
+        the xhr object as third.
+
+      </td>
+    </tr><tr id="event-processing">
+      <td><a href="#event-processing"><code>processing</code></a></td>
+      <td>
+
+        When a file gets processed (since there is a queue not all files
+        are processed immediately). This event was called <code>processingfile</code>
+        previously.
+
+      </td>
+    </tr><tr id="event-uploadprogress">
+      <td><a href="#event-uploadprogress"><code>uploadprogress</code></a></td>
+      <td>
+
+        Gets called periodically whenever the file upload progress
+        changes.<br />
+
+        Gets the <code>progress</code> parameter as second parameter which
+        is a percentage (0-100) and the <code>bytesSent</code> parameter
+        as third which is the number of the bytes that have been sent to
+        the server.<br />
+
+        When an upload finishes dropzone <em>ensures</em> that
+        uploadprogress will be called with a percentage of 100 <em>at
+        least</em> once.<br />
+
+        <strong class="warning">Warning:</strong> This function can potentially be called
+        with the same progress multiple times.
+
+      </td>
+    </tr><tr id="event-sending">
+      <td><a href="#event-sending"><code>sending</code></a></td>
+      <td>
+
+        Called just before each file is sent. Gets the xhr object and the
+        <a href="https://developer.mozilla.org/en-US/docs/DOM/XMLHttpRequest/FormData">formData</a>
+        objects as second and third parameters, so you can modify them
+        (for example to add a CSRF token) or add additional data.
+
+      </td>
+    </tr><tr id="event-success">
+      <td><a href="#event-success"><code>success</code></a></td>
+      <td>
+
+        The file has been uploaded successfully. Gets the server response
+        as second argument. (This event was called <code>finished</code>
+        previously)
+
+      </td>
+    </tr><tr id="event-complete">
+      <td><a href="#event-complete"><code>complete</code></a></td>
+      <td>
+
+        Called when the upload was either successful or erroneous.
+
+      </td>
+    </tr><tr id="event-canceled">
+      <td><a href="#event-canceled"><code>canceled</code></a></td>
+      <td>
+
+        Called when a file upload gets canceled.
+
+      </td>
+    </tr><tr id="event-maxfilesreached">
+      <td><a href="#event-maxfilesreached"><code>maxfilesreached</code></a></td>
+      <td>
+
+        Called when the number of files accepted reaches the
+        <code>maxFiles</code> limit.
+
+      </td>
+    </tr><tr id="event-maxfilesexceeded">
+      <td><a href="#event-maxfilesexceeded"><code>maxfilesexceeded</code></a></td>
+      <td>
+
+        Called for each file that has been rejected because the number of
+        files exceeds the <code>maxFiles</code> limit.
+
+      </td>
+    </tr><tr>
+      <td class="separator" colspan="2">
+
+        All of these receive a list of files as first parameter and are
+        only called if the <code>uploadMultiple</code> option is true:
+
+      </td>
+    </tr><tr id="event-processingmultiple">
+      <td><a href="#event-processingmultiple"><code>processingmultiple</code></a></td>
+      <td>See <code>processing</code> for description.</td>
+    </tr><tr id="event-sendingmultiple">
+      <td><a href="#event-sendingmultiple"><code>sendingmultiple</code></a></td>
+      <td>See <code>sending</code> for description.</td>
+    </tr><tr id="event-successmultiple">
+      <td><a href="#event-successmultiple"><code>successmultiple</code></a></td>
+      <td>See <code>success</code> for description.</td>
+    </tr><tr id="event-completemultiple">
+      <td><a href="#event-completemultiple"><code>completemultiple</code></a></td>
+      <td>See <code>complete</code> for description.</td>
+    </tr><tr id="event-canceledmultiple">
+      <td><a href="#event-canceledmultiple"><code>canceledmultiple</code></a></td>
+      <td>See <code>canceled</code> for description.</td>
+    </tr><tr>
+      <td class="separator" colspan="2">
+
+        Special events:
+
+      </td>
+    </tr><tr id="event-totaluploadprogress">
+      <td><a href="#event-totaluploadprogress"><code>totaluploadprogress</code></a></td>
+      <td>
+
+        Called with the total <code>uploadProgress</code> (0-100), the
+        <code>totalBytes</code> and the <code>totalBytesSent</code>. This
+        event can be used to show the overall upload progress of all
+        files.
+
+      </td>
+    </tr><tr id="event-reset">
+      <td><a href="#event-reset"><code>reset</code></a></td>
+      <td>
+
+        Called when all files in the list are removed and the dropzone is
+        reset to initial state.
+
+      </td>
+    </tr><tr id="event-queuecomplete">
+      <td><a href="#event-queuecomplete"><code>queuecomplete</code></a></td>
+      <td>
+
+        Called when all files in the queue finish uploading.
+
+      </td>
+    </tr>
+  </tbody>
+</table>
+

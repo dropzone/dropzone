@@ -8,5 +8,8 @@ _config.yaml
 .idea
 dist
 
+# The GitLab pages artifacts
+public
+
 # Exclude all js files
 **/*.js
