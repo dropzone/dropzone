@@ -1,0 +1,12 @@
+image: node:wheezy
+
+before_script:
+  - apt-get update -qq && apt-get -y -qq install ruby
+  - gem install sass
+  - npm install
+  - npm install -g grunt-cli
+
+test:
+  stage: test
+  script:
+  - npm run test
