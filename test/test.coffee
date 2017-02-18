@@ -1293,9 +1293,6 @@ describe "Dropzone", ->
           mock2.type = "image/jpg"
           mock3.type = "image/jpg"
 
-          dropzone.on "thumbnail", ->
-            console.log "HII"
-
           ct_file = ct_callback = null
           dropzone.createThumbnail = (file, callback) ->
             ct_file = file
@@ -1436,6 +1433,15 @@ describe "Dropzone", ->
           expect(requests.length).to.equal 1
           expect(requests[0].url).to.equal url
           expect(requests[0].method).to.equal method
+          done()
+        , 10
+
+      it "should use the timeout option", (done) ->
+        dropzone.addFile mockFile
+
+        setTimeout ->
+          expect(requests.length).to.equal 1
+          expect(requests[0].timeout).to.equal dropzone.options.timeout
           done()
         , 10
 
