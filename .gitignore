@@ -9,4 +9,4 @@ _config.yaml
 dist
 
 # Exclude all js files
-.js
+**/*.js
