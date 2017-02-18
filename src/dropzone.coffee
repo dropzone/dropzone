@@ -1350,7 +1350,8 @@ Dropzone.discover = ->
 #
 Dropzone.blacklistedBrowsers = [
   # The mac os version of opera 12 seems to have a problem with the File drag'n'drop API.
-  /opera.*Macintosh.*version\/12/i
+  # Also Windows Phone Opera Mini 9 (which identifies as version 12 also).
+  /opera.*(Macintosh|Windows Phone).*version\/12/i
   # /MSIE\ 10/i
 ]
 
