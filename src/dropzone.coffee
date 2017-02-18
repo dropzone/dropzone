@@ -953,8 +953,6 @@ class Dropzone extends Emitter
 
     file.status = Dropzone.ADDED
 
-    @emit "addedfile", file
-
     @_enqueueThumbnail file
 
     @accept file, (error) =>
@@ -964,6 +962,7 @@ class Dropzone extends Emitter
       else
         file.accepted = true
         @enqueueFile file if @options.autoQueue # Will set .accepted = true
+      @emit "addedfile", file
       @_updateMaxFilesReachedClass()
 
 
