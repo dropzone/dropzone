@@ -6,3 +6,7 @@ node_modules
 _site
 _config.yaml
 .idea
+dist
+
+# Exclude all js files
+.js

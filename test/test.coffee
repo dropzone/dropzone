@@ -15,7 +15,6 @@ describe "Dropzone", ->
   beforeEach -> xhr = sinon.useFakeXMLHttpRequest()
 
   describe "Emitter", ->
-
     emitter = null
     beforeEach -> emitter = new Dropzone::Emitter()
 
@@ -1442,17 +1441,16 @@ describe "Dropzone", ->
 
       it "should ignore the onreadystate callback if readyState != 4", (done) ->
         dropzone.addFile mockFile
-
         setTimeout ->
-
           mockFile.status.should.eql Dropzone.UPLOADING
 
           requests[0].status = 200
           requests[0].readyState = 3
+          requests[0].responseHeaders = {'content-type': "text/plain"}
           requests[0].onload()
 
           mockFile.status.should.eql Dropzone.UPLOADING
-        
+
           requests[0].readyState = 4
           requests[0].onload()
 
@@ -1481,6 +1479,7 @@ describe "Dropzone", ->
 
           requests[0].status = 400
           requests[0].readyState = 4
+          requests[0].responseHeaders = {'content-type': "text/plain"}
           requests[0].onload()
 
           expect(yes == error == errormultiple == complete == completemultiple).to.be.ok
@@ -1682,6 +1681,7 @@ describe "Dropzone", ->
             requests.length.should.equal 1
             requests[0].status = 400
             requests[0].readyState = 4
+            requests[0].responseHeaders = {'content-type': "text/plain"}
 
             requests[0].onload()
 
@@ -1697,6 +1697,7 @@ describe "Dropzone", ->
               requests.length.should.equal 2
               requests[1].status = 200
               requests[1].readyState = 4
+              requests[1].responseHeaders = {'content-type': "text/plain"}
 
               requests[1].onload()
 
