@@ -130,6 +130,7 @@ class Dropzone extends Emitter
   defaultOptions:
     url: null
     method: "post"
+    sendDataAsBody: no
     withCredentials: no
     timeout: 30000 # timeout in milliseconds
     parallelUploads: 2
@@ -1246,10 +1247,16 @@ class Dropzone extends Emitter
     # last parameter
     formData.append @_getParamName(i), files[i], @_renameFilename(files[i].name, files[i]) for i in [0..files.length-1]
 
-    @submitRequest xhr, formData, files
+    if @options.sendDataAsBody
+      @submitRequestAsBody xhr, formData, files
+    else
+      @submitRequest xhr, formData, files
 
   submitRequest: (xhr, formData, files) ->
     xhr.send formData
+
+  submitRequestAsBody: (xhr, formData, files) ->
+    xhr.send files[0]
 
   # Called internally when processing is finished.
   # Individual callbacks have to be called in the appropriate sections.
