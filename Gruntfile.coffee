@@ -32,9 +32,9 @@ module.exports = (grunt) ->
     concat:
       amd:
         src: [
-          "AMD_header"
+          "tool/AMD_header"
           "dist/dropzone.js"
-          "AMD_footer"
+          "tool/AMD_footer"
         ]
         dest: "dist/dropzone-amd-module.js"
 

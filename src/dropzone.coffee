@@ -254,6 +254,10 @@ class Dropzone extends Emitter
     dictMaxFilesExceeded: "You can not upload any more files."
 
 
+    # END OPTIONS
+    # (Required by the dropzone documentation parser)
+
+
     # If `done()` is called without argument the file is accepted
     # If you call it with an error message, the file is rejected
     # (This allows for asynchronous validation).
