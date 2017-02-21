@@ -229,7 +229,7 @@ class Dropzone extends Emitter
     dictFallbackText: "Please use the fallback form below to upload your files like in the olden days."
 
     # If the filesize is too big.
-    dictFileTooBig: "File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB."
+    dictFileTooBig: "File is too big ({{filesize}}MB). Max filesize: {{maxFilesize}}MB."
 
     # If the file doesn't match the file type.
     dictInvalidFileType: "You can't upload files of this type."
