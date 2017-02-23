@@ -526,6 +526,11 @@ main {
     td:first-of-type, th:first-of-type {
       border-right: 1px solid $border-color;
     }
+    .default-value {
+      display: block;
+      font-weight: normal;
+      color: rgba(0, 88, 160, 0.3);
+    }
     td:first-of-type {
       font-weight: bold;
       color: $main-color;
@@ -544,9 +549,17 @@ main {
       color: $text-color;
     }
 
+    p {
+      margin: 0;
+    }
+
     @media (max-width: 600px) {
       table, tbody, thead, tr, td, th {
         display: block;
+      }
+      .default-value {
+        display: inline-block;
+        margin-left: 1em;
       }
       td, th {
         &:first-of-type {

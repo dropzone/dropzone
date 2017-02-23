@@ -128,23 +128,56 @@ class Dropzone extends Emitter
 
 
   defaultOptions:
+    # Has to be specified on elements other than form (or when the form
+    # doesn't have an `action` attribute). You can also
+    # provide a function that will be called with `files` and
+    # must return the url (since `v3.12.0`)
     url: null
+
+    # can be changed to `"put"` if necessary. You can also provide a function
+    # that will be called with `files` and must return the method (since `v3.12.0`)
     method: "post"
+
+    # foo
     withCredentials: no
+
+    # foo
     timeout: 30000 # timeout in milliseconds
+
+    # How many file uploads to process in parallel (See the
+    # *Enqueuing file uploads* documentation section for more info)
     parallelUploads: 2
-    uploadMultiple: no # Whether to send multiple files in one request.
-    maxFilesize: 256 # in MB
-    paramName: "file" # The name of the file param that gets transferred.
+
+    # Whether to send multiple files in one request. If
+    # this it set to true, then the fallback file input element will
+    # have the `multiple` attribute as well. This option will
+    # also trigger additional events (like `processingmultiple`). See the events
+    # documentation section for more information.
+    uploadMultiple: no
+
+    # in MB
+    maxFilesize: 256
+
+    # The name of the file param that gets transferred.
+    # **NOTE**: If you have the option  `uploadMultiple` set to `true`, then
+    # Dropzone will append `[]` to the name.
+    paramName: "file"
+
+    # foo
     createImageThumbnails: true
-    maxThumbnailFilesize: 10 # in MB. When the filename exceeds this limit, the thumbnail will not be generated.
+
+    # in MB. When the filename exceeds this limit, the thumbnail will not be generated.
+    maxThumbnailFilesize: 10
+
+    # foo
     thumbnailWidth: 120
+
+    # foo
     thumbnailHeight: 120
 
     # The base that is used to calculate the filesize. You can change this to
     # 1024 if you would rather display kibibytes, mebibytes, etc...
-    # 1024 is technically incorrect,
-    # because `1024 bytes` are `1 kibibyte` not `1 kilobyte`.
+    # 1024 is technically incorrect, because `1024 bytes` are `1 kibibyte` not `1 kilobyte`.
     # You can change this to `1024` if you don't care about validity.
     filesizeBase: 1000
 
@@ -215,8 +248,6 @@ class Dropzone extends Emitter
     # Before the file is appended to the formData, the function _renameFilename is performed for file.name, file
     # which executes the function defined in renameFilename
     renameFilename: null
-
-    # Dictionary
 
     # The text used before any files are dropped
     dictDefaultMessage: "Drop files here to upload"

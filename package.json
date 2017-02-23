@@ -42,7 +42,6 @@
     "type": "git",
     "url": "https://github.com/enyo/dropzone.git"
   },
-  "dependencies": {},
   "devDependencies": {
     "chai": "1.7.x",
     "grunt": "^1.0.0",
@@ -54,6 +53,7 @@
     "mocha": "^3.2.0",
     "phantomjs-prebuilt": "^2.1.7",
     "mocha-phantomjs": "^4.1.0",
-    "sinon": "1.17.7"
+    "sinon": "1.17.7",
+    "marked": "^0.3.6"
   }
 }
