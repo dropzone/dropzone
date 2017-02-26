@@ -43,6 +43,8 @@ while ((matchResult = singleConfigRegExp.exec(configBlock)) !== null) {
     defaultValue = 'Translation';
   } else if (functionRegExp.test(defaultValue)) {
     defaultValue = 'Function';
+  } else if (defaultValue === '"""') {
+    defaultValue = 'HTML template';
   }
 
   let doc = marked(rawDoc);
