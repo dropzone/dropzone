@@ -7,7 +7,7 @@ Contribute
 > made on this branch. This is no longer the case!
 
 
-The latest version is always in the **[master](https://github.com/enyo/dropzone)**
+The latest version is always in the **[master](https://gitlab.com/meno/dropzone)**
 branch.
 
 

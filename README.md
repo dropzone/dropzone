@@ -6,7 +6,7 @@ This means that a user can drag and drop a file onto it, and the file gets uploa
 * * *
 
 _If you want support, please use [stackoverflow](http://stackoverflow.com/) with the `dropzone.js` tag and not the
-GitHub issues tracker. Only post an issue here if you think you discovered a bug or have a feature request._
+GitLab issues tracker. Only post an issue here if you think you discovered a bug or have a feature request._
 
 * * *
 
