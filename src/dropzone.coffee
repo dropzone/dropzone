@@ -135,14 +135,14 @@ class Dropzone extends Emitter
     url: null
 
     # can be changed to `"put"` if necessary. You can also provide a function
-    # that will be called with `files` and must return the method (since `v3.12.0`)
+    # that will be called with `files` and must return the method (since `v3.12.0`).
     method: "post"
 
     # foo
     withCredentials: no
 
-    # foo
-    timeout: 30000 # timeout in milliseconds
+    # The timeout for the XHR requests in milliseconds (since `v4.4.0`).
+    timeout: 30000
 
     # How many file uploads to process in parallel (See the
     # *Enqueuing file uploads* documentation section for more info)
@@ -155,7 +155,9 @@ class Dropzone extends Emitter
     # documentation section for more information.
     uploadMultiple: no
 
-    # in MB
+    # If not `null` defines how many files this Dropzone handles. If it exceeds,
+    # the event `maxfilesexceeded` will be called. The dropzone element gets the
+    # class `dz-max-files-reached` accordingly so you can provide visual feedback.
     maxFilesize: 256
 
     # The name of the file param that gets transferred.
@@ -163,16 +165,16 @@ class Dropzone extends Emitter
     # Dropzone will append `[]` to the name.
     paramName: "file"
 
-    # foo
+    # Whether thumbnails for images should be generated
     createImageThumbnails: true
 
-    # in MB. When the filename exceeds this limit, the thumbnail will not be generated.
+    # In MB. When the filename exceeds this limit, the thumbnail will not be generated.
     maxThumbnailFilesize: 10
 
-    # foo
+    # If `null`, the ratio of the image will be used to calculate it.
     thumbnailWidth: 120
 
-    # foo
+    # The same as `thumbnailWidth`. If both are null, images will not be resized.
     thumbnailHeight: 120
 
     # The base that is used to calculate the filesize. You can change this to
@@ -189,27 +191,36 @@ class Dropzone extends Emitter
     # This is the same as adding hidden input fields in the form element.
     params: { }
 
+    # An optional object to send additional headers to the server. Eg:
+    # `{ "My-Awesome-Header": "header value" }`
+    headers: null
+
     # If true, the dropzone will present a file selector when clicked.
+
+    # If `true`, the dropzone element itself will be clickable, if `false`
+    # nothing will be clickable.
+    #
+    # You can also pass an HTML element, a CSS selector (for multiple elements)
+    # or an array of those. In that case, all of those elements will trigger an
+    # upload when clicked.
     clickable: yes
 
     # Whether hidden files in directories should be ignored.
     ignoreHiddenFiles: yes
 
-    # You can set accepted mime types here.
+
+    # The default implementation of `accept` checks the file's mime type or
+    # extension against this list. This is a comma separated list of mime
+    # types or file extensions.
     #
-    # The default implementation of the `accept()` function will check this
-    # property, and if the Dropzone is clickable this will be used as
-    # `accept` attribute.
+    # Eg.: `image/*,application/pdf,.psd`
     #
-    # This is a comma separated list of mime types or extensions. E.g.:
-    #
-    #     audio/*,video/*,image/png,.pdf
-    #
-    # See https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-accept
-    # for a reference.
+    # If the Dropzone is `clickable` this option will also be used as
+    # [`accept`](https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-accept)
+    # parameter on the hidden file input as well.
     acceptedFiles: null
 
-    # @deprecated
+    # **Deprecated!**
     # Use acceptedFiles instead.
     acceptedMimeTypes: null
 
@@ -224,17 +235,20 @@ class Dropzone extends Emitter
     # You'll have to call `enqueueFile(file)` manually.
     autoQueue: on
 
-    # If true, Dropzone will add a link to each file preview to cancel/remove
-    # the upload.
-    # See dictCancelUpload and dictRemoveFile to use different words.
+    # If `true`, this will add a link to every file preview to remove or cancel (if
+    # already uploading) the file. The `dictCancelUpload`, `dictCancelUploadConfirmation`
+    # and `dictRemoveFile` options are used for the wording.
     addRemoveLinks: no
 
-    # A CSS selector or HTML element for the file previews container.
-    # If null, the dropzone element itself will be used.
-    # If false, previews won't be rendered.
+    # Defines where to display the file previews – if `null` the
+    # Dropzone element itself is used. Can be a plain `HTMLElement` or a CSS
+    # selector. The element should have the `dropzone-previews` class so
+    # the previews are displayed properly.
     previewsContainer: null
 
-    # Selector for hidden input container
+    # This is the element the hidden input field (which is used when clicking on the
+    # dropzone to trigger file selection) will be appended to. This might
+    # be important in case you use frameworks to switch the content of your page.
     hiddenInputContainer: "body"
 
     # If null, no capture type will be specified
@@ -245,8 +259,7 @@ class Dropzone extends Emitter
     # be set to an appropriate mime type (e.g. "image/*", "audio/*", or "video/*").
     capture: null
 
-    # Before the file is appended to the formData, the function _renameFilename is performed for file.name, file
-    # which executes the function defined in renameFilename
+    # A function that is invoked before the file is uploaded to the server and renames the file.
     renameFilename: null
 
     # The text used before any files are dropped
@@ -284,14 +297,13 @@ class Dropzone extends Emitter
     # You can use {{maxFiles}} here, which will be replaced by the option.
     dictMaxFilesExceeded: "You can not upload any more files."
 
-
-    # END OPTIONS
-    # (Required by the dropzone documentation parser)
-
-
-    # If `done()` is called without argument the file is accepted
-    # If you call it with an error message, the file is rejected
-    # (This allows for asynchronous validation).
+    # A function that gets a [file](https://developer.mozilla.org/en-US/docs/DOM/File)
+    # and a `done` function as parameters.
+    #
+    # If the done function is invoked without arguments, the file is "accepted" and will
+    # be processed. If you pass an error message, the file is rejected, and the error
+    # message will be displayed.
+    # This function will not be called if the file is too big or doesn't match the mime types.
     accept: (file, done) -> done()
 
 
@@ -329,16 +341,15 @@ class Dropzone extends Emitter
 
     # Gets called to calculate the thumbnail dimensions.
     #
-    # You can use file.width, file.height, options.thumbnailWidth and
-    # options.thumbnailHeight to calculate the dimensions.
+    # It gets the `file` as first parameter and must return an object containing:
     #
-    # The dimensions are going to be used like this:
+    #  - `srcWidth` & `srcHeight` (required)
+    #  - `srcX` & `srcY` (optional, default `0`)
+    #  - `trgX` & `trgY` (optional, default `0`)
+    #  - `trgWidth` & `trgHeight` (optional, when omitted `options.thumbnailWidth` and
+    #     `options.thumbnailHeight` are used
     #
-    #     var info = @options.resize.call(this, file);
-    #     ctx.drawImage(img, info.srcX, info.srcY, info.srcWidth, info.srcHeight, info.trgX, info.trgY, info.trgWidth, info.trgHeight);
-    #
-    #  srcX, srcy, trgX and trgY can be omitted (in which case 0 is assumed).
-    #  trgWidth and trgHeight can be omitted (in which case the options.thumbnailWidth / options.thumbnailHeight are used)
+    # Those values are going to be used by `ctx.drawImage()`.
     resize: (file) ->
       info =
         srcX: 0
@@ -380,6 +391,9 @@ class Dropzone extends Emitter
       info.srcY = (file.height - info.srcHeight) / 2
 
       return info
+
+    # END OPTIONS
+    # (Required by the dropzone documentation parser)
 
 
     ###
@@ -650,7 +664,8 @@ class Dropzone extends Emitter
   # Files that are either queued or uploading
   getActiveFiles: -> file for file in @files when file.status == Dropzone.UPLOADING or file.status == Dropzone.QUEUED
 
-
+  # The function that gets called when Dropzone is initialized. You
+  # can (and should) setup event listeners inside this function.
   init: ->
     # In case it isn't set already
     @element.setAttribute("enctype", "multipart/form-data") if @element.tagName == "form"

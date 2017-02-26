@@ -33,6 +33,7 @@ pages:
   script:
   - apt-get -y -qq install ruby-dev
   - gem install jekyll pygments.rb
+  - node tool/build_configuration_doc.js # build the documentation
   - jekyll build -s website -d public
   artifacts:
     paths:

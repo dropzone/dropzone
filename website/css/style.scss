@@ -506,7 +506,7 @@ main {
   }
 
 
-  table {
+  table.configuration-table {
     font-size: 0.9rem;
     margin-top: 1*$lh;
     margin-bottom: 3*$lh;
@@ -526,10 +526,15 @@ main {
     td:first-of-type, th:first-of-type {
       border-right: 1px solid $border-color;
     }
-    .default-value {
+    a.default-value {
       display: block;
       font-weight: normal;
       color: rgba(0, 88, 160, 0.3);
+      font-size: 0.9em;
+      &:hover {
+        border: none;
+        color: $main-color;
+      }
     }
     td:first-of-type {
       font-weight: bold;
