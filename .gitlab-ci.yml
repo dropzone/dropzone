@@ -5,21 +5,19 @@ before_script:
   - apt-get update -qq
   - apt-get -y -qq install ruby
   - gem install sass
+  - npm install
+  - npm install -g grunt-cli
 
 test:
   stage: test
   script:
   # Required by and phantomjs
   - apt-get -y -qq install libssl-dev libfontconfig1-dev
-  - npm install
-  - npm install -g grunt-cli
   - npm run test
 
 release:
   stage: deploy
   script:
-  - npm install
-  - npm install -g grunt-cli
   - grunt
   artifacts:
     paths:
@@ -33,8 +31,7 @@ pages:
   script:
   - apt-get -y -qq install ruby-dev
   - gem install jekyll pygments.rb
-  - npm install
-  - node tool/build_configuration_doc.js # build the documentation
+  - grunt build-website
   - jekyll build -s website -d public
   artifacts:
     paths:

@@ -48,8 +48,7 @@ changes to the Javascript or CSS files
 **I will not merge requests written in Javascript or CSS.**
 
 Please don't include compiled `.js` or `.css` files in your pull requests but only
-`.coffee` or `.scss` files. That way pull requests aren't polluted and I can see
-immediately what you changed.
+`.coffee` or `.scss` files.
 
 
 To build the library use [grunt](http://gruntjs.com).
@@ -73,6 +72,22 @@ which will run the tests in your console in a headless browser.
 The tests are also written in coffeescript in the `test/test.coffee` file,
 and compiled with `grunt js` or `grunt watch`.
 
+
+Website
+-------
+
+The website is located in `website/` and is generated with [Jekyll](http://jekyllrb.com/).
+
+Most of the content of the website is generated, some parts from the `README.md` and some
+directly from the `dropzone.coffee` source file (the configuration options).
+
+This is how you build the site:
+
+```bash
+$ grunt build-website
+$ cd website
+$ jekyll serve # Or jekyll build
+```
 
 * Thanks for contributing!*
 

@@ -81,3 +81,7 @@ module.exports = (grunt) ->
   grunt.registerTask "js", "Compile coffeescript", [ "coffee", "concat" ]
 
   grunt.registerTask "downloads", "Compile all stylus and coffeescript files and generate the download files", [ "js", "css", "uglify" ]
+
+  grunt.registerTask "build-website", "Builds the website", ->
+    grunt.util.spawn { cmd: 'node', args: ['tool/build_configuration_doc.js'] }
+    grunt.util.spawn { cmd: 'node', args: ['tool/build_site_from_readme.js'] }
