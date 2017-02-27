@@ -108,8 +108,6 @@ there would have been a html input like this:
 If you want another name than `file` you can [configure dropzone](#configuration)
 with the option `paramName`.
 
-> If you’re using component don’t forget to `require("dropzone");` otherwise it won’t be activated.
-
 
 If you want your file uploads to work even without JavaScript, you can include
 an element with the class `fallback` that dropzone will remove if the browser
