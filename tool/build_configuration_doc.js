@@ -65,16 +65,20 @@ while ((matchResult = singleConfigRegExp.exec(configBlock)) !== null) {
 
   let doc = marked(rawDoc);
 
+  doc = doc
+      .replace(/{{/g, '{% raw %}{{{% endraw %}')
+      .replace(/}}/g, '{% raw %}}}{% endraw %}');
+
   htmlDoc += `
     <tr id="config-${varName}">
-      <td>
+      <td class="label">
         <a href="#config-${varName}"><code>${varName}</code></a>
         <a title="See source code"
            target="_blank"
            href="https://gitlab.com/meno/dropzone/blob/master/src/dropzone.coffee#L${getLine(varName)}"
            class="default-value"><code>default: ${defaultValue}</code></a>
       </td>
-      <td>
+      <td class="value">
         ${doc}
       </td>
     </tr>`;

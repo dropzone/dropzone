@@ -90,7 +90,7 @@ h1, h2 {
   &.anchor {
     margin: 0;
     padding: 0;
-    height: 0;
+    height: 1px; // Must be at least one pixel so chrome scrolls to it
     overflow: hidden;
     visibility: hidden;
   }
@@ -572,6 +572,9 @@ main {
           border-right: none;
         }
         overflow: auto;
+      }
+      td.label {
+        border-bottom-color: rgba(0, 135, 247, 0.15);
       }
       th.title {
         padding-top: $lh;
