@@ -3,3 +3,6 @@ _site
 !.gitignore
 node_modules
 !**/*.js
+
+# This file will be generated
+index.md
