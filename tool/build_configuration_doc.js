@@ -25,6 +25,10 @@ let htmlDoc = '';
 
 let configCount = 0;
 
+// Used to add a separator line
+let firstDict = true;
+let firstFunction = true;
+
 while ((matchResult = singleConfigRegExp.exec(configBlock)) !== null) {
   let rawDoc = '';
   // Get each line of doc
@@ -39,10 +43,22 @@ while ((matchResult = singleConfigRegExp.exec(configBlock)) !== null) {
   let defaultValue = matchResult[4];
 
   if (varName.indexOf('dict') === 0) {
+    if (firstDict) {
+      htmlDoc += `<tr>
+        <td class="separator" colspan="2">to translate dropzone, you can provide these options:</td>
+      </tr>`;
+      firstDict = false;
+    }
     rawDoc = `\`${defaultValue}\`<br>${rawDoc}`;
-    defaultValue = 'Translation';
+    defaultValue = 'see description';
   } else if (functionRegExp.test(defaultValue)) {
-    defaultValue = 'Function';
+    if (firstFunction) {
+      htmlDoc += `<tr>
+        <td class="separator" colspan="2">functions you can override to change or extend default behavior:</td>
+      </tr>`;
+      firstFunction = false;
+    }
+    defaultValue = defaultValue === '-> noop' ? 'empty Function' : 'function';
   } else if (defaultValue === '"""') {
     defaultValue = 'HTML template';
   }

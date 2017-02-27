@@ -265,6 +265,12 @@ class Dropzone extends Emitter
     # A function that is invoked before the file is uploaded to the server and renames the file.
     renameFilename: null
 
+    # If `true` the fallback will be forced. This is very useful to test your server
+    # implementations first and make sure that everything works as
+    # expected without dropzone if you experience problems, and to test
+    # how your fallbacks will look.
+    forceFallback: off
+
     # The text used before any files are dropped.
     dictDefaultMessage: "Drop files here to upload"
 
@@ -300,6 +306,10 @@ class Dropzone extends Emitter
     # You can use {{maxFiles}} here, which will be replaced by the option.
     dictMaxFilesExceeded: "You can not upload any more files."
 
+    # Called when dropzone initialized
+    # You can add event listeners here
+    init: -> noop
+
     # A function that gets a [file](https://developer.mozilla.org/en-US/docs/DOM/File)
     # and a `done` function as parameters.
     #
@@ -309,16 +319,6 @@ class Dropzone extends Emitter
     # This function will not be called if the file is too big or doesn't match the mime types.
     accept: (file, done) -> done()
 
-
-    # Called when dropzone initialized
-    # You can add event listeners here
-    init: -> noop
-
-    # If `true` the fallback will be forced. This is very useful to test your server
-    # implementations first and make sure that everything works as
-    # expected without dropzone if you experience problems, and to test
-    # how your fallbacks will look.
-    forceFallback: off
 
     # Gets called when the browser is not supported.
     # The default implementation shows the fallback input field and adds

@@ -562,9 +562,9 @@ main {
       table, tbody, thead, tr, td, th {
         display: block;
       }
-      .default-value {
-        display: inline-block;
-        margin-left: 1em;
+      a.default-value {
+        display: inline;
+        margin-left: 0.5em;
       }
       td, th {
         &:first-of-type {
