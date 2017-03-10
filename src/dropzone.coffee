@@ -1384,7 +1384,10 @@ camelize = (str) -> str.replace /[\-_](\w)/g, (match) -> match.charAt(1).toUpper
 
 # Creates an element from string
 Dropzone.createElement = (string) ->
-  div = document.createElement "div"
+  if string.substr(0, 3) == '<tr'
+    div = document.createElement "tbody"
+  else
+    div = document.createElement "div"
   div.innerHTML = string
   div.childNodes[0]
 
