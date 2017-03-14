@@ -966,6 +966,14 @@ class Dropzone extends Emitter
         @enqueueFile file if @options.autoQueue # Will set .accepted = true
       @_updateMaxFilesReachedClass()
 
+  putFile: (file) ->
+    file.upload =
+      progress: 100
+      total: file.size
+      bytesSent: file.size
+    file.status = Dropzone.SUCCESS
+    @files.push file
+    @emit "addedfile", file
 
   # Wrapper for enqueueFile
   enqueueFiles: (files) -> @enqueueFile file for file in files; null
