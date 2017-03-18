@@ -136,6 +136,7 @@ class Dropzone extends Emitter
     uploadMultiple: no # Whether to send multiple files in one request.
     maxFilesize: 256 # in MB
     paramName: "file" # The name of the file param that gets transferred.
+    inputId: null # The id of the input
     createImageThumbnails: true
     maxThumbnailFilesize: 10 # in MB. When the filename exceeds this limit, the thumbnail will not be generated.
     thumbnailWidth: 120
@@ -628,6 +629,7 @@ class Dropzone extends Emitter
         @hiddenFileInput.parentNode.removeChild @hiddenFileInput if @hiddenFileInput
         @hiddenFileInput = document.createElement "input"
         @hiddenFileInput.setAttribute "type", "file"
+        @hiddenFileInput.setAttribute "id", @options.inputId if @options.inputId?
         @hiddenFileInput.setAttribute "multiple", "multiple" if !@options.maxFiles? || @options.maxFiles > 1
         @hiddenFileInput.className = "dz-hidden-input"
 
