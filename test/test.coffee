@@ -587,7 +587,7 @@ describe "Dropzone", ->
         describe "with default thumbnail settings", ->
           it "should properly return target dimensions", ->
 
-            info = dropzone.options.resize.call dropzone, file
+            info = dropzone.options.resize.call dropzone, file, dropzone.options.thumbnailWidth, dropzone.options.thumbnailHeight
 
             info.optWidth.should.eql 120
             info.optHeight.should.eql 120
@@ -601,10 +601,7 @@ describe "Dropzone", ->
             ]
 
             for setting, i in testSettings
-              dropzone.options.thumbnailWidth = setting[0]
-              dropzone.options.thumbnailHeight = setting[1]
-
-              info = dropzone.options.resize.call dropzone, file
+              info = dropzone.options.resize.call dropzone, file, setting[0], setting[1]
 
               if i is 0
                 info.optWidth.should.eql 200
@@ -1294,7 +1291,7 @@ describe "Dropzone", ->
           mock3.type = "image/jpg"
 
           ct_file = ct_callback = null
-          dropzone.createThumbnail = (file, callback) ->
+          dropzone.createThumbnail = (file, thumbnailWidth, thumbnailHeight, callback) ->
             ct_file = file
             ct_callback = callback
 
@@ -1336,15 +1333,12 @@ describe "Dropzone", ->
 
             blob = createBlob('foo', 'image/svg+xml')
 
-            dropzone.on "thumbnail", (file, dataURI) ->
-              file.should.equal blob
+            dropzone.createThumbnail blob, dropzone.options.thumbnailWidth, dropzone.options.thumbnailHeight, (dataURI, canvas) ->
               fileReader = new FileReader
               fileReader.onload = ->
                 fileReader.result.should.equal dataURI
                 done()
-              fileReader.readAsDataURL(file)
-
-            dropzone.createThumbnail(blob)
+              fileReader.readAsDataURL blob
 
     describe "enqueueFile()", ->
       it "should be wrapped by enqueueFiles()", ->

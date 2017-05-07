@@ -177,6 +177,23 @@ class Dropzone extends Emitter
     # The same as `thumbnailWidth`. If both are null, images will not be resized.
     thumbnailHeight: 120
 
+    # If set, images will be resized to these dimensions before being **uploaded**.
+    # If only one, `resizeWidth` **or** `resizeHeight` is provided, the original aspect
+    # ratio of the file will be preserved.
+    #
+    # The `options.transformFile` function uses these options, so if the `transformFile` function
+    # is overridden, these options don't do anything.
+    resizeWidth: null
+
+    # See `resizeWidth`.
+    resizeHeight: null
+
+    # The mime type of the resized image. See `resizeWidth`.
+    resizeMimeType: 'image/jpeg'
+
+    # The quality of the resized images. See `resizeWidth`.
+    resizeQuality: 0.8
+
     # The base that is used to calculate the filesize. You can change this to
     # 1024 if you would rather display kibibytes, mebibytes, etc...
     # 1024 is technically incorrect, because `1024 bytes` are `1 kibibyte` not `1 kilobyte`.
@@ -352,7 +369,7 @@ class Dropzone extends Emitter
 
     # Gets called to calculate the thumbnail dimensions.
     #
-    # It gets the `file` as first parameter and must return an object containing:
+    # It gets `file`, `width` and `height` (both may be `null`) as parameters and must return an object containing:
     #
     #  - `srcWidth` & `srcHeight` (required)
     #  - `srcX` & `srcY` (optional, default `0`)
@@ -361,7 +378,7 @@ class Dropzone extends Emitter
     #     `options.thumbnailHeight` are used
     #
     # Those values are going to be used by `ctx.drawImage()`.
-    resize: (file) ->
+    resize: (file, width, height) ->
       info =
         srcX: 0
         srcY: 0
@@ -370,8 +387,8 @@ class Dropzone extends Emitter
 
       srcRatio = file.width / file.height
 
-      info.optWidth = @options.thumbnailWidth
-      info.optHeight = @options.thumbnailHeight
+      info.optWidth = width
+      info.optHeight = height
 
       # automatically calculate dimensions if not specified
       if !info.optWidth? and !info.optHeight?
@@ -402,6 +419,19 @@ class Dropzone extends Emitter
       info.srcY = (file.height - info.srcHeight) / 2
 
       return info
+
+    # Can be used to transform the file (for example, resize an image if necessary).
+    #
+    # The default implementation uses `resizeWidth` and `resizeHeight` (if provided) and resizes
+    # images according to those dimensions.
+    #
+    # Gets the `file` as the first parameter, and a `done()` function as the second, that needs
+    # to be invoked with the file when the transformation is done.
+    transformFile: (file, done) ->
+      if @options.resizeWidth != null || @options.resizeHeight != null
+        @resizeImage file, @options.resizeWidth, @options.resizeHeight, done
+      else
+        done file
 
 
     # A string that contains the template used for each dropped
@@ -1062,7 +1092,9 @@ class Dropzone extends Emitter
     return if @_processingThumbnail or @_thumbnailQueue.length == 0
 
     @_processingThumbnail = yes
-    @createThumbnail @_thumbnailQueue.shift(), =>
+    file = @_thumbnailQueue.shift()
+    @createThumbnail file, @options.thumbnailWidth, @options.thumbnailHeight, (dataUrl) =>
+      @emit "thumbnail", file, dataUrl
       @_processingThumbnail = no
       @_processThumbnailQueue()
 
@@ -1082,23 +1114,31 @@ class Dropzone extends Emitter
       @removeFile file if file.status != Dropzone.UPLOADING || cancelIfNecessary
     return null
 
-  createThumbnail: (file, callback) ->
+  # Resizes an image before it gets sent to the server. This function is the default behavior of
+  # `options.transformFile` if resizeWidth or resizeHeight are set.
+  resizeImage: (file, width, height, callback) ->
+    @createThumbnail file, @options.resizeWidth, @options.resizeHeight, (dataUrl, canvas) =>
+      if canvas == null
+        # The image has not been resized
+        callback file
+      else
+        canvas.toBlob callback, @options.resizeMimeType, @options.resizeQuality
 
+  createThumbnail: (file, width, height, callback) ->
     fileReader = new FileReader
 
     fileReader.onload = =>
 
       # Don't bother creating a thumbnail for SVG images since they're vector
       if file.type == "image/svg+xml"
-        @emit "thumbnail", file, fileReader.result
-        callback() if callback?
+        callback(fileReader.result) if callback?
         return
 
-      @createThumbnailFromUrl file, fileReader.result, callback
+      @createThumbnailFromUrl file, fileReader.result, width, height, callback
 
     fileReader.readAsDataURL file
 
-  createThumbnailFromUrl: (file, imageUrl, callback, crossOrigin) ->
+  createThumbnailFromUrl: (file, imageUrl, width, height, callback, crossOrigin) ->
     # Not using `new Image` here because of a bug in latest Chrome versions.
     # See https://github.com/enyo/dropzone/pull/226
     img = document.createElement "img"
@@ -1109,7 +1149,7 @@ class Dropzone extends Emitter
       file.width = img.width
       file.height = img.height
 
-      resizeInfo = @options.resize.call @, file
+      resizeInfo = @options.resize.call @, file, width, height
 
       resizeInfo.trgWidth ?= resizeInfo.optWidth
       resizeInfo.trgHeight ?= resizeInfo.optHeight
@@ -1124,8 +1164,7 @@ class Dropzone extends Emitter
 
       thumbnail = canvas.toDataURL "image/png"
 
-      @emit "thumbnail", file, thumbnail
-      callback() if callback?
+      callback(thumbnail, canvas) if callback?
 
     img.onerror = callback if callback?
 
@@ -1313,12 +1352,19 @@ class Dropzone extends Emitter
           formData.append inputName, input.value
 
 
-    # Finally add the file
-    # Has to be last because some servers (eg: S3) expect the file to be the
-    # last parameter
-    formData.append @_getParamName(i), files[i], @_renameFilename(files[i].name, files[i]) for i in [0..files.length-1]
+    # Finally add the files
+    # Has to be last because some servers (eg: S3) expect the file to be the last parameter
 
-    @submitRequest xhr, formData, files
+    # Clumsy way of handling asynchronous calls, until I get to add a proper Future library.
+    doneCounter = 0
+
+    for i in [0..files.length-1]
+      doneFunction = (file, paramName, fileName) => (transformedFile) =>
+        formData.append paramName, transformedFile, fileName
+        @submitRequest xhr, formData, files if ++doneCounter == files.length
+
+      @options.transformFile.call @, files[i], doneFunction(files[i], @_getParamName(i), @_renameFilename(file.name, file))
+
 
   submitRequest: (xhr, formData, files) ->
     xhr.send formData
