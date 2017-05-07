@@ -13,3 +13,4 @@ public
 
 # Exclude all js files
 **/*.js
+!index.js
