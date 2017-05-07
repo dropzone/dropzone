@@ -428,7 +428,7 @@ class Dropzone extends Emitter
     # Gets the `file` as the first parameter, and a `done()` function as the second, that needs
     # to be invoked with the file when the transformation is done.
     transformFile: (file, done) ->
-      if @options.resizeWidth != null || @options.resizeHeight != null
+      if (@options.resizeWidth || @options.resizeHeight) and file.type.match(/image.*/)
         @resizeImage file, @options.resizeWidth, @options.resizeHeight, done
       else
         done file
@@ -1115,7 +1115,7 @@ class Dropzone extends Emitter
     return null
 
   # Resizes an image before it gets sent to the server. This function is the default behavior of
-  # `options.transformFile` if resizeWidth or resizeHeight are set.
+  # `options.transformFile` if `resizeWidth` or `resizeHeight` are set.
   resizeImage: (file, width, height, callback) ->
     @createThumbnail file, @options.resizeWidth, @options.resizeHeight, (dataUrl, canvas) =>
       if canvas == null

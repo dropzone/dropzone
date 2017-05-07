@@ -1315,9 +1315,6 @@ describe "Dropzone", ->
             done()
           ), 10
           
-
-          # dropzone.addFile mock1
-
         describe "when file is SVG", ->
           it "should use the SVG image itself", (done) ->
 
@@ -1400,7 +1397,6 @@ describe "Dropzone", ->
         dropzone.uploadFiles.calledWith([ mockFile ]).should.be.ok
 
       it "should use url options if strings", (done) ->
-
         dropzone.addFile mockFile
 
         setTimeout ->
@@ -1648,6 +1644,53 @@ describe "Dropzone", ->
             formData.append.callCount.should.equal 2
             formData.append.args[0][0].should.eql "myName[0]"
             formData.append.args[1][0].should.eql "myName[1]"
+            done()
+          , 10
+
+
+        it "should use resizeImage if dimensions are provided", (done) ->
+          sinon.stub dropzone, "resizeImage"
+          sinon.stub dropzone, "createThumbnail"
+
+          dropzone.options.resizeWidth = 400
+
+          mock1 = getMockFile()
+          mock1.type = 'image/jpeg'
+
+          dropzone.addFile mock1
+
+          setTimeout ->
+            dropzone.resizeImage.callCount.should.eql 1
+            done()
+          , 10
+
+        it "should not use resizeImage if dimensions are not provided", (done) ->
+          sinon.stub dropzone, "resizeImage"
+          sinon.stub dropzone, "createThumbnail"
+
+          mock1 = getMockFile()
+          mock1.type = 'image/jpeg'
+
+          dropzone.addFile mock1
+
+          setTimeout ->
+            dropzone.resizeImage.callCount.should.eql 0
+            done()
+          , 10
+
+        it "should not use resizeImage if file is not an image", (done) ->
+          sinon.stub dropzone, "resizeImage"
+          sinon.stub dropzone, "createThumbnail"
+
+          dropzone.options.resizeWidth = 400
+
+          mock1 = getMockFile()
+          mock1.type = 'text/plain'
+
+          dropzone.addFile mock1
+
+          setTimeout ->
+            dropzone.resizeImage.callCount.should.eql 0
             done()
           , 10
 
