@@ -1093,7 +1093,7 @@ class Dropzone extends Emitter
 
     @_processingThumbnail = yes
     file = @_thumbnailQueue.shift()
-    @createThumbnail file, @options.thumbnailWidth, @options.thumbnailHeight, (dataUrl) =>
+    @createThumbnail file, @options.thumbnailWidth, @options.thumbnailHeight, true, (dataUrl) =>
       @emit "thumbnail", file, dataUrl
       @_processingThumbnail = no
       @_processThumbnailQueue()
@@ -1115,30 +1115,35 @@ class Dropzone extends Emitter
     return null
 
   # Resizes an image before it gets sent to the server. This function is the default behavior of
-  # `options.transformFile` if `resizeWidth` or `resizeHeight` are set.
+  # `options.transformFile` if `resizeWidth` or `resizeHeight` are set. The callback is invoked with
+  # the resized blob.
   resizeImage: (file, width, height, callback) ->
-    @createThumbnail file, @options.resizeWidth, @options.resizeHeight, (dataUrl, canvas) =>
+    @createThumbnail file, @options.resizeWidth, @options.resizeHeight, false, (dataUrl, canvas) =>
       if canvas == null
         # The image has not been resized
         callback file
       else
-        canvas.toBlob callback, @options.resizeMimeType, @options.resizeQuality
+        resizedDataURL = canvas.toDataURL @options.resizeMimeType, @options.resizeQuality
+        # Now add the original EXIF information
+        callback Dropzone.dataURItoBlob ExifRestore.restore file.dataURL, resizedDataURL
 
-  createThumbnail: (file, width, height, callback) ->
+  createThumbnail: (file, width, height, fixOrientation, callback) ->
     fileReader = new FileReader
 
     fileReader.onload = =>
+
+      file.dataURL = fileReader.result
 
       # Don't bother creating a thumbnail for SVG images since they're vector
       if file.type == "image/svg+xml"
         callback(fileReader.result) if callback?
         return
 
-      @createThumbnailFromUrl file, fileReader.result, width, height, callback
+      @createThumbnailFromUrl file, width, height, fixOrientation, callback
 
     fileReader.readAsDataURL file
 
-  createThumbnailFromUrl: (file, imageUrl, width, height, callback, crossOrigin) ->
+  createThumbnailFromUrl: (file, width, height, fixOrientation, callback, crossOrigin) ->
     # Not using `new Image` here because of a bug in latest Chrome versions.
     # See https://github.com/enyo/dropzone/pull/226
     img = document.createElement "img"
@@ -1146,29 +1151,72 @@ class Dropzone extends Emitter
     img.crossOrigin = crossOrigin if crossOrigin
 
     img.onload = =>
-      file.width = img.width
-      file.height = img.height
+      loadExif = (callback) -> callback 1
+      if EXIF and fixOrientation
+        loadExif = (callback) ->
+          EXIF.getData img, () ->
+            callback EXIF.getTag this, 'Orientation'
 
-      resizeInfo = @options.resize.call @, file, width, height
+      loadExif (orientation) =>
+        file.width = img.width
+        file.height = img.height
 
-      resizeInfo.trgWidth ?= resizeInfo.optWidth
-      resizeInfo.trgHeight ?= resizeInfo.optHeight
+        resizeInfo = @options.resize.call @, file, width, height
 
-      canvas = document.createElement "canvas"
-      ctx = canvas.getContext "2d"
-      canvas.width = resizeInfo.trgWidth
-      canvas.height = resizeInfo.trgHeight
+        resizeInfo.trgWidth ?= resizeInfo.optWidth
+        resizeInfo.trgHeight ?= resizeInfo.optHeight
 
-      # This is a bugfix for iOS' scaling bug.
-      drawImageIOSFix ctx, img, resizeInfo.srcX ? 0, resizeInfo.srcY ? 0, resizeInfo.srcWidth, resizeInfo.srcHeight, resizeInfo.trgX ? 0, resizeInfo.trgY ? 0, resizeInfo.trgWidth, resizeInfo.trgHeight
+        canvas = document.createElement "canvas"
+        ctx = canvas.getContext "2d"
 
-      thumbnail = canvas.toDataURL "image/png"
+        canvas.width = resizeInfo.trgWidth
+        canvas.height = resizeInfo.trgHeight
 
-      callback(thumbnail, canvas) if callback?
+        if orientation > 4
+          canvas.width = resizeInfo.trgHeight
+          canvas.height = resizeInfo.trgWidth
+
+        switch orientation
+          when 2
+            # horizontal flip
+            ctx.translate canvas.width, 0
+            ctx.scale -1, 1
+          when 3
+            # 180° rotate left
+            ctx.translate canvas.width, canvas.height
+            ctx.rotate Math.PI
+          when 4
+            # vertical flip
+            ctx.translate 0, canvas.height
+            ctx.scale 1, -1
+          when 5
+            # vertical flip + 90 rotate right
+            ctx.rotate 0.5 * Math.PI
+            ctx.scale 1, -1
+          when 6
+            # 90° rotate right
+            ctx.rotate 0.5 * Math.PI
+            ctx.translate 0, -canvas.height
+          when 7
+            # horizontal flip + 90 rotate right
+            ctx.rotate 0.5 * Math.PI
+            ctx.translate canvas.width, -canvas.height
+            ctx.scale -1, 1
+          when 8
+            # 90° rotate left
+            ctx.rotate -0.5 * Math.PI
+            ctx.translate -canvas.width, 0
+
+        # This is a bugfix for iOS' scaling bug.
+        drawImageIOSFix ctx, img, resizeInfo.srcX ? 0, resizeInfo.srcY ? 0, resizeInfo.srcWidth, resizeInfo.srcHeight, resizeInfo.trgX ? 0, resizeInfo.trgY ? 0, resizeInfo.trgWidth, resizeInfo.trgHeight
+
+        thumbnail = canvas.toDataURL "image/png"
+
+        callback(thumbnail, canvas) if callback?
 
     img.onerror = callback if callback?
 
-    img.src = imageUrl
+    img.src = file.dataURL
 
 
   # Goes through the queue and processes files if there aren't too many already.
@@ -1491,8 +1539,22 @@ Dropzone.isBrowserSupported = ->
 
   capableBrowser
 
+Dropzone.dataURItoBlob = (dataURI) ->
+  # convert base64 to raw binary data held in a string
+  # doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+  byteString = atob dataURI.split(',')[1]
 
+  # separate out the mime component
+  mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
 
+  # write the bytes of the string to an ArrayBuffer
+  ab = new ArrayBuffer byteString.length
+  ia = new Uint8Array ab
+  for i in [0 .. byteString.length]
+    ia[i] = byteString.charCodeAt i
+
+  # write the ArrayBuffer to a blob
+  new Blob [ab], {type: mimeString}
 
 # Returns an array without the rejected item
 without = (list, rejectedItem) -> item for item in list when item isnt rejectedItem
@@ -1654,6 +1716,129 @@ drawImageIOSFix = (ctx, img, sx, sy, sw, sh, dx, dy, dw, dh) ->
 
 
 
+
+# Based on MinifyJpeg
+# Source: http://www.perry.cz/files/ExifRestorer.js
+# http://elicon.blog57.fc2.com/blog-entry-206.html
+class ExifRestore
+  @KEY_STR: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
+
+  @encode64: (input) ->
+    output = ''
+    chr1 = undefined
+    chr2 = undefined
+    chr3 = ''
+    enc1 = undefined
+    enc2 = undefined
+    enc3 = undefined
+    enc4 = ''
+    i = 0
+    loop
+      chr1 = input[i++]
+      chr2 = input[i++]
+      chr3 = input[i++]
+      enc1 = chr1 >> 2
+      enc2 = (chr1 & 3) << 4 | chr2 >> 4
+      enc3 = (chr2 & 15) << 2 | chr3 >> 6
+      enc4 = chr3 & 63
+      if isNaN(chr2)
+        enc3 = enc4 = 64
+      else if isNaN(chr3)
+        enc4 = 64
+      output = output + @KEY_STR.charAt(enc1) + @KEY_STR.charAt(enc2) + @KEY_STR.charAt(enc3) + @KEY_STR.charAt(enc4)
+      chr1 = chr2 = chr3 = ''
+      enc1 = enc2 = enc3 = enc4 = ''
+      unless i < input.length
+        break
+    output
+
+  @restore: (origFileBase64, resizedFileBase64) ->
+    if !origFileBase64.match('data:image/jpeg;base64,')
+      return resizedFileBase64
+    rawImage = @decode64(origFileBase64.replace('data:image/jpeg;base64,', ''))
+    segments = @slice2Segments(rawImage)
+    image = @exifManipulation(resizedFileBase64, segments)
+    'data:image/jpeg;base64,' + @encode64 image
+
+  @exifManipulation: (resizedFileBase64, segments) ->
+    exifArray = @getExifArray(segments)
+    newImageArray = @insertExif(resizedFileBase64, exifArray)
+    aBuffer = new Uint8Array(newImageArray)
+    aBuffer
+
+  @getExifArray: (segments) ->
+    seg = undefined
+    x = 0
+    while x < segments.length
+      seg = segments[x]
+      if seg[0] == 255 & seg[1] == 225
+        return seg
+      x++
+    []
+
+  @insertExif: (resizedFileBase64, exifArray) ->
+    imageData = resizedFileBase64.replace('data:image/jpeg;base64,', '')
+    buf = @decode64(imageData)
+    separatePoint = buf.indexOf(255, 3)
+    mae = buf.slice(0, separatePoint)
+    ato = buf.slice(separatePoint)
+    array = mae
+    array = array.concat(exifArray)
+    array = array.concat(ato)
+    array
+
+  @slice2Segments: (rawImageArray) ->
+    head = 0
+    segments = []
+    loop
+      if rawImageArray[head] == 255 & rawImageArray[head + 1] == 218
+        break
+      if rawImageArray[head] == 255 & rawImageArray[head + 1] == 216
+        head += 2
+      else
+        length = rawImageArray[head + 2] * 256 + rawImageArray[head + 3]
+        endPoint = head + length + 2
+        seg = rawImageArray.slice(head, endPoint)
+        segments.push seg
+        head = endPoint
+      if head > rawImageArray.length
+        break
+    segments
+
+  @decode64: (input) ->
+    output = ''
+    chr1 = undefined
+    chr2 = undefined
+    chr3 = ''
+    enc1 = undefined
+    enc2 = undefined
+    enc3 = undefined
+    enc4 = ''
+    i = 0
+    buf = []
+    # remove all characters that are not A-Z, a-z, 0-9, +, /, or =
+    base64test = /[^A-Za-z0-9\+\/\=]/g
+    if base64test.exec(input)
+      alert 'There were invalid base64 characters in the input text.\n' + 'Valid base64 characters are A-Z, a-z, 0-9, \'+\', \'/\',and \'=\'\n' + 'Expect errors in decoding.'
+    input = input.replace(/[^A-Za-z0-9\+\/\=]/g, '')
+    loop
+      enc1 = @KEY_STR.indexOf(input.charAt(i++))
+      enc2 = @KEY_STR.indexOf(input.charAt(i++))
+      enc3 = @KEY_STR.indexOf(input.charAt(i++))
+      enc4 = @KEY_STR.indexOf(input.charAt(i++))
+      chr1 = enc1 << 2 | enc2 >> 4
+      chr2 = (enc2 & 15) << 4 | enc3 >> 2
+      chr3 = (enc3 & 3) << 6 | enc4
+      buf.push chr1
+      if enc3 != 64
+        buf.push chr2
+      if enc4 != 64
+        buf.push chr3
+      chr1 = chr2 = chr3 = ''
+      enc1 = enc2 = enc3 = enc4 = ''
+      unless i < input.length
+        break
+    buf
 
 
 
