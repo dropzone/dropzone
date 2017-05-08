@@ -587,7 +587,7 @@ describe "Dropzone", ->
         describe "with default thumbnail settings", ->
           it "should properly return target dimensions", ->
 
-            info = dropzone.options.resize.call dropzone, file
+            info = dropzone.options.resize.call dropzone, file, dropzone.options.thumbnailWidth, dropzone.options.thumbnailHeight
 
             info.optWidth.should.eql 120
             info.optHeight.should.eql 120
@@ -601,10 +601,7 @@ describe "Dropzone", ->
             ]
 
             for setting, i in testSettings
-              dropzone.options.thumbnailWidth = setting[0]
-              dropzone.options.thumbnailHeight = setting[1]
-
-              info = dropzone.options.resize.call dropzone, file
+              info = dropzone.options.resize.call dropzone, file, setting[0], setting[1]
 
               if i is 0
                 info.optWidth.should.eql 200
@@ -1294,7 +1291,7 @@ describe "Dropzone", ->
           mock3.type = "image/jpg"
 
           ct_file = ct_callback = null
-          dropzone.createThumbnail = (file, callback) ->
+          dropzone.createThumbnail = (file, thumbnailWidth, thumbnailHeight, fixOrientation, callback) ->
             ct_file = file
             ct_callback = callback
 
@@ -1318,9 +1315,6 @@ describe "Dropzone", ->
             done()
           ), 10
           
-
-          # dropzone.addFile mock1
-
         describe "when file is SVG", ->
           it "should use the SVG image itself", (done) ->
 
@@ -1336,15 +1330,12 @@ describe "Dropzone", ->
 
             blob = createBlob('foo', 'image/svg+xml')
 
-            dropzone.on "thumbnail", (file, dataURI) ->
-              file.should.equal blob
+            dropzone.createThumbnail blob, dropzone.options.thumbnailWidth, dropzone.options.thumbnailHeight, false, (dataURI, canvas) ->
               fileReader = new FileReader
               fileReader.onload = ->
                 fileReader.result.should.equal dataURI
                 done()
-              fileReader.readAsDataURL(file)
-
-            dropzone.createThumbnail(blob)
+              fileReader.readAsDataURL blob
 
     describe "enqueueFile()", ->
       it "should be wrapped by enqueueFiles()", ->
@@ -1406,7 +1397,6 @@ describe "Dropzone", ->
         dropzone.uploadFiles.calledWith([ mockFile ]).should.be.ok
 
       it "should use url options if strings", (done) ->
-
         dropzone.addFile mockFile
 
         setTimeout ->
@@ -1654,6 +1644,53 @@ describe "Dropzone", ->
             formData.append.callCount.should.equal 2
             formData.append.args[0][0].should.eql "myName[0]"
             formData.append.args[1][0].should.eql "myName[1]"
+            done()
+          , 10
+
+
+        it "should use resizeImage if dimensions are provided", (done) ->
+          sinon.stub dropzone, "resizeImage"
+          sinon.stub dropzone, "createThumbnail"
+
+          dropzone.options.resizeWidth = 400
+
+          mock1 = getMockFile()
+          mock1.type = 'image/jpeg'
+
+          dropzone.addFile mock1
+
+          setTimeout ->
+            dropzone.resizeImage.callCount.should.eql 1
+            done()
+          , 10
+
+        it "should not use resizeImage if dimensions are not provided", (done) ->
+          sinon.stub dropzone, "resizeImage"
+          sinon.stub dropzone, "createThumbnail"
+
+          mock1 = getMockFile()
+          mock1.type = 'image/jpeg'
+
+          dropzone.addFile mock1
+
+          setTimeout ->
+            dropzone.resizeImage.callCount.should.eql 0
+            done()
+          , 10
+
+        it "should not use resizeImage if file is not an image", (done) ->
+          sinon.stub dropzone, "resizeImage"
+          sinon.stub dropzone, "createThumbnail"
+
+          dropzone.options.resizeWidth = 400
+
+          mock1 = getMockFile()
+          mock1.type = 'text/plain'
+
+          dropzone.addFile mock1
+
+          setTimeout ->
+            dropzone.resizeImage.callCount.should.eql 0
             done()
           , 10
 
