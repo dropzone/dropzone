@@ -585,35 +585,62 @@ describe "Dropzone", ->
       describe ".resize()", ->
 
         describe "with default thumbnail settings", ->
-          it "should properly return target dimensions", ->
+          it "should properly return target dimensions for 'contain'", ->
 
-            info = dropzone.options.resize.call dropzone, file, dropzone.options.thumbnailWidth, dropzone.options.thumbnailHeight
+            info = dropzone.options.resize.call dropzone, file, 120, 120, 'crop'
+            info.trgWidth.should.eql 120
+            info.trgHeight.should.eql 100
+            info = dropzone.options.resize.call dropzone, file, 100, 100, 'crop'
+            info.trgWidth.should.eql 100
+            info.trgHeight.should.eql 100
 
-            info.optWidth.should.eql 120
-            info.optHeight.should.eql 120
+          it "should properly return target dimensions for 'contain'", ->
+            info = dropzone.options.resize.call dropzone, file, 120, 120, 'contain'
+            info.trgWidth.should.eql 120
+            info.trgHeight.should.eql 60
+            info = dropzone.options.resize.call dropzone, file, 100, 100, 'contain'
+            info.trgWidth.should.eql 100
+            info.trgHeight.should.eql 50
 
         describe "with null thumbnail settings", ->
-          it "should properly return target dimensions", ->
+          it "should properly return target dimensions for crop", ->
             testSettings = [
               [null, null],
-              [null, 150],
+              [null, 80],
               [150, null]
             ]
 
             for setting, i in testSettings
-              info = dropzone.options.resize.call dropzone, file, setting[0], setting[1]
+              info = dropzone.options.resize.call dropzone, file, setting[0], setting[1], 'crop'
 
               if i is 0
-                info.optWidth.should.eql 200
-                info.optHeight.should.eql 100
+                info.trgWidth.should.eql 200
+                info.trgHeight.should.eql 100
 
               if i is 1
-                info.optWidth.should.eql 300
-                info.optHeight.should.eql 150
+                info.trgWidth.should.eql 160
+                info.trgHeight.should.eql 80
 
               if i is 2
-                info.optWidth.should.eql 150
-                info.optHeight.should.eql 75
+                info.trgWidth.should.eql 150
+                info.trgHeight.should.eql 75
+
+          it "should properly return target dimensions for contain", ->
+            testSettings = [
+              [null, 80],
+              [150, null]
+            ]
+
+            for setting, i in testSettings
+              info = dropzone.options.resize.call dropzone, file, setting[0], setting[1], 'contain'
+
+              if i is 0
+                info.trgWidth.should.eql 160
+                info.trgHeight.should.eql 80
+
+              if i is 1
+                info.trgWidth.should.eql 150
+                info.trgHeight.should.eql 75
 
   describe "instance", ->
 
