@@ -177,6 +177,10 @@ class Dropzone extends Emitter
     # The same as `thumbnailWidth`. If both are null, images will not be resized.
     thumbnailHeight: 120
 
+    # How the images should be scaled down in case both, `thumbnailWidth` and `thumbnailHeight` are provided.
+    # Can be either `contain` or `crop`.
+    thumbnailMethod: 'crop'
+
     # If set, images will be resized to these dimensions before being **uploaded**.
     # If only one, `resizeWidth` **or** `resizeHeight` is provided, the original aspect
     # ratio of the file will be preserved.
@@ -195,6 +199,10 @@ class Dropzone extends Emitter
 
     # The quality of the resized images. See `resizeWidth`.
     resizeQuality: 0.8
+
+    # How the images should be scaled down in case both, `resizeWidth` and `resizeHeight` are provided.
+    # Can be either `contain` or `crop`.
+    resizeMethod: 'contain'
 
     # The base that is used to calculate the filesize. You can change this to
     # 1024 if you would rather display kibibytes, mebibytes, etc...
@@ -374,13 +382,12 @@ class Dropzone extends Emitter
     # It gets `file`, `width` and `height` (both may be `null`) as parameters and must return an object containing:
     #
     #  - `srcWidth` & `srcHeight` (required)
+    #  - `trgWidth` & `trgHeight` (required)
     #  - `srcX` & `srcY` (optional, default `0`)
     #  - `trgX` & `trgY` (optional, default `0`)
-    #  - `trgWidth` & `trgHeight` (optional, when omitted `options.thumbnailWidth` and
-    #     `options.thumbnailHeight` are used
     #
     # Those values are going to be used by `ctx.drawImage()`.
-    resize: (file, width, height) ->
+    resize: (file, width, height, resizeMethod) ->
       info =
         srcX: 0
         srcY: 0
@@ -389,36 +396,44 @@ class Dropzone extends Emitter
 
       srcRatio = file.width / file.height
 
-      info.optWidth = width
-      info.optHeight = height
+      # Automatically calculate dimensions if not specified
+      if !width? and !height?
+        width = info.srcWidth
+        height = info.srcHeight
+      else if !width?
+        width = height * srcRatio
+      else if !height?
+        height = width / srcRatio
 
-      # automatically calculate dimensions if not specified
-      if !info.optWidth? and !info.optHeight?
-        info.optWidth = info.srcWidth
-        info.optHeight = info.srcHeight
-      else if !info.optWidth?
-        info.optWidth = srcRatio * info.optHeight
-      else if !info.optHeight?
-        info.optHeight = (1/srcRatio) * info.optWidth
+      # Make sure images aren't upscaled
+      width = Math.min width, info.srcWidth
+      height = Math.min height, info.srcHeight
 
-      trgRatio = info.optWidth / info.optHeight
+      trgRatio = width / height
 
-      if file.height < info.optHeight or file.width < info.optWidth
-        # This image is smaller than the canvas
-        info.trgHeight = info.srcHeight
-        info.trgWidth = info.srcWidth
-
-      else
+      if info.srcWidth > width or info.srcHeight > height
         # Image is bigger and needs rescaling
-        if srcRatio > trgRatio
-          info.srcHeight = file.height
-          info.srcWidth = info.srcHeight * trgRatio
+        if resizeMethod == 'crop'
+          if srcRatio > trgRatio
+            info.srcHeight = file.height
+            info.srcWidth = info.srcHeight * trgRatio
+          else
+            info.srcWidth = file.width
+            info.srcHeight = info.srcWidth / trgRatio
+        else if resizeMethod == 'contain'
+          # Method 'contain'
+          if srcRatio > trgRatio
+            height = width / srcRatio
+          else
+            width = height * srcRatio
         else
-          info.srcWidth = file.width
-          info.srcHeight = info.srcWidth / trgRatio
+          throw new Error "Unknown resizeMethod '#{resizeMethod}'"
 
       info.srcX = (file.width - info.srcWidth) / 2
       info.srcY = (file.height - info.srcHeight) / 2
+
+      info.trgWidth = width
+      info.trgHeight = height
 
       return info
 
@@ -431,7 +446,7 @@ class Dropzone extends Emitter
     # to be invoked with the file when the transformation is done.
     transformFile: (file, done) ->
       if (@options.resizeWidth || @options.resizeHeight) and file.type.match(/image.*/)
-        @resizeImage file, @options.resizeWidth, @options.resizeHeight, done
+        @resizeImage file, @options.resizeWidth, @options.resizeHeight, @options.resizeMethod, done
       else
         done file
 
@@ -1095,7 +1110,7 @@ class Dropzone extends Emitter
 
     @_processingThumbnail = yes
     file = @_thumbnailQueue.shift()
-    @createThumbnail file, @options.thumbnailWidth, @options.thumbnailHeight, true, (dataUrl) =>
+    @createThumbnail file, @options.thumbnailWidth, @options.thumbnailHeight, @options.thumbnailMethod, true, (dataUrl) =>
       @emit "thumbnail", file, dataUrl
       @_processingThumbnail = no
       @_processThumbnailQueue()
@@ -1119,8 +1134,8 @@ class Dropzone extends Emitter
   # Resizes an image before it gets sent to the server. This function is the default behavior of
   # `options.transformFile` if `resizeWidth` or `resizeHeight` are set. The callback is invoked with
   # the resized blob.
-  resizeImage: (file, width, height, callback) ->
-    @createThumbnail file, @options.resizeWidth, @options.resizeHeight, false, (dataUrl, canvas) =>
+  resizeImage: (file, width, height, resizeMethod, callback) ->
+    @createThumbnail file, width, height, resizeMethod, false, (dataUrl, canvas) =>
       if canvas == null
         # The image has not been resized
         callback file
@@ -1133,7 +1148,7 @@ class Dropzone extends Emitter
           resizedDataURL = ExifRestore.restore file.dataURL, resizedDataURL
         callback Dropzone.dataURItoBlob resizedDataURL
 
-  createThumbnail: (file, width, height, fixOrientation, callback) ->
+  createThumbnail: (file, width, height, resizeMethod, fixOrientation, callback) ->
     fileReader = new FileReader
 
     fileReader.onload = =>
@@ -1145,11 +1160,11 @@ class Dropzone extends Emitter
         callback(fileReader.result) if callback?
         return
 
-      @createThumbnailFromUrl file, width, height, fixOrientation, callback
+      @createThumbnailFromUrl file, width, height, resizeMethod, fixOrientation, callback
 
     fileReader.readAsDataURL file
 
-  createThumbnailFromUrl: (file, width, height, fixOrientation, callback, crossOrigin) ->
+  createThumbnailFromUrl: (file, width, height, resizeMethod, fixOrientation, callback, crossOrigin) ->
     # Not using `new Image` here because of a bug in latest Chrome versions.
     # See https://github.com/enyo/dropzone/pull/226
     img = document.createElement "img"
@@ -1167,10 +1182,7 @@ class Dropzone extends Emitter
         file.width = img.width
         file.height = img.height
 
-        resizeInfo = @options.resize.call @, file, width, height
-
-        resizeInfo.trgWidth ?= resizeInfo.optWidth
-        resizeInfo.trgHeight ?= resizeInfo.optHeight
+        resizeInfo = @options.resize.call @, file, width, height, resizeMethod
 
         canvas = document.createElement "canvas"
         ctx = canvas.getContext "2d"
