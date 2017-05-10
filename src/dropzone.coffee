@@ -188,8 +188,10 @@ class Dropzone extends Emitter
     # See `resizeWidth`.
     resizeHeight: null
 
-    # The mime type of the resized image. See `resizeWidth`.
-    resizeMimeType: 'image/jpeg'
+    # The mime type of the resized image (before it gets uploaded to the server).
+    # If `null` the original mime type will be used. To force jpeg, for example, use `image/jpeg`.
+    # See `resizeWidth` for more information.
+    resizeMimeType: null
 
     # The quality of the resized images. See `resizeWidth`.
     resizeQuality: 0.8
@@ -1123,9 +1125,13 @@ class Dropzone extends Emitter
         # The image has not been resized
         callback file
       else
-        resizedDataURL = canvas.toDataURL @options.resizeMimeType, @options.resizeQuality
-        # Now add the original EXIF information
-        callback Dropzone.dataURItoBlob ExifRestore.restore file.dataURL, resizedDataURL
+        resizeMimeType = @options.resizeMimeType
+        resizeMimeType ?= file.type
+        resizedDataURL = canvas.toDataURL resizeMimeType, @options.resizeQuality
+        if resizeMimeType == 'image/jpeg' || resizeMimeType == 'image/jpg'
+          # Now add the original EXIF information
+          resizedDataURL = ExifRestore.restore file.dataURL, resizedDataURL
+        callback Dropzone.dataURItoBlob resizedDataURL
 
   createThumbnail: (file, width, height, fixOrientation, callback) ->
     fileReader = new FileReader
@@ -1819,7 +1825,7 @@ class ExifRestore
     # remove all characters that are not A-Z, a-z, 0-9, +, /, or =
     base64test = /[^A-Za-z0-9\+\/\=]/g
     if base64test.exec(input)
-      alert 'There were invalid base64 characters in the input text.\n' + 'Valid base64 characters are A-Z, a-z, 0-9, \'+\', \'/\',and \'=\'\n' + 'Expect errors in decoding.'
+      console.warning 'There were invalid base64 characters in the input text.\n' + 'Valid base64 characters are A-Z, a-z, 0-9, \'+\', \'/\',and \'=\'\n' + 'Expect errors in decoding.'
     input = input.replace(/[^A-Za-z0-9\+\/\=]/g, '')
     loop
       enc1 = @KEY_STR.indexOf(input.charAt(i++))
