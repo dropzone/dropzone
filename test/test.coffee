@@ -1291,7 +1291,7 @@ describe "Dropzone", ->
           mock3.type = "image/jpg"
 
           ct_file = ct_callback = null
-          dropzone.createThumbnail = (file, thumbnailWidth, thumbnailHeight, fixOrientation, callback) ->
+          dropzone.createThumbnail = (file, thumbnailWidth, thumbnailHeight, resizeMethod, fixOrientation, callback) ->
             ct_file = file
             ct_callback = callback
 
@@ -1330,7 +1330,7 @@ describe "Dropzone", ->
 
             blob = createBlob('foo', 'image/svg+xml')
 
-            dropzone.createThumbnail blob, dropzone.options.thumbnailWidth, dropzone.options.thumbnailHeight, false, (dataURI, canvas) ->
+            dropzone.createThumbnail blob, dropzone.options.thumbnailWidth, dropzone.options.thumbnailHeight, 'crop', false, (dataURI, canvas) ->
               fileReader = new FileReader
               fileReader.onload = ->
                 fileReader.result.should.equal dataURI
