@@ -550,7 +550,7 @@ would look something like this:
 {% highlight javascript %}
 // This is an example of completely disabling Dropzone's default behavior.
 // Do *not* use this unless you really know what you are doing.
-Dropzone.myDropzone.options = {
+Dropzone.options.myDropzone = {
   previewTemplate: document.querySelector('#template-container').innerHTML,
   // Specifing an event as an configuration option overwrites the default
   // `addedfile` event handler.
