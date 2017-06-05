@@ -32,12 +32,7 @@
     "email": "m@tias.me",
     "url": "https://gitlab.com/meno/dropzone/issues"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://www.opensource.org/licenses/MIT"
-    }
-  ],
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://gitlab.com/meno/dropzone.git"
