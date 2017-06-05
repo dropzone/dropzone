@@ -67,7 +67,7 @@ or [iTunes](https://itunes.apple.com/at/album/flashlights-ep/id1075875101?l=en) 
 or stream it on [Spotify](https://open.spotify.com/album/14y7LCmuPCBAZqrvc6uqkd):
 
 <div>
-    <iframe style="display: block; width: 300px; margin: 0 auto;" src="https://embed.spotify.com/?uri=spotify%3Aalbum%3A14y7LCmuPCBAZqrvc6uqkd&theme=white&view=coverart" width="300" height="80" frameborder="0" allowtransparency="true"></iframe>
+    <iframe style="display: block; width: 280px; margin: 0 auto;" src="https://embed.spotify.com/?uri=spotify%3Aalbum%3A14y7LCmuPCBAZqrvc6uqkd&theme=white&view=coverart" width="280" height="80" frameborder="0" allowtransparency="true"></iframe>
 </div>
 
 
