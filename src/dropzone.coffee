@@ -1152,7 +1152,7 @@ class Dropzone extends Emitter
 
     img.onload = =>
       loadExif = (callback) -> callback 1
-      if EXIF and fixOrientation
+      if EXIF? and fixOrientation
         loadExif = (callback) ->
           EXIF.getData img, () ->
             callback EXIF.getTag this, 'Orientation'
