@@ -1173,7 +1173,7 @@ class Dropzone extends Emitter
 
     img.onload = =>
       loadExif = (callback) -> callback 1
-      if EXIF and fixOrientation
+      if EXIF? and fixOrientation
         loadExif = (callback) ->
           EXIF.getData img, () ->
             callback EXIF.getTag this, 'Orientation'
@@ -1310,14 +1310,16 @@ class Dropzone extends Emitter
 
   uploadFiles: (files) ->
     xhr = new XMLHttpRequest()
-    xhr.timeout = resolveOption @options.timeout, files
-    
+
     # Put the xhr object in the file objects to be able to reference it later.
     file.xhr = xhr for file in files
 
     method = resolveOption @options.method, files
     url = resolveOption @options.url, files
     xhr.open method, url, true
+
+    # Setting the timeout after open because of IE11 issue: https://gitlab.com/meno/dropzone/issues/8
+    xhr.timeout = resolveOption @options.timeout, files
 
     # Has to be after `.open()`. See https://github.com/enyo/dropzone/issues/179
     xhr.withCredentials = !!@options.withCredentials
@@ -1708,7 +1710,7 @@ detectVerticalSquash = (img) ->
   canvas.height = ih
   ctx = canvas.getContext("2d")
   ctx.drawImage img, 0, 0
-  data = ctx.getImageData(0, 0, 1, ih).data
+  data = ctx.getImageData(1, 0, 1, ih).data
 
 
   # search image edge pixel position in case it is squashed vertically.
