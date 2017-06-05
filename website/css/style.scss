@@ -505,6 +505,10 @@ main {
 
   }
 
+  .configuration-table-container {
+    max-width: 100%;
+    overflow-x: scroll;
+  }
 
   table {
     font-size: 0.9rem;
