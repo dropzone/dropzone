@@ -1364,13 +1364,14 @@ class Dropzone extends Emitter
 
       return unless xhr.readyState is 4
 
-      response = xhr.responseText
+      if xhr.responseType!='arraybuffer' && xhr.responseType!='blob'
+        response = xhr.responseText
 
-      if xhr.getResponseHeader("content-type") and ~xhr.getResponseHeader("content-type").indexOf "application/json"
-        try
-          response = JSON.parse response
-        catch e
-          response = "Invalid JSON response from server."
+        if xhr.getResponseHeader("content-type") and ~xhr.getResponseHeader("content-type").indexOf "application/json"
+          try
+            response = JSON.parse response
+          catch e
+            response = "Invalid JSON response from server."
 
       updateProgress()
 
