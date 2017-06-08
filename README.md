@@ -1,7 +1,5 @@
 <img alt="Dropzone.js" src="http://www.dropzonejs.com/images/new-logo.svg" />
 
-[ ![Codeship Status for enyo/dropzone](https://codeship.com/projects/3fc90800-74e0-0132-38ce-22ab3bab314c/status?branch=master)](https://codeship.com/projects/55087)
-
 Dropzone.js is a light weight JavaScript library that turns an HTML element into a dropzone.
 This means that a user can drag and drop a file onto it, and the file gets uploaded to the server via AJAX.
 
