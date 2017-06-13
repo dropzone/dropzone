@@ -1,3 +1,7 @@
+## 5.1.0
+
+- Add possibility to translate file sizes. (thanks to @lerarybak for that)
+
 ## 5.0.1
 
 - Add missing dist/ folder to npm.

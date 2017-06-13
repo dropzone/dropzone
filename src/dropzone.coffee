@@ -336,8 +336,8 @@ class Dropzone extends Emitter
     # The string `{{maxFiles}}` will be replaced by the configuration value.
     dictMaxFilesExceeded: "You can not upload any more files."
 
-    # A filesize is displayed when a file is loaded.
-    # Selected filesize unit will be replaced by the one from configuration value.
+    # Allows you to translate the different units. Starting with `tb` for terabytes and going down to
+    # `b` for bytes.
     dictFileSizeUnits: { tb: "TB", gb: "GB", mb: "MB", kb: "KB", b: "b" }
 
     # Called when dropzone initialized
@@ -1469,7 +1469,7 @@ class Dropzone extends Emitter
 
 
 
-Dropzone.version = "5.0.1"
+Dropzone.version = "5.1.0"
 
 
 # This is a map of options for your different dropzones. Add configurations
