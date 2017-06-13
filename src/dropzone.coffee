@@ -336,6 +336,10 @@ class Dropzone extends Emitter
     # The string `{{maxFiles}}` will be replaced by the configuration value.
     dictMaxFilesExceeded: "You can not upload any more files."
 
+    # A filesize is displayed when a file is loaded.
+    # Selected filesize unit will be replaced by the one from configuration value.
+    dictFileSizeUnits: { tb: "TB", gb: "GB", mb: "MB", kb: "KB", b: "b" }
+
     # Called when dropzone initialized
     # You can add event listeners here
     init: -> noop
@@ -946,7 +950,7 @@ class Dropzone extends Emitter
     selectedUnit = "b"
 
     if size > 0
-      units = [ 'TB', 'GB', 'MB', 'KB', 'b' ]
+      units = [ 'tb', 'gb', 'mb', 'kb', 'b' ]
 
       for unit, i in units
         cutoff = Math.pow(@options.filesizeBase, 4 - i) / 10
@@ -958,7 +962,7 @@ class Dropzone extends Emitter
 
       selectedSize = Math.round(10 * selectedSize) / 10 # Cutting of digits
 
-    "<strong>#{selectedSize}</strong> #{selectedUnit}"
+    "<strong>#{selectedSize}</strong> #{@options.dictFileSizeUnits[selectedUnit]}"
 
 
   # Adds or removes the `dz-max-files-reached` class from the form.
