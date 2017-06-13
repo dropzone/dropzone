@@ -1,0 +1,17 @@
+build
+components
+node_modules
+.DS_Store
+.sass-cache
+_site
+_config.yaml
+.idea
+website
+tool
+
+# The GitLab pages artifacts
+public
+
+# Exclude all js files
+**/*.js
+!index.js

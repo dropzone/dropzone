@@ -1465,7 +1465,7 @@ class Dropzone extends Emitter
 
 
 
-Dropzone.version = "5.0.0"
+Dropzone.version = "5.0.1"
 
 
 # This is a map of options for your different dropzones. Add configurations
