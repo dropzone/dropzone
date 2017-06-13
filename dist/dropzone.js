@@ -147,6 +147,7 @@
       hiddenInputContainer: "body",
       capture: null,
       renameFilename: null,
+      renameFile: null,
       forceFallback: false,
       dictDefaultMessage: "Drop files here to upload",
       dictFallbackMessage: "Your browser does not support drag'n'drop file uploads.",
@@ -159,6 +160,13 @@
       dictRemoveFile: "Remove file",
       dictRemoveFileConfirmation: null,
       dictMaxFilesExceeded: "You can not upload any more files.",
+      dictFileSizeUnits: {
+        tb: "TB",
+        gb: "GB",
+        mb: "MB",
+        kb: "KB",
+        b: "b"
+      },
       init: function() {
         return noop;
       },
@@ -285,7 +293,7 @@
           ref = file.previewElement.querySelectorAll("[data-dz-name]");
           for (j = 0, len = ref.length; j < len; j++) {
             node = ref[j];
-            node.textContent = this._renameFilename(file.name, file);
+            node.textContent = file.upload.filename;
           }
           ref1 = file.previewElement.querySelectorAll("[data-dz-size]");
           for (k = 0, len1 = ref1.length; k < len1; k++) {
@@ -469,6 +477,13 @@
       if (this.options.acceptedMimeTypes) {
         this.options.acceptedFiles = this.options.acceptedMimeTypes;
         delete this.options.acceptedMimeTypes;
+      }
+      if (this.options.renameFilename != null) {
+        this.options.renameFile = (function(_this) {
+          return function(file) {
+            return _this.options.renameFilename.call(_this, file.name, file);
+          };
+        })(this);
       }
       this.options.method = this.options.method.toUpperCase();
       if ((fallback = this.getExistingFallback()) && fallback.parentNode) {
@@ -745,11 +760,11 @@
       }
     };
 
-    Dropzone.prototype._renameFilename = function(name, file) {
-      if (typeof this.options.renameFilename !== "function") {
-        return name;
+    Dropzone.prototype._renameFile = function(file) {
+      if (typeof this.options.renameFile !== "function") {
+        return file.name;
       }
-      return this.options.renameFilename(name, file);
+      return this.options.renameFile(file);
     };
 
     Dropzone.prototype.getFallbackForm = function() {
@@ -860,7 +875,7 @@
       selectedSize = 0;
       selectedUnit = "b";
       if (size > 0) {
-        units = ['TB', 'GB', 'MB', 'KB', 'b'];
+        units = ['tb', 'gb', 'mb', 'kb', 'b'];
         for (i = j = 0, len = units.length; j < len; i = ++j) {
           unit = units[i];
           cutoff = Math.pow(this.options.filesizeBase, 4 - i) / 10;
@@ -872,7 +887,7 @@
         }
         selectedSize = Math.round(10 * selectedSize) / 10;
       }
-      return "<strong>" + selectedSize + "</strong> " + selectedUnit;
+      return "<strong>" + selectedSize + "</strong> " + this.options.dictFileSizeUnits[selectedUnit];
     };
 
     Dropzone.prototype._updateMaxFilesReachedClass = function() {
@@ -1003,7 +1018,8 @@
       file.upload = {
         progress: 0,
         total: file.size,
-        bytesSent: 0
+        bytesSent: 0,
+        filename: this._renameFile(file)
       };
       this.files.push(file);
       file.status = Dropzone.ADDED;
@@ -1478,7 +1494,7 @@
             };
           };
         })(this);
-        results.push(this.options.transformFile.call(this, files[i], doneFunction(files[i], this._getParamName(i), this._renameFilename(file.name, file))));
+        results.push(this.options.transformFile.call(this, files[i], doneFunction(files[i], this._getParamName(i), files[i].upload.filename)));
       }
       return results;
     };
@@ -1525,7 +1541,7 @@
 
   })(Emitter);
 
-  Dropzone.version = "5.0.1";
+  Dropzone.version = "5.1.0";
 
   Dropzone.options = {};
 
