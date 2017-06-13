@@ -289,8 +289,13 @@ class Dropzone extends Emitter
     # be set to an appropriate mime type (e.g. "image/*", "audio/*", or "video/*").
     capture: null
 
-    # A function that is invoked before the file is uploaded to the server and renames the file.
+    # **Deprecated**. Use `renameFile` instead.
     renameFilename: null
+
+    # A function that is invoked before the file is uploaded to the server and renames the file.
+    # This function gets the `File` as argument and can use the `file.name`. The actual name of the
+    # file that gets used during the upload can be accessed through `file.upload.filename`.
+    renameFile: null
 
     # If `true` the fallback will be forced. This is very useful to test your server
     # implementations first and make sure that everything works as
@@ -540,7 +545,7 @@ class Dropzone extends Emitter
         file.previewTemplate = file.previewElement # Backwards compatibility
 
         @previewsContainer.appendChild file.previewElement
-        node.textContent = @_renameFilename(file.name, file) for node in file.previewElement.querySelectorAll("[data-dz-name]")
+        node.textContent = file.upload.filename for node in file.previewElement.querySelectorAll("[data-dz-name]")
         node.innerHTML = @filesize file.size for node in file.previewElement.querySelectorAll("[data-dz-size]")
 
         if @options.addRemoveLinks
@@ -694,6 +699,10 @@ class Dropzone extends Emitter
     if @options.acceptedMimeTypes
       @options.acceptedFiles = @options.acceptedMimeTypes
       delete @options.acceptedMimeTypes
+
+    # Backwards compatibility
+    if @options.renameFilename?
+      @options.renameFile = (file) => @options.renameFilename.call this, file.name, file
 
     @options.method = @options.method.toUpperCase()
 
@@ -884,11 +893,11 @@ class Dropzone extends Emitter
     else
       "#{@options.paramName}#{if @options.uploadMultiple then "[#{n}]" else ""}"
 
-  # If @options.renameFilename is a function,
+  # If @options.renameFile is a function,
   # the function will be used to rename the file.name before appending it to the formData
-  _renameFilename: (name, file) ->
-    return name unless typeof @options.renameFilename is "function"
-    @options.renameFilename name, file
+  _renameFile: (file) ->
+    return file.name unless typeof @options.renameFile is "function"
+    @options.renameFile file
 
   # Returns a form that can be used as fallback if the browser does not support DragnDrop
   #
@@ -1072,6 +1081,7 @@ class Dropzone extends Emitter
       # It's actual different than the size to be transmitted.
       total: file.size
       bytesSent: 0
+      filename: @_renameFile file
     @files.push file
 
     file.status = Dropzone.ADDED
@@ -1435,7 +1445,7 @@ class Dropzone extends Emitter
         formData.append paramName, transformedFile, fileName
         @submitRequest xhr, formData, files if ++doneCounter == files.length
 
-      @options.transformFile.call @, files[i], doneFunction(files[i], @_getParamName(i), @_renameFilename(file.name, file))
+      @options.transformFile.call @, files[i], doneFunction(files[i], @_getParamName(i), files[i].upload.filename)
 
 
   submitRequest: (xhr, formData, files) ->

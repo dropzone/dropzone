@@ -1,6 +1,10 @@
 ## 5.1.0
 
-- Add possibility to translate file sizes. (thanks to @lerarybak for that)
+- Add possibility to translate file sizes. (#16 thanks to @lerarybak for that)
+- Fix duplicate filenames in multiple file uploads (#15)
+- The `renameFilename` option has been **deprecated**. Use `renameFile` instead
+  (which also has a slightly different function signature)
+- The `renameFile` option now stores the new name in `file.upload.filename` (#1)
 
 ## 5.0.1
 

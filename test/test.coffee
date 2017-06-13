@@ -9,6 +9,8 @@ describe "Dropzone", ->
     name: "test file name"
     size: 123456
     type: "text/html"
+    upload:
+      filename: "test file name"
 
 
   xhr = null
@@ -543,6 +545,8 @@ describe "Dropzone", ->
           size: 2 * 1024 * 1024
           width: 200
           height: 100
+          upload:
+            filename: "test name"
         dropzone.options.addedfile.call dropzone, file
 
       describe ".addedFile()", ->
@@ -1722,24 +1726,27 @@ describe "Dropzone", ->
           , 10
 
 
-      it "should not change the file name if the options.renameFilename is not set", (done) ->
+      it "should not change the file name if the options.renameFile is not set", (done) ->
         mockFilename = 'T3sT ;:_-.,!¨@&%&'
+        mockFile = getMockFile()
+        mockFile.name = mockFilename
 
-        renamedFilename = dropzone._renameFilename(mockFilename)
+        renamedFilename = dropzone._renameFile mockFile
 
-        setTimeout ->
-          renamedFilename.should.equal mockFilename
-          done()
-        , 10
+        renamedFilename.should.equal mockFilename
+        done()
 
       it "should rename the file name if options.renamedFilename is set", (done) ->
-        dropzone.options.renameFilename = (name) ->
-          name.toLowerCase().replace(/[^\w]/gi, '')
-        renamedFilename = dropzone._renameFilename('T3sT ;:_-.,!¨@&%&')
-        setTimeout ->
-          renamedFilename.should.equal 't3st_'
-          done()
-        , 10
+        dropzone.options.renameFile = (file) ->
+          file.name.toLowerCase().replace(/[^\w]/gi, '')
+
+        mockFile = getMockFile()
+        mockFile.name = 'T3sT ;:_-.,!¨@&%&'
+
+        renamedFilename = dropzone._renameFile mockFile
+
+        renamedFilename.should.equal 't3st_'
+        done()
 
       describe "should properly set status of file", ->
         it "should correctly set `withCredentials` on the xhr object", (done) ->
