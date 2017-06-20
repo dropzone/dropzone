@@ -1351,10 +1351,9 @@ class Dropzone extends Emitter
         progress = 100 * e.loaded / e.total
 
         for file in files
-          file.upload =
-            progress: progress
-            total: e.total
-            bytesSent: e.loaded
+          file.upload.progress = progress
+          file.upload.total = e.total
+          file.upload.bytesSent = e.loaded
       else
         # Called when the file finished uploading
 

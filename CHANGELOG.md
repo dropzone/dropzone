@@ -1,6 +1,7 @@
 ## 5.1.1
 
 - Fix issue where showing files already on the server fails, due to the missing `file.upload.filename`
+- Fix issue where `file.upload.filename` gets removed after the file uploaded completed.
 
 ## 5.1.0
 
