@@ -9,17 +9,18 @@ const srcFile = 'website/_includes/configuration-options.template.html';
 const dstFile = 'website/_includes/configuration-options.html';
 
 let fileData = fs.readFileSync(srcFile, "utf8");
-const data = fs.readFileSync('src/dropzone.coffee', "utf8");
+const data = fs.readFileSync('src/dropzone.js', "utf8");
 const dataLines = data.split("\n");
 
 // Get the content between `defaultOptions:` and `# END OPTIONS`
-const configBlockRegExp = /defaultOptions:([^]*?)# END OPTIONS/g;
+const configBlockRegExp = /this\.prototype\.defaultOptions \= \{([^]*?)\/\/ END OPTIONS/g;
 const configBlock = configBlockRegExp.exec(data)[1];
 
-const singleConfigRegExp = /((^\s*#.*$\n)+)^\s*(\w+)\s*:\s*(.*)/gm;
+const singleConfigRegExp = /\/\*\*\n((^\s*\*.*$\n)+)^\s*\*\/\n^\s*(\w+)\s*(.*)/gm;
 
-const docLineRegExp = /^\s*#(.*)$/gm;
-const functionRegExp = /(\(.*\))?\s*-\>/;
+const docLineRegExp = /^\s*\*(.*)$/gm;
+const functionRegExp = /(\(.*\))\s*(\{.*)$/;
+const defaultValueRegExp = /\s*(.*?),?$/;
 
 let htmlDoc = '';
 
@@ -31,6 +32,9 @@ let firstFunction = true;
 
 while ((matchResult = singleConfigRegExp.exec(configBlock)) !== null) {
   let rawDoc = '';
+  let varName = matchResult[3];
+  let defaultValue = null;
+
   // Get each line of doc
   while ((docMatchResult = docLineRegExp.exec(matchResult[1])) !== null) {
     let docLine = docMatchResult[1];
@@ -38,9 +42,6 @@ while ((matchResult = singleConfigRegExp.exec(configBlock)) !== null) {
     if (docLine.charAt(0) === ' ') docLine = docLine.substr(1);
     rawDoc += docLine + '\n';
   }
-
-  let varName = matchResult[3];
-  let defaultValue = matchResult[4];
 
   if (varName.indexOf('dict') === 0) {
     if (firstDict) {
@@ -51,16 +52,20 @@ while ((matchResult = singleConfigRegExp.exec(configBlock)) !== null) {
     }
     rawDoc = `\`${defaultValue}\`<br>${rawDoc}`;
     defaultValue = 'see description';
-  } else if (functionRegExp.test(defaultValue)) {
+  } else if ((funcMatchResult = functionRegExp.exec(matchResult[4])) !== null) {
     if (firstFunction) {
       htmlDoc += `<tr>
         <td class="separator" colspan="2">functions you can override to change or extend default behavior:</td>
       </tr>`;
       firstFunction = false;
     }
-    defaultValue = defaultValue === '-> noop' ? 'empty Function' : 'function';
-  } else if (defaultValue === '"""') {
+    defaultValue = funcMatchResult[2] === '{},' ? 'empty function' : 'function';
+  } else if (varName === 'previewTemplate') {
     defaultValue = 'HTML template';
+  }
+
+  if (defaultValue === null) {
+    let defaultValue = defaultValueRegExp.exec(matchResult[4])[1];
   }
 
   let doc = marked(rawDoc);
@@ -85,7 +90,7 @@ while ((matchResult = singleConfigRegExp.exec(configBlock)) !== null) {
 
   configCount++;
 }
-
+return;
 fs.writeFileSync(dstFile, fileData.replace('<!-- options -->', htmlDoc));
 
 console.log(`Success! Created config for ${configCount} options and wrote to "${dstFile}"`);
@@ -96,7 +101,7 @@ console.log(`Success! Created config for ${configCount} options and wrote to "${
  */
 function getLine(config) {
   for (let i = 0; i < dataLines.length; i++) {
-    if (new RegExp(`^\\s*${config}\\:`).test(dataLines[i])) {
+    if (new RegExp(`^\\s*${config}(\\:|\\()`).test(dataLines[i])) {
       return i + 1;
     }
   }

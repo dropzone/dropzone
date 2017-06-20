@@ -25,9 +25,6 @@
  */
 
 
-let noop = function() {};
-
-
 // The Emitter class provides the ability to call `.on()` on Dropzone to listen
 // to events.
 // It is strongly based on component's emitter class, and I removed the
@@ -37,7 +34,9 @@ class Emitter {
   on(event, fn) {
     this._callbacks = this._callbacks || {};
     // Create namespace for this event
-    if (!this._callbacks[event]) { this._callbacks[event] = []; }
+    if (!this._callbacks[event]) {
+      this._callbacks[event] = [];
+    }
     this._callbacks[event].push(fn);
     return this;
   }
@@ -48,7 +47,9 @@ class Emitter {
     let callbacks = this._callbacks[event];
 
     if (callbacks) {
-      for (let callback of Array.from(callbacks)) { callback.apply(this, args); }
+      for (let callback of Array.from(callbacks)) {
+        callback.apply(this, args);
+      }
     }
 
     return this;
@@ -65,7 +66,9 @@ class Emitter {
 
     // specific event
     let callbacks = this._callbacks[event];
-    if (!callbacks) { return this; }
+    if (!callbacks) {
+      return this;
+    }
 
     // remove all handlers
     if (arguments.length === 1) {
@@ -88,18 +91,18 @@ class Emitter {
 
 class Dropzone extends Emitter {
   static initClass() {
-  
+
     // Exposing the emitter class, mainly for tests
     this.prototype.Emitter = Emitter;
-  
+
     /*
-    This is a list of all available events you can register on a dropzone object.
-  
-    You can register an event handler like this:
-  
-        dropzone.on("dragEnter", function() { });
-  
-    */
+     This is a list of all available events you can register on a dropzone object.
+
+     You can register an event handler like this:
+
+     dropzone.on("dragEnter", function() { });
+
+     */
     this.prototype.events = [
       "drop",
       "dragstart",
@@ -130,249 +133,347 @@ class Dropzone extends Emitter {
       "maxfilesreached",
       "queuecomplete"
     ];
-  
-  
-  
+
+
     this.prototype.defaultOptions = {
-      // Has to be specified on elements other than form (or when the form
-      // doesn't have an `action` attribute). You can also
-      // provide a function that will be called with `files` and
-      // must return the url (since `v3.12.0`)
+      /**
+       * Has to be specified on elements other than form (or when the form
+       * doesn't have an `action` attribute). You can also
+       * provide a function that will be called with `files` and
+       * must return the url (since `v3.12.0`)
+       */
       url: null,
-  
-      // can be changed to `"put"` if necessary. You can also provide a function
-      // that will be called with `files` and must return the method (since `v3.12.0`).
+
+      /**
+       * Can be changed to `"put"` if necessary. You can also provide a function
+       * that will be called with `files` and must return the method (since `v3.12.0`).
+       */
       method: "post",
-  
-      // foo
+
+      /**
+       * Will be set on the XHRequest.
+       */
       withCredentials: false,
-  
-      // The timeout for the XHR requests in milliseconds (since `v4.4.0`).
+
+      /**
+       * The timeout for the XHR requests in milliseconds (since `v4.4.0`).
+       */
       timeout: 30000,
-  
-      // How many file uploads to process in parallel (See the
-      // *Enqueuing file uploads* documentation section for more info)
+
+      /**
+       * How many file uploads to process in parallel (See the
+       * Enqueuing file uploads* documentation section for more info)
+       */
       parallelUploads: 2,
-  
-      // Whether to send multiple files in one request. If
-      // this it set to true, then the fallback file input element will
-      // have the `multiple` attribute as well. This option will
-      // also trigger additional events (like `processingmultiple`). See the events
-      // documentation section for more information.
+
+      /**
+       * Whether to send multiple files in one request. If
+       * this it set to true, then the fallback file input element will
+       * have the `multiple` attribute as well. This option will
+       * also trigger additional events (like `processingmultiple`). See the events
+       * documentation section for more information.
+       */
       uploadMultiple: false,
-  
-      // If not `null` defines how many files this Dropzone handles. If it exceeds,
-      // the event `maxfilesexceeded` will be called. The dropzone element gets the
-      // class `dz-max-files-reached` accordingly so you can provide visual feedback.
+
+      /**
+       * If not `null` defines how many files this Dropzone handles. If it exceeds,
+       * the event `maxfilesexceeded` will be called. The dropzone element gets the
+       * class `dz-max-files-reached` accordingly so you can provide visual feedback.
+       */
       maxFilesize: 256,
-  
-      // The name of the file param that gets transferred.
-      // **NOTE**: If you have the option  `uploadMultiple` set to `true`, then
-      // Dropzone will append `[]` to the name.
+
+      /**
+       * The name of the file param that gets transferred.
+       * **NOTE**: If you have the option  `uploadMultiple` set to `true`, then
+       * Dropzone will append `[]` to the name.
+       */
       paramName: "file",
-  
-      // Whether thumbnails for images should be generated
+
+      /**
+       * Whether thumbnails for images should be generated
+       */
       createImageThumbnails: true,
-  
-      // In MB. When the filename exceeds this limit, the thumbnail will not be generated.
+
+      /**
+       * In MB. When the filename exceeds this limit, the thumbnail will not be generated.
+       */
       maxThumbnailFilesize: 10,
-  
-      // If `null`, the ratio of the image will be used to calculate it.
+
+      /**
+       * If `null`, the ratio of the image will be used to calculate it.
+       */
       thumbnailWidth: 120,
-  
-      // The same as `thumbnailWidth`. If both are null, images will not be resized.
+
+      /**
+       * The same as `thumbnailWidth`. If both are null, images will not be resized.
+       */
       thumbnailHeight: 120,
-  
-      // How the images should be scaled down in case both, `thumbnailWidth` and `thumbnailHeight` are provided.
-      // Can be either `contain` or `crop`.
+
+      /**
+       * How the images should be scaled down in case both, `thumbnailWidth` and `thumbnailHeight` are provided.
+       * Can be either `contain` or `crop`.
+       */
       thumbnailMethod: 'crop',
-  
-      // If set, images will be resized to these dimensions before being **uploaded**.
-      // If only one, `resizeWidth` **or** `resizeHeight` is provided, the original aspect
-      // ratio of the file will be preserved.
-      //
-      // The `options.transformFile` function uses these options, so if the `transformFile` function
-      // is overridden, these options don't do anything.
+
+      /**
+       * If set, images will be resized to these dimensions before being **uploaded**.
+       * If only one, `resizeWidth` **or** `resizeHeight` is provided, the original aspect
+       * ratio of the file will be preserved.
+       *
+       * The `options.transformFile` function uses these options, so if the `transformFile` function
+       * is overridden, these options don't do anything.
+       */
       resizeWidth: null,
-  
-      // See `resizeWidth`.
+
+      /**
+       * See `resizeWidth`.
+       */
       resizeHeight: null,
-  
-      // The mime type of the resized image (before it gets uploaded to the server).
-      // If `null` the original mime type will be used. To force jpeg, for example, use `image/jpeg`.
-      // See `resizeWidth` for more information.
+
+      /**
+       * The mime type of the resized image (before it gets uploaded to the server).
+       * If `null` the original mime type will be used. To force jpeg, for example, use `image/jpeg`.
+       * See `resizeWidth` for more information.
+       */
       resizeMimeType: null,
-  
-      // The quality of the resized images. See `resizeWidth`.
+
+      /**
+       * The quality of the resized images. See `resizeWidth`.
+       */
       resizeQuality: 0.8,
-  
-      // How the images should be scaled down in case both, `resizeWidth` and `resizeHeight` are provided.
-      // Can be either `contain` or `crop`.
+
+      /**
+       * How the images should be scaled down in case both, `resizeWidth` and `resizeHeight` are provided.
+       * Can be either `contain` or `crop`.
+       */
       resizeMethod: 'contain',
-  
-      // The base that is used to calculate the filesize. You can change this to
-      // 1024 if you would rather display kibibytes, mebibytes, etc...
-      // 1024 is technically incorrect, because `1024 bytes` are `1 kibibyte` not `1 kilobyte`.
-      // You can change this to `1024` if you don't care about validity.
+
+      /**
+       * The base that is used to calculate the filesize. You can change this to
+       * 1024 if you would rather display kibibytes, mebibytes, etc...
+       * 1024 is technically incorrect, because `1024 bytes` are `1 kibibyte` not `1 kilobyte`.
+       * You can change this to `1024` if you don't care about validity.
+       */
       filesizeBase: 1000,
-  
-      // Can be used to limit the maximum number of files that will be handled
-      // by this Dropzone
+
+      /**
+       * Can be used to limit the maximum number of files that will be handled by this Dropzone
+       */
       maxFiles: null,
-  
-      // Can be an object of additional parameters to transfer to the server.
-      // This is the same as adding hidden input fields in the form element.
-      params: { },
-  
-      // An optional object to send additional headers to the server. Eg:
-      // `{ "My-Awesome-Header": "header value" }`
+
+      /**
+       * Can be an object of additional parameters to transfer to the server.
+       * This is the same as adding hidden input fields in the form element.
+       */
+      params: {},
+
+      /**
+       * An optional object to send additional headers to the server. Eg:
+       * `{ "My-Awesome-Header": "header value" }`
+       */
       headers: null,
-  
-      // If true, the dropzone will present a file selector when clicked.
-  
-      // If `true`, the dropzone element itself will be clickable, if `false`
-      // nothing will be clickable.
-      //
-      // You can also pass an HTML element, a CSS selector (for multiple elements)
-      // or an array of those. In that case, all of those elements will trigger an
-      // upload when clicked.
+
+      /**
+       * If `true`, the dropzone element itself will be clickable, if `false`
+       * nothing will be clickable.
+       *
+       * You can also pass an HTML element, a CSS selector (for multiple elements)
+       * or an array of those. In that case, all of those elements will trigger an
+       * upload when clicked.
+       */
       clickable: true,
-  
-      // Whether hidden files in directories should be ignored.
+
+      /**
+       * Whether hidden files in directories should be ignored.
+       */
       ignoreHiddenFiles: true,
-  
-  
-      // The default implementation of `accept` checks the file's mime type or
-      // extension against this list. This is a comma separated list of mime
-      // types or file extensions.
-      //
-      // Eg.: `image/*,application/pdf,.psd`
-      //
-      // If the Dropzone is `clickable` this option will also be used as
-      // [`accept`](https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-accept)
-      // parameter on the hidden file input as well.
+
+
+      /**
+       * The default implementation of `accept` checks the file's mime type or
+       * extension against this list. This is a comma separated list of mime
+       * types or file extensions.
+       *
+       * Eg.: `image/*,application/pdf,.psd`
+       *
+       * If the Dropzone is `clickable` this option will also be used as
+       * [`accept`](https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-accept)
+       * parameter on the hidden file input as well.
+       */
       acceptedFiles: null,
-  
-      // **Deprecated!**
-      // Use acceptedFiles instead.
+
+      /**
+       * **Deprecated!**
+       * Use acceptedFiles instead.
+       */
       acceptedMimeTypes: null,
-  
-      // If false, files will be added to the queue but the queue will not be
-      // processed automatically.
-      // This can be useful if you need some additional user input before sending
-      // files (or if you want want all files sent at once).
-      // If you're ready to send the file simply call `myDropzone.processQueue()`.
-      //
-      // See the [enqueuing file uploads](#enqueuing-file-uploads) documentation
-      // section for more information.
+
+      /**
+       * If false, files will be added to the queue but the queue will not be
+       * processed automatically.
+       * This can be useful if you need some additional user input before sending
+       * files (or if you want want all files sent at once).
+       * If you're ready to send the file simply call `myDropzone.processQueue()`.
+       *
+       * See the [enqueuing file uploads](#enqueuing-file-uploads) documentation
+       * section for more information.
+       */
       autoProcessQueue: true,
-  
-      // If false, files added to the dropzone will not be queued by default.
-      // You'll have to call `enqueueFile(file)` manually.
+
+      /**
+       * If false, files added to the dropzone will not be queued by default.
+       * You'll have to call `enqueueFile(file)` manually.
+       */
       autoQueue: true,
-  
-      // If `true`, this will add a link to every file preview to remove or cancel (if
-      // already uploading) the file. The `dictCancelUpload`, `dictCancelUploadConfirmation`
-      // and `dictRemoveFile` options are used for the wording.
+
+      /**
+       * If `true`, this will add a link to every file preview to remove or cancel (if
+       * already uploading) the file. The `dictCancelUpload`, `dictCancelUploadConfirmation`
+       * and `dictRemoveFile` options are used for the wording.
+       */
       addRemoveLinks: false,
-  
-      // Defines where to display the file previews – if `null` the
-      // Dropzone element itself is used. Can be a plain `HTMLElement` or a CSS
-      // selector. The element should have the `dropzone-previews` class so
-      // the previews are displayed properly.
+
+      /**
+       * Defines where to display the file previews – if `null` the
+       * Dropzone element itself is used. Can be a plain `HTMLElement` or a CSS
+       * selector. The element should have the `dropzone-previews` class so
+       * the previews are displayed properly.
+       */
       previewsContainer: null,
-  
-      // This is the element the hidden input field (which is used when clicking on the
-      // dropzone to trigger file selection) will be appended to. This might
-      // be important in case you use frameworks to switch the content of your page.
+
+      /**
+       * This is the element the hidden input field (which is used when clicking on the
+       * dropzone to trigger file selection) will be appended to. This might
+       * be important in case you use frameworks to switch the content of your page.
+       */
       hiddenInputContainer: "body",
-  
-      // If null, no capture type will be specified
-      // If camera, mobile devices will skip the file selection and choose camera
-      // If microphone, mobile devices will skip the file selection and choose the microphone
-      // If camcorder, mobile devices will skip the file selection and choose the camera in video mode
-      // On apple devices multiple must be set to false.  AcceptedFiles may need to
-      // be set to an appropriate mime type (e.g. "image/*", "audio/*", or "video/*").
+
+      /**
+       * If null, no capture type will be specified
+       * If camera, mobile devices will skip the file selection and choose camera
+       * If microphone, mobile devices will skip the file selection and choose the microphone
+       * If camcorder, mobile devices will skip the file selection and choose the camera in video mode
+       * On apple devices multiple must be set to false.  AcceptedFiles may need to
+       * be set to an appropriate mime type (e.g. "image/*", "audio/*", or "video/*").
+       */
       capture: null,
-  
-      // **Deprecated**. Use `renameFile` instead.
+
+      /**
+       * **Deprecated**. Use `renameFile` instead.
+       */
       renameFilename: null,
-  
-      // A function that is invoked before the file is uploaded to the server and renames the file.
-      // This function gets the `File` as argument and can use the `file.name`. The actual name of the
-      // file that gets used during the upload can be accessed through `file.upload.filename`.
+
+      /**
+       * A function that is invoked before the file is uploaded to the server and renames the file.
+       * This function gets the `File` as argument and can use the `file.name`. The actual name of the
+       * file that gets used during the upload can be accessed through `file.upload.filename`.
+       */
       renameFile: null,
-  
-      // If `true` the fallback will be forced. This is very useful to test your server
-      // implementations first and make sure that everything works as
-      // expected without dropzone if you experience problems, and to test
-      // how your fallbacks will look.
+
+      /**
+       * If `true` the fallback will be forced. This is very useful to test your server
+       * implementations first and make sure that everything works as
+       * expected without dropzone if you experience problems, and to test
+       * how your fallbacks will look.
+       */
       forceFallback: false,
-  
-      // The text used before any files are dropped.
+
+      /**
+       * The text used before any files are dropped.
+       */
       dictDefaultMessage: "Drop files here to upload",
-  
-      // The text that replaces the default message text it the browser is not supported.
+
+      /**
+       * The text that replaces the default message text it the browser is not supported.
+       */
       dictFallbackMessage: "Your browser does not support drag'n'drop file uploads.",
-  
-      // The text that will be added before the fallback form.
-      // If you provide a  fallback element yourself, or if this option is `null` this will
-      // be ignored.
+
+      /**
+       * The text that will be added before the fallback form.
+       * If you provide a  fallback element yourself, or if this option is `null` this will
+       * be ignored.
+       */
       dictFallbackText: "Please use the fallback form below to upload your files like in the olden days.",
-  
-      // If the filesize is too big.
-      // `{{filesize}}` and `{{maxFilesize}}` will be replaced with the respective configuration values.
+
+      /**
+       * If the filesize is too big.
+       * `{{filesize}}` and `{{maxFilesize}}` will be replaced with the respective configuration values.
+       */
       dictFileTooBig: "File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.",
-  
-      // If the file doesn't match the file type.
+
+      /**
+       * If the file doesn't match the file type.
+       */
       dictInvalidFileType: "You can't upload files of this type.",
-  
-      // If the server response was invalid.
-      // `{{statusCode}}` will be replaced with the servers status code.
+
+      /**
+       * If the server response was invalid.
+       * `{{statusCode}}` will be replaced with the servers status code.
+       */
       dictResponseError: "Server responded with {{statusCode}} code.",
-  
-      // If `addRemoveLinks` is true, the text to be used for the cancel upload link.
+
+      /**
+       * If `addRemoveLinks` is true, the text to be used for the cancel upload link.
+       */
       dictCancelUpload: "Cancel upload",
-  
-      // If `addRemoveLinks` is true, the text to be used for confirmation when cancelling upload.
+
+      /**
+       * If `addRemoveLinks` is true, the text to be used for confirmation when cancelling upload.
+       */
       dictCancelUploadConfirmation: "Are you sure you want to cancel this upload?",
-  
-      // If `addRemoveLinks` is true, the text to be used to remove a file.
+
+      /**
+       * If `addRemoveLinks` is true, the text to be used to remove a file.
+       */
       dictRemoveFile: "Remove file",
-  
-      // If this is not null, then the user will be prompted before removing a file.
+
+      /**
+       * If this is not null, then the user will be prompted before removing a file.
+       */
       dictRemoveFileConfirmation: null,
-  
-      // Displayed if `maxFiles` is st and exceeded.
-      // The string `{{maxFiles}}` will be replaced by the configuration value.
+
+      /**
+       * Displayed if `maxFiles` is st and exceeded.
+       * The string `{{maxFiles}}` will be replaced by the configuration value.
+       */
       dictMaxFilesExceeded: "You can not upload any more files.",
-  
-      // Allows you to translate the different units. Starting with `tb` for terabytes and going down to
-      // `b` for bytes.
-      dictFileSizeUnits: { tb: "TB", gb: "GB", mb: "MB", kb: "KB", b: "b" },
-  
-      // Called when dropzone initialized
-      // You can add event listeners here
-      init() { return noop; },
-  
-      // A function that gets a [file](https://developer.mozilla.org/en-US/docs/DOM/File)
-      // and a `done` function as parameters.
-      //
-      // If the done function is invoked without arguments, the file is "accepted" and will
-      // be processed. If you pass an error message, the file is rejected, and the error
-      // message will be displayed.
-      // This function will not be called if the file is too big or doesn't match the mime types.
-      accept(file, done) { return done(); },
-  
-  
-      // Gets called when the browser is not supported.
-      // The default implementation shows the fallback input field and adds
-      // a text.
+
+      /**
+       * Allows you to translate the different units. Starting with `tb` for terabytes and going down to
+       * `b` for bytes.
+       */
+      dictFileSizeUnits: {tb: "TB", gb: "GB", mb: "MB", kb: "KB", b: "b"},
+
+      /**
+       * Called when dropzone initialized
+       * You can add event listeners here
+       */
+      init() {},
+
+      /**
+       * A function that gets a [file](https://developer.mozilla.org/en-US/docs/DOM/File)
+       * and a `done` function as parameters.
+       *
+       * If the done function is invoked without arguments, the file is "accepted" and will
+       * be processed. If you pass an error message, the file is rejected, and the error
+       * message will be displayed.
+       * This function will not be called if the file is too big or doesn't match the mime types.
+       */
+      accept(file, done) {
+        return done();
+      },
+
+
+      /**
+       * Gets called when the browser is not supported.
+       * The default implementation shows the fallback input field and adds
+       * a text.
+       */
       fallback() {
         // This code should pass in IE7... :(
         let messageElement;
         this.element.className = `${this.element.className} dz-browser-not-supported`;
-  
+
         for (let child of Array.from(this.element.getElementsByTagName("div"))) {
           if (/(^| )dz-message($| )/.test(child.className)) {
             messageElement = child;
@@ -384,7 +485,7 @@ class Dropzone extends Emitter {
           messageElement = Dropzone.createElement("<div class=\"dz-message\"><span></span></div>");
           this.element.appendChild(messageElement);
         }
-  
+
         let span = messageElement.getElementsByTagName("span")[0];
         if (span) {
           if (span.textContent != null) {
@@ -393,22 +494,23 @@ class Dropzone extends Emitter {
             span.innerText = this.options.dictFallbackMessage;
           }
         }
-  
+
         return this.element.appendChild(this.getFallbackForm());
       },
-  
-  
-  
-      // Gets called to calculate the thumbnail dimensions.
-      //
-      // It gets `file`, `width` and `height` (both may be `null`) as parameters and must return an object containing:
-      //
-      //  - `srcWidth` & `srcHeight` (required)
-      //  - `trgWidth` & `trgHeight` (required)
-      //  - `srcX` & `srcY` (optional, default `0`)
-      //  - `trgX` & `trgY` (optional, default `0`)
-      //
-      // Those values are going to be used by `ctx.drawImage()`.
+
+
+      /**
+       * Gets called to calculate the thumbnail dimensions.
+       *
+       * It gets `file`, `width` and `height` (both may be `null`) as parameters and must return an object containing:
+       *
+       *  - `srcWidth` & `srcHeight` (required)
+       *  - `trgWidth` & `trgHeight` (required)
+       *  - `srcX` & `srcY` (optional, default `0`)
+       *  - `trgX` & `trgY` (optional, default `0`)
+       *
+       * Those values are going to be used by `ctx.drawImage()`.
+       */
       resize(file, width, height, resizeMethod) {
         let info = {
           srcX: 0,
@@ -416,9 +518,9 @@ class Dropzone extends Emitter {
           srcWidth: file.width,
           srcHeight: file.height
         };
-  
+
         let srcRatio = file.width / file.height;
-  
+
         // Automatically calculate dimensions if not specified
         if ((width == null) && (height == null)) {
           width = info.srcWidth;
@@ -428,13 +530,13 @@ class Dropzone extends Emitter {
         } else if ((height == null)) {
           height = width / srcRatio;
         }
-  
+
         // Make sure images aren't upscaled
         width = Math.min(width, info.srcWidth);
         height = Math.min(height, info.srcHeight);
-  
+
         let trgRatio = width / height;
-  
+
         if ((info.srcWidth > width) || (info.srcHeight > height)) {
           // Image is bigger and needs rescaling
           if (resizeMethod === 'crop') {
@@ -456,23 +558,25 @@ class Dropzone extends Emitter {
             throw new Error(`Unknown resizeMethod '${resizeMethod}'`);
           }
         }
-  
+
         info.srcX = (file.width - info.srcWidth) / 2;
         info.srcY = (file.height - info.srcHeight) / 2;
-  
+
         info.trgWidth = width;
         info.trgHeight = height;
-  
+
         return info;
       },
-  
-      // Can be used to transform the file (for example, resize an image if necessary).
-      //
-      // The default implementation uses `resizeWidth` and `resizeHeight` (if provided) and resizes
-      // images according to those dimensions.
-      //
-      // Gets the `file` as the first parameter, and a `done()` function as the second, that needs
-      // to be invoked with the file when the transformation is done.
+
+      /**
+       * Can be used to transform the file (for example, resize an image if necessary).
+       *
+       * The default implementation uses `resizeWidth` and `resizeHeight` (if provided) and resizes
+       * images according to those dimensions.
+       *
+       * Gets the `file` as the first parameter, and a `done()` function as the second, that needs
+       * to be invoked with the file when the transformation is done.
+       */
       transformFile(file, done) {
         if ((this.options.resizeWidth || this.options.resizeHeight) && file.type.match(/image.*/)) {
           return this.resizeImage(file, this.options.resizeWidth, this.options.resizeHeight, this.options.resizeMethod, done);
@@ -480,21 +584,23 @@ class Dropzone extends Emitter {
           return done(file);
         }
       },
-  
-  
-      // A string that contains the template used for each dropped
-      // file. Change it to fulfill your needs but make sure to properly
-      // provide all elements.
-      //
-      // If you want to use an actual HTML element instead of providing a String
-      // as a config option, you could create a div with the id `tpl`,
-      // put the template inside it and provide the element like this:
-      //
-      //     document
-      //       .querySelector('#tpl')
-      //       .innerHTML
-      //
-      previewTemplate:  `\
+
+
+      /**
+       * A string that contains the template used for each dropped
+       * file. Change it to fulfill your needs but make sure to properly
+       * provide all elements.
+       *
+       * If you want to use an actual HTML element instead of providing a String
+       * as a config option, you could create a div with the id `tpl`,
+       * put the template inside it and provide the element like this:
+       *
+       *     document
+       *       .querySelector('#tpl')
+       *       .innerHTML
+       *
+       */
+      previewTemplate: `\
 <div class="dz-preview dz-file-preview">
   <div class="dz-image"><img data-dz-thumbnail /></div>
   <div class="dz-details">
@@ -525,57 +631,75 @@ class Dropzone extends Emitter {
   </div>
 </div>\
 `,
-  
+
       // END OPTIONS
       // (Required by the dropzone documentation parser)
-  
-  
+
+
       /*
-      Those functions register themselves to the events on init and handle all
-      the user interface specific stuff. Overwriting them won't break the upload
-      but can break the way it's displayed.
-      You can overwrite them if you don't like the default behavior. If you just
-      want to add an additional event handler, register it on the dropzone object
-      and don't overwrite those options.
-      */
-  
-  
-  
-  
+       Those functions register themselves to the events on init and handle all
+       the user interface specific stuff. Overwriting them won't break the upload
+       but can break the way it's displayed.
+       You can overwrite them if you don't like the default behavior. If you just
+       want to add an additional event handler, register it on the dropzone object
+       and don't overwrite those options.
+       */
+
+
+
+
       // Those are self explanatory and simply concern the DragnDrop.
-      drop(e) { return this.element.classList.remove("dz-drag-hover"); },
-      dragstart: noop,
-      dragend(e) { return this.element.classList.remove("dz-drag-hover"); },
-      dragenter(e) { return this.element.classList.add("dz-drag-hover"); },
-      dragover(e) { return this.element.classList.add("dz-drag-hover"); },
-      dragleave(e) { return this.element.classList.remove("dz-drag-hover"); },
-  
-      paste: noop,
-  
+      drop(e) {
+        return this.element.classList.remove("dz-drag-hover");
+      },
+      dragstart(e) {
+      },
+      dragend(e) {
+        return this.element.classList.remove("dz-drag-hover");
+      },
+      dragenter(e) {
+        return this.element.classList.add("dz-drag-hover");
+      },
+      dragover(e) {
+        return this.element.classList.add("dz-drag-hover");
+      },
+      dragleave(e) {
+        return this.element.classList.remove("dz-drag-hover");
+      },
+
+      paste(e) {
+      },
+
       // Called whenever there are no files left in the dropzone anymore, and the
       // dropzone should be displayed as if in the initial state.
       reset() {
         return this.element.classList.remove("dz-started");
       },
-  
+
       // Called when a file is added to the queue
       // Receives `file`
       addedfile(file) {
-        if (this.element === this.previewsContainer) { this.element.classList.add("dz-started"); }
-  
+        if (this.element === this.previewsContainer) {
+          this.element.classList.add("dz-started");
+        }
+
         if (this.previewsContainer) {
           file.previewElement = Dropzone.createElement(this.options.previewTemplate.trim());
           file.previewTemplate = file.previewElement; // Backwards compatibility
-  
+
           this.previewsContainer.appendChild(file.previewElement);
-          for (var node of Array.from(file.previewElement.querySelectorAll("[data-dz-name]"))) { node.textContent = file.name; }
-          for (node of Array.from(file.previewElement.querySelectorAll("[data-dz-size]"))) { node.innerHTML = this.filesize(file.size); }
-  
+          for (var node of Array.from(file.previewElement.querySelectorAll("[data-dz-name]"))) {
+            node.textContent = file.name;
+          }
+          for (node of Array.from(file.previewElement.querySelectorAll("[data-dz-size]"))) {
+            node.innerHTML = this.filesize(file.size);
+          }
+
           if (this.options.addRemoveLinks) {
             file._removeLink = Dropzone.createElement(`<a class="dz-remove" href="javascript:undefined;" data-dz-remove>${this.options.dictRemoveFile}</a>`);
             file.previewElement.appendChild(file._removeLink);
           }
-  
+
           let removeFileEvent = e => {
             e.preventDefault();
             e.stopPropagation();
@@ -589,20 +713,22 @@ class Dropzone extends Emitter {
               }
             }
           };
-  
+
           return Array.from(file.previewElement.querySelectorAll("[data-dz-remove]")).map((removeLink) => removeLink.addEventListener("click", removeFileEvent));
         }
       },
-  
-  
+
+
       // Called whenever a file is removed.
       removedfile(file) {
-        if (file.previewElement) { if (file.previewElement != null) {
-          file.previewElement.parentNode.removeChild(file.previewElement);
-        } }
+        if (file.previewElement) {
+          if (file.previewElement != null) {
+            file.previewElement.parentNode.removeChild(file.previewElement);
+          }
+        }
         return this._updateMaxFilesReachedClass();
       },
-  
+
       // Called when a thumbnail has been generated
       // Receives `file` and `dataUrl`
       thumbnail(file, dataUrl) {
@@ -612,99 +738,118 @@ class Dropzone extends Emitter {
             thumbnailElement.alt = file.name;
             thumbnailElement.src = dataUrl;
           }
-  
+
           return setTimeout((() => file.previewElement.classList.add("dz-image-preview")), 1);
         }
       },
-  
+
       // Called whenever an error occurs
       // Receives `file` and `message`
       error(file, message) {
         if (file.previewElement) {
           file.previewElement.classList.add("dz-error");
-          if ((typeof message !== "String") && message.error) { message = message.error; }
+          if ((typeof message !== "String") && message.error) {
+            message = message.error;
+          }
           return Array.from(file.previewElement.querySelectorAll("[data-dz-errormessage]")).map((node) => (node.textContent = message));
         }
       },
-  
-      errormultiple: noop,
-  
+
+      errormultiple() {
+      },
+
       // Called when a file gets processed. Since there is a cue, not all added
       // files are processed immediately.
       // Receives `file`
       processing(file) {
         if (file.previewElement) {
           file.previewElement.classList.add("dz-processing");
-          if (file._removeLink) { return file._removeLink.textContent = this.options.dictCancelUpload; }
+          if (file._removeLink) {
+            return file._removeLink.textContent = this.options.dictCancelUpload;
+          }
         }
       },
-  
-      processingmultiple: noop,
-  
+
+      processingmultiple() {
+      },
+
       // Called whenever the upload progress gets updated.
       // Receives `file`, `progress` (percentage 0-100) and `bytesSent`.
       // To get the total number of bytes of the file, use `file.size`
       uploadprogress(file, progress, bytesSent) {
         if (file.previewElement) {
           return Array.from(file.previewElement.querySelectorAll("[data-dz-uploadprogress]")).map((node) =>
-            node.nodeName === 'PROGRESS' ?
-              (node.value = progress)
-            :
-              (node.style.width = `${progress}%`));
+              node.nodeName === 'PROGRESS' ?
+                  (node.value = progress)
+                  :
+                  (node.style.width = `${progress}%`));
         }
       },
-  
+
       // Called whenever the total upload progress gets updated.
       // Called with totalUploadProgress (0-100), totalBytes and totalBytesSent
-      totaluploadprogress: noop,
-  
+      totaluploadprogress() {
+      },
+
       // Called just before the file is sent. Gets the `xhr` object as second
       // parameter, so you can modify it (for example to add a CSRF token) and a
       // `formData` object to add additional information.
-      sending: noop,
-  
-      sendingmultiple: noop,
-  
+      sending() {
+      },
+
+      sendingmultiple() {},
+
       // When the complete upload is finished and successful
       // Receives `file`
       success(file) {
-        if (file.previewElement) { return file.previewElement.classList.add("dz-success"); }
+        if (file.previewElement) {
+          return file.previewElement.classList.add("dz-success");
+        }
       },
-  
-      successmultiple: noop,
-  
+
+      successmultiple() {},
+
       // When the upload is canceled.
-      canceled(file) { return this.emit("error", file, "Upload canceled."); },
-  
-      canceledmultiple: noop,
-  
+      canceled(file) {
+        return this.emit("error", file, "Upload canceled.");
+      },
+
+      canceledmultiple() {},
+
       // When the upload is finished, either with success or an error.
       // Receives `file`
       complete(file) {
-        if (file._removeLink) { file._removeLink.textContent = this.options.dictRemoveFile; }
-        if (file.previewElement) { return file.previewElement.classList.add("dz-complete"); }
+        if (file._removeLink) {
+          file._removeLink.textContent = this.options.dictRemoveFile;
+        }
+        if (file.previewElement) {
+          return file.previewElement.classList.add("dz-complete");
+        }
       },
-  
-      completemultiple: noop,
-  
-      maxfilesexceeded: noop,
-  
-      maxfilesreached: noop,
-  
-      queuecomplete: noop,
-  
-      addedfiles: noop
+
+      completemultiple() {},
+
+      maxfilesexceeded() {},
+
+      maxfilesreached() {},
+
+      queuecomplete() {},
+
+      addedfiles() {}
     };
-  
-  
-    this.prototype._thumbnailQueue = [ ];
+
+
+    this.prototype._thumbnailQueue = [];
     this.prototype._processingThumbnail = false;
   }
 
   // global utility
   static extend(target, ...objects) {
     for (let object of Array.from(objects)) {
-      for (let key in object) { let val = object[key]; target[key] = val; }
+      for (let key in object) {
+        let val = object[key];
+        target[key] = val;
+      }
     }
     return target;
   }
@@ -718,16 +863,22 @@ class Dropzone extends Emitter {
 
     this.defaultOptions.previewTemplate = this.defaultOptions.previewTemplate.replace(/\n*/g, "");
 
-    this.clickableElements = [ ];
-    this.listeners = [ ];
+    this.clickableElements = [];
+    this.listeners = [];
     this.files = []; // All files
 
-    if (typeof this.element === "string") { this.element = document.querySelector(this.element); }
+    if (typeof this.element === "string") {
+      this.element = document.querySelector(this.element);
+    }
 
     // Not checking if instance of HTMLElement or Element since IE9 is extremely weird.
-    if (!this.element || (this.element.nodeType == null)) { throw new Error("Invalid dropzone element."); }
+    if (!this.element || (this.element.nodeType == null)) {
+      throw new Error("Invalid dropzone element.");
+    }
 
-    if (this.element.dropzone) { throw new Error("Dropzone already attached."); }
+    if (this.element.dropzone) {
+      throw new Error("Dropzone already attached.");
+    }
 
     // Now add this dropzone to the instances.
     Dropzone.instances.push(this);
@@ -735,19 +886,27 @@ class Dropzone extends Emitter {
     // Put the dropzone inside the element itself.
     this.element.dropzone = this;
 
-    let elementOptions = (left = Dropzone.optionsForElement(this.element)) != null ? left : { };
+    let elementOptions = (left = Dropzone.optionsForElement(this.element)) != null ? left : {};
 
-    this.options = Dropzone.extend({ }, this.defaultOptions, elementOptions, options != null ? options : { });
+    this.options = Dropzone.extend({}, this.defaultOptions, elementOptions, options != null ? options : {});
 
     // If the browser failed, just call the fallback and leave
-    if (this.options.forceFallback || !Dropzone.isBrowserSupported()) { return this.options.fallback.call(this); }
+    if (this.options.forceFallback || !Dropzone.isBrowserSupported()) {
+      return this.options.fallback.call(this);
+    }
 
     // @options.url = @element.getAttribute "action" unless @options.url?
-    if (this.options.url == null) { this.options.url = this.element.getAttribute("action"); }
+    if (this.options.url == null) {
+      this.options.url = this.element.getAttribute("action");
+    }
 
-    if (!this.options.url) { throw new Error("No URL provided."); }
+    if (!this.options.url) {
+      throw new Error("No URL provided.");
+    }
 
-    if (this.options.acceptedFiles && this.options.acceptedMimeTypes) { throw new Error("You can't provide both 'acceptedFiles' and 'acceptedMimeTypes'. 'acceptedMimeTypes' is deprecated."); }
+    if (this.options.acceptedFiles && this.options.acceptedMimeTypes) {
+      throw new Error("You can't provide both 'acceptedFiles' and 'acceptedMimeTypes'. 'acceptedMimeTypes' is deprecated.");
+    }
 
     // Backwards compatibility
     if (this.options.acceptedMimeTypes) {
@@ -778,7 +937,7 @@ class Dropzone extends Emitter {
 
     if (this.options.clickable) {
       if (this.options.clickable === true) {
-        this.clickableElements = [ this.element ];
+        this.clickableElements = [this.element];
       } else {
         this.clickableElements = Dropzone.getElements(this.options.clickable, "clickable");
       }
@@ -790,29 +949,45 @@ class Dropzone extends Emitter {
 
 
   // Returns all files that have been accepted
-  getAcceptedFiles() { return Array.from(this.files).filter((file) => file.accepted).map((file) => file); }
+  getAcceptedFiles() {
+    return Array.from(this.files).filter((file) => file.accepted).map((file) => file);
+  }
 
   // Returns all files that have been rejected
   // Not sure when that's going to be useful, but added for completeness.
-  getRejectedFiles() { return Array.from(this.files).filter((file) => !file.accepted).map((file) => file); }
+  getRejectedFiles() {
+    return Array.from(this.files).filter((file) => !file.accepted).map((file) => file);
+  }
 
-  getFilesWithStatus(status) { return Array.from(this.files).filter((file) => file.status === status).map((file) => file); }
+  getFilesWithStatus(status) {
+    return Array.from(this.files).filter((file) => file.status === status).map((file) => file);
+  }
 
   // Returns all files that are in the queue
-  getQueuedFiles() { return this.getFilesWithStatus(Dropzone.QUEUED); }
+  getQueuedFiles() {
+    return this.getFilesWithStatus(Dropzone.QUEUED);
+  }
 
-  getUploadingFiles() { return this.getFilesWithStatus(Dropzone.UPLOADING); }
+  getUploadingFiles() {
+    return this.getFilesWithStatus(Dropzone.UPLOADING);
+  }
 
-  getAddedFiles() { return this.getFilesWithStatus(Dropzone.ADDED); }
+  getAddedFiles() {
+    return this.getFilesWithStatus(Dropzone.ADDED);
+  }
 
   // Files that are either queued or uploading
-  getActiveFiles() { return Array.from(this.files).filter((file) => (file.status === Dropzone.UPLOADING) || (file.status === Dropzone.QUEUED)).map((file) => file); }
+  getActiveFiles() {
+    return Array.from(this.files).filter((file) => (file.status === Dropzone.UPLOADING) || (file.status === Dropzone.QUEUED)).map((file) => file);
+  }
 
   // The function that gets called when Dropzone is initialized. You
   // can (and should) setup event listeners inside this function.
   init() {
     // In case it isn't set already
-    if (this.element.tagName === "form") { this.element.setAttribute("enctype", "multipart/form-data"); }
+    if (this.element.tagName === "form") {
+      this.element.setAttribute("enctype", "multipart/form-data");
+    }
 
     if (this.element.classList.contains("dropzone") && !this.element.querySelector(".dz-message")) {
       this.element.appendChild(Dropzone.createElement(`<div class="dz-default dz-message"><span>${this.options.dictDefaultMessage}</span></div>`));
@@ -820,14 +995,22 @@ class Dropzone extends Emitter {
 
     if (this.clickableElements.length) {
       let setupHiddenFileInput = () => {
-        if (this.hiddenFileInput) { this.hiddenFileInput.parentNode.removeChild(this.hiddenFileInput); }
+        if (this.hiddenFileInput) {
+          this.hiddenFileInput.parentNode.removeChild(this.hiddenFileInput);
+        }
         this.hiddenFileInput = document.createElement("input");
         this.hiddenFileInput.setAttribute("type", "file");
-        if ((this.options.maxFiles === null) || (this.options.maxFiles > 1)) { this.hiddenFileInput.setAttribute("multiple", "multiple"); }
+        if ((this.options.maxFiles === null) || (this.options.maxFiles > 1)) {
+          this.hiddenFileInput.setAttribute("multiple", "multiple");
+        }
         this.hiddenFileInput.className = "dz-hidden-input";
 
-        if (this.options.acceptedFiles !== null) { this.hiddenFileInput.setAttribute("accept", this.options.acceptedFiles); }
-        if (this.options.capture !== null) { this.hiddenFileInput.setAttribute("capture", this.options.capture); }
+        if (this.options.acceptedFiles !== null) {
+          this.hiddenFileInput.setAttribute("accept", this.options.acceptedFiles);
+        }
+        if (this.options.capture !== null) {
+          this.hiddenFileInput.setAttribute("capture", this.options.capture);
+        }
 
         // Not setting `display="none"` because some browsers don't accept clicks
         // on elements that aren't displayed.
@@ -839,8 +1022,12 @@ class Dropzone extends Emitter {
         this.hiddenFileInput.style.width = "0";
         document.querySelector(this.options.hiddenInputContainer).appendChild(this.hiddenFileInput);
         return this.hiddenFileInput.addEventListener("change", () => {
-          let { files } = this.hiddenFileInput;
-          if (files.length) { for (let file of Array.from(files)) { this.addFile(file); } }
+          let {files} = this.hiddenFileInput;
+          if (files.length) {
+            for (let file of Array.from(files)) {
+              this.addFile(file);
+            }
+          }
           this.emit("addedfiles", files);
           return setupHiddenFileInput();
         });
@@ -854,7 +1041,9 @@ class Dropzone extends Emitter {
     // Setup all event listeners on the Dropzone object itself.
     // They're not in @setupEventListeners() because they shouldn't be removed
     // again when the dropzone gets disabled.
-    for (let eventName of Array.from(this.events)) { this.on(eventName, this.options[eventName]); }
+    for (let eventName of Array.from(this.events)) {
+      this.on(eventName, this.options[eventName]);
+    }
 
     this.on("uploadprogress", () => this.updateTotalUploadProgress());
 
@@ -871,7 +1060,7 @@ class Dropzone extends Emitter {
     });
 
 
-    let noPropagation = function(e) {
+    let noPropagation = function (e) {
       e.stopPropagation();
       if (e.preventDefault) {
         return e.preventDefault();
@@ -897,7 +1086,10 @@ class Dropzone extends Emitter {
             // http://stackoverflow.com/questions/19526430/drag-and-drop-file-uploads-from-chrome-downloads-bar
             // Try is required to prevent bug in Internet Explorer 11 (SCRIPT65535 exception)
             let efct;
-            try { efct = e.dataTransfer.effectAllowed; } catch (error) {}
+            try {
+              efct = e.dataTransfer.effectAllowed;
+            } catch (error) {
+            }
             e.dataTransfer.dropEffect = ('move' === efct) || ('linkMove' === efct) ? 'move' : 'copy';
 
             noPropagation(e);
@@ -915,10 +1107,10 @@ class Dropzone extends Emitter {
           }
         }
 
-          // This is disabled right now, because the browsers don't implement it properly.
-          // "paste": (e) =>
-          //   noPropagation e
-          //   @paste e
+        // This is disabled right now, because the browsers don't implement it properly.
+        // "paste": (e) =>
+        //   noPropagation e
+        //   @paste e
       }
     ];
 
@@ -988,7 +1180,9 @@ class Dropzone extends Emitter {
   // If @options.renameFile is a function,
   // the function will be used to rename the file.name before appending it to the formData
   _renameFile(file) {
-    if (typeof this.options.renameFile !== "function") { return file.name; }
+    if (typeof this.options.renameFile !== "function") {
+      return file.name;
+    }
     return this.options.renameFile(file);
   }
 
@@ -998,10 +1192,14 @@ class Dropzone extends Emitter {
   // This code has to pass in IE7 :(
   getFallbackForm() {
     let existingFallback, form;
-    if (existingFallback = this.getExistingFallback()) { return existingFallback; }
+    if (existingFallback = this.getExistingFallback()) {
+      return existingFallback;
+    }
 
     let fieldsString = "<div class=\"dz-fallback\">";
-    if (this.options.dictFallbackText) { fieldsString += `<p>${this.options.dictFallbackText}</p>`; }
+    if (this.options.dictFallbackText) {
+      fieldsString += `<p>${this.options.dictFallbackText}</p>`;
+    }
     fieldsString += `<input type="file" name="${this._getParamName(0)}" ${this.options.uploadMultiple ? 'multiple="multiple"' : undefined } /><input type="submit" value="Upload!"></div>`;
 
     let fields = Dropzone.createElement(fieldsString);
@@ -1021,11 +1219,19 @@ class Dropzone extends Emitter {
   //
   // This code has to pass in IE7 :(
   getExistingFallback() {
-    let getFallback = function(elements) { for (let el of Array.from(elements)) { if (/(^| )fallback($| )/.test(el.className)) { return el; } } };
+    let getFallback = function (elements) {
+      for (let el of Array.from(elements)) {
+        if (/(^| )fallback($| )/.test(el.className)) {
+          return el;
+        }
+      }
+    };
 
-    for (let tagName of [ "div", "form" ]) {
+    for (let tagName of ["div", "form"]) {
       var fallback;
-      if (fallback = getFallback(this.element.getElementsByTagName(tagName))) { return fallback; }
+      if (fallback = getFallback(this.element.getElementsByTagName(tagName))) {
+        return fallback;
+      }
     }
   }
 
@@ -1033,28 +1239,28 @@ class Dropzone extends Emitter {
   // Activates all listeners stored in @listeners
   setupEventListeners() {
     return Array.from(this.listeners).map((elementListeners) =>
-      (() => {
-        let result = [];
-        for (let event in elementListeners.events) {
-          let listener = elementListeners.events[event];
-          result.push(elementListeners.element.addEventListener(event, listener, false));
-        }
-        return result;
-      })());
+        (() => {
+          let result = [];
+          for (let event in elementListeners.events) {
+            let listener = elementListeners.events[event];
+            result.push(elementListeners.element.addEventListener(event, listener, false));
+          }
+          return result;
+        })());
   }
 
 
   // Deactivates all listeners stored in @listeners
   removeEventListeners() {
     return Array.from(this.listeners).map((elementListeners) =>
-      (() => {
-        let result = [];
-        for (let event in elementListeners.events) {
-          let listener = elementListeners.events[event];
-          result.push(elementListeners.element.removeEventListener(event, listener, false));
-        }
-        return result;
-      })());
+        (() => {
+          let result = [];
+          for (let event in elementListeners.events) {
+            let listener = elementListeners.events[event];
+            result.push(elementListeners.element.removeEventListener(event, listener, false));
+          }
+          return result;
+        })());
   }
 
   // Removes all event listeners and cancels all files in the queue or being processed.
@@ -1076,7 +1282,7 @@ class Dropzone extends Emitter {
     let selectedUnit = "b";
 
     if (size > 0) {
-      let units = [ 'tb', 'gb', 'mb', 'kb', 'b' ];
+      let units = ['tb', 'gb', 'mb', 'kb', 'b'];
 
       for (let i = 0; i < units.length; i++) {
         let unit = units[i];
@@ -1099,7 +1305,9 @@ class Dropzone extends Emitter {
   // Adds or removes the `dz-max-files-reached` class from the form.
   _updateMaxFilesReachedClass() {
     if ((this.options.maxFiles != null) && (this.getAcceptedFiles().length >= this.options.maxFiles)) {
-      if (this.getAcceptedFiles().length === this.options.maxFiles) { this.emit('maxfilesreached', this.files); }
+      if (this.getAcceptedFiles().length === this.options.maxFiles) {
+        this.emit('maxfilesreached', this.files);
+      }
       return this.element.classList.add("dz-max-files-reached");
     } else {
       return this.element.classList.remove("dz-max-files-reached");
@@ -1107,17 +1315,18 @@ class Dropzone extends Emitter {
   }
 
 
-
   drop(e) {
-    if (!e.dataTransfer) { return; }
+    if (!e.dataTransfer) {
+      return;
+    }
     this.emit("drop", e);
 
-    let { files } = e.dataTransfer;
+    let {files} = e.dataTransfer;
     this.emit("addedfiles", files);
 
     // Even if it's a folder, files.length will contain the folders.
     if (files.length) {
-      let { items } = e.dataTransfer;
+      let {items} = e.dataTransfer;
       if (items && items.length && (items[0].webkitGetAsEntry != null)) {
         // The browser supports dropping of folders, so handle items instead of files
         this._addFilesFromItems(items);
@@ -1128,12 +1337,16 @@ class Dropzone extends Emitter {
   }
 
   paste(e) {
-    if (__guard__(e != null ? e.clipboardData : undefined, x => x.items) == null) { return; }
+    if (__guard__(e != null ? e.clipboardData : undefined, x => x.items) == null) {
+      return;
+    }
 
     this.emit("paste", e);
-    let { items } = e.clipboardData;
+    let {items} = e.clipboardData;
 
-    if (items.length) { return this._addFilesFromItems(items); }
+    if (items.length) {
+      return this._addFilesFromItems(items);
+    }
   }
 
 
@@ -1180,32 +1393,33 @@ class Dropzone extends Emitter {
 
     var readEntries = () => {
       return dirReader.readEntries(entries => {
-        if (entries.length > 0) {
-          for (let entry of Array.from(entries)) {
-            if (entry.isFile) {
-              entry.file(file => {
-                if (this.options.ignoreHiddenFiles && (file.name.substring(0, 1) === '.')) { return; }
-                file.fullPath = `${path}/${file.name}`;
-                return this.addFile(file);
-              });
-            } else if (entry.isDirectory) {
-              this._addFilesFromDirectory(entry, `${path}/${entry.name}`);
-            }
-          }
+            if (entries.length > 0) {
+              for (let entry of Array.from(entries)) {
+                if (entry.isFile) {
+                  entry.file(file => {
+                    if (this.options.ignoreHiddenFiles && (file.name.substring(0, 1) === '.')) {
+                      return;
+                    }
+                    file.fullPath = `${path}/${file.name}`;
+                    return this.addFile(file);
+                  });
+                } else if (entry.isDirectory) {
+                  this._addFilesFromDirectory(entry, `${path}/${entry.name}`);
+                }
+              }
 
-          // Recursively call readEntries() again, since browser only handle
-          // the first 100 entries.
-          // See: https://developer.mozilla.org/en-US/docs/Web/API/DirectoryReader#readEntries
-          readEntries();
-        }
-        return null;
-      }
-      , errorHandler);
+              // Recursively call readEntries() again, since browser only handle
+              // the first 100 entries.
+              // See: https://developer.mozilla.org/en-US/docs/Web/API/DirectoryReader#readEntries
+              readEntries();
+            }
+            return null;
+          }
+          , errorHandler);
     };
 
     return readEntries();
   }
-
 
 
   // If `done()` is called without argument the file is accepted
@@ -1247,10 +1461,12 @@ class Dropzone extends Emitter {
     return this.accept(file, error => {
       if (error) {
         file.accepted = false;
-        this._errorProcessing([ file ], error); // Will set the file.status
+        this._errorProcessing([file], error); // Will set the file.status
       } else {
         file.accepted = true;
-        if (this.options.autoQueue) { this.enqueueFile(file); } // Will set .accepted = true
+        if (this.options.autoQueue) {
+          this.enqueueFile(file);
+        } // Will set .accepted = true
       }
       return this._updateMaxFilesReachedClass();
     });
@@ -1258,7 +1474,12 @@ class Dropzone extends Emitter {
 
 
   // Wrapper for enqueueFile
-  enqueueFiles(files) { for (let file of Array.from(files)) { this.enqueueFile(file); } return null; }
+  enqueueFiles(files) {
+    for (let file of Array.from(files)) {
+      this.enqueueFile(file);
+    }
+    return null;
+  }
 
   enqueueFile(file) {
     if ((file.status === Dropzone.ADDED) && (file.accepted === true)) {
@@ -1270,6 +1491,7 @@ class Dropzone extends Emitter {
       throw new Error("This file can't be queued because it has already been processed or was rejected.");
     }
   }
+
   _enqueueThumbnail(file) {
     if (this.options.createImageThumbnails && file.type.match(/image.*/) && (file.size <= (this.options.maxThumbnailFilesize * 1024 * 1024))) {
       this._thumbnailQueue.push(file);
@@ -1278,7 +1500,9 @@ class Dropzone extends Emitter {
   }
 
   _processThumbnailQueue() {
-    if (this._processingThumbnail || (this._thumbnailQueue.length === 0)) { return; }
+    if (this._processingThumbnail || (this._thumbnailQueue.length === 0)) {
+      return;
+    }
 
     this._processingThumbnail = true;
     let file = this._thumbnailQueue.shift();
@@ -1292,19 +1516,27 @@ class Dropzone extends Emitter {
 
   // Can be called by the user to remove a file
   removeFile(file) {
-    if (file.status === Dropzone.UPLOADING) { this.cancelUpload(file); }
+    if (file.status === Dropzone.UPLOADING) {
+      this.cancelUpload(file);
+    }
     this.files = without(this.files, file);
 
     this.emit("removedfile", file);
-    if (this.files.length === 0) { return this.emit("reset"); }
+    if (this.files.length === 0) {
+      return this.emit("reset");
+    }
   }
 
   // Removes all files that aren't currently processed from the list
   removeAllFiles(cancelIfNecessary) {
     // Create a copy of files since removeFile() changes the @files array.
-    if (cancelIfNecessary == null) { cancelIfNecessary = false; }
+    if (cancelIfNecessary == null) {
+      cancelIfNecessary = false;
+    }
     for (let file of Array.from(this.files.slice())) {
-      if ((file.status !== Dropzone.UPLOADING) || cancelIfNecessary) { this.removeFile(file); }
+      if ((file.status !== Dropzone.UPLOADING) || cancelIfNecessary) {
+        this.removeFile(file);
+      }
     }
     return null;
   }
@@ -1318,8 +1550,10 @@ class Dropzone extends Emitter {
         // The image has not been resized
         return callback(file);
       } else {
-        let { resizeMimeType } = this.options;
-        if (resizeMimeType == null) { resizeMimeType = file.type; }
+        let {resizeMimeType} = this.options;
+        if (resizeMimeType == null) {
+          resizeMimeType = file.type;
+        }
         let resizedDataURL = canvas.toDataURL(resizeMimeType, this.options.resizeQuality);
         if ((resizeMimeType === 'image/jpeg') || (resizeMimeType === 'image/jpg')) {
           // Now add the original EXIF information
@@ -1339,7 +1573,9 @@ class Dropzone extends Emitter {
 
       // Don't bother creating a thumbnail for SVG images since they're vector
       if (file.type === "image/svg+xml") {
-        if (callback != null) { callback(fileReader.result); }
+        if (callback != null) {
+          callback(fileReader.result);
+        }
         return;
       }
 
@@ -1354,15 +1590,17 @@ class Dropzone extends Emitter {
     // See https://github.com/enyo/dropzone/pull/226
     let img = document.createElement("img");
 
-    if (crossOrigin) { img.crossOrigin = crossOrigin; }
+    if (crossOrigin) {
+      img.crossOrigin = crossOrigin;
+    }
 
     img.onload = () => {
       let loadExif = callback => callback(1);
       if ((typeof EXIF !== 'undefined' && EXIF !== null) && fixOrientation) {
         loadExif = callback =>
-          EXIF.getData(img, function() {
-            return callback(EXIF.getTag(this, 'Orientation'));
-          })
+            EXIF.getData(img, function () {
+              return callback(EXIF.getTag(this, 'Orientation'));
+            })
         ;
       }
 
@@ -1427,11 +1665,15 @@ class Dropzone extends Emitter {
 
         let thumbnail = canvas.toDataURL("image/png");
 
-        if (callback != null) { return callback(thumbnail, canvas); }
+        if (callback != null) {
+          return callback(thumbnail, canvas);
+        }
       });
     };
 
-    if (callback != null) { img.onerror = callback; }
+    if (callback != null) {
+      img.onerror = callback;
+    }
 
     return img.src = file.dataURL;
   }
@@ -1439,23 +1681,29 @@ class Dropzone extends Emitter {
 
   // Goes through the queue and processes files if there aren't too many already.
   processQueue() {
-    let { parallelUploads } = this.options;
+    let {parallelUploads} = this.options;
     let processingLength = this.getUploadingFiles().length;
     let i = processingLength;
 
     // There are already at least as many files uploading than should be
-    if (processingLength >= parallelUploads) { return; }
+    if (processingLength >= parallelUploads) {
+      return;
+    }
 
     let queuedFiles = this.getQueuedFiles();
 
-    if (!(queuedFiles.length > 0)) { return; }
+    if (!(queuedFiles.length > 0)) {
+      return;
+    }
 
     if (this.options.uploadMultiple) {
       // The files should be uploaded in one request
       return this.processFiles(queuedFiles.slice(0, (parallelUploads - processingLength)));
     } else {
       while (i < parallelUploads) {
-        if (!queuedFiles.length) { return; } // Nothing left to process
+        if (!queuedFiles.length) {
+          return;
+        } // Nothing left to process
         this.processFile(queuedFiles.shift());
         i++;
       }
@@ -1464,7 +1712,9 @@ class Dropzone extends Emitter {
 
 
   // Wrapper for `processFiles`
-  processFile(file) { return this.processFiles([ file ]); }
+  processFile(file) {
+    return this.processFiles([file]);
+  }
 
 
   // Loads the file, then calls finishedLoading()
@@ -1476,15 +1726,18 @@ class Dropzone extends Emitter {
       this.emit("processing", file);
     }
 
-    if (this.options.uploadMultiple) { this.emit("processingmultiple", files); }
+    if (this.options.uploadMultiple) {
+      this.emit("processingmultiple", files);
+    }
 
     return this.uploadFiles(files);
   }
 
 
-
-  _getFilesWithXhr(xhr) { let files;
-  return files = (Array.from(this.files).filter((file) => file.xhr === xhr).map((file) => file)); }
+  _getFilesWithXhr(xhr) {
+    let files;
+    return files = (Array.from(this.files).filter((file) => file.xhr === xhr).map((file) => file));
+  }
 
 
   // Cancels the file upload and sets the status to CANCELED
@@ -1494,18 +1747,28 @@ class Dropzone extends Emitter {
   cancelUpload(file) {
     if (file.status === Dropzone.UPLOADING) {
       let groupedFiles = this._getFilesWithXhr(file.xhr);
-      for (var groupedFile of Array.from(groupedFiles)) { groupedFile.status = Dropzone.CANCELED; }
+      for (var groupedFile of Array.from(groupedFiles)) {
+        groupedFile.status = Dropzone.CANCELED;
+      }
       file.xhr.abort();
-      for (groupedFile of Array.from(groupedFiles)) { this.emit("canceled", groupedFile); }
-      if (this.options.uploadMultiple) { this.emit("canceledmultiple", groupedFiles); }
+      for (groupedFile of Array.from(groupedFiles)) {
+        this.emit("canceled", groupedFile);
+      }
+      if (this.options.uploadMultiple) {
+        this.emit("canceledmultiple", groupedFiles);
+      }
 
-    } else if ([ Dropzone.ADDED, Dropzone.QUEUED ].includes(file.status)) {
+    } else if ([Dropzone.ADDED, Dropzone.QUEUED].includes(file.status)) {
       file.status = Dropzone.CANCELED;
       this.emit("canceled", file);
-      if (this.options.uploadMultiple) { this.emit("canceledmultiple", [ file ]); }
+      if (this.options.uploadMultiple) {
+        this.emit("canceledmultiple", [file]);
+      }
     }
 
-    if (this.options.autoProcessQueue) { return this.processQueue(); }
+    if (this.options.autoProcessQueue) {
+      return this.processQueue();
+    }
   }
 
   resolveOption(option, ...args) {
@@ -1516,14 +1779,18 @@ class Dropzone extends Emitter {
   }
 
   // Wrapper for uploadFiles()
-  uploadFile(file) { return this.uploadFiles([ file ]); }
+  uploadFile(file) {
+    return this.uploadFiles([file]);
+  }
 
   uploadFiles(files) {
     let result, value;
     let xhr = new XMLHttpRequest();
 
     // Put the xhr object in the file objects to be able to reference it later.
-    for (var file of Array.from(files)) { file.xhr = xhr; }
+    for (var file of Array.from(files)) {
+      file.xhr = xhr;
+    }
 
     let method = this.resolveOption(this.options.method, files);
     let url = this.resolveOption(this.options.url, files);
@@ -1567,13 +1834,17 @@ class Dropzone extends Emitter {
         progress = 100;
 
         for (file of Array.from(files)) {
-          if ((file.upload.progress !== 100) || (file.upload.bytesSent !== file.upload.total)) { allFilesFinished = false; }
+          if ((file.upload.progress !== 100) || (file.upload.bytesSent !== file.upload.total)) {
+            allFilesFinished = false;
+          }
           file.upload.progress = progress;
           file.upload.bytesSent = file.upload.total;
         }
 
         // Nothing to do, all files already at 100%
-        if (allFilesFinished) { return; }
+        if (allFilesFinished) {
+          return;
+        }
       }
 
       return (() => {
@@ -1586,9 +1857,13 @@ class Dropzone extends Emitter {
     };
 
     xhr.onload = e => {
-      if (files[0].status === Dropzone.CANCELED) { return; }
+      if (files[0].status === Dropzone.CANCELED) {
+        return;
+      }
 
-      if (xhr.readyState !== 4) { return; }
+      if (xhr.readyState !== 4) {
+        return;
+      }
 
       if ((xhr.responseType !== 'arraybuffer') && (xhr.responseType !== 'blob')) {
         response = xhr.responseText;
@@ -1613,7 +1888,9 @@ class Dropzone extends Emitter {
     };
 
     xhr.onerror = () => {
-      if (files[0].status === Dropzone.CANCELED) { return; }
+      if (files[0].status === Dropzone.CANCELED) {
+        return;
+      }
       return handleError();
     };
 
@@ -1627,21 +1904,34 @@ class Dropzone extends Emitter {
       "X-Requested-With": "XMLHttpRequest",
     };
 
-    if (this.options.headers) { Dropzone.extend(headers, this.options.headers); }
+    if (this.options.headers) {
+      Dropzone.extend(headers, this.options.headers);
+    }
 
     for (let headerName in headers) {
       let headerValue = headers[headerName];
-      if (headerValue) { xhr.setRequestHeader(headerName, headerValue); }
+      if (headerValue) {
+        xhr.setRequestHeader(headerName, headerValue);
+      }
     }
 
     let formData = new FormData();
 
     // Adding all @options parameters
-    if (this.options.params) { for (let key in this.options.params) { value = this.options.params[key]; formData.append(key, value); } }
+    if (this.options.params) {
+      for (let key in this.options.params) {
+        value = this.options.params[key];
+        formData.append(key, value);
+      }
+    }
 
     // Let the user add additional data if necessary
-    for (file of Array.from(files)) { this.emit("sending", file, xhr, formData); }
-    if (this.options.uploadMultiple) { this.emit("sendingmultiple", files, xhr, formData); }
+    for (file of Array.from(files)) {
+      this.emit("sending", file, xhr, formData);
+    }
+    if (this.options.uploadMultiple) {
+      this.emit("sendingmultiple", files, xhr, formData);
+    }
 
 
     // Take care of other input elements
@@ -1653,8 +1943,12 @@ class Dropzone extends Emitter {
 
         if ((input.tagName === "SELECT") && input.hasAttribute("multiple")) {
           // Possibly multiple values
-          for (let option of Array.from(input.options)) { if (option.selected) { formData.append(inputName, option.value); } }
-        } else if (!inputType || ((needle = inputType.toLowerCase(), ![ "checkbox", "radio" ].includes(needle))) || input.checked) {
+          for (let option of Array.from(input.options)) {
+            if (option.selected) {
+              formData.append(inputName, option.value);
+            }
+          }
+        } else if (!inputType || ((needle = inputType.toLowerCase(), !["checkbox", "radio"].includes(needle))) || input.checked) {
           formData.append(inputName, input.value);
         }
       }
@@ -1669,10 +1963,12 @@ class Dropzone extends Emitter {
 
     return (() => {
       result = [];
-      for (let i = 0, end = files.length-1, asc = 0 <= end; asc ? i <= end : i >= end; asc ? i++ : i--) {
+      for (let i = 0, end = files.length - 1, asc = 0 <= end; asc ? i <= end : i >= end; asc ? i++ : i--) {
         let doneFunction = (file, paramName, fileName) => transformedFile => {
           formData.append(paramName, transformedFile, fileName);
-          if (++doneCounter === files.length) { return this.submitRequest(xhr, formData, files); }
+          if (++doneCounter === files.length) {
+            return this.submitRequest(xhr, formData, files);
+          }
         };
 
         result.push(this.options.transformFile.call(this, files[i], doneFunction(files[i], this._getParamName(i), files[i].upload.filename)));
@@ -1699,7 +1995,9 @@ class Dropzone extends Emitter {
       this.emit("completemultiple", files);
     }
 
-    if (this.options.autoProcessQueue) { return this.processQueue(); }
+    if (this.options.autoProcessQueue) {
+      return this.processQueue();
+    }
   }
 
   // Called internally when processing is finished.
@@ -1715,11 +2013,12 @@ class Dropzone extends Emitter {
       this.emit("completemultiple", files);
     }
 
-    if (this.options.autoProcessQueue) { return this.processQueue(); }
+    if (this.options.autoProcessQueue) {
+      return this.processQueue();
+    }
   }
 }
 Dropzone.initClass();
-
 
 
 Dropzone.version = "5.1.1";
@@ -1739,23 +2038,31 @@ Dropzone.version = "5.1.1";
 // And in html:
 //
 //     <form action="/upload" id="my-dropzone-element-id" class="dropzone"></form>
-Dropzone.options = { };
+Dropzone.options = {};
 
 
 // Returns the options for an element or undefined if none available.
-Dropzone.optionsForElement = function(element) {
+Dropzone.optionsForElement = function (element) {
   // Get the `Dropzone.options.elementId` for this element if it exists
-  if (element.getAttribute("id")) { return Dropzone.options[camelize(element.getAttribute("id"))]; } else { return undefined; }
+  if (element.getAttribute("id")) {
+    return Dropzone.options[camelize(element.getAttribute("id"))];
+  } else {
+    return undefined;
+  }
 };
 
 
 // Holds a list of all dropzone instances
-Dropzone.instances = [ ];
+Dropzone.instances = [];
 
 // Returns the dropzone for given element if any
-Dropzone.forElement = function(element) {
-  if (typeof element === "string") { element = document.querySelector(element); }
-  if ((element != null ? element.dropzone : undefined) == null) { throw new Error("No Dropzone found for given element. This is probably because you're trying to access it before Dropzone had the time to initialize. Use the `init` option to setup any additional observers on your Dropzone."); }
+Dropzone.forElement = function (element) {
+  if (typeof element === "string") {
+    element = document.querySelector(element);
+  }
+  if ((element != null ? element.dropzone : undefined) == null) {
+    throw new Error("No Dropzone found for given element. This is probably because you're trying to access it before Dropzone had the time to initialize. Use the `init` option to setup any additional observers on your Dropzone.");
+  }
   return element.dropzone;
 };
 
@@ -1764,23 +2071,25 @@ Dropzone.forElement = function(element) {
 Dropzone.autoDiscover = true;
 
 // Looks for all .dropzone elements and creates a dropzone for them
-Dropzone.discover = function() {
+Dropzone.discover = function () {
   let dropzones;
   if (document.querySelectorAll) {
     dropzones = document.querySelectorAll(".dropzone");
   } else {
-    dropzones = [ ];
+    dropzones = [];
     // IE :(
     let checkElements = elements =>
-      (() => {
-        let result = [];
-        for (let el of Array.from(elements)) {
-          if (/(^| )dropzone($| )/.test(el.className)) { result.push(dropzones.push(el)); } else {
-            result.push(undefined);
+        (() => {
+          let result = [];
+          for (let el of Array.from(elements)) {
+            if (/(^| )dropzone($| )/.test(el.className)) {
+              result.push(dropzones.push(el));
+            } else {
+              result.push(undefined);
+            }
           }
-        }
-        return result;
-      })()
+          return result;
+        })()
     ;
     checkElements(document.getElementsByTagName("div"));
     checkElements(document.getElementsByTagName("form"));
@@ -1789,15 +2098,16 @@ Dropzone.discover = function() {
   return (() => {
     let result = [];
     for (let dropzone of Array.from(dropzones)) {
-    // Create a dropzone unless auto discover has been disabled for specific element
-      if (Dropzone.optionsForElement(dropzone) !== false) { result.push(new Dropzone(dropzone)); } else {
+      // Create a dropzone unless auto discover has been disabled for specific element
+      if (Dropzone.optionsForElement(dropzone) !== false) {
+        result.push(new Dropzone(dropzone));
+      } else {
         result.push(undefined);
       }
     }
     return result;
   })();
 };
-
 
 
 // Since the whole Drag'n'Drop API is pretty new, some browsers implement it,
@@ -1819,7 +2129,7 @@ Dropzone.blacklistedBrowsers = [
 
 
 // Checks if the browser is supported
-Dropzone.isBrowserSupported = function() {
+Dropzone.isBrowserSupported = function () {
   let capableBrowser = true;
 
   if (window.File && window.FileReader && window.FileList && window.Blob && window.FormData && document.querySelector) {
@@ -1841,7 +2151,7 @@ Dropzone.isBrowserSupported = function() {
   return capableBrowser;
 };
 
-Dropzone.dataURItoBlob = function(dataURI) {
+Dropzone.dataURItoBlob = function (dataURI) {
   // convert base64 to raw binary data held in a string
   // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
   let byteString = atob(dataURI.split(',')[1]);
@@ -1867,50 +2177,63 @@ var without = (list, rejectedItem) => Array.from(list).filter((item) => item !==
 var camelize = str => str.replace(/[\-_](\w)/g, match => match.charAt(1).toUpperCase());
 
 // Creates an element from string
-Dropzone.createElement = function(string) {
+Dropzone.createElement = function (string) {
   let div = document.createElement("div");
   div.innerHTML = string;
   return div.childNodes[0];
 };
 
 // Tests if given element is inside (or simply is) the container
-Dropzone.elementInside = function(element, container) {
-  if (element === container) { return true; } // Coffeescript doesn't support do/while loops
-  while ((element = element.parentNode)) { if (element === container) { return true; } }
+Dropzone.elementInside = function (element, container) {
+  if (element === container) {
+    return true;
+  } // Coffeescript doesn't support do/while loops
+  while ((element = element.parentNode)) {
+    if (element === container) {
+      return true;
+    }
+  }
   return false;
 };
 
 
-
-Dropzone.getElement = function(el, name) {
+Dropzone.getElement = function (el, name) {
   let element;
   if (typeof el === "string") {
     element = document.querySelector(el);
   } else if (el.nodeType != null) {
     element = el;
   }
-  if (element == null) { throw new Error(`Invalid \`${name}\` option provided. Please provide a CSS selector or a plain HTML element.`); }
+  if (element == null) {
+    throw new Error(`Invalid \`${name}\` option provided. Please provide a CSS selector or a plain HTML element.`);
+  }
   return element;
 };
 
 
-Dropzone.getElements = function(els, name) {
+Dropzone.getElements = function (els, name) {
   let el, elements;
   if (els instanceof Array) {
-    elements = [ ];
+    elements = [];
     try {
-      for (el of Array.from(els)) { elements.push(this.getElement(el, name)); }
+      for (el of Array.from(els)) {
+        elements.push(this.getElement(el, name));
+      }
     } catch (e) {
       elements = null;
     }
   } else if (typeof els === "string") {
-    elements = [ ];
-    for (el of Array.from(document.querySelectorAll(els))) { elements.push(el); }
+    elements = [];
+    for (el of Array.from(document.querySelectorAll(els))) {
+      elements.push(el);
+    }
   } else if (els.nodeType != null) {
-    elements = [ els ];
+    elements = [els];
   }
 
-  if ((elements == null) || !elements.length) { throw new Error(`Invalid \`${name}\` option provided. Please provide a CSS selector, a plain HTML element or a list of those.`); }
+  if ((elements == null) || !elements.length) {
+    throw new Error(`Invalid \`${name}\` option provided. Please provide a CSS selector, a plain HTML element or a list of those.`);
+  }
 
   return elements;
 };
@@ -1919,7 +2242,7 @@ Dropzone.getElements = function(els, name) {
 //
 // The default implementation just uses `window.confirm` and then calls the
 // appropriate callback.
-Dropzone.confirm = function(question, accepted, rejected) {
+Dropzone.confirm = function (question, accepted, rejected) {
   if (window.confirm(question)) {
     return accepted();
   } else if (rejected != null) {
@@ -1930,8 +2253,10 @@ Dropzone.confirm = function(question, accepted, rejected) {
 // Validates the mime type like this:
 //
 // https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-accept
-Dropzone.isValidFile = function(file, acceptedFiles) {
-  if (!acceptedFiles) { return true; } // If there are no accepted mime types, it's OK
+Dropzone.isValidFile = function (file, acceptedFiles) {
+  if (!acceptedFiles) {
+    return true;
+  } // If there are no accepted mime types, it's OK
   acceptedFiles = acceptedFiles.split(",");
 
   let mimeType = file.type;
@@ -1940,12 +2265,18 @@ Dropzone.isValidFile = function(file, acceptedFiles) {
   for (let validType of Array.from(acceptedFiles)) {
     validType = validType.trim();
     if (validType.charAt(0) === ".") {
-      if (file.name.toLowerCase().indexOf(validType.toLowerCase(), file.name.length - validType.length) !== -1) { return true; }
+      if (file.name.toLowerCase().indexOf(validType.toLowerCase(), file.name.length - validType.length) !== -1) {
+        return true;
+      }
     } else if (/\/\*$/.test(validType)) {
       // This is something like a image/* mime type
-      if (baseMimeType === validType.replace(/\/.*$/, "")) { return true; }
+      if (baseMimeType === validType.replace(/\/.*$/, "")) {
+        return true;
+      }
     } else {
-      if (mimeType === validType) { return true; }
+      if (mimeType === validType) {
+        return true;
+      }
     }
   }
 
@@ -1955,12 +2286,12 @@ Dropzone.isValidFile = function(file, acceptedFiles) {
 
 // Augment jQuery
 if (typeof jQuery !== 'undefined' && jQuery !== null) {
-  jQuery.fn.dropzone = function(options) {
-    return this.each(function() { return new Dropzone(this, options); });
+  jQuery.fn.dropzone = function (options) {
+    return this.each(function () {
+      return new Dropzone(this, options);
+    });
   };
 }
-
-
 
 
 if (typeof module !== 'undefined' && module !== null) {
@@ -1968,9 +2299,6 @@ if (typeof module !== 'undefined' && module !== null) {
 } else {
   window.Dropzone = Dropzone;
 }
-
-
-
 
 
 // Dropzone file status codes
@@ -1989,21 +2317,18 @@ Dropzone.ERROR = "error";
 Dropzone.SUCCESS = "success";
 
 
-
-
-
 /*
 
-Bugfix for iOS 6 and 7
-Source: http://stackoverflow.com/questions/11929099/html5-canvas-drawimage-ratio-bug-ios
-based on the work of https://github.com/stomita/ios-imagefile-megapixel
+ Bugfix for iOS 6 and 7
+ Source: http://stackoverflow.com/questions/11929099/html5-canvas-drawimage-ratio-bug-ios
+ based on the work of https://github.com/stomita/ios-imagefile-megapixel
 
-*/
+ */
 
 // Detecting vertical squash in loaded image.
 // Fixes a bug which squash image vertically while drawing into canvas for some images.
 // This is a bug in iOS6 devices. This function from https://github.com/stomita/ios-imagefile-megapixel
-let detectVerticalSquash = function(img) {
+let detectVerticalSquash = function (img) {
   let iw = img.naturalWidth;
   let ih = img.naturalHeight;
   let canvas = document.createElement("canvas");
@@ -2011,7 +2336,7 @@ let detectVerticalSquash = function(img) {
   canvas.height = ih;
   let ctx = canvas.getContext("2d");
   ctx.drawImage(img, 0, 0);
-  let { data } = ctx.getImageData(1, 0, 1, ih);
+  let {data} = ctx.getImageData(1, 0, 1, ih);
 
 
   // search image edge pixel position in case it is squashed vertically.
@@ -2021,24 +2346,29 @@ let detectVerticalSquash = function(img) {
   while (py > sy) {
     let alpha = data[((py - 1) * 4) + 3];
 
-    if (alpha === 0) { ey = py; } else { sy = py; }
+    if (alpha === 0) {
+      ey = py;
+    } else {
+      sy = py;
+    }
 
     py = (ey + sy) >> 1;
   }
   let ratio = (py / ih);
 
-  if (ratio === 0) { return 1; } else { return ratio; }
+  if (ratio === 0) {
+    return 1;
+  } else {
+    return ratio;
+  }
 };
 
 // A replacement for context.drawImage
 // (args are for source and destination).
-var drawImageIOSFix = function(ctx, img, sx, sy, sw, sh, dx, dy, dw, dh) {
+var drawImageIOSFix = function (ctx, img, sx, sy, sw, sh, dx, dy, dw, dh) {
   let vertSquashRatio = detectVerticalSquash(img);
   return ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh / vertSquashRatio);
 };
-
-
-
 
 
 // Based on MinifyJpeg
@@ -2192,8 +2522,6 @@ class ExifRestore {
 ExifRestore.initClass();
 
 
-
-
 /*
  * contentloaded.js
  *
@@ -2210,7 +2538,7 @@ ExifRestore.initClass();
 
 // @win window reference
 // @fn function reference
-let contentLoaded = function(win, fn) {
+let contentLoaded = function (win, fn) {
   let done = false;
   let top = true;
   let doc = win.document;
@@ -2218,13 +2546,17 @@ let contentLoaded = function(win, fn) {
   let add = (doc.addEventListener ? "addEventListener" : "attachEvent");
   let rem = (doc.addEventListener ? "removeEventListener" : "detachEvent");
   let pre = (doc.addEventListener ? "" : "on");
-  var init = function(e) {
-    if ((e.type === "readystatechange") && (doc.readyState !== "complete")) { return; }
+  var init = function (e) {
+    if ((e.type === "readystatechange") && (doc.readyState !== "complete")) {
+      return;
+    }
     ((e.type === "load" ? win : doc))[rem](pre + e.type, init, false);
-    if (!done && (done = true)) { return fn.call(win, e.type || e); }
+    if (!done && (done = true)) {
+      return fn.call(win, e.type || e);
+    }
   };
 
-  var poll = function() {
+  var poll = function () {
     try {
       root.doScroll("left");
     } catch (e) {
@@ -2238,8 +2570,11 @@ let contentLoaded = function(win, fn) {
     if (doc.createEventObject && root.doScroll) {
       try {
         top = !win.frameElement;
-      } catch (error) {}
-      if (top) { poll(); }
+      } catch (error) {
+      }
+      if (top) {
+        poll();
+      }
     }
     doc[add](pre + "DOMContentLoaded", init, false);
     doc[add](pre + "readystatechange", init, false);
@@ -2249,7 +2584,11 @@ let contentLoaded = function(win, fn) {
 
 
 // As a single function to be able to write tests.
-Dropzone._autoDiscoverFunction = function() { if (Dropzone.autoDiscover) { return Dropzone.discover(); } };
+Dropzone._autoDiscoverFunction = function () {
+  if (Dropzone.autoDiscover) {
+    return Dropzone.discover();
+  }
+};
 contentLoaded(window, Dropzone._autoDiscoverFunction);
 
 function __guard__(value, transform) {
