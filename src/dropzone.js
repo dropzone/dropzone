@@ -1525,12 +1525,12 @@ class Dropzone extends Emitter {
     // Put the xhr object in the file objects to be able to reference it later.
     for (var file of Array.from(files)) { file.xhr = xhr; }
 
-    let method = resolveOption(this.options.method, files);
-    let url = resolveOption(this.options.url, files);
+    let method = this.resolveOption(this.options.method, files);
+    let url = this.resolveOption(this.options.url, files);
     xhr.open(method, url, true);
 
     // Setting the timeout after open because of IE11 issue: https://gitlab.com/meno/dropzone/issues/8
-    xhr.timeout = resolveOption(this.options.timeout, files);
+    xhr.timeout = this.resolveOption(this.options.timeout, files);
 
     // Has to be after `.open()`. See https://github.com/enyo/dropzone/issues/179
     xhr.withCredentials = !!this.options.withCredentials;
@@ -1627,7 +1627,7 @@ class Dropzone extends Emitter {
       "X-Requested-With": "XMLHttpRequest",
     };
 
-    if (this.options.headers) { extend(headers, this.options.headers); }
+    if (this.options.headers) { Dropzone.extend(headers, this.options.headers); }
 
     for (let headerName in headers) {
       let headerValue = headers[headerName];
