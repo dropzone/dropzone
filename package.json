@@ -1,6 +1,6 @@
 {
   "name": "dropzone",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "description": "Handles drag and drop of files for you.",
   "keywords": [
     "dragndrop",
@@ -14,44 +14,41 @@
     {
       "name": "Matias Meno",
       "email": "m@tias.me",
-      "web": "http://www.matiasmeno.com"
+      "web": "http://www.colorglare.com"
     }
   ],
   "contributors": [
     {
       "name": "Matias Meno",
       "email": "m@tias.me",
-      "web": "http://www.matiasmeno.com"
+      "web": "http://www.colorglare.com"
     }
   ],
   "scripts": {
-    "test": "./test.sh"
+    "test": "grunt && npm run test-prebuilt",
+    "test-prebuilt": "mocha-phantomjs test/test.html"
   },
   "bugs": {
     "email": "m@tias.me",
-    "url": "https://github.com/enyo/dropzone/issues"
+    "url": "https://gitlab.com/meno/dropzone/issues"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://www.opensource.org/licenses/MIT"
-    }
-  ],
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/enyo/dropzone.git"
+    "url": "https://gitlab.com/meno/dropzone.git"
   },
-  "dependencies": {},
   "devDependencies": {
     "chai": "1.7.x",
-    "grunt": "^0.4.4",
-    "grunt-contrib-coffee": "^0.10.1",
-    "grunt-contrib-concat": "^0.4.0",
-    "grunt-contrib-sass": "^0.8.1",
-    "grunt-contrib-uglify": "^0.4.0",
-    "grunt-contrib-watch": "^0.6.1",
-    "mocha": "^1.18.2",
-    "mocha-phantomjs": "^3.3.2",
-    "sinon": "1.9.1"
+    "grunt": "^1.0.0",
+    "grunt-contrib-coffee": "^1.0.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-sass": "^1.0.0",
+    "grunt-contrib-uglify": "^2.1.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "mocha": "^3.2.0",
+    "phantomjs-prebuilt": "^2.1.7",
+    "mocha-phantomjs": "^4.1.0",
+    "sinon": "1.17.7",
+    "marked": "^0.3.6"
   }
 }

@@ -305,7 +305,7 @@
           ref = file.previewElement.querySelectorAll("[data-dz-name]");
           for (j = 0, len = ref.length; j < len; j++) {
             node = ref[j];
-            node.textContent = file.upload.filename;
+            node.textContent = file.name;
           }
           ref1 = file.previewElement.querySelectorAll("[data-dz-size]");
           for (k = 0, len1 = ref1.length; k < len1; k++) {
@@ -1380,11 +1380,9 @@
             progress = 100 * e.loaded / e.total;
             for (k = 0, len1 = files.length; k < len1; k++) {
               file = files[k];
-              file.upload = {
-                progress: progress,
-                total: e.total,
-                bytesSent: e.loaded
-              };
+              file.upload.progress = progress;
+              file.upload.total = e.total;
+              file.upload.bytesSent = e.loaded;
             }
           } else {
             allFilesFinished = true;
@@ -1418,13 +1416,15 @@
           if (xhr.readyState !== 4) {
             return;
           }
-          response = xhr.responseText;
-          if (xhr.getResponseHeader("content-type") && ~xhr.getResponseHeader("content-type").indexOf("application/json")) {
-            try {
-              response = JSON.parse(response);
-            } catch (error1) {
-              e = error1;
-              response = "Invalid JSON response from server.";
+          if (xhr.responseType !== 'arraybuffer' && xhr.responseType !== 'blob') {
+            response = xhr.responseText;
+            if (xhr.getResponseHeader("content-type") && ~xhr.getResponseHeader("content-type").indexOf("application/json")) {
+              try {
+                response = JSON.parse(response);
+              } catch (error1) {
+                e = error1;
+                response = "Invalid JSON response from server.";
+              }
             }
           }
           updateProgress();
@@ -1553,7 +1553,7 @@
 
   })(Emitter);
 
-  Dropzone.version = "5.1.0";
+  Dropzone.version = "5.1.1";
 
   Dropzone.options = {};
 
