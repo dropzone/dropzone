@@ -545,7 +545,7 @@ class Dropzone extends Emitter
         file.previewTemplate = file.previewElement # Backwards compatibility
 
         @previewsContainer.appendChild file.previewElement
-        node.textContent = file.upload.filename for node in file.previewElement.querySelectorAll("[data-dz-name]")
+        node.textContent = file.name for node in file.previewElement.querySelectorAll("[data-dz-name]")
         node.innerHTML = @filesize file.size for node in file.previewElement.querySelectorAll("[data-dz-size]")
 
         if @options.addRemoveLinks

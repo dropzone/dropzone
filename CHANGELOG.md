@@ -1,3 +1,7 @@
+## 5.1.1
+
+- Fix issue where showing files already on the server fails, due to the missing `file.upload.filename`
+
 ## 5.1.0
 
 - Add possibility to translate file sizes. (#16 thanks to @lerarybak for that)
