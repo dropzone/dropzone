@@ -63,5 +63,5 @@ $ cd website
 $ jekyll serve # Or jekyll build
 ```
 
-* Thanks for contributing!*
+**Thanks for contributing!**
 
