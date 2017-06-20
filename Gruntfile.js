@@ -1,4 +1,4 @@
-export default function (grunt) {
+module.exports = function (grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON("package.json"),
@@ -25,20 +25,16 @@ export default function (grunt) {
         }]
       }
     },
-
-    coffee: {
-      default: {
-        files: {
-          "dist/dropzone.js": "src/dropzone.coffee"
-        }
+    babel: {
+      options: {
+        sourceMap: false
       },
-      test: {
+      dist: {
         files: {
-          "test/test.js": "test/*.coffee"
+          "dist/dropzone.js": "src/dropzone.js"
         }
       }
     },
-
     concat: {
       amd: {
         src: [
@@ -53,18 +49,9 @@ export default function (grunt) {
     watch: {
       js: {
         files: [
-          "src/dropzone.coffee"
+          "src/dropzone.js"
         ],
         tasks: ["js"],
-        options: {
-          nospawn: true
-        }
-      },
-      test: {
-        files: [
-          "test/*.coffee"
-        ],
-        tasks: ["coffee:test"],
         options: {
           nospawn: true
         }
@@ -91,7 +78,7 @@ export default function (grunt) {
   });
 
 
-  grunt.loadNpmTasks("grunt-contrib-coffee");
+  grunt.loadNpmTasks("grunt-babel");
   grunt.loadNpmTasks("grunt-contrib-sass");
   grunt.loadNpmTasks("grunt-contrib-concat");
   grunt.loadNpmTasks("grunt-contrib-watch");
@@ -102,9 +89,9 @@ export default function (grunt) {
 
   grunt.registerTask("css", "Compile the sass files to css", ["sass"]);
 
-  grunt.registerTask("js", "Compile coffeescript", ["coffee", "concat"]);
+  grunt.registerTask("js", "Compile ES6", ["babel", "concat"]);
 
-  grunt.registerTask("downloads", "Compile all stylus and coffeescript files and generate the download files", ["js", "css", "uglify"]);
+  grunt.registerTask("downloads", "Compile all stylus and javascript files and generate the download files", ["js", "css", "uglify"]);
 
   grunt.registerTask("build-website", "Builds the website", function () {
     grunt.util.spawn({cmd: 'node', args: ['tool/build_configuration_doc.js']});
