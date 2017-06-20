@@ -1,12 +1,6 @@
 Contribute
 ==========
 
-
-> I have changed my branching model recently (November 2013)! Previously
-> the latest version was always in develop, and pull request had to be
-> made on this branch. This is no longer the case!
-
-
 The latest version is always in the **[master](https://gitlab.com/meno/dropzone)**
 branch.
 
@@ -38,39 +32,19 @@ This will install all the tools you need to compile the source files and to test
 the library.
 
 
-Coffeescript & Sass (-> Javascript & CSS)
+ECMAScript 6 & Sass (-> Javascript & CSS)
 ------------------------------------------
 
-Dropzone is written in [Coffeescript](http://coffeescript.org) and
-[Sass](http://sass-lang.com/) so *do not* make
-changes to the Javascript or CSS files
+Since June 2017, Dropzone is written in [ECMAScript 6](https://babeljs.io/learn-es2015/) and
+[Sass](http://sass-lang.com/).
 
-**I will not merge requests written in Javascript or CSS.**
-
-Please don't include compiled `.js` or `.css` files in your pull requests but only
-`.coffee` or `.scss` files.
-
-
-To build the library use [grunt](http://gruntjs.com).
-
-```bash
-$ grunt -h # Displays available options
-$ grunt # compiles all coffeescript and stylus files
-$ grunt watch # watches for changes and builds on the fly
-```
-
-> I recommend using `grunt watch` when you begin developing. This way you can't
-> forget to compile the source files and will avoid headaches.
-
+Please don't include compiled `.js` or `.css` files in your pull requests but only the source files.
 
 Testing
 -------
 
 To test the library, open `test/test.html` in your browser or type `npm test`
 which will run the tests in your console in a headless browser.
-
-The tests are also written in coffeescript in the `test/test.coffee` file,
-and compiled with `grunt js` or `grunt watch`.
 
 
 Website
