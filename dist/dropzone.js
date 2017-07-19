@@ -1500,6 +1500,7 @@
     };
 
     Dropzone.prototype.submitRequest = function(xhr, formData, files) {
+      this.emit("beforesubmit", files, xhr, formData);
       return xhr.send(formData);
     };
 
