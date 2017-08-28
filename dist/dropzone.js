@@ -1226,7 +1226,7 @@
             drawImageIOSFix(ctx, img, (ref = resizeInfo.srcX) != null ? ref : 0, (ref1 = resizeInfo.srcY) != null ? ref1 : 0, resizeInfo.srcWidth, resizeInfo.srcHeight, (ref2 = resizeInfo.trgX) != null ? ref2 : 0, (ref3 = resizeInfo.trgY) != null ? ref3 : 0, resizeInfo.trgWidth, resizeInfo.trgHeight);
             thumbnail = canvas.toDataURL("image/png");
             if (callback != null) {
-              return callback(thumbnail, canvas);
+              return callback(thumbnail, canvas, file);
             }
           });
         };
