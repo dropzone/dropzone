@@ -3,7 +3,7 @@ image: nodesource/jessie:latest
 before_script:
   - export NODE_ENV=development
   - apt-get update -qq
-  - apt-get -y -qq install ruby
+  - apt-get -y -qq install ruby ruby-dev
   - gem install sass
   - npm install
   - npm install -g grunt-cli
