@@ -13,6 +13,7 @@ test:
   script:
   # Required by and phantomjs
   - apt-get -y -qq install libssl-dev libfontconfig1-dev
+  - grunt
   - npm run test
 
 release:
