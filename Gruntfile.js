@@ -31,12 +31,19 @@ module.exports = function (grunt) {
       },
       dist: {
         files: {
-          "dist/dropzone.js": "src/dropzone.js",
+          "dist/dropzone.js": "tool/dropzone_precompilation.js",
           "test/test-prebuilt.js": "test/test.js"
         }
       }
     },
     concat: {
+      precompilation: {
+        src: [
+          "tool/es6_polyfills.js",
+          "src/dropzone.js"
+        ],
+        dest: "tool/dropzone_precompilation.js"
+      },
       amd: {
         src: [
           "tool/AMD_header",
@@ -91,7 +98,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask("css", "Compile the sass files to css", ["sass"]);
 
-  grunt.registerTask("js", "Compile ES6", ["babel", "concat"]);
+  grunt.registerTask("js", "Compile ES6", ["concat:precompilation", "babel", "concat:amd"]);
 
   grunt.registerTask("downloads", "Compile all stylus and javascript files and generate the download files", ["js", "css", "uglify"]);
 
