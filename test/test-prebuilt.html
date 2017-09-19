@@ -1,0 +1,31 @@
+<!--
+This is the file, that is used in the CI test environment, and it will test the compiled dropzone and test files.
+
+src/dropzone.js and test/test.js are both written in ES6. In order for them to be backwards compatible,
+I convert them with babel.
+
+If you want to test the converted files, run `grunt`, and then open this file.
+
+For development, it's easier to simply use the test.html file.
+-->
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+
+<!-- mocha-phantomjs setup -->
+<div id="mocha"></div>
+<script src="../node_modules/mocha/mocha.js"></script>
+<script src="../node_modules/chai/chai.js"></script>
+<script src="../node_modules/sinon/pkg/sinon.js"></script>
+<script>
+  mocha.ui('bdd');
+  expect = chai.expect;
+</script>
+
+<!-- The actual tests -->
+<script src="../dist/dropzone.js"></script>
+<script src="test-prebuilt.js"></script>
+<script>
+  mocha.run();
+</script>

@@ -31,7 +31,8 @@ module.exports = function (grunt) {
       },
       dist: {
         files: {
-          "dist/dropzone.js": "src/dropzone.js"
+          "dist/dropzone.js": "src/dropzone.js",
+          "test/test-prebuilt.js": "test/test.js"
         }
       }
     },
@@ -49,7 +50,8 @@ module.exports = function (grunt) {
     watch: {
       js: {
         files: [
-          "src/dropzone.js"
+          "src/dropzone.js",
+          "test/test.js"
         ],
         tasks: ["js"],
         options: {
