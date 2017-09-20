@@ -2497,7 +2497,7 @@ class ExifRestore {
     // remove all characters that are not A-Z, a-z, 0-9, +, /, or =
     let base64test = /[^A-Za-z0-9\+\/\=]/g;
     if (base64test.exec(input)) {
-      console.warning('There were invalid base64 characters in the input text.\nValid base64 characters are A-Z, a-z, 0-9, \'+\', \'/\',and \'=\'\nExpect errors in decoding.');
+      console.warn('There were invalid base64 characters in the input text.\nValid base64 characters are A-Z, a-z, 0-9, \'+\', \'/\',and \'=\'\nExpect errors in decoding.');
     }
     input = input.replace(/[^A-Za-z0-9\+\/\=]/g, '');
     while (true) {
