@@ -36,6 +36,7 @@ folder.
 - Support for large files
 - Complete theming. The look and feel of Dropzone is just the default theme. You
   can define everything yourself by overwriting the default event listeners.
+- Browser image resizing (resize the images before you upload them to your server)
 - Well tested
 
 ## Documentation
@@ -592,6 +593,12 @@ There is no workaround for drag’n’drop in older browsers – it simply isn't
 supported. The same goes for image previews, etc... But using dropzone, your
 users using an old browser _will_ be able to upload files. It just won’t look
 and feel great. But hey, that’s their fault.
+
+Version 5.0
+---------
+
+- Starting with version 5.2, dropzone is no longer written in CoffeeScript, but in EcmaScript6. To
+  still work in older browsers, the code is still compiled with babel.
 
 Version 4.0
 -----------
