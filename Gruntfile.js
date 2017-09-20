@@ -27,7 +27,10 @@ module.exports = function (grunt) {
     },
     babel: {
       options: {
-        sourceMap: false
+        sourceMap: false,
+        plugins: [
+            ['transform-es2015-for-of', { loose: true }]
+        ]
       },
       dist: {
         files: {

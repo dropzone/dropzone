@@ -47,7 +47,7 @@ class Emitter {
     let callbacks = this._callbacks[event];
 
     if (callbacks) {
-      for (let callback of Array.from(callbacks)) {
+      for (let callback of callbacks) {
         callback.apply(this, args);
       }
     }
