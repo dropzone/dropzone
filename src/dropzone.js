@@ -1944,6 +1944,9 @@ class Dropzone extends Emitter {
         let inputType = input.getAttribute("type");
         if (inputType) inputType = inputType.toLowerCase();
 
+        // If the input doesn't have a name, we can't use it.
+        if (inputName == null) continue;
+
         if ((input.tagName === "SELECT") && input.hasAttribute("multiple")) {
           // Possibly multiple values
           for (let option of input.options) {
