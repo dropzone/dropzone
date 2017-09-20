@@ -1,3 +1,7 @@
+## 5.2.0
+
+- **Migrated from coffeescript to ES6!** 
+
 ## 5.1.1
 
 - Fix issue where showing files already on the server fails, due to the missing `file.upload.filename`

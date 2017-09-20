@@ -4,8 +4,20 @@ Contribute
 The latest version is always in the **[master](https://gitlab.com/meno/dropzone)**
 branch.
 
-
 > Please provide a test for any new feature (see the [testing section](#testing) below).
+
+CoffeScript -> EcmaScript6
+---------------------
+
+Starting with Dropzone 5.2, the library is written in ES6 instead of CoffeeScript. This
+makes it easier for contributors, and is more future proof.
+
+In order for older browsers to still be supported, the `dist/` files are still compiled with
+[babel](https://babeljs.io/), but in a few years, that compilation step can be removed.
+
+The only caveat to this approach, is not to use any actual ES6 features like `Array.from`
+or `Array.isArray` since that would require a polyfill. This means, that only syntactic sugar
+should be used.
 
 
 Communicate
@@ -53,7 +65,7 @@ Website
 The website is located in `website/` and is generated with [Jekyll](http://jekyllrb.com/).
 
 Most of the content of the website is generated, some parts from the `README.md` and some
-directly from the `dropzone.coffee` source file (the configuration options).
+directly from the `dropzone.js` source file (the configuration options).
 
 This is how you build the site:
 
