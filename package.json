@@ -47,6 +47,7 @@
     "grunt-contrib-sass": "^1.0.0",
     "grunt-contrib-uglify": "^2.1.0",
     "grunt-contrib-watch": "^1.0.0",
+    "grunt-text-replace": "^0.4.0",
     "marked": "^0.3.6",
     "mocha": "^3.2.0",
     "mocha-phantomjs": "^4.1.0",

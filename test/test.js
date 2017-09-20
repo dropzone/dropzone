@@ -1234,7 +1234,7 @@ describe("Dropzone", function() {
         mock3 = getMockFile();
         mock4 = getMockFile();
         dropzone.options.accept = function(file, done) {
-          if ([ mock1, mock3 ].includes(file)) {
+          if (file === mock1 || file === mock3) {
             return done();
           } else {
             return done("error");
