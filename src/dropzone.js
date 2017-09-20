@@ -723,10 +723,8 @@ class Dropzone extends Emitter {
 
       // Called whenever a file is removed.
       removedfile(file) {
-        if (file.previewElement) {
-          if (file.previewElement != null) {
-            file.previewElement.parentNode.removeChild(file.previewElement);
-          }
+        if (file.previewElement != null && file.previewElement.parentNode != null) {
+          file.previewElement.parentNode.removeChild(file.previewElement);
         }
         return this._updateMaxFilesReachedClass();
       },
@@ -2127,9 +2125,8 @@ Dropzone.discover = function () {
 // incorrectly **
 //
 Dropzone.blacklistedBrowsers = [
-  // The mac os version of opera 12 seems to have a problem with the File drag'n'drop API.
-  /opera.*Macintosh.*version\/12/i
-  // /MSIE\ 10/i
+  // The mac os and windows phone version of opera 12 seems to have a problem with the File drag'n'drop API.
+  /opera.*(Macintosh|Windows Phone).*version\/12/i
 ];
 
 
