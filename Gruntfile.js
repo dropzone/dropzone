@@ -29,12 +29,13 @@ module.exports = function (grunt) {
       options: {
         sourceMap: false,
         plugins: [
-            ['transform-es2015-for-of', { loose: true }]
+          // Make sure we don't use the ES6 iterator when not required.
+          ['transform-es2015-for-of', { loose: true }]
         ]
       },
       dist: {
         files: {
-          "dist/dropzone.js": "tool/dropzone_precompilation.js",
+          "dist/dropzone.js": "src/dropzone.js",
           "test/test-prebuilt.js": "test/test.js"
         }
       }
