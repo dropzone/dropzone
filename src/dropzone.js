@@ -723,10 +723,8 @@ class Dropzone extends Emitter {
 
       // Called whenever a file is removed.
       removedfile(file) {
-        if (file.previewElement) {
-          if (file.previewElement != null) {
-            file.previewElement.parentNode.removeChild(file.previewElement);
-          }
+        if (file.previewElement != null && file.previewElement.parentNode != null) {
+          file.previewElement.parentNode.removeChild(file.previewElement);
         }
         return this._updateMaxFilesReachedClass();
       },
@@ -1946,6 +1944,9 @@ class Dropzone extends Emitter {
         let inputType = input.getAttribute("type");
         if (inputType) inputType = inputType.toLowerCase();
 
+        // If the input doesn't have a name, we can't use it.
+        if (inputName == null) continue;
+
         if ((input.tagName === "SELECT") && input.hasAttribute("multiple")) {
           // Possibly multiple values
           for (let option of input.options) {
@@ -2127,9 +2128,8 @@ Dropzone.discover = function () {
 // incorrectly **
 //
 Dropzone.blacklistedBrowsers = [
-  // The mac os version of opera 12 seems to have a problem with the File drag'n'drop API.
-  /opera.*Macintosh.*version\/12/i
-  // /MSIE\ 10/i
+  // The mac os and windows phone version of opera 12 seems to have a problem with the File drag'n'drop API.
+  /opera.*(Macintosh|Windows Phone).*version\/12/i
 ];
 
 
@@ -2497,7 +2497,7 @@ class ExifRestore {
     // remove all characters that are not A-Z, a-z, 0-9, +, /, or =
     let base64test = /[^A-Za-z0-9\+\/\=]/g;
     if (base64test.exec(input)) {
-      console.warning('There were invalid base64 characters in the input text.\nValid base64 characters are A-Z, a-z, 0-9, \'+\', \'/\',and \'=\'\nExpect errors in decoding.');
+      console.warn('There were invalid base64 characters in the input text.\nValid base64 characters are A-Z, a-z, 0-9, \'+\', \'/\',and \'=\'\nExpect errors in decoding.');
     }
     input = input.replace(/[^A-Za-z0-9\+\/\=]/g, '');
     while (true) {

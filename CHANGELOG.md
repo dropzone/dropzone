@@ -1,6 +1,10 @@
 ## 5.2.0
 
 - **Migrated from coffeescript to ES6!** 
+- Fixed a faulty `console.warning` (should be `console.warn`)
+- If an input field doesn't have a name, don't include it when sending the form (thanks to @remyj38)
+- Opera on Windows Phone is now also blacklisted (thanks to @dracos1)
+- If a custom preview element is used, it is now properly handled when it doesn't have a parent (thanks to @uNmAnNeR)
 
 ## 5.1.1
 
