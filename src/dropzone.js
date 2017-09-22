@@ -1939,10 +1939,11 @@ class Dropzone extends Emitter {
   }
 
 
-  // Invoked when there is new progress information about given files
+  // Invoked when there is new progress information about given files.
+  // If e is not provided, it is assumed that the upload is finished.
   _updateFilesUploadProgress(files, e) {
     let progress;
-    if (e != null) {
+    if (typeof e === 'undefined') {
       progress = (100 * e.loaded) / e.total;
 
       for (let file of files) {
