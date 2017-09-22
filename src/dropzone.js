@@ -1791,7 +1791,7 @@ class Dropzone extends Emitter {
     let xhr = new XMLHttpRequest();
 
     // Put the xhr object in the file objects to be able to reference it later.
-    for (var file of files) {
+    for (let file of files) {
       file.xhr = xhr;
     }
 
@@ -1806,50 +1806,12 @@ class Dropzone extends Emitter {
     xhr.withCredentials = !!this.options.withCredentials;
 
 
-    let response = null;
-
-    let handleError = () => {
-      for (file of files) {
-        this._errorProcessing(files, response || this.options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr);
-      }
-    };
-
     xhr.onload = e => {
-      if (files[0].status === Dropzone.CANCELED) {
-        return;
-      }
-
-      if (xhr.readyState !== 4) {
-        return;
-      }
-
-      if ((xhr.responseType !== 'arraybuffer') && (xhr.responseType !== 'blob')) {
-        response = xhr.responseText;
-
-        if (xhr.getResponseHeader("content-type") && ~xhr.getResponseHeader("content-type").indexOf("application/json")) {
-          try {
-            response = JSON.parse(response);
-          } catch (error) {
-            e = error;
-            response = "Invalid JSON response from server.";
-          }
-        }
-      }
-
-      this._updateFilesUploadProgress(files);
-
-      if (!(200 <= xhr.status && xhr.status < 300)) {
-        return handleError();
-      } else {
-        return this._finished(files, response, e);
-      }
+      this._finishedUploading(files, xhr, e);
     };
 
     xhr.onerror = () => {
-      if (files[0].status === Dropzone.CANCELED) {
-        return;
-      }
-      return handleError();
+      this._handleUploadError(files, xhr);
     };
 
     // Some browsers do not have the .upload property
@@ -1884,7 +1846,7 @@ class Dropzone extends Emitter {
     }
 
     // Let the user add additional data if necessary
-    for (file of files) {
+    for (let file of files) {
       this.emit("sending", file, xhr, formData);
     }
     if (this.options.uploadMultiple) {
@@ -1892,6 +1854,29 @@ class Dropzone extends Emitter {
     }
 
 
+    this._addFormElementData(formData);
+
+
+    // Finally add the files
+    // Has to be last because some servers (eg: S3) expect the file to be the last parameter
+
+    // Clumsy way of handling asynchronous calls, until I get to add a proper Future library.
+    let doneCounter = 0;
+
+    for (let i = 0; i < files.length; i++) {
+      let doneFunction = (file, paramName, fileName) => transformedFile => {
+        formData.append(paramName, transformedFile, fileName);
+        if (++doneCounter === files.length) {
+          return this.submitRequest(xhr, formData, files);
+        }
+      };
+
+      this.options.transformFile.call(this, files[i], doneFunction(files[i], this._getParamName(i), files[i].upload.filename));
+    }
+  }
+
+  // Takes care of adding other input elements of the form to the AJAX request
+  _addFormElementData(formData) {
     // Take care of other input elements
     if (this.element.tagName === "FORM") {
       for (let input of this.element.querySelectorAll("input, textarea, select, button")) {
@@ -1900,7 +1885,7 @@ class Dropzone extends Emitter {
         if (inputType) inputType = inputType.toLowerCase();
 
         // If the input doesn't have a name, we can't use it.
-        if (inputName == null) continue;
+        if (typeof inputName === 'undefined' || inputName === null) continue;
 
         if ((input.tagName === "SELECT") && input.hasAttribute("multiple")) {
           // Possibly multiple values
@@ -1914,36 +1899,13 @@ class Dropzone extends Emitter {
         }
       }
     }
-
-
-    // Finally add the files
-    // Has to be last because some servers (eg: S3) expect the file to be the last parameter
-
-    // Clumsy way of handling asynchronous calls, until I get to add a proper Future library.
-    let doneCounter = 0;
-
-    return (() => {
-      result = [];
-      for (let i = 0; i < files.length; i++) {
-        let doneFunction = (file, paramName, fileName) => transformedFile => {
-          formData.append(paramName, transformedFile, fileName);
-          if (++doneCounter === files.length) {
-            return this.submitRequest(xhr, formData, files);
-          }
-        };
-
-        result.push(this.options.transformFile.call(this, files[i], doneFunction(files[i], this._getParamName(i), files[i].upload.filename)));
-      }
-      return result;
-    })();
   }
-
 
   // Invoked when there is new progress information about given files.
   // If e is not provided, it is assumed that the upload is finished.
   _updateFilesUploadProgress(files, e) {
     let progress;
-    if (typeof e === 'undefined') {
+    if (typeof e !== 'undefined') {
       progress = (100 * e.loaded) / e.total;
 
       for (let file of files) {
@@ -1975,7 +1937,51 @@ class Dropzone extends Emitter {
     for (let file of files) {
       this.emit("uploadprogress", file, progress, file.upload.bytesSent);
     }
-  };
+  }
+
+
+  _finishedUploading(files, xhr, e) {
+    let response;
+
+    if (files[0].status === Dropzone.CANCELED) {
+      return;
+    }
+
+    if (xhr.readyState !== 4) {
+      return;
+    }
+
+    if ((xhr.responseType !== 'arraybuffer') && (xhr.responseType !== 'blob')) {
+      response = xhr.responseText;
+
+      if (xhr.getResponseHeader("content-type") && ~xhr.getResponseHeader("content-type").indexOf("application/json")) {
+        try {
+          response = JSON.parse(response);
+        } catch (error) {
+          e = error;
+          response = "Invalid JSON response from server.";
+        }
+      }
+    }
+
+    this._updateFilesUploadProgress(files);
+
+    if (!(200 <= xhr.status && xhr.status < 300)) {
+      return this._handleUploadError(files, xhr, response);
+    } else {
+      return this._finished(files, response, e);
+    }
+  }
+
+  _handleUploadError(files, xhr, response) {
+    if (files[0].status === Dropzone.CANCELED) {
+      return;
+    }
+
+    for (let file of files) {
+      this._errorProcessing(files, response || this.options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr);
+    }
+  }
 
   submitRequest(xhr, formData, files) {
     return xhr.send(formData);
