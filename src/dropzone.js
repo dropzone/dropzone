@@ -1787,84 +1787,99 @@ class Dropzone extends Emitter {
 
   uploadFiles(files) {
     this._transformFiles(files, (transformedFiles) => {
-      let xhr = new XMLHttpRequest();
-
-      // Put the xhr object in the file objects to be able to reference it later.
-      for (let file of files) {
-        file.xhr = xhr;
-      }
-
-      let method = this.resolveOption(this.options.method, files);
-      let url = this.resolveOption(this.options.url, files);
-      xhr.open(method, url, true);
-
-      // Setting the timeout after open because of IE11 issue: https://gitlab.com/meno/dropzone/issues/8
-      xhr.timeout = this.resolveOption(this.options.timeout, files);
-
-      // Has to be after `.open()`. See https://github.com/enyo/dropzone/issues/179
-      xhr.withCredentials = !!this.options.withCredentials;
-
-
-      xhr.onload = e => {
-        this._finishedUploading(files, xhr, e);
-      };
-
-      xhr.onerror = () => {
-        this._handleUploadError(files, xhr);
-      };
-
-      // Some browsers do not have the .upload property
-      let progressObj = xhr.upload != null ? xhr.upload : xhr;
-      progressObj.onprogress = (e) => this._updateFilesUploadProgress(files, e);
-
-      let headers = {
-        "Accept": "application/json",
-        "Cache-Control": "no-cache",
-        "X-Requested-With": "XMLHttpRequest",
-      };
-
-      if (this.options.headers) {
-        Dropzone.extend(headers, this.options.headers);
-      }
-
-      for (let headerName in headers) {
-        let headerValue = headers[headerName];
-        if (headerValue) {
-          xhr.setRequestHeader(headerName, headerValue);
-        }
-      }
-
-      let formData = new FormData();
-
-      // Adding all @options parameters
-      if (this.options.params) {
-        for (let key in this.options.params) {
-          let value = this.options.params[key];
-          formData.append(key, value);
-        }
-      }
-
-      // Let the user add additional data if necessary
-      for (let file of files) {
-        this.emit("sending", file, xhr, formData);
-      }
-      if (this.options.uploadMultiple) {
-        this.emit("sendingmultiple", files, xhr, formData);
-      }
-
-
-      this._addFormElementData(formData);
-
-
-      // Finally add the files
-      // Has to be last because some servers (eg: S3) expect the file to be the last parameter
-
+      let dataBlocks = [];
       for (let i = 0; i < files.length; i++) {
-        formData.append(this._getParamName(i), transformedFiles[i], files[i].upload.filename);
+        dataBlocks[i] = {
+          'name': this._getParamName(i),
+          'data': transformedFiles[i],
+          'filename': files[i].upload.filename
+        };
       }
-
-      this.submitRequest(xhr, formData, files);
+      this._uploadData(files, dataBlocks);
     });
+  }
+
+  // This function actually uploads the file(s) to the server.
+  // If dataBlocks contains the actual data to upload (meaning, that this could either be transformed
+  // files, or individual chunks for chunked upload).
+  _uploadData(files, dataBlocks) {
+    let xhr = new XMLHttpRequest();
+
+    // Put the xhr object in the file objects to be able to reference it later.
+    for (let file of files) {
+      file.xhr = xhr;
+    }
+
+    let method = this.resolveOption(this.options.method, files);
+    let url = this.resolveOption(this.options.url, files);
+    xhr.open(method, url, true);
+
+    // Setting the timeout after open because of IE11 issue: https://gitlab.com/meno/dropzone/issues/8
+    xhr.timeout = this.resolveOption(this.options.timeout, files);
+
+    // Has to be after `.open()`. See https://github.com/enyo/dropzone/issues/179
+    xhr.withCredentials = !!this.options.withCredentials;
+
+
+    xhr.onload = e => {
+      this._finishedUploading(files, xhr, e);
+    };
+
+    xhr.onerror = () => {
+      this._handleUploadError(files, xhr);
+    };
+
+    // Some browsers do not have the .upload property
+    let progressObj = xhr.upload != null ? xhr.upload : xhr;
+    progressObj.onprogress = (e) => this._updateFilesUploadProgress(files, e);
+
+    let headers = {
+      "Accept": "application/json",
+      "Cache-Control": "no-cache",
+      "X-Requested-With": "XMLHttpRequest",
+    };
+
+    if (this.options.headers) {
+      Dropzone.extend(headers, this.options.headers);
+    }
+
+    for (let headerName in headers) {
+      let headerValue = headers[headerName];
+      if (headerValue) {
+        xhr.setRequestHeader(headerName, headerValue);
+      }
+    }
+
+    let formData = new FormData();
+
+    // Adding all @options parameters
+    if (this.options.params) {
+      for (let key in this.options.params) {
+        let value = this.options.params[key];
+        formData.append(key, value);
+      }
+    }
+
+    // Let the user add additional data if necessary
+    for (let file of files) {
+      this.emit("sending", file, xhr, formData);
+    }
+    if (this.options.uploadMultiple) {
+      this.emit("sendingmultiple", files, xhr, formData);
+    }
+
+
+    this._addFormElementData(formData);
+
+
+    // Finally add the files
+    // Has to be last because some servers (eg: S3) expect the file to be the last parameter
+    for (let i = 0; i < dataBlocks.length; i++) {
+      let dataBlock = dataBlocks[i];
+      formData.append(dataBlock.name, dataBlock.data, dataBlock.filename);
+    }
+
+    this.submitRequest(xhr, formData, files);
   }
 
 
