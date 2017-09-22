@@ -176,6 +176,32 @@ class Dropzone extends Emitter {
       uploadMultiple: false,
 
       /**
+       * Whether you want files to be uploaded in chunks to your server. This can't be
+       * used in combination with `uploadMultiple`.
+       */
+      chunking: false,
+
+      /**
+       * If `chunking` is enabled, this defines whether **every** file should be chunked,
+       * even if the file size is below chunkSize. This means, that the additional chunk
+       * form data will be submitted and the `chunksUploaded` callback will be invoked.
+       */
+      forceChunking: false,
+
+      /**
+       * If `chunking` is `true`, then this defines the chunk size in bytes.
+       */
+      chunkSize: 2000000,
+
+      /**
+       * The callback that will be invoked when all chunks have been uploaded for a file.
+       * It gets the file for which the chunks have been uploaded as the first parameter,
+       * and the `done` function as second. `done()` needs to be invoked when everything
+       * needed to finish the upload process is done.
+       */
+      chunksUploaded: function(file, done) { done(); },
+
+      /**
        * If not `null` defines how many files this Dropzone handles. If it exceeds,
        * the event `maxfilesexceeded` will be called. The dropzone element gets the
        * class `dz-max-files-reached` accordingly so you can provide visual feedback.
@@ -909,6 +935,10 @@ class Dropzone extends Emitter {
 
     if (this.options.acceptedFiles && this.options.acceptedMimeTypes) {
       throw new Error("You can't provide both 'acceptedFiles' and 'acceptedMimeTypes'. 'acceptedMimeTypes' is deprecated.");
+    }
+
+    if (this.options.uploadMultiple && this.options.chunking) {
+      throw new Error('You cannot set both: uploadMultiple and chunking.');
     }
 
     // Backwards compatibility
@@ -1787,15 +1817,23 @@ class Dropzone extends Emitter {
 
   uploadFiles(files) {
     this._transformFiles(files, (transformedFiles) => {
-      let dataBlocks = [];
-      for (let i = 0; i < files.length; i++) {
-        dataBlocks[i] = {
-          'name': this._getParamName(i),
-          'data': transformedFiles[i],
-          'filename': files[i].upload.filename
-        };
+      if (this.options.chunking && (this.options.forceChunking || files[0].size > this.options.chunkSize)) {
+        // This file should be sent in chunks!
+        // If the chunking option is set, we **know** that there can only be **one** file, since
+        // uploadMultiple is not allowed with this option.
+
+        // TODO: implement chunking
+      } else {
+        let dataBlocks = [];
+        for (let i = 0; i < files.length; i++) {
+          dataBlocks[i] = {
+            'name': this._getParamName(i),
+            'data': transformedFiles[i],
+            'filename': files[i].upload.filename
+          };
+        }
+        this._uploadData(files, dataBlocks);
       }
-      this._uploadData(files, dataBlocks);
     });
   }
 
