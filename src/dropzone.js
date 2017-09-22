@@ -1750,11 +1750,13 @@ class Dropzone extends Emitter {
   cancelUpload(file) {
     if (file.status === Dropzone.UPLOADING) {
       let groupedFiles = this._getFilesWithXhr(file.xhr);
-      for (var groupedFile of groupedFiles) {
+      for (let groupedFile of groupedFiles) {
         groupedFile.status = Dropzone.CANCELED;
       }
-      file.xhr.abort();
-      for (groupedFile of groupedFiles) {
+      if (typeof file.xhr !== 'undefined') {
+        file.xhr.abort();
+      }
+      for (let groupedFile of groupedFiles) {
         this.emit("canceled", groupedFile);
       }
       if (this.options.uploadMultiple) {
@@ -1780,6 +1782,8 @@ class Dropzone extends Emitter {
     }
     return option;
   }
+
+  uploadFile(file) { return this.uploadFiles([file]); }
 
   uploadFiles(files) {
     this._transformFiles(files, (transformedFiles) => {
