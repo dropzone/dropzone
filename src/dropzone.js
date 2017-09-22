@@ -1809,54 +1809,9 @@ class Dropzone extends Emitter {
     let response = null;
 
     let handleError = () => {
-      return (() => {
-        result = [];
-        for (file of files) {
-          result.push(this._errorProcessing(files, response || this.options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr));
-        }
-        return result;
-      })();
-    };
-
-
-    let updateProgress = e => {
-      let progress;
-      if (e != null) {
-        progress = (100 * e.loaded) / e.total;
-
-        for (file of files) {
-          file.upload.progress = progress;
-          file.upload.total = e.total;
-          file.upload.bytesSent = e.loaded;
-        }
-      } else {
-        // Called when the file finished uploading
-
-        let allFilesFinished = true;
-
-        progress = 100;
-
-        for (file of files) {
-          if ((file.upload.progress !== 100) || (file.upload.bytesSent !== file.upload.total)) {
-            allFilesFinished = false;
-          }
-          file.upload.progress = progress;
-          file.upload.bytesSent = file.upload.total;
-        }
-
-        // Nothing to do, all files already at 100%
-        if (allFilesFinished) {
-          return;
-        }
+      for (file of files) {
+        this._errorProcessing(files, response || this.options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr);
       }
-
-      return (() => {
-        result = [];
-        for (file of files) {
-          result.push(this.emit("uploadprogress", file, progress, file.upload.bytesSent));
-        }
-        return result;
-      })();
     };
 
     xhr.onload = e => {
@@ -1881,7 +1836,7 @@ class Dropzone extends Emitter {
         }
       }
 
-      updateProgress();
+      this._updateFilesUploadProgress(files);
 
       if (!(200 <= xhr.status && xhr.status < 300)) {
         return handleError();
@@ -1899,7 +1854,7 @@ class Dropzone extends Emitter {
 
     // Some browsers do not have the .upload property
     let progressObj = xhr.upload != null ? xhr.upload : xhr;
-    progressObj.onprogress = updateProgress;
+    progressObj.onprogress = (e) => this._updateFilesUploadProgress(files, e);
 
     let headers = {
       "Accept": "application/json",
@@ -1969,7 +1924,7 @@ class Dropzone extends Emitter {
 
     return (() => {
       result = [];
-      for (let i = 0, end = files.length - 1, asc = 0 <= end; asc ? i <= end : i >= end; asc ? i++ : i--) {
+      for (let i = 0; i < files.length; i++) {
         let doneFunction = (file, paramName, fileName) => transformedFile => {
           formData.append(paramName, transformedFile, fileName);
           if (++doneCounter === files.length) {
@@ -1983,6 +1938,43 @@ class Dropzone extends Emitter {
     })();
   }
 
+
+  // Invoked when there is new progress information about given files
+  _updateFilesUploadProgress(files, e) {
+    let progress;
+    if (e != null) {
+      progress = (100 * e.loaded) / e.total;
+
+      for (let file of files) {
+        file.upload.progress = progress;
+        file.upload.total = e.total;
+        file.upload.bytesSent = e.loaded;
+      }
+    } else {
+      // Called when the file finished uploading
+
+      let allFilesFinished = true;
+
+      progress = 100;
+
+      for (let file of files) {
+        if ((file.upload.progress !== 100) || (file.upload.bytesSent !== file.upload.total)) {
+          allFilesFinished = false;
+        }
+        file.upload.progress = progress;
+        file.upload.bytesSent = file.upload.total;
+      }
+
+      // Nothing to do, all files already at 100%
+      if (allFilesFinished) {
+        return;
+      }
+    }
+
+    for (let file of files) {
+      this.emit("uploadprogress", file, progress, file.upload.bytesSent);
+    }
+  };
 
   submitRequest(xhr, formData, files) {
     return xhr.send(formData);
