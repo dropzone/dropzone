@@ -1781,97 +1781,101 @@ class Dropzone extends Emitter {
     return option;
   }
 
-  // Wrapper for uploadFiles()
-  uploadFile(file) {
-    return this.uploadFiles([file]);
-  }
-
   uploadFiles(files) {
-    let result, value;
-    let xhr = new XMLHttpRequest();
+    this._transformFiles(files, (transformedFiles) => {
+      let xhr = new XMLHttpRequest();
 
-    // Put the xhr object in the file objects to be able to reference it later.
-    for (let file of files) {
-      file.xhr = xhr;
-    }
-
-    let method = this.resolveOption(this.options.method, files);
-    let url = this.resolveOption(this.options.url, files);
-    xhr.open(method, url, true);
-
-    // Setting the timeout after open because of IE11 issue: https://gitlab.com/meno/dropzone/issues/8
-    xhr.timeout = this.resolveOption(this.options.timeout, files);
-
-    // Has to be after `.open()`. See https://github.com/enyo/dropzone/issues/179
-    xhr.withCredentials = !!this.options.withCredentials;
-
-
-    xhr.onload = e => {
-      this._finishedUploading(files, xhr, e);
-    };
-
-    xhr.onerror = () => {
-      this._handleUploadError(files, xhr);
-    };
-
-    // Some browsers do not have the .upload property
-    let progressObj = xhr.upload != null ? xhr.upload : xhr;
-    progressObj.onprogress = (e) => this._updateFilesUploadProgress(files, e);
-
-    let headers = {
-      "Accept": "application/json",
-      "Cache-Control": "no-cache",
-      "X-Requested-With": "XMLHttpRequest",
-    };
-
-    if (this.options.headers) {
-      Dropzone.extend(headers, this.options.headers);
-    }
-
-    for (let headerName in headers) {
-      let headerValue = headers[headerName];
-      if (headerValue) {
-        xhr.setRequestHeader(headerName, headerValue);
+      // Put the xhr object in the file objects to be able to reference it later.
+      for (let file of files) {
+        file.xhr = xhr;
       }
-    }
 
-    let formData = new FormData();
+      let method = this.resolveOption(this.options.method, files);
+      let url = this.resolveOption(this.options.url, files);
+      xhr.open(method, url, true);
 
-    // Adding all @options parameters
-    if (this.options.params) {
-      for (let key in this.options.params) {
-        value = this.options.params[key];
-        formData.append(key, value);
-      }
-    }
+      // Setting the timeout after open because of IE11 issue: https://gitlab.com/meno/dropzone/issues/8
+      xhr.timeout = this.resolveOption(this.options.timeout, files);
 
-    // Let the user add additional data if necessary
-    for (let file of files) {
-      this.emit("sending", file, xhr, formData);
-    }
-    if (this.options.uploadMultiple) {
-      this.emit("sendingmultiple", files, xhr, formData);
-    }
+      // Has to be after `.open()`. See https://github.com/enyo/dropzone/issues/179
+      xhr.withCredentials = !!this.options.withCredentials;
 
 
-    this._addFormElementData(formData);
-
-
-    // Finally add the files
-    // Has to be last because some servers (eg: S3) expect the file to be the last parameter
-
-    // Clumsy way of handling asynchronous calls, until I get to add a proper Future library.
-    let doneCounter = 0;
-
-    for (let i = 0; i < files.length; i++) {
-      let doneFunction = (file, paramName, fileName) => transformedFile => {
-        formData.append(paramName, transformedFile, fileName);
-        if (++doneCounter === files.length) {
-          return this.submitRequest(xhr, formData, files);
-        }
+      xhr.onload = e => {
+        this._finishedUploading(files, xhr, e);
       };
 
-      this.options.transformFile.call(this, files[i], doneFunction(files[i], this._getParamName(i), files[i].upload.filename));
+      xhr.onerror = () => {
+        this._handleUploadError(files, xhr);
+      };
+
+      // Some browsers do not have the .upload property
+      let progressObj = xhr.upload != null ? xhr.upload : xhr;
+      progressObj.onprogress = (e) => this._updateFilesUploadProgress(files, e);
+
+      let headers = {
+        "Accept": "application/json",
+        "Cache-Control": "no-cache",
+        "X-Requested-With": "XMLHttpRequest",
+      };
+
+      if (this.options.headers) {
+        Dropzone.extend(headers, this.options.headers);
+      }
+
+      for (let headerName in headers) {
+        let headerValue = headers[headerName];
+        if (headerValue) {
+          xhr.setRequestHeader(headerName, headerValue);
+        }
+      }
+
+      let formData = new FormData();
+
+      // Adding all @options parameters
+      if (this.options.params) {
+        for (let key in this.options.params) {
+          let value = this.options.params[key];
+          formData.append(key, value);
+        }
+      }
+
+      // Let the user add additional data if necessary
+      for (let file of files) {
+        this.emit("sending", file, xhr, formData);
+      }
+      if (this.options.uploadMultiple) {
+        this.emit("sendingmultiple", files, xhr, formData);
+      }
+
+
+      this._addFormElementData(formData);
+
+
+      // Finally add the files
+      // Has to be last because some servers (eg: S3) expect the file to be the last parameter
+
+      for (let i = 0; i < files.length; i++) {
+        formData.append(this._getParamName(i), transformedFiles[i], files[i].upload.filename);
+      }
+
+      this.submitRequest(xhr, formData, files);
+    });
+  }
+
+
+  // Transforms all files with this.options.transformFile and invokes done with the transformed files when done.
+  _transformFiles(files, done) {
+    let transformedFiles = [];
+    // Clumsy way of handling asynchronous calls, until I get to add a proper Future library.
+    let doneCounter = 0;
+    for (let i = 0; i < files.length; i++) {
+      this.options.transformFile.call(this, files[i], (transformedFile) => {
+        transformedFiles[i] = transformedFile;
+        if (++doneCounter === files.length) {
+          done(transformedFiles);
+        }
+      });
     }
   }
 
@@ -1984,7 +1988,7 @@ class Dropzone extends Emitter {
   }
 
   submitRequest(xhr, formData, files) {
-    return xhr.send(formData);
+    xhr.send(formData);
   }
 
   // Called internally when processing is finished.
