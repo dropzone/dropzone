@@ -199,6 +199,16 @@ class Dropzone extends Emitter {
       parallelChunkUploads: false,
 
       /**
+       * Whether a chunk should be retried if it fails.
+       */
+      retryChunks: false,
+
+      /**
+       * If `retryChunks` is true, how many times should it be retried.
+       */
+      retryChunksLimit: 3,
+
+      /**
        * The callback that will be invoked when all chunks have been uploaded for a file.
        * It gets the file for which the chunks have been uploaded as the first parameter,
        * and the `done` function as second. `done()` needs to be invoked when everything
@@ -1859,10 +1869,12 @@ class Dropzone extends Emitter {
           };
 
           file.upload.chunks[chunkNumber] = {
+            file: file,
             number: chunkNumber,
-            dataBlock: dataBlock, // In case we want to retry
+            dataBlock: dataBlock, // In case we want to retry.
             status: Dropzone.UPLOADING,
-            progress: 0
+            progress: 0,
+            retries: 0 // The number of times this block has been retried.
           };
 
 
@@ -2155,6 +2167,16 @@ class Dropzone extends Emitter {
   _handleUploadError(files, xhr, response) {
     if (files[0].status === Dropzone.CANCELED) {
       return;
+    }
+
+    if (files[0].upload.chunked && this.options.retryChunks) {
+      let chunk = this._getChunk(files[0], xhr);
+      if (chunk.retries++ < this.options.retryChunksLimit) {
+        this._uploadData(files, [chunk.dataBlock]);
+        return;
+      } else {
+        console.warn('Retried this chunk too often. Giving up.')
+      }
     }
 
     for (let file of files) {
