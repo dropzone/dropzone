@@ -303,10 +303,26 @@ class Dropzone extends Emitter {
       maxFiles: null,
 
       /**
-       * Can be an object of additional parameters to transfer to the server.
+       * Can be an **object** of additional parameters to transfer to the server, **or** a `Function`
+       * that gets invoked with the `files`, `xhr` and, if it's a chunked upload, `chunk` arguments. In case
+       * of a function, this needs to return a map.
+       *
+       * The default implementation does nothing for normal uploads, but adds relevant information for
+       * chunked uploads.
+       *
        * This is the same as adding hidden input fields in the form element.
        */
-      params: {},
+      params(files, xhr, chunk) {
+        if (chunk) {
+          return {
+            dzchunkindex: chunk.index,
+            dztotalfilesize: chunk.file.size,
+            dzchunksize: this.options.chunkSize,
+            dztotalchunkcount: chunk.file.upload.totalChunkCount,
+            dzchunkbyteoffset: chunk.index * this.options.chunkSize
+          };
+        }
+      },
 
       /**
        * An optional object to send additional headers to the server. Eg:
@@ -1846,31 +1862,31 @@ class Dropzone extends Emitter {
         file.upload.chunks = [];
 
         let handleNextChunk = () => {
-          let chunkNumber = 0;
+          let chunkIndex = 0;
 
           // Find the next item in file.upload.chunks that is not defined yet.
-          while (file.upload.chunks[chunkNumber] !== undefined) {
-            chunkNumber++;
+          while (file.upload.chunks[chunkIndex] !== undefined) {
+            chunkIndex++;
           }
 
           // This means, that all chunks have already been started.
-          if (chunkNumber >= file.upload.totalChunkCount) return;
+          if (chunkIndex >= file.upload.totalChunkCount) return;
 
           startedChunkCount++;
 
-          let start = chunkNumber * this.options.chunkSize;
+          let start = chunkIndex * this.options.chunkSize;
           let end = Math.min(start + this.options.chunkSize, file.size);
 
           let dataBlock = {
             name: this._getParamName(0),
-            data: transformedFile.slice(start, end),
+            data: transformedFile.webkitSlice ? transformedFile.webkitSlice(start, end) : transformedFile.slice(start, end),
             filename: file.upload.filename,
-            chunkNumber: chunkNumber
+            chunkIndex: chunkIndex
           };
 
-          file.upload.chunks[chunkNumber] = {
+          file.upload.chunks[chunkIndex] = {
             file: file,
-            number: chunkNumber,
+            index: chunkIndex,
             dataBlock: dataBlock, // In case we want to retry.
             status: Dropzone.UPLOADING,
             progress: 0,
@@ -1898,7 +1914,6 @@ class Dropzone extends Emitter {
           }
 
           if (allFinished) {
-            // Clear the upload data so we don't store unnecessary data.
             this._finished(files, '', null);
           }
         };
@@ -1946,7 +1961,7 @@ class Dropzone extends Emitter {
     }
     if (files[0].upload.chunked) {
       // Put the xhr object in the right chunk object, so it can be associated later, and found with _getChunk
-      files[0].upload.chunks[dataBlocks[0].chunkNumber].xhr = xhr;
+      files[0].upload.chunks[dataBlocks[0].chunkIndex].xhr = xhr;
     }
 
     let method = this.resolveOption(this.options.method, files);
@@ -1993,8 +2008,13 @@ class Dropzone extends Emitter {
 
     // Adding all @options parameters
     if (this.options.params) {
-      for (let key in this.options.params) {
-        let value = this.options.params[key];
+      let additionalParams = this.options.params;
+      if (typeof additionalParams === 'function') {
+        additionalParams = additionalParams.call(this, files, xhr, files[0].upload.chunked ? this._getChunk(files[0], xhr) : null);
+      }
+
+      for (let key in additionalParams) {
+        let value = additionalParams[key];
         formData.append(key, value);
       }
     }
