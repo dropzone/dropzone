@@ -1914,7 +1914,9 @@ class Dropzone extends Emitter {
           }
 
           if (allFinished) {
-            this._finished(files, '', null);
+            this.options.chunksUploaded(file, () => {
+              this._finished(files, '', null);
+            });
           }
         };
 
