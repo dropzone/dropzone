@@ -178,6 +178,8 @@ class Dropzone extends Emitter {
       /**
        * Whether you want files to be uploaded in chunks to your server. This can't be
        * used in combination with `uploadMultiple`.
+       *
+       * See [chunksUploaded](#config-chunksUploaded) for the callback to finalise an upload.
        */
       chunking: false,
 
@@ -207,14 +209,6 @@ class Dropzone extends Emitter {
        * If `retryChunks` is true, how many times should it be retried.
        */
       retryChunksLimit: 3,
-
-      /**
-       * The callback that will be invoked when all chunks have been uploaded for a file.
-       * It gets the file for which the chunks have been uploaded as the first parameter,
-       * and the `done` function as second. `done()` needs to be invoked when everything
-       * needed to finish the upload process is done.
-       */
-      chunksUploaded: function(file, done) { done(); },
 
       /**
        * If not `null` defines how many files this Dropzone handles. If it exceeds,
@@ -520,6 +514,13 @@ class Dropzone extends Emitter {
         return done();
       },
 
+      /**
+       * The callback that will be invoked when all chunks have been uploaded for a file.
+       * It gets the file for which the chunks have been uploaded as the first parameter,
+       * and the `done` function as second. `done()` needs to be invoked when everything
+       * needed to finish the upload process is done.
+       */
+      chunksUploaded: function(file, done) { done(); },
 
       /**
        * Gets called when the browser is not supported.
