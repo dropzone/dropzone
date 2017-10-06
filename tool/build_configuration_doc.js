@@ -90,7 +90,7 @@ while ((matchResult = singleConfigRegExp.exec(configBlock)) !== null) {
 
   configCount++;
 }
-return;
+
 fs.writeFileSync(dstFile, fileData.replace('<!-- options -->', htmlDoc));
 
 console.log(`Success! Created config for ${configCount} options and wrote to "${dstFile}"`);

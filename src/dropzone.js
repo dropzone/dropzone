@@ -176,6 +176,41 @@ class Dropzone extends Emitter {
       uploadMultiple: false,
 
       /**
+       * Whether you want files to be uploaded in chunks to your server. This can't be
+       * used in combination with `uploadMultiple`.
+       *
+       * See [chunksUploaded](#config-chunksUploaded) for the callback to finalise an upload.
+       */
+      chunking: false,
+
+      /**
+       * If `chunking` is enabled, this defines whether **every** file should be chunked,
+       * even if the file size is below chunkSize. This means, that the additional chunk
+       * form data will be submitted and the `chunksUploaded` callback will be invoked.
+       */
+      forceChunking: false,
+
+      /**
+       * If `chunking` is `true`, then this defines the chunk size in bytes.
+       */
+      chunkSize: 2000000,
+
+      /**
+       * If `true`, the individual chunks of a file are being uploaded simultaneously.
+       */
+      parallelChunkUploads: false,
+
+      /**
+       * Whether a chunk should be retried if it fails.
+       */
+      retryChunks: false,
+
+      /**
+       * If `retryChunks` is true, how many times should it be retried.
+       */
+      retryChunksLimit: 3,
+
+      /**
        * If not `null` defines how many files this Dropzone handles. If it exceeds,
        * the event `maxfilesexceeded` will be called. The dropzone element gets the
        * class `dz-max-files-reached` accordingly so you can provide visual feedback.
@@ -262,10 +297,26 @@ class Dropzone extends Emitter {
       maxFiles: null,
 
       /**
-       * Can be an object of additional parameters to transfer to the server.
+       * Can be an **object** of additional parameters to transfer to the server, **or** a `Function`
+       * that gets invoked with the `files`, `xhr` and, if it's a chunked upload, `chunk` arguments. In case
+       * of a function, this needs to return a map.
+       *
+       * The default implementation does nothing for normal uploads, but adds relevant information for
+       * chunked uploads.
+       *
        * This is the same as adding hidden input fields in the form element.
        */
-      params: {},
+      params(files, xhr, chunk) {
+        if (chunk) {
+          return {
+            dzchunkindex: chunk.index,
+            dztotalfilesize: chunk.file.size,
+            dzchunksize: this.options.chunkSize,
+            dztotalchunkcount: chunk.file.upload.totalChunkCount,
+            dzchunkbyteoffset: chunk.index * this.options.chunkSize
+          };
+        }
+      },
 
       /**
        * An optional object to send additional headers to the server. Eg:
@@ -463,6 +514,13 @@ class Dropzone extends Emitter {
         return done();
       },
 
+      /**
+       * The callback that will be invoked when all chunks have been uploaded for a file.
+       * It gets the file for which the chunks have been uploaded as the first parameter,
+       * and the `done` function as second. `done()` needs to be invoked when everything
+       * needed to finish the upload process is done.
+       */
+      chunksUploaded: function(file, done) { done(); },
 
       /**
        * Gets called when the browser is not supported.
@@ -478,7 +536,7 @@ class Dropzone extends Emitter {
           if (/(^| )dz-message($| )/.test(child.className)) {
             messageElement = child;
             child.className = "dz-message"; // Removes the 'dz-default' class
-            continue;
+            break;
           }
         }
         if (!messageElement) {
@@ -909,6 +967,10 @@ class Dropzone extends Emitter {
 
     if (this.options.acceptedFiles && this.options.acceptedMimeTypes) {
       throw new Error("You can't provide both 'acceptedFiles' and 'acceptedMimeTypes'. 'acceptedMimeTypes' is deprecated.");
+    }
+
+    if (this.options.uploadMultiple && this.options.chunking) {
+      throw new Error('You cannot set both: uploadMultiple and chunking.');
     }
 
     // Backwards compatibility
@@ -1451,7 +1513,9 @@ class Dropzone extends Emitter {
       // It's actual different than the size to be transmitted.
       total: file.size,
       bytesSent: 0,
-      filename: this._renameFile(file)
+      filename: this._renameFile(file),
+      chunked: this.options.chunking && (this.options.forceChunking || file.size > this.options.chunkSize),
+      totalChunkCount: Math.ceil(file.size / this.options.chunkSize)
     };
     this.files.push(file);
 
@@ -1750,11 +1814,13 @@ class Dropzone extends Emitter {
   cancelUpload(file) {
     if (file.status === Dropzone.UPLOADING) {
       let groupedFiles = this._getFilesWithXhr(file.xhr);
-      for (var groupedFile of groupedFiles) {
+      for (let groupedFile of groupedFiles) {
         groupedFile.status = Dropzone.CANCELED;
       }
-      file.xhr.abort();
-      for (groupedFile of groupedFiles) {
+      if (typeof file.xhr !== 'undefined') {
+        file.xhr.abort();
+      }
+      for (let groupedFile of groupedFiles) {
         this.emit("canceled", groupedFile);
       }
       if (this.options.uploadMultiple) {
@@ -1781,18 +1847,124 @@ class Dropzone extends Emitter {
     return option;
   }
 
-  // Wrapper for uploadFiles()
-  uploadFile(file) {
-    return this.uploadFiles([file]);
-  }
+  uploadFile(file) { return this.uploadFiles([file]); }
 
   uploadFiles(files) {
-    let result, value;
+    this._transformFiles(files, (transformedFiles) => {
+      if (files[0].upload.chunked) {
+        // This file should be sent in chunks!
+
+        // If the chunking option is set, we **know** that there can only be **one** file, since
+        // uploadMultiple is not allowed with this option.
+        let file = files[0];
+        let transformedFile = transformedFiles[0];
+        let startedChunkCount = 0;
+
+        file.upload.chunks = [];
+
+        let handleNextChunk = () => {
+          let chunkIndex = 0;
+
+          // Find the next item in file.upload.chunks that is not defined yet.
+          while (file.upload.chunks[chunkIndex] !== undefined) {
+            chunkIndex++;
+          }
+
+          // This means, that all chunks have already been started.
+          if (chunkIndex >= file.upload.totalChunkCount) return;
+
+          startedChunkCount++;
+
+          let start = chunkIndex * this.options.chunkSize;
+          let end = Math.min(start + this.options.chunkSize, file.size);
+
+          let dataBlock = {
+            name: this._getParamName(0),
+            data: transformedFile.webkitSlice ? transformedFile.webkitSlice(start, end) : transformedFile.slice(start, end),
+            filename: file.upload.filename,
+            chunkIndex: chunkIndex
+          };
+
+          file.upload.chunks[chunkIndex] = {
+            file: file,
+            index: chunkIndex,
+            dataBlock: dataBlock, // In case we want to retry.
+            status: Dropzone.UPLOADING,
+            progress: 0,
+            retries: 0 // The number of times this block has been retried.
+          };
+
+
+          this._uploadData(files, [dataBlock]);
+        };
+
+        file.upload.finishedChunkUpload = (chunk) => {
+          let allFinished = true;
+          chunk.status = Dropzone.SUCCESS;
+
+          // Clear the data from the chunk
+          chunk.dataBlock = null;
+
+          for (let i = 0; i < file.upload.totalChunkCount; i ++) {
+            if (file.upload.chunks[i] === undefined) {
+              return handleNextChunk();
+            }
+            if (file.upload.chunks[i].status !== Dropzone.SUCCESS) {
+              allFinished = false;
+            }
+          }
+
+          if (allFinished) {
+            this.options.chunksUploaded(file, () => {
+              this._finished(files, '', null);
+            });
+          }
+        };
+
+        if (this.options.parallelChunkUploads) {
+          for (let i = 0; i < file.upload.totalChunkCount; i++) {
+            handleNextChunk();
+          }
+        }
+        else {
+          handleNextChunk();
+        }
+      } else {
+        let dataBlocks = [];
+        for (let i = 0; i < files.length; i++) {
+          dataBlocks[i] = {
+            name: this._getParamName(i),
+            data: transformedFiles[i],
+            filename: files[i].upload.filename
+          };
+        }
+        this._uploadData(files, dataBlocks);
+      }
+    });
+  }
+
+  /// Returns the right chunk for given file and xhr
+  _getChunk(file, xhr) {
+    for (let i = 0; i < file.upload.totalChunkCount; i++) {
+      if (file.upload.chunks[i] !== undefined && file.upload.chunks[i].xhr === xhr) {
+        return file.upload.chunks[i];
+      }
+    }
+  }
+
+  // This function actually uploads the file(s) to the server.
+  // If dataBlocks contains the actual data to upload (meaning, that this could either be transformed
+  // files, or individual chunks for chunked upload).
+  _uploadData(files, dataBlocks) {
     let xhr = new XMLHttpRequest();
 
     // Put the xhr object in the file objects to be able to reference it later.
-    for (var file of files) {
+    for (let file of files) {
       file.xhr = xhr;
+    }
+    if (files[0].upload.chunked) {
+      // Put the xhr object in the right chunk object, so it can be associated later, and found with _getChunk
+      files[0].upload.chunks[dataBlocks[0].chunkIndex].xhr = xhr;
     }
 
     let method = this.resolveOption(this.options.method, files);
@@ -1806,100 +1978,17 @@ class Dropzone extends Emitter {
     xhr.withCredentials = !!this.options.withCredentials;
 
 
-    let response = null;
-
-    let handleError = () => {
-      return (() => {
-        result = [];
-        for (file of files) {
-          result.push(this._errorProcessing(files, response || this.options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr));
-        }
-        return result;
-      })();
-    };
-
-
-    let updateProgress = e => {
-      let progress;
-      if (e != null) {
-        progress = (100 * e.loaded) / e.total;
-
-        for (file of files) {
-          file.upload.progress = progress;
-          file.upload.total = e.total;
-          file.upload.bytesSent = e.loaded;
-        }
-      } else {
-        // Called when the file finished uploading
-
-        let allFilesFinished = true;
-
-        progress = 100;
-
-        for (file of files) {
-          if ((file.upload.progress !== 100) || (file.upload.bytesSent !== file.upload.total)) {
-            allFilesFinished = false;
-          }
-          file.upload.progress = progress;
-          file.upload.bytesSent = file.upload.total;
-        }
-
-        // Nothing to do, all files already at 100%
-        if (allFilesFinished) {
-          return;
-        }
-      }
-
-      return (() => {
-        result = [];
-        for (file of files) {
-          result.push(this.emit("uploadprogress", file, progress, file.upload.bytesSent));
-        }
-        return result;
-      })();
-    };
-
     xhr.onload = e => {
-      if (files[0].status === Dropzone.CANCELED) {
-        return;
-      }
-
-      if (xhr.readyState !== 4) {
-        return;
-      }
-
-      if ((xhr.responseType !== 'arraybuffer') && (xhr.responseType !== 'blob')) {
-        response = xhr.responseText;
-
-        if (xhr.getResponseHeader("content-type") && ~xhr.getResponseHeader("content-type").indexOf("application/json")) {
-          try {
-            response = JSON.parse(response);
-          } catch (error) {
-            e = error;
-            response = "Invalid JSON response from server.";
-          }
-        }
-      }
-
-      updateProgress();
-
-      if (!(200 <= xhr.status && xhr.status < 300)) {
-        return handleError();
-      } else {
-        return this._finished(files, response, e);
-      }
+      this._finishedUploading(files, xhr, e);
     };
 
     xhr.onerror = () => {
-      if (files[0].status === Dropzone.CANCELED) {
-        return;
-      }
-      return handleError();
+      this._handleUploadError(files, xhr);
     };
 
     // Some browsers do not have the .upload property
     let progressObj = xhr.upload != null ? xhr.upload : xhr;
-    progressObj.onprogress = updateProgress;
+    progressObj.onprogress = (e) => this._updateFilesUploadProgress(files, xhr, e);
 
     let headers = {
       "Accept": "application/json",
@@ -1922,14 +2011,19 @@ class Dropzone extends Emitter {
 
     // Adding all @options parameters
     if (this.options.params) {
-      for (let key in this.options.params) {
-        value = this.options.params[key];
+      let additionalParams = this.options.params;
+      if (typeof additionalParams === 'function') {
+        additionalParams = additionalParams.call(this, files, xhr, files[0].upload.chunked ? this._getChunk(files[0], xhr) : null);
+      }
+
+      for (let key in additionalParams) {
+        let value = additionalParams[key];
         formData.append(key, value);
       }
     }
 
     // Let the user add additional data if necessary
-    for (file of files) {
+    for (let file of files) {
       this.emit("sending", file, xhr, formData);
     }
     if (this.options.uploadMultiple) {
@@ -1937,6 +2031,37 @@ class Dropzone extends Emitter {
     }
 
 
+    this._addFormElementData(formData);
+
+
+    // Finally add the files
+    // Has to be last because some servers (eg: S3) expect the file to be the last parameter
+    for (let i = 0; i < dataBlocks.length; i++) {
+      let dataBlock = dataBlocks[i];
+      formData.append(dataBlock.name, dataBlock.data, dataBlock.filename);
+    }
+
+    this.submitRequest(xhr, formData, files);
+  }
+
+
+  // Transforms all files with this.options.transformFile and invokes done with the transformed files when done.
+  _transformFiles(files, done) {
+    let transformedFiles = [];
+    // Clumsy way of handling asynchronous calls, until I get to add a proper Future library.
+    let doneCounter = 0;
+    for (let i = 0; i < files.length; i++) {
+      this.options.transformFile.call(this, files[i], (transformedFile) => {
+        transformedFiles[i] = transformedFile;
+        if (++doneCounter === files.length) {
+          done(transformedFiles);
+        }
+      });
+    }
+  }
+
+  // Takes care of adding other input elements of the form to the AJAX request
+  _addFormElementData(formData) {
     // Take care of other input elements
     if (this.element.tagName === "FORM") {
       for (let input of this.element.querySelectorAll("input, textarea, select, button")) {
@@ -1945,7 +2070,7 @@ class Dropzone extends Emitter {
         if (inputType) inputType = inputType.toLowerCase();
 
         // If the input doesn't have a name, we can't use it.
-        if (inputName == null) continue;
+        if (typeof inputName === 'undefined' || inputName === null) continue;
 
         if ((input.tagName === "SELECT") && input.hasAttribute("multiple")) {
           // Possibly multiple values
@@ -1959,33 +2084,131 @@ class Dropzone extends Emitter {
         }
       }
     }
+  }
 
+  // Invoked when there is new progress information about given files.
+  // If e is not provided, it is assumed that the upload is finished.
+  _updateFilesUploadProgress(files, xhr, e) {
+    let progress;
+    if (typeof e !== 'undefined') {
+      progress = (100 * e.loaded) / e.total;
 
-    // Finally add the files
-    // Has to be last because some servers (eg: S3) expect the file to be the last parameter
-
-    // Clumsy way of handling asynchronous calls, until I get to add a proper Future library.
-    let doneCounter = 0;
-
-    return (() => {
-      result = [];
-      for (let i = 0, end = files.length - 1, asc = 0 <= end; asc ? i <= end : i >= end; asc ? i++ : i--) {
-        let doneFunction = (file, paramName, fileName) => transformedFile => {
-          formData.append(paramName, transformedFile, fileName);
-          if (++doneCounter === files.length) {
-            return this.submitRequest(xhr, formData, files);
+      if (files[0].upload.chunked) {
+        let file = files[0];
+        // Since this is a chunked upload, we need to update the appropriate chunk progress.
+        let chunk = this._getChunk(file, xhr);
+        chunk.progress = progress;
+        chunk.total = e.total;
+        chunk.bytesSent = e.loaded;
+        let fileProgress = 0, fileTotal, fileBytesSent;
+        file.upload.progress = 0;
+        file.upload.total = 0;
+        file.upload.bytesSent = 0;
+        for (let i = 0; i < file.upload.totalChunkCount; i++) {
+          if (file.upload.chunks[i] !== undefined && file.upload.chunks[i].progress !== undefined) {
+            file.upload.progress += file.upload.chunks[i].progress;
+            file.upload.total += file.upload.chunks[i].total;
+            file.upload.bytesSent += file.upload.chunks[i].bytesSent;
           }
-        };
-
-        result.push(this.options.transformFile.call(this, files[i], doneFunction(files[i], this._getParamName(i), files[i].upload.filename)));
+        }
+        file.upload.progress = file.upload.progress / file.upload.totalChunkCount;
+      } else {
+        for (let file of files) {
+          file.upload.progress = progress;
+          file.upload.total = e.total;
+          file.upload.bytesSent = e.loaded;
+        }
       }
-      return result;
-    })();
+      for (let file of files) {
+        this.emit("uploadprogress", file, file.upload.progress, file.upload.bytesSent);
+      }
+    } else {
+      // Called when the file finished uploading
+
+      let allFilesFinished = true;
+
+      progress = 100;
+
+      for (let file of files) {
+        if ((file.upload.progress !== 100) || (file.upload.bytesSent !== file.upload.total)) {
+          allFilesFinished = false;
+        }
+        file.upload.progress = progress;
+        file.upload.bytesSent = file.upload.total;
+      }
+
+      // Nothing to do, all files already at 100%
+      if (allFilesFinished) {
+        return;
+      }
+
+      for (let file of files) {
+        this.emit("uploadprogress", file, progress, file.upload.bytesSent);
+      }
+    }
+
   }
 
 
+  _finishedUploading(files, xhr, e) {
+    let response;
+
+    if (files[0].status === Dropzone.CANCELED) {
+      return;
+    }
+
+    if (xhr.readyState !== 4) {
+      return;
+    }
+
+    if ((xhr.responseType !== 'arraybuffer') && (xhr.responseType !== 'blob')) {
+      response = xhr.responseText;
+
+      if (xhr.getResponseHeader("content-type") && ~xhr.getResponseHeader("content-type").indexOf("application/json")) {
+        try {
+          response = JSON.parse(response);
+        } catch (error) {
+          e = error;
+          response = "Invalid JSON response from server.";
+        }
+      }
+    }
+
+    this._updateFilesUploadProgress(files);
+
+    if (!(200 <= xhr.status && xhr.status < 300)) {
+      this._handleUploadError(files, xhr, response);
+    } else {
+      if (files[0].upload.chunked) {
+        files[0].upload.finishedChunkUpload(this._getChunk(files[0], xhr));
+      } else {
+        this._finished(files, response, e);
+      }
+    }
+  }
+
+  _handleUploadError(files, xhr, response) {
+    if (files[0].status === Dropzone.CANCELED) {
+      return;
+    }
+
+    if (files[0].upload.chunked && this.options.retryChunks) {
+      let chunk = this._getChunk(files[0], xhr);
+      if (chunk.retries++ < this.options.retryChunksLimit) {
+        this._uploadData(files, [chunk.dataBlock]);
+        return;
+      } else {
+        console.warn('Retried this chunk too often. Giving up.')
+      }
+    }
+
+    for (let file of files) {
+      this._errorProcessing(files, response || this.options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr);
+    }
+  }
+
   submitRequest(xhr, formData, files) {
-    return xhr.send(formData);
+    xhr.send(formData);
   }
 
   // Called internally when processing is finished.
