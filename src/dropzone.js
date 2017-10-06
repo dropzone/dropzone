@@ -297,29 +297,6 @@ class Dropzone extends Emitter {
       maxFiles: null,
 
       /**
-       * Can be an **object** of additional parameters to transfer to the server, **or** a `Function`
-       * that gets invoked with the `files`, `xhr` and, if it's a chunked upload, `chunk` arguments. In case
-       * of a function, this needs to return a map.
-       *
-       * The default implementation does nothing for normal uploads, but adds relevant information for
-       * chunked uploads.
-       *
-       * This is the same as adding hidden input fields in the form element.
-       */
-      params(files, xhr, chunk) {
-        if (chunk) {
-          return {
-            dzuuid: chunk.file.upload.uuid,
-            dzchunkindex: chunk.index,
-            dztotalfilesize: chunk.file.size,
-            dzchunksize: this.options.chunkSize,
-            dztotalchunkcount: chunk.file.upload.totalChunkCount,
-            dzchunkbyteoffset: chunk.index * this.options.chunkSize
-          };
-        }
-      },
-
-      /**
        * An optional object to send additional headers to the server. Eg:
        * `{ "My-Awesome-Header": "header value" }`
        */
@@ -501,6 +478,29 @@ class Dropzone extends Emitter {
        * You can add event listeners here
        */
       init() {},
+
+      /**
+       * Can be an **object** of additional parameters to transfer to the server, **or** a `Function`
+       * that gets invoked with the `files`, `xhr` and, if it's a chunked upload, `chunk` arguments. In case
+       * of a function, this needs to return a map.
+       *
+       * The default implementation does nothing for normal uploads, but adds relevant information for
+       * chunked uploads.
+       *
+       * This is the same as adding hidden input fields in the form element.
+       */
+      params(files, xhr, chunk) {
+        if (chunk) {
+          return {
+            dzuuid: chunk.file.upload.uuid,
+            dzchunkindex: chunk.index,
+            dztotalfilesize: chunk.file.size,
+            dzchunksize: this.options.chunkSize,
+            dztotalchunkcount: chunk.file.upload.totalChunkCount,
+            dzchunkbyteoffset: chunk.index * this.options.chunkSize
+          };
+        }
+      },
 
       /**
        * A function that gets a [file](https://developer.mozilla.org/en-US/docs/DOM/File)
