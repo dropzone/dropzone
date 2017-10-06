@@ -309,6 +309,7 @@ class Dropzone extends Emitter {
       params(files, xhr, chunk) {
         if (chunk) {
           return {
+            dzuuid: chunk.file.upload.uuid,
             dzchunkindex: chunk.index,
             dztotalfilesize: chunk.file.size,
             dzchunksize: this.options.chunkSize,
@@ -1508,6 +1509,7 @@ class Dropzone extends Emitter {
 
   addFile(file) {
     file.upload = {
+      uuid: Dropzone.uuidv4(),
       progress: 0,
       // Setting the total upload size to file.size for the beginning
       // It's actual different than the size to be transmitted.
@@ -2246,6 +2248,13 @@ class Dropzone extends Emitter {
       return this.processQueue();
     }
   }
+
+  static uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      let r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  };
 }
 Dropzone.initClass();
 
@@ -2510,7 +2519,6 @@ Dropzone.isValidFile = function (file, acceptedFiles) {
 
   return false;
 };
-
 
 // Augment jQuery
 if (typeof jQuery !== 'undefined' && jQuery !== null) {
