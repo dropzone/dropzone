@@ -1086,7 +1086,13 @@ class Dropzone extends Emitter {
         this.hiddenFileInput.style.left = "0";
         this.hiddenFileInput.style.height = "0";
         this.hiddenFileInput.style.width = "0";
-        document.querySelector(this.options.hiddenInputContainer).appendChild(this.hiddenFileInput);
+        // Get the hiddenInputContainer which both can be an element or querySelector
+        if (this.options.hiddenInputContainer.tagName) {
+            var hiddenInputcontainer = this.options.hiddenInputContainer;
+        } else {
+            var hiddenInputContainer = document.querySelector(this.options.hiddenInputContainer);
+        }
+        hiddenInputContainer.appendChild(this.hiddenFileInput);
         return this.hiddenFileInput.addEventListener("change", () => {
           let {files} = this.hiddenFileInput;
           if (files.length) {
