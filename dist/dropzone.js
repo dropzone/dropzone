@@ -2746,8 +2746,8 @@ var Dropzone = function (_Emitter) {
 
         var file = _ref28;
 
-        this._errorProcessing(files, response || this.options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr);
       }
+      this._errorProcessing(files, response || this.options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr);
     }
   }, {
     key: "submitRequest",
