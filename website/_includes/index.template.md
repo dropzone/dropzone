@@ -32,18 +32,16 @@ News
 
 **Dropzone 5.2.0**
 
-The most requested feature of this release is **chunked uploads**!
-
-Thanks to **SIMPEL** for donating the money, making this feature available to everybody!
+The most requested feature of this release is **chunked uploads**! Thanks to
+**SIMPEL** for donating the money, making this feature available to everybody!
+Check out [the wiki on chunked uploads](https://gitlab.com/meno/dropzone/wikis/faq#chunked-uploads) for more
+information and see the [full CHANGELOG on GitLab](https://gitlab.com/meno/dropzone/blob/master/CHANGELOG.md).
 
 <p style="text-align: center;">
   <a href="http://simpel.com.au/" target="_blank" rel="nofollow noopener" style="border-bottom: none; background: white; padding: 0.8rem 1rem 0.5rem 0.9rem; display: inline-block;">
     <img src="https://i.imgur.com/hih5Bka.jpg" alt="SIMPEL Company Logo" style="width: 240px; height: 53px">
   </a>
 </p>
-
-Check out [the wiki on chunked uploads](https://gitlab.com/meno/dropzone/wikis/faq#chunked-uploads) for more
-information and see the [full CHANGELOG on GitLab](https://gitlab.com/meno/dropzone/blob/master/CHANGELOG.md).
 
 **Dropzone 5.0.0**
 
@@ -58,16 +56,12 @@ Big shout out to MD Systems, who donated the money to make **browser side image 
 
 <section markdown="1">
 
-# New Video Coming Soon!
+# New Video Out Now!
 
-<!-- Your embedded video player code -->
-<div style="background: white; border-radius: 4px;">
-    <div class="fb-video"
-        data-href="https://www.facebook.com/thisismeno/videos/1494653023951721/"
-        data-width="720"
-        data-show-text="true"><blockquote cite="https://www.facebook.com/thisismeno/videos/1494653023951721/" class="fb-xfbml-parse-ignore" style="padding: 1.5rem;"><a href="https://www.facebook.com/thisismeno/videos/1494653023951721/">Aux Bras Teaser 1</a><p>AUX BRAS — New single coming s-s-s-soooon! #teaser 1
-        Thanks to Vedia Production for making the video, and Julia &amp; Markus for starring in it!</p></blockquote>
-    </div>
+<div>
+  <div class="embedded-video">
+    <iframe style="margin: 0 auto;" width="560" height="315" src="https://www.youtube.com/embed/2McZErtMST8?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>
+  </div>
 </div>
 
 **Previous Videos**
@@ -84,10 +78,10 @@ Big shout out to MD Systems, who donated the money to make **browser side image 
 
 <div>
   <br>
-  For the full desktop experience, visit <a href="http://www.meno.fm/flashlights">www.meno.fm/flashlights</a>.
-  (I wrote a <a href="http://www.colorglare.com/2016/02/05/flashlights.html"><strong>COLORGLARE</strong> post about the build process</a>.) 
+  For the full desktop experience, visit <a href="http://www.meno.fm/flashlights">www.meno.fm/flashlights</a> —
+  I wrote a <a href="http://www.colorglare.com/2016/02/05/flashlights.html"><strong>COLORGLARE</strong> post about the build process</a>. 
     
-  To keep updated, like my <a href="https://www.facebook.com/thisismeno/">Facebook artist page</a>. <div style="display: inline-block; position: relative; top: -0.2em; margin-left: 0.4em;"><div class="fb-like" data-href="https://www.facebook.com/thisismeno/" data-layout="button" data-action="like" data-show-faces="false" data-share="false" data-colorscheme="dark"></div></div>
+  To keep updated, like my <a href="https://www.facebook.com/thisismeno/">Facebook artist page</a>! <div style="display: inline-block; position: relative; top: -0.2em; margin-left: 0.4em;"><div class="fb-like" data-href="https://www.facebook.com/thisismeno/" data-layout="button" data-action="like" data-show-faces="false" data-share="false" data-colorscheme="dark"></div></div>
     
   Purchase my EP on
   <a href="https://play.google.com/store/music/album/Meno_Flashlights?id=Bvkm477idlkjw6joacowb7aa4he">Google Play</a>,
