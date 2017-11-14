@@ -447,6 +447,11 @@ class Dropzone extends Emitter {
       dictCancelUpload: "Cancel upload",
 
       /**
+       * The text that is displayed if an upload was manually canceled
+       */
+      dictUploadCanceled: "Upload canceled.",
+
+      /**
        * If `addRemoveLinks` is true, the text to be used for confirmation when cancelling upload.
        */
       dictCancelUploadConfirmation: "Are you sure you want to cancel this upload?",
@@ -472,7 +477,6 @@ class Dropzone extends Emitter {
        * `b` for bytes.
        */
       dictFileSizeUnits: {tb: "TB", gb: "GB", mb: "MB", kb: "KB", b: "b"},
-
       /**
        * Called when dropzone initialized
        * You can add event listeners here
@@ -873,7 +877,7 @@ class Dropzone extends Emitter {
 
       // When the upload is canceled.
       canceled(file) {
-        return this.emit("error", file, "Upload canceled.");
+        return this.emit("error", file, this.options.dictUploadCanceled);
       },
 
       canceledmultiple() {},
