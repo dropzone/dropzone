@@ -1935,6 +1935,24 @@ describe("Dropzone", function() {
           , 10);
         });
 
+        it("should not use resizeImage for SVG if dimensions are provided", function(done) {
+          sinon.stub(dropzone, "resizeImage");
+          sinon.stub(dropzone, "createThumbnail");
+
+          dropzone.options.resizeWidth = 400;
+
+          let mock1 = getMockFile();
+          mock1.type = 'image/svg+xml';
+
+          dropzone.addFile(mock1);
+
+          return setTimeout(function() {
+              dropzone.resizeImage.callCount.should.eql(0);
+              return done();
+            }
+            , 10);
+        });
+
         it("should not use resizeImage if dimensions are not provided", function(done) {
           sinon.stub(dropzone, "resizeImage");
           sinon.stub(dropzone, "createThumbnail");
