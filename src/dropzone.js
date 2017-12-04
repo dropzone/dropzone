@@ -1417,10 +1417,6 @@ class Dropzone extends Emitter {
 
 
   handleFiles(files) {
-    if (FileList.prototype.map) {
-      files.map((file) => this.addFile(file));
-    }
-
     for(let file of files) {
       this.addFile(file);
     }
