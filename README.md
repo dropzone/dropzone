@@ -47,7 +47,7 @@ Please also refer to the [FAQ](https://github.com/enyo/dropzone/wiki/FAQ).
 
 ## Examples
 
-For examples, please see the [GitHub wiki](https://github.com/enyo/dropzone/wiki).
+For examples, please see the [GitLab wiki](https://gitlab.com/meno/dropzone/wikis/home).
 
 
 # Installation
@@ -566,7 +566,7 @@ new Dropzone(document.body, {
 
 
 
-Look at the [github wiki](https://github.com/enyo/dropzone/wiki) for more examples.
+Look at the [gitlab wiki](https://gitlab.com/meno/dropzone/wikis/home) for more examples.
 
 If you have any problems using Dropzone, please try to find help on
 [stackoverflow.com](http://stackoverflow.com/) by using the `dropzone.js`
