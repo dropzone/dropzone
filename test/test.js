@@ -1943,7 +1943,6 @@ describe("Dropzone", function() {
           };
 
           dropzone.options.resizeWidth = 400;
-          dropzone.foo = 'x';
 
           let mock1 = getMockFile();
           mock1.type = 'image/svg+xml';
