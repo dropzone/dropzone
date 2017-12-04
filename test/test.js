@@ -1375,7 +1375,7 @@ describe("Dropzone", function() {
 
 
 
-  return describe("file handling", function() {
+  describe("file handling", function() {
     let mockFile = null;
     let dropzone = null;
 
@@ -1384,7 +1384,7 @@ describe("Dropzone", function() {
       mockFile = getMockFile();
 
       let element = Dropzone.createElement("<div></div>");
-      return dropzone = new Dropzone(element, {url: "/the/url"});
+      dropzone = new Dropzone(element, {url: "/the/url"});
     });
 
     afterEach(() => dropzone.destroy());
@@ -1933,6 +1933,29 @@ describe("Dropzone", function() {
             return done();
           }
           , 10);
+        });
+
+        it("should not use resizeImage for SVG if dimensions are provided", function(done) {
+          sinon.stub(dropzone, "uploadFiles");
+
+          dropzone.createThumbnail = function(file, width, height, resizeMethod, fixOrientation, callback) {
+            callback(null, null);
+          };
+
+          dropzone.options.resizeWidth = 400;
+
+          let mock1 = getMockFile();
+          mock1.type = 'image/svg+xml';
+
+          dropzone.addFile(mock1);
+
+          setTimeout(function() {
+              dropzone.uploadFiles.callCount.should.eql(1);
+              let uploadedFiles = dropzone.uploadFiles.getCall(0).args[0];
+              uploadedFiles.should.eql([mock1]);
+              done();
+            }
+            , 10);
         });
 
         it("should not use resizeImage if dimensions are not provided", function(done) {

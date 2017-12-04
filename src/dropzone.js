@@ -1615,7 +1615,7 @@ class Dropzone extends Emitter {
   // the resized blob.
   resizeImage(file, width, height, resizeMethod, callback) {
     return this.createThumbnail(file, width, height, resizeMethod, false, (dataUrl, canvas) => {
-      if (canvas === null) {
+      if (canvas == null) {
         // The image has not been resized
         return callback(file);
       } else {
