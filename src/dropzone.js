@@ -1421,7 +1421,9 @@ class Dropzone extends Emitter {
 
 
   handleFiles(files) {
-    return files.map((file) => this.addFile(file));
+    for(let file of files) {
+      this.addFile(file);
+    }
   }
 
   // When a folder is dropped (or files are pasted), items must be handled
