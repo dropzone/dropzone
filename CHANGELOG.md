@@ -1,3 +1,9 @@
+## 5.3.0
+
+- Add `dictUploadCanceled` option (thanks to @Fohlen)
+- Fix issue with drag'n'drop on Safari and IE10 (thanks to @taylorryan)
+- Fix issues with resizing if SVG files are dropped (thanks to @saschagros)
+
 ## 5.2.0
 
 - **Migrated from coffeescript to ES6!** 
