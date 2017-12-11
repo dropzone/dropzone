@@ -1652,7 +1652,7 @@ var Dropzone = function (_Emitter) {
     value: function handleFiles(files) {
       var _this5 = this;
 
-      return files.map(function (file) {
+      return [].slice.call(files, 0).map(function (file) {
         return _this5.addFile(file);
       });
     }
