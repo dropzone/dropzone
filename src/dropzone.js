@@ -1339,7 +1339,7 @@ class Dropzone extends Emitter {
   }
 
   enable() {
-    delete(this.disabled);
+    delete this.disabled;
     this.clickableElements.forEach(element => element.classList.add("dz-clickable"));
     return this.setupEventListeners();
   }
