@@ -26,7 +26,7 @@
   ],
   "scripts": {
     "test": "grunt && npm run test-prebuilt",
-    "test-prebuilt": "mocha-headless-chrome -f test/test-prebuilt.html"
+    "test-prebuilt": "mocha-headless-chrome -f test/test-prebuilt.html -a no-sandbox -a disable-setuid-sandbox"
   },
   "bugs": {
     "email": "m@tias.me",
