@@ -1,9 +1,12 @@
-image: nodesource/jessie:latest
+image: debian:stretch
 
 before_script:
   - export NODE_ENV=development
   - apt-get update -qq
-  - apt-get -y -qq install ruby ruby-dev
+  # Required for npm
+  - apt-get -y -qq install curl gnupg2
+  - curl -sL https://deb.nodesource.com/setup_9.x | bash -
+  - apt-get -y -qq install nodejs build-essential ruby ruby-dev
   - gem install sass
   - npm install
   - npm install -g grunt-cli
@@ -28,8 +31,9 @@ release:
 pages:
   stage: deploy
   script:
-  - apt-get -y -qq install ruby-dev
-  - gem install jekyll pygments.rb
+  - ruby --version
+  - gem install jekyll -v 3.6.2
+  - gem install pygments.rb
   - grunt build-website
   - jekyll build -s website -d public
   artifacts:
