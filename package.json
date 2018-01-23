@@ -42,7 +42,6 @@
     "chai": "1.7.x",
     "grunt": "^1.0.0",
     "grunt-babel": "^6.0.0",
-    "grunt-contrib-coffee": "^1.0.0",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-sass": "^1.0.0",
     "grunt-contrib-uglify": "^2.1.0",
