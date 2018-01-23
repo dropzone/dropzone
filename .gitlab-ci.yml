@@ -11,8 +11,7 @@ before_script:
 test:
   stage: test
   script:
-  # Required by and phantomjs
-  - apt-get -y -qq install libssl-dev libfontconfig1-dev
+  - apt-get -y -qq install chromium-browser
   - npm run test
 
 release:
