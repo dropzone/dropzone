@@ -26,7 +26,7 @@
   ],
   "scripts": {
     "test": "grunt && npm run test-prebuilt",
-    "test-prebuilt": "mocha-phantomjs test/test-prebuilt.html"
+    "test-prebuilt": "mocha-headless-chrome -f test/test-prebuilt.html"
   },
   "bugs": {
     "email": "m@tias.me",
@@ -50,8 +50,7 @@
     "grunt-text-replace": "^0.4.0",
     "marked": "^0.3.6",
     "mocha": "^3.2.0",
-    "mocha-phantomjs": "^4.1.0",
-    "phantomjs-prebuilt": "^2.1.7",
+    "mocha-headless-chrome": "^1.8.0",
     "sinon": "1.17.7"
   }
 }
