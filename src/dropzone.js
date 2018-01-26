@@ -830,7 +830,7 @@ class Dropzone extends Emitter {
         if (file.previewElement) {
           file.previewElement.classList.add("dz-processing");
           if (file._removeLink) {
-            return file._removeLink.textContent = this.options.dictCancelUpload;
+            return file._removeLink.innerHTML = this.options.dictCancelUpload;
           }
         }
       },
@@ -886,7 +886,7 @@ class Dropzone extends Emitter {
       // Receives `file`
       complete(file) {
         if (file._removeLink) {
-          file._removeLink.textContent = this.options.dictRemoveFile;
+          file._removeLink.innerHTML = this.options.dictRemoveFile;
         }
         if (file.previewElement) {
           return file.previewElement.classList.add("dz-complete");
