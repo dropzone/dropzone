@@ -1393,7 +1393,13 @@ class Dropzone extends Emitter {
     }
     this.emit("drop", e);
 
-    let {files} = e.dataTransfer;
+    // Convert the FileList to an Array
+    // This is necessary for IE11
+    let files = [];
+    for (let i = 0; i < e.dataTransfer.files.length; i++) {
+      files[i] = e.dataTransfer.files[i];
+    }
+
     this.emit("addedfiles", files);
 
     // Even if it's a folder, files.length will contain the folders.
