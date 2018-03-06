@@ -1,3 +1,7 @@
+## 5.3.1
+
+- Fix broken npm release of 5.3.0
+
 ## 5.3.0
 
 - Add `dictUploadCanceled` option (thanks to @Fohlen)
