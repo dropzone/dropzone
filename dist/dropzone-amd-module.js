@@ -1566,6 +1566,7 @@ var Dropzone = function (_Emitter) {
         return element.classList.remove("dz-clickable");
       });
       this.removeEventListeners();
+      this.disabled = true;
 
       return this.files.map(function (file) {
         return _this4.cancelUpload(file);
@@ -1574,6 +1575,7 @@ var Dropzone = function (_Emitter) {
   }, {
     key: "enable",
     value: function enable() {
+      delete this.disabled;
       this.clickableElements.forEach(function (element) {
         return element.classList.add("dz-clickable");
       });
@@ -1630,7 +1632,12 @@ var Dropzone = function (_Emitter) {
       }
       this.emit("drop", e);
 
-      var files = e.dataTransfer.files;
+      // Convert the FileList to an Array
+      // This is necessary for IE11
+      var files = [];
+      for (var i = 0; i < e.dataTransfer.files.length; i++) {
+        files[i] = e.dataTransfer.files[i];
+      }
 
       this.emit("addedfiles", files);
 
@@ -2865,7 +2872,7 @@ var Dropzone = function (_Emitter) {
 
 Dropzone.initClass();
 
-Dropzone.version = "5.3.1";
+Dropzone.version = "5.4.0";
 
 // This is a map of options for your different dropzones. Add configurations
 // to this object for your different dropzone elemens.
