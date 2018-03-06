@@ -1,3 +1,7 @@
+## 5.4.0
+
+- Fix IE11 issue when dropping files
+
 ## 5.3.1
 
 - Fix broken npm release of 5.3.0
