@@ -60,13 +60,16 @@ Big shout out to MD Systems, who donated the money to make **browser side image 
 
 <div>
   <div class="embedded-video">
-    <iframe style="margin: 0 auto;" width="560" height="315" src="https://www.youtube.com/embed/2McZErtMST8?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>
+    <iframe style="margin: 0 auto;" width="560" height="315" src="https://www.youtube.com/embed/lQ3OSTDpLmY?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>
   </div>
 </div>
 
 **Previous Videos**
 
 <div class="video-grid">
+  <div class="video-grid__cell">
+    <iframe style="margin: 0 auto;" width="280" height="158" src="https://www.youtube.com/embed/2McZErtMST8?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>
+  </div>
   <div class="video-grid__cell">
     <iframe style="margin: 0 auto;" width="280" height="158" src="https://www.youtube.com/embed/z-OUBkuDzv4?rel=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>
   </div>

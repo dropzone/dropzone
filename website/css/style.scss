@@ -473,9 +473,9 @@ main {
         position: relative;
         flex: 1;
 
-
-        &:last-child {
-          margin-left: 1.5rem;
+        margin-left: 1.5rem;
+        &:first-child {
+          margin-left: 0;
         }
 
         &:after {
