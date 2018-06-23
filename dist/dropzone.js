@@ -2695,6 +2695,9 @@ var Dropzone = function (_Emitter) {
 
           var _file5 = _ref28;
 
+          if (_file5.upload.chunked){
+            continue;
+          }
           this.emit("uploadprogress", _file5, progress, _file5.upload.bytesSent);
         }
       }
