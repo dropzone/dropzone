@@ -86,18 +86,10 @@ Big shout out to MD Systems, who donated the money to make **browser side image 
 
 <div>
   <br>
-  For the full desktop experience, visit <a href="http://www.meno.fm/flashlights">www.meno.fm/flashlights</a> —
-  I wrote a <a href="http://www.colorglare.com/2016/02/05/flashlights.html"><strong>COLORGLARE</strong> post about the build process</a>. 
-    
-  To keep updated, like my <a href="https://www.facebook.com/thisismeno/">Facebook artist page</a>! <div style="display: inline-block; position: relative; top: -0.2em; margin-left: 0.4em;"><div class="fb-like" data-href="https://www.facebook.com/thisismeno/" data-layout="button" data-action="like" data-show-faces="false" data-share="false" data-colorscheme="dark"></div></div>
-    
-  Purchase my EP on
-  <a href="https://play.google.com/store/music/album/Meno_Flashlights?id=Bvkm477idlkjw6joacowb7aa4he">Google Play</a>,
-  <a href="https://www.amazon.com/gp/product/B01AP3ETYO?ie=UTF8&keywords=meno%20flashlights&qid=1454067033&ref_=sr_1_3&s=dmusic&sr=8-3">Amazon Music</a>
-  or <a href="https://itunes.apple.com/at/album/flashlights-ep/id1075875101?l=en">iTunes</a> –
-  or stream it on <a href="https://open.spotify.com/album/14y7LCmuPCBAZqrvc6uqkd">Spotify</a>:
-  <br><br>
-  <iframe style="display: block; width: 280px; margin: 0 auto;" src="https://embed.spotify.com/?uri=spotify%3Aalbum%3A14y7LCmuPCBAZqrvc6uqkd&theme=white&view=coverart" width="280" height="80" frameborder="0" allowtransparency="true"></iframe>
+  To keep updated, like my <a href="https://www.facebook.com/yesyesmeno/">Facebook artist page</a>! <div style="display: inline-block; position: relative; top: -0.2em; margin-left: 0.4em;"><div class="fb-like" data-href="https://www.facebook.com/thisismeno/" data-layout="button" data-action="like" data-show-faces="false" data-share="false" data-colorscheme="dark"></div></div>
+  <br>  
+  Listen to my music on Spotify:<br><br>
+  <iframe style="display: block; width: 280px; margin: 0 auto;" src="https://open.spotify.com/embed?uri=spotify:artist:6YYLgYEaM5Z42woEFtzu32" width="280" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
 </div>
 
 
