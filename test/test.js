@@ -1457,6 +1457,19 @@ describe("Dropzone", function() {
         return dropzone.files[0].previewElement.querySelector("a[data-dz-remove].dz-remove").should.be.ok;
       });
 
+      it("should create a remove link with HTML if configured to do so", function() {
+        dropzone.options.addRemoveLinks = true;
+        dropzone.options.dictRemoveFile = '<i class="icon icon-class"></i> Remove';
+        dropzone.processFile = function() {};
+        dropzone.uploadFile = function() {};
+
+        sinon.stub(dropzone, "processQueue");
+        dropzone.addFile(mockFile);
+
+        return dropzone.files[0].previewElement.querySelector("a[data-dz-remove].dz-remove").should.be.ok
+            && dropzone.files[0].previewElement.querySelector("a[data-dz-remove].dz-remove").innerHTML.should.equal('<i class="icon icon-class"></i> Remove');
+      });
+
 
       it("should attach an event handler to data-dz-remove links", function() {
         dropzone.options.previewTemplate = `\
