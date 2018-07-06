@@ -1,6 +1,6 @@
 {
   "name": "dropzone",
-  "version": "5.4.0",
+  "version": "5.5.0",
   "description": "Handles drag and drop of files for you.",
   "keywords": [
     "dragndrop",
@@ -24,10 +24,6 @@
       "web": "http://www.colorglare.com"
     }
   ],
-  "scripts": {
-    "test": "grunt && npm run test-prebuilt",
-    "test-prebuilt": "mocha-phantomjs test/test.html"
-  },
   "bugs": {
     "email": "m@tias.me",
     "url": "https://gitlab.com/meno/dropzone/issues"
