@@ -5,6 +5,7 @@
   chunk objects (thanks to @clayton2)
 - Allow HTML in the remove links (thanks to @christianklemp)
 - `hiddenInputContainer` can now be an `HtmlElement` in addition to a selector String (thanks to @WAmeling)
+- Fix default values on website (since the last deployment, the default values all stated `null`)
 
 ## 5.4.0
 

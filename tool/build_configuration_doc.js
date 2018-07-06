@@ -20,7 +20,7 @@ const singleConfigRegExp = /\/\*\*\n((^\s*\*.*$\n)+)^\s*\*\/\n^\s*(\w+)\s*(.*)/g
 
 const docLineRegExp = /^\s*\*(.*)$/gm;
 const functionRegExp = /(\(.*\))\s*(\{.*)$/;
-const defaultValueRegExp = /\s*(.*?),?$/;
+const defaultValueRegExp = /\s*(: )?(.*?),?$/;
 
 let htmlDoc = '';
 
@@ -65,8 +65,9 @@ while ((matchResult = singleConfigRegExp.exec(configBlock)) !== null) {
   }
 
   if (defaultValue === null) {
-    let defaultValue = defaultValueRegExp.exec(matchResult[4])[1];
+    defaultValue = defaultValueRegExp.exec(matchResult[4])[2];
   }
+  console.log(defaultValue);
 
   let doc = marked(rawDoc);
 
