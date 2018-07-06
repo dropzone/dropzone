@@ -1920,6 +1920,8 @@ class Dropzone extends Emitter {
 
           // Clear the data from the chunk
           chunk.dataBlock = null;
+          // Leaving this reference to xhr intact here will cause memory leaks in some browsers
+          chunk.xhr = null;
 
           for (let i = 0; i < file.upload.totalChunkCount; i ++) {
             if (file.upload.chunks[i] === undefined) {
