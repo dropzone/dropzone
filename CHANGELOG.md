@@ -4,6 +4,7 @@
 - Remove a potential memory leak in some browsers by keeping a reference to `xhr` inside the individual
   chunk objects (thanks to @clayton2)
 - Allow HTML in the remove links (thanks to @christianklemp)
+- `hiddenInputContainer` can now be an `HtmlElement` in addition to a selector String (thanks to @WAmeling)
 
 ## 5.4.0
 

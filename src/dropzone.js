@@ -374,6 +374,8 @@ class Dropzone extends Emitter {
        * This is the element the hidden input field (which is used when clicking on the
        * dropzone to trigger file selection) will be appended to. This might
        * be important in case you use frameworks to switch the content of your page.
+       *
+       * Can be a selector string, or an element directly.
        */
       hiddenInputContainer: "body",
 
@@ -1090,13 +1092,7 @@ class Dropzone extends Emitter {
         this.hiddenFileInput.style.left = "0";
         this.hiddenFileInput.style.height = "0";
         this.hiddenFileInput.style.width = "0";
-        // Get the hiddenInputContainer which both can be an element or querySelector
-        if (this.options.hiddenInputContainer.tagName) {
-            var hiddenInputcontainer = this.options.hiddenInputContainer;
-        } else {
-            var hiddenInputContainer = document.querySelector(this.options.hiddenInputContainer);
-        }
-        hiddenInputContainer.appendChild(this.hiddenFileInput);
+        Dropzone.getElement(this.options.hiddenInputContainer, 'hiddenInputContainer').appendChild(this.hiddenFileInput);
         return this.hiddenFileInput.addEventListener("change", () => {
           let {files} = this.hiddenFileInput;
           if (files.length) {
