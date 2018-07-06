@@ -3,6 +3,7 @@
 - Correct photo orientation before uploading (if enabled) (thanks to @nosegrind)
 - Remove a potential memory leak in some browsers by keeping a reference to `xhr` inside the individual
   chunk objects (thanks to @clayton2)
+- Allow HTML in the remove links (thanks to @christianklemp)
 
 ## 5.4.0
 
