@@ -1628,7 +1628,7 @@ class Dropzone extends Emitter {
   // `options.transformFile` if `resizeWidth` or `resizeHeight` are set. The callback is invoked with
   // the resized blob.
   resizeImage(file, width, height, resizeMethod, callback) {
-    return this.createThumbnail(file, width, height, resizeMethod, false, (dataUrl, canvas) => {
+    return this.createThumbnail(file, width, height, resizeMethod, true, (dataUrl, canvas) => {
       if (canvas == null) {
         // The image has not been resized
         return callback(file);
@@ -1728,18 +1728,18 @@ class Dropzone extends Emitter {
           case 6:
             // 90° rotate right
             ctx.rotate(0.5 * Math.PI);
-            ctx.translate(0, -canvas.height);
+            ctx.translate(0, -canvas.width);
             break;
           case 7:
             // horizontal flip + 90 rotate right
             ctx.rotate(0.5 * Math.PI);
-            ctx.translate(canvas.width, -canvas.height);
+            ctx.translate(canvas.height, -canvas.width);
             ctx.scale(-1, 1);
             break;
           case 8:
             // 90° rotate left
             ctx.rotate(-0.5 * Math.PI);
-            ctx.translate(-canvas.width, 0);
+            ctx.translate(-canvas.height, 0);
             break;
         }
 
