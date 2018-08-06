@@ -26,7 +26,7 @@ release:
     - dist
     name: "dist"
   only:
-  - master
+  - master@meno/dropzone
 
 pages:
   stage: deploy
@@ -40,4 +40,4 @@ pages:
     paths:
     - public
   only:
-  - master
+  - master@meno/dropzone
