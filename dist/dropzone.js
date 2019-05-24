@@ -2466,10 +2466,9 @@ var Dropzone = function (_Emitter) {
           additionalParams = additionalParams.call(this, files, xhr, files[0].upload.chunked ? this._getChunk(files[0], xhr) : null);
         }
 
-        for (var key in additionalParams) {
-          var value = additionalParams[key];
+        additionalParams.forEach(function (value, key, map) {
           formData.append(key, value);
-        }
+        });
       }
 
       // Let the user add additional data if necessary
