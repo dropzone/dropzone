@@ -5,7 +5,7 @@ This means that a user can drag and drop a file onto it, and the file gets uploa
 
 * * *
 
-_If you want support, please use [stackoverflow](http://stackoverflow.com/) with the `dropzone.js` tag and not the
+_If you want support, please use [stackoverflow](https://stackoverflow.com/questions/tagged/dropzone.js) with the `dropzone.js` tag and not the
 GitLab issues tracker. Only post an issue here if you think you discovered a bug or have a feature request._
 
 * * *
@@ -569,7 +569,7 @@ new Dropzone(document.body, {
 Look at the [gitlab wiki](https://gitlab.com/meno/dropzone/wikis/home) for more examples.
 
 If you have any problems using Dropzone, please try to find help on
-[stackoverflow.com](http://stackoverflow.com/) by using the `dropzone.js`
+[stackoverflow.com](https://stackoverflow.com/questions/tagged/dropzone.js) by using the `dropzone.js`
 tag.
 Only create an issue on Github when you think you found a bug or want to
 suggest a new feature.
