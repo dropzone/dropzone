@@ -2418,14 +2418,7 @@ var Dropzone = function (_Emitter) {
 
       var method = this.resolveOption(this.options.method, files);
       var url = this.resolveOption(this.options.url, files);
-      xhr.open(method, url, true);
-
-      // Setting the timeout after open because of IE11 issue: https://gitlab.com/meno/dropzone/issues/8
-      xhr.timeout = this.resolveOption(this.options.timeout, files);
-
-      // Has to be after `.open()`. See https://github.com/enyo/dropzone/issues/179
-      xhr.withCredentials = !!this.options.withCredentials;
-
+      
       xhr.onload = function (e) {
         _this15._finishedUploading(files, xhr, e);
       };
@@ -2439,6 +2432,14 @@ var Dropzone = function (_Emitter) {
       progressObj.onprogress = function (e) {
         return _this15._updateFilesUploadProgress(files, xhr, e);
       };
+      
+      xhr.open(method, url, true);
+
+      // Setting the timeout after open because of IE11 issue: https://gitlab.com/meno/dropzone/issues/8
+      xhr.timeout = this.resolveOption(this.options.timeout, files);
+
+      // Has to be after `.open()`. See https://github.com/enyo/dropzone/issues/179
+      xhr.withCredentials = !!this.options.withCredentials;
 
       var headers = {
         "Accept": "application/json",
