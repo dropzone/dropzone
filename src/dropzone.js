@@ -2002,6 +2002,10 @@ class Dropzone extends Emitter {
       this._finishedUploading(files, xhr, e);
     };
 
+    xhr.ontimeout = () => {
+      this._handleUploadError(files, xhr, `Request timedout after ${this.options.timeout} seconds`);
+    };
+
     xhr.onerror = () => {
       this._handleUploadError(files, xhr);
     };
