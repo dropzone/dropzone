@@ -1,3 +1,7 @@
+## 5.6.0
+
+- Timeout now generates an error (thanks to @mmollick)
+
 ## 5.5.0
 
 - Correct photo orientation before uploading (if enabled) (thanks to @nosegrind)

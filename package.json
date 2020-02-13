@@ -38,18 +38,22 @@
     "url": "https://gitlab.com/meno/dropzone.git"
   },
   "devDependencies": {
-    "babel-preset-env": "^1.5.2",
-    "chai": "1.7.x",
-    "grunt": "^1.0.0",
-    "grunt-babel": "^6.0.0",
+    "@babel/core": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
+    "chai": "4.2.x",
+    "grunt": "^1.0.4",
+    "grunt-babel": "^8.0.0",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-sass": "^1.0.0",
-    "grunt-contrib-uglify": "^2.1.0",
-    "grunt-contrib-watch": "^1.0.0",
+    "grunt-contrib-uglify": "^4.0.1",
+    "grunt-contrib-watch": "^1.1.0",
     "grunt-text-replace": "^0.4.0",
-    "marked": "^0.3.6",
-    "mocha": "^3.2.0",
-    "mocha-headless-chrome": "^1.8.0",
-    "sinon": "1.17.7"
+    "marked": "^0.8.0",
+    "mocha": "^7.0.1",
+    "mocha-headless-chrome": "^2.0.3",
+    "sinon": "8.1.1"
+  },
+  "dependencies": {
+    "npm": "^6.13.7"
   }
 }

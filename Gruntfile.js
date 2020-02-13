@@ -28,10 +28,6 @@ module.exports = function (grunt) {
     babel: {
       options: {
         sourceMap: false,
-        plugins: [
-          // Make sure we don't use the ES6 iterator when not required.
-          ['transform-es2015-for-of', { loose: true }]
-        ]
       },
       dist: {
         files: {
@@ -117,7 +113,7 @@ module.exports = function (grunt) {
   grunt.registerTask("downloads", "Compile all stylus and javascript files and generate the download files", ["js", "css", "uglify"]);
 
   grunt.registerTask("build-website", "Builds the website", function () {
-    grunt.util.spawn({cmd: 'node', args: ['tool/build_configuration_doc.js']});
-    grunt.util.spawn({cmd: 'node', args: ['tool/build_site_from_readme.js']});
+    grunt.util.spawn({ cmd: 'node', args: ['tool/build_configuration_doc.js'] });
+    grunt.util.spawn({ cmd: 'node', args: ['tool/build_site_from_readme.js'] });
   });
 };
