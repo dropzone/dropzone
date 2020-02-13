@@ -2226,9 +2226,7 @@ class Dropzone extends Emitter {
       }
     }
 
-    for (let file of files) {
-      this._errorProcessing(files, response || this.options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr);
-    }
+    this._errorProcessing(files, response || this.options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr);
   }
 
   submitRequest(xhr, formData, files) {
