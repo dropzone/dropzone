@@ -3,18 +3,15 @@ chai.should();
 describe("Dropzone", function() {
 
 
-  let getMockFile = () =>
-    ({
-      status: Dropzone.ADDED,
-      accepted: true,
-      name: "test file name",
-      size: 123456,
-      type: "text/html",
-      upload: {
-        filename: "test file name"
-      }
-    })
-  ;
+  let getMockFile = (type = 'text/html', filename = "test file name") => {
+    let file = new File(["file contents"], filename, { type: type });
+    file.status = Dropzone.ADDED;
+    file.accepted = true;
+    file.upload = {
+      filename: filename
+    };
+    return file;
+  };
 
 
   let xhr = null;
@@ -1096,13 +1093,13 @@ describe("Dropzone", function() {
         dropzone.getAcceptedFiles = () => ({length: 9});
         dropzone.options.maxFiles = 10;
         dropzone._updateMaxFilesReachedClass();
-        spy.should.not.have.been.called;
+        spy.notCalled.should.be.true;
         dropzone.getAcceptedFiles = () => ({length: 10});
         dropzone._updateMaxFilesReachedClass();
-        spy.should.have.been.called;
+        spy.called.should.be.true;
         dropzone.getAcceptedFiles = () => ({length: 11});
         dropzone._updateMaxFilesReachedClass();
-        return spy.should.have.been.calledOnce;
+        spy.calledOnce.should.be.true;
       }); //ie, it has not been called again
 
       it("should properly remove the dz-max-files-reached class", function() {
@@ -1516,23 +1513,20 @@ describe("Dropzone", function() {
       return describe("thumbnails", function() {
         it("should properly queue the thumbnail creation", function(done) {
           let ct_callback;
-          let doneFunction = null;
+          let doneFunction;
 
           dropzone.accept = (file, done) => doneFunction = done;
           dropzone.processFile = function() {};
           dropzone.uploadFile = function() {};
 
-          let mock1 = getMockFile();
-          let mock2 = getMockFile();
-          let mock3 = getMockFile();
-          mock1.type = "image/jpg";
-          mock2.type = "image/jpg";
-          mock3.type = "image/jpg";
+          let mock1 = getMockFile("image/jpg");
+          let mock2 = getMockFile("image/jpg");
+          let mock3 = getMockFile("image/jpg");
 
-          let ct_file = (ct_callback = null);
+          let ct_file;
           dropzone.createThumbnail = function(file, thumbnailWidth, thumbnailHeight, resizeMethod, fixOrientation, callback) {
             ct_file = file;
-            return ct_callback = callback;
+            ct_callback = callback;
           };
 
           sinon.spy(dropzone, "createThumbnail");
@@ -1936,8 +1930,7 @@ describe("Dropzone", function() {
 
           dropzone.options.resizeWidth = 400;
 
-          let mock1 = getMockFile();
-          mock1.type = 'image/jpeg';
+          let mock1 = getMockFile('image/jpeg');
 
           dropzone.addFile(mock1);
 
@@ -1957,8 +1950,7 @@ describe("Dropzone", function() {
 
           dropzone.options.resizeWidth = 400;
 
-          let mock1 = getMockFile();
-          mock1.type = 'image/svg+xml';
+          let mock1 = getMockFile('image/svg+xml');
 
           dropzone.addFile(mock1);
 
@@ -1975,8 +1967,7 @@ describe("Dropzone", function() {
           sinon.stub(dropzone, "resizeImage");
           sinon.stub(dropzone, "createThumbnail");
 
-          let mock1 = getMockFile();
-          mock1.type = 'image/jpeg';
+          let mock1 = getMockFile('image/jpeg');
 
           dropzone.addFile(mock1);
 
@@ -1993,8 +1984,7 @@ describe("Dropzone", function() {
 
           dropzone.options.resizeWidth = 400;
 
-          let mock1 = getMockFile();
-          mock1.type = 'text/plain';
+          let mock1 = getMockFile('text/plain');
 
           dropzone.addFile(mock1);
 
@@ -2009,8 +1999,7 @@ describe("Dropzone", function() {
 
       it("should not change the file name if the options.renameFile is not set", function(done) {
         let mockFilename = 'T3sT ;:_-.,!¨@&%&';
-        mockFile = getMockFile();
-        mockFile.name = mockFilename;
+        mockFile = getMockFile('text/html', mockFilename);
 
         let renamedFilename = dropzone._renameFile(mockFile);
 
@@ -2021,8 +2010,7 @@ describe("Dropzone", function() {
       it("should rename the file name if options.renamedFilename is set", function(done) {
         dropzone.options.renameFile = file => file.name.toLowerCase().replace(/[^\w]/gi, '');
 
-        mockFile = getMockFile();
-        mockFile.name = 'T3sT ;:_-.,!¨@&%&';
+        mockFile = getMockFile('text/html', 'T3sT ;:_-.,!¨@&%&');
 
         let renamedFilename = dropzone._renameFile(mockFile);
 
@@ -2073,16 +2061,12 @@ describe("Dropzone", function() {
     return describe("complete file", () =>
       it("should properly emit the queuecomplete event when the complete queue is finished", function(done) {
 
-        let mock1 = getMockFile();
-        let mock2 = getMockFile();
-        let mock3 = getMockFile();
+        let mock1 = getMockFile("text/html", "mock1");
+        let mock2 = getMockFile("text/html", "mock2");
+        let mock3 = getMockFile("text/html", "mock3");
         mock1.status = Dropzone.ADDED;
         mock2.status = Dropzone.ADDED;
         mock3.status = Dropzone.ADDED;
-        mock1.name = "mock1";
-        mock2.name = "mock2";
-        mock3.name = "mock3";
-
 
         dropzone.uploadFiles = function(files) {
           return setTimeout((() => {

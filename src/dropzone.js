@@ -1409,8 +1409,6 @@ class Dropzone extends Emitter {
       files[i] = e.dataTransfer.files[i];
     }
 
-    this.emit("addedfiles", files);
-
     // Even if it's a folder, files.length will contain the folders.
     if (files.length) {
       let {items} = e.dataTransfer;
@@ -1421,6 +1419,8 @@ class Dropzone extends Emitter {
         this.handleFiles(files);
       }
     }
+
+    this.emit("addedfiles", files);
   }
 
   paste(e) {
@@ -2286,7 +2286,7 @@ class Dropzone extends Emitter {
 Dropzone.initClass();
 
 
-Dropzone.version = "5.5.0";
+Dropzone.version = "5.6.0";
 
 
 // This is a map of options for your different dropzones. Add configurations
