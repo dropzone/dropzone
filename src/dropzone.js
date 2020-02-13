@@ -1131,8 +1131,15 @@ class Dropzone extends Emitter {
       }
     });
 
-
+    const containsFiles = function (e) {
+      return (e.dataTransfer.types && e.dataTransfer.types.some(type => type == "Files"));
+    };
+    
     let noPropagation = function (e) {
+      // If there are no files, we don't want to stop
+      // propagation so we don't interfere with other
+      // drag and drop behaviour.
+      if (!containsFiles(e)) return;
       e.stopPropagation();
       if (e.preventDefault) {
         return e.preventDefault();
