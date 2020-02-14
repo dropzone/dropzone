@@ -1,3 +1,13 @@
+## 5.7.0
+
+- Cleanup the SVGs used to remove IDs and sketch attributes
+  Since SVGs are duplicated this resulted in duplicate IDs being used.
+- Add a dedicated `displayExistingFile` method to make it easier to display
+  server files.
+- Fix an error where chunked uploads don't work as expected when transforming
+  files before uploading.
+- Make the default text a button so it's discoverable by keyboard.
+
 ## 5.6.1
 
 - Re-released due to missing javascript files
