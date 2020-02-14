@@ -1,6 +1,6 @@
 {
   "name": "dropzone",
-  "version": "5.5.0",
+  "version": "5.7.0",
   "description": "Handles drag and drop of files for you.",
   "keywords": [
     "dragndrop",
@@ -24,6 +24,10 @@
       "web": "http://www.colorglare.com"
     }
   ],
+  "scripts": {
+    "test": "grunt && npm run test-prebuilt",
+    "test-prebuilt": "mocha-headless-chrome -f test/test-prebuilt.html -a no-sandbox -a disable-setuid-sandbox"
+  },
   "bugs": {
     "email": "m@tias.me",
     "url": "https://gitlab.com/meno/dropzone/issues"

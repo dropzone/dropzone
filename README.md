@@ -22,7 +22,7 @@ GitHub issues tracker. Only post an issue here if you think you discovered a bug
 This is no longer the official repository for Dropzone. I have switched to [gitlab.com](https://gitlab.com/meno/dropzone)
 as the primary location to continue development.
  
-There are multiple reasons why I am switching from GitHub to GitLab, but one of the main reasons are the ridiculous
+There are multiple reasons why I am switching from GitHub to GitLab, but a few of the reasons are the
 issue tracker that GitHub is providing, *drowning* me in issues that I am unable to categorise or prioritize properly,
 the lack of proper continuous integration, and build files. I don't want the compiled `.js` files in my repository, and
 people regularly commit changes to the compiled files and create pull requests with them.

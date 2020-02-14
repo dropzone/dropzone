@@ -1,1 +1,1 @@
-module.exports = require("./lib/dropzone.js"); // Exposing dropzone
+module.exports = require("./dist/dropzone.js"); // Exposing dropzone
