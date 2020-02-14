@@ -162,7 +162,7 @@ class Dropzone extends Emitter {
 
       /**
        * How many file uploads to process in parallel (See the
-       * Enqueuing file uploads* documentation section for more info)
+       * Enqueuing file uploads documentation section for more info)
        */
       parallelUploads: 2,
 
@@ -1536,9 +1536,10 @@ class Dropzone extends Emitter {
       // It's actual different than the size to be transmitted.
       total: file.size,
       bytesSent: 0,
-      filename: this._renameFile(file),
-      chunked: this.options.chunking && (this.options.forceChunking || file.size > this.options.chunkSize),
-      totalChunkCount: Math.ceil(file.size / this.options.chunkSize)
+      filename: this._renameFile(file)
+      // Not setting chunking information here, because the acutal data — and
+      // thus the chunks — might change if `options.transformFile` is set
+      // and does something to the data.
     };
     this.files.push(file);
 
@@ -1874,6 +1875,14 @@ class Dropzone extends Emitter {
 
   uploadFiles(files) {
     this._transformFiles(files, (transformedFiles) => {
+      if (this.options.chunking) {
+        // Chunking is not allowed to be used with `uploadMultiple` so we know
+        // that there is only __one__file.
+        let transformedFile = transformedFiles[0];
+        files[0].upload.chunked = this.options.chunking && (this.options.forceChunking || transformedFile.size > this.options.chunkSize);
+        files[0].upload.totalChunkCount = Math.ceil(transformedFile.size / this.options.chunkSize);
+      }
+
       if (files[0].upload.chunked) {
         // This file should be sent in chunks!
 

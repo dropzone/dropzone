@@ -3,8 +3,8 @@ chai.should();
 describe("Dropzone", function () {
 
 
-  let getMockFile = (type = 'text/html', filename = "test file name") => {
-    let file = new File(["file contents"], filename, { type: type });
+  let getMockFile = (type = 'text/html', filename = "test file name", contents = ["file contents"]) => {
+    let file = new File(contents, filename, { type: type });
     file.status = Dropzone.ADDED;
     file.accepted = true;
     file.upload = {
@@ -2022,7 +2022,7 @@ describe("Dropzone", function () {
         it("should correctly set `withCredentials` on the xhr object", function (done) {
           dropzone.addFile(mockFile);
 
-          return setTimeout(function () {
+          setTimeout(function () {
             mockFile.status.should.eql(Dropzone.UPLOADING);
 
             requests.length.should.equal(1);
@@ -2038,7 +2038,7 @@ describe("Dropzone", function () {
             mockFile = getMockFile();
             dropzone.addFile(mockFile);
 
-            return setTimeout(function () {
+            setTimeout(function () {
               mockFile.status.should.eql(Dropzone.UPLOADING);
 
               requests.length.should.equal(2);
@@ -2050,12 +2050,76 @@ describe("Dropzone", function () {
 
               mockFile.status.should.eql(Dropzone.SUCCESS);
               return done();
-            }
-              , 10);
-          }
-            , 10);
+            }, 10);
+          }, 10);
         })
       );
+    });
+
+    describe("transformFile()", function () {
+      it("should be invoked and the result should be uploaded if configured", (done) => {
+        sinon.stub(dropzone, "_uploadData");
+
+        let mock1 = getMockFile('text/html', 'original-file');
+        let mock2 = getMockFile('text/html', 'transformed-file');
+
+        dropzone.options.transformFile = (file, done) => {
+          file.should.eql(mock1);
+          done(mock2);
+        }
+
+        dropzone.addFile(mock1);
+
+        setTimeout(function () {
+          dropzone._uploadData.callCount.should.equal(1);
+          let uploadedFiles = dropzone._uploadData.args[0][0];
+          let uploadedDataBlocks = dropzone._uploadData.args[0][1];
+          uploadedFiles[0].should.equal(mock1);
+          uploadedDataBlocks[0].data.should.equal(mock2);
+          done();
+        }, 10);
+      });
+      it("should be used as a basis for chunked uploads", (done) => {
+        sinon.stub(dropzone, "_uploadData");
+
+        dropzone.options.chunking = true;
+        dropzone.options.chunkSize = 1;
+        dropzone.options.parallelChunkUploads = true;
+
+        let mock1 = getMockFile('text/html', 'original-file', ["Veeeeery long file"]); // 18 bytes
+        let mock2 = getMockFile('text/html', 'transformed-file', ["2b"]); // only 2 bytes
+
+        dropzone.options.transformFile = (file, done) => {
+          file.should.eql(mock1);
+          done(mock2);
+        }
+
+        dropzone.addFile(mock1);
+
+        setTimeout(async function () {
+          dropzone._uploadData.callCount.should.equal(2);
+
+          // the same file should be passed on each call.
+          dropzone._uploadData.args[0][0][0].should.eql(mock1);
+          dropzone._uploadData.args[1][0][0].should.eql(mock1);
+
+          // Since we only allow chunks of 1 byte, there should be 2 chunks,
+          // because the transformed file only has 2 bytes.
+          // If this would equal to 18 bytes, then the wrong file would have
+          // been chunked.
+          mock1.upload.totalChunkCount.should.eql(2);
+
+          let uploadedDataBlocks1 = dropzone._uploadData.args[0][1][0];
+          let uploadedDataBlocks2 = dropzone._uploadData.args[1][1][0];
+
+
+          let block1Text = await uploadedDataBlocks1.data.text();
+          let block2Text = await uploadedDataBlocks2.data.text();
+          block1Text.should.equal('2');
+          block2Text.should.equal('b');
+          done();
+        }, 10);
+      });
     });
 
     return describe("complete file", () =>
