@@ -43,7 +43,7 @@ folder.
 
 For the full documentation and installation please visit [www.dropzonejs.com](http://www.dropzonejs.com)
 
-Please also refer to the [FAQ](https://github.com/enyo/dropzone/wiki/FAQ).
+Please also refer to the [FAQ](https://gitlab.com/meno/dropzone/-/wikis/FAQ).
 
 ## Examples
 
@@ -184,7 +184,7 @@ Paid documentations:
 - [eBook for Dropzone with PHP](http://www.startutorial.com/homes/dropzonejs_php_the_complete_guide?utm_source=dzj&amp;utm_medium=banner&amp;utm_campaign=dropzonejs) by startutorial.com.
 
 
-Please look at the [Dropzone FAQ](https://github.com/enyo/dropzone/wiki/FAQ) if
+Please look at the [Dropzone FAQ](https://gitlab.com/meno/dropzone/-/wikis/FAQ) if
 you need more information.
 
 
@@ -312,7 +312,7 @@ See the [Theming](#theming) section, for a more in depth look at how to change D
 I created an example where I made Dropzone look and feel exactly the way jQuery
 File Uploader does with a few lines of configuration code. [Check it out!](/bootstrap.html)
 
-> Again, please look at the [Dropzone FAQ](https://github.com/enyo/dropzone/wiki/FAQ) if
+> Again, please look at the [Dropzone FAQ](https://gitlab.com/meno/dropzone/-/wikis/FAQ) if
 > you’re still unclear about some features.
 
 
@@ -374,15 +374,15 @@ Dropzone.confirm = function(question, accepted, rejected) {
 
 * * *
 
-If you want Dropzone to download a file from your server and display it,
-you can use
+If you want Dropzone to display an image you have on your server, you can use:
 
 ```js
 // callback and crossOrigin are optional
-myDropzone.createThumbnailFromUrl(file, imageUrl, callback, crossOrigin);
+let mockFile = { name: "Filename", size: 12345 };
+myDropzone.displayExistingFile(mockFile, 'https://image-url');
 ```
 
-See the FAQ on [How to show files stored on server](https://github.com/enyo/dropzone/wiki/FAQ#how-to-show-files-already-stored-on-server)
+See the FAQ on [How to show files stored on server](https://gitlab.com/meno/dropzone/-/wikis/FAQ#how-to-show-files-already-stored-on-server)
  for more information.
 
 
@@ -571,7 +571,7 @@ Look at the [gitlab wiki](https://gitlab.com/meno/dropzone/wikis/home) for more 
 If you have any problems using Dropzone, please try to find help on
 [stackoverflow.com](https://stackoverflow.com/questions/tagged/dropzone.js) by using the `dropzone.js`
 tag.
-Only create an issue on Github when you think you found a bug or want to
+Only create an issue on GitLab when you think you found a bug or want to
 suggest a new feature.
 
 
