@@ -1,3 +1,7 @@
+## 5.6.1
+
+- Re-released due to missing javascript files
+
 ## 5.6.0
 
 - Timeout now generates an error (thanks to @mmollick)
