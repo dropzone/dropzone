@@ -1670,11 +1670,36 @@ class Dropzone extends Emitter {
         return;
       }
 
-      return this.createThumbnailFromUrl(file, width, height, resizeMethod, fixOrientation, callback);
+      this.createThumbnailFromUrl(file, width, height, resizeMethod, fixOrientation, callback);
     };
 
-    return fileReader.readAsDataURL(file);
+    fileReader.readAsDataURL(file);
   }
+
+  // `mockFile` needs to have these attributes:
+  // 
+  //     { name: 'name', size: 12345, imageUrl: '' }
+  //
+  // `callback` will be invoked when the image has been downloaded and displayed.
+  // `crossOrigin` will be added to the `img` tag when accessing the file.
+  displayExistingFile(mockFile, imageUrl, callback, crossOrigin, resizeThumbnail = true) {
+    this.emit("addedfile", mockFile);
+    this.emit("complete", mockFile);
+
+    if (!resizeThumbnail) {
+      this.emit("thumbnail", mockFile, imageUrl);
+      if (callback) callback();
+    } else {
+      let onDone = (thumbnail) => {
+        this.emit('thumbnail', mockFile, thumbnail);
+        if (callback) callback();
+      }
+      mockFile.dataURL = imageUrl;
+
+      this.createThumbnailFromUrl(mockFile, this.options.thumbnailWidth, this.options.thumbnailHeight, this.options.resizeMethod, this.options.fixOrientation, onDone, crossOrigin);
+    }
+  }
+
 
   createThumbnailFromUrl(file, width, height, resizeMethod, fixOrientation, callback, crossOrigin) {
     // Not using `new Image` here because of a bug in latest Chrome versions.

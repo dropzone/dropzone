@@ -2,6 +2,8 @@
 
 - Cleanup the SVGs used to remove IDs and sketch attributes
   Since SVGs are duplicated this resulted in duplicate IDs being used.
+- Add a dedicated `displayExistingFile` method to make it easier to display
+  server files.
 
 ## 5.6.1
 
