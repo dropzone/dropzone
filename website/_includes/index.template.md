@@ -11,7 +11,7 @@ Try it out!
 <div id="dropzone"><form action="/upload" class="dropzone needsclick" id="demo-upload">
 
   <div class="dz-message needsclick">
-    Drop files here or click to upload.<br>
+    <button type="button" class="dz-button">Drop files here or click to upload.</button><br>
     <span class="note needsclick">(This is just a demo dropzone. Selected files are <strong>not</strong> actually uploaded.)</span>
   </div>
 
