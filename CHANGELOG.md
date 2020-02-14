@@ -1,3 +1,8 @@
+## 5.7.0
+
+- Cleanup the SVGs used to remove IDs and sketch attributes
+  Since SVGs are duplicated this resulted in duplicate IDs being used.
+
 ## 5.6.1
 
 - Re-released due to missing javascript files
