@@ -12,7 +12,3 @@ tool
 
 # The GitLab pages artifacts
 public
-
-# Exclude all js files
-**/*.js
-!index.js
