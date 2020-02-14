@@ -31,8 +31,7 @@ module.exports = function (grunt) {
       },
       dist: {
         files: {
-          "dist/dropzone.js": "src/dropzone.js",
-          "test/test-prebuilt.js": "test/test.js"
+          "dist/dropzone.js": "src/dropzone.js"
         }
       }
     },
