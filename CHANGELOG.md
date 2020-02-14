@@ -1,12 +1,16 @@
 ## 5.6.1
 
 - Re-released due to missing javascript files
+- Removes `npm` dependency that got added by mistake
 
 ## 5.6.0
 
 - Timeout now generates an error (thanks to @mmollick)
 - Fix duplicate iteration of error processing (#159 thanks @darkland)
 - Fixed bootstrap example (@thanks to @polosatus)
+- The `addedfiles` event now triggers _after_ each individual `addedfile` event
+  when dragging files into the dropzone, which is the same behavior as when
+  clicking it.
 
 ## 5.5.0
 
