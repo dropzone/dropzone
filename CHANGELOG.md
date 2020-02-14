@@ -4,6 +4,9 @@
   Since SVGs are duplicated this resulted in duplicate IDs being used.
 - Add a dedicated `displayExistingFile` method to make it easier to display
   server files.
+- Fix an error where chunked uploads don't work as expected when transforming
+  files before uploading.
+- Make the default text a button so it's discoverable by keyboard.
 
 ## 5.6.1
 
