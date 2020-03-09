@@ -58,7 +58,7 @@ installation approaches.
 
 * * *
 
-Download the standalone [dropzone.js](https://gitlab.com/meno/dropzone/builds/artifacts/master/file/dist/dropzone.js?job=release)
+Download the standalone [dropzone.js](https://github.com/enyo/dropzone/archive/v5.7.0.zip)
 and include it like this:
 
 ```html
@@ -73,7 +73,7 @@ Dropzone is now activated and available as `window.Dropzone`.
 
 This is all you need to get dropzone up and running, but if you want it to look
 like the dropzone on this page, you’ll need to use the **dropzone.css**
-in the [dist folder](https://gitlab.com/meno/dropzone/builds/artifacts/master/download?job=release).
+in the [dist folder](https://github.com/enyo/dropzone/archive/v5.7.0.zip).
 
 
 With RequireJS
@@ -82,7 +82,7 @@ With RequireJS
 Dropzone is also available as an [AMD module](https://github.com/amdjs/amdjs-api/wiki/AMD)
 for [RequireJS](http://requirejs.org).
 
-You can find the [dropzone-amd-module](https://gitlab.com/meno/dropzone/builds/artifacts/master/file/dist/dropzone-amd-module.js?job=release)
+You can find the [dropzone-amd-module](https://github.com/enyo/dropzone/archive/v5.7.0.zip)
 in the dist folder.
 
 
