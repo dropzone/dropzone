@@ -14,7 +14,7 @@ GitLab issues tracker. Only post an issue here if you think you discovered a bug
 
 <br>
 <div align="center">
-  <a href="https://gitlab.com/meno/dropzone/builds/artifacts/master/download?job=release"><strong>&gt;&gt; Download &lt;&lt;</strong></a>
+  <a href="https://github.com/enyo/dropzone/archive/v5.7.0.zip"><strong>&gt;&gt; Download &lt;&lt;</strong></a>
 </div>
 <br>
 <br>
