@@ -1633,28 +1633,15 @@ function (_Emitter) {
 
   }, {
     key: "filesize",
-    value: function filesize(size) {
-      var selectedSize = 0;
-      var selectedUnit = "b";
-
-      if (size > 0) {
-        var units = ['tb', 'gb', 'mb', 'kb', 'b'];
-
-        for (var i = 0; i < units.length; i++) {
-          var unit = units[i];
-          var cutoff = Math.pow(this.options.filesizeBase, 4 - i) / 10;
-
-          if (size >= cutoff) {
-            selectedSize = size / Math.pow(this.options.filesizeBase, 4 - i);
-            selectedUnit = unit;
-            break;
-          }
-        }
-
-        selectedSize = Math.round(10 * selectedSize) / 10; // Cutting of digits
-      }
-
-      return "<strong>".concat(selectedSize, "</strong> ").concat(this.options.dictFileSizeUnits[selectedUnit]);
+    value: function filesize( bytes ) {
+		var fsize = "0", size_unit = 'Bytes';
+		var sizes = ['b', 'KB', 'MB', 'GB', 'TB'];
+		if ( bytes > 0 ) {
+			var i = parseInt( Math.floor( Math.log( bytes ) / Math.log( 1024 ) ) );
+			fsize = ( bytes / Math.pow( 1024, i ) ).toFixed( 2 );
+			size_unit = sizes[i];
+		}
+		return "<strong>" + fsize + "</strong> " + size_unit;
     } // Adds or removes the `dz-max-files-reached` class from the form.
 
   }, {
