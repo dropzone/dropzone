@@ -2458,7 +2458,7 @@ function (_Emitter) {
             if (chunkIndex >= file.upload.totalChunkCount) return;
             startedChunkCount++;
             var start = chunkIndex * _this15.options.chunkSize;
-            var end = Math.min(start + _this15.options.chunkSize, file.size);
+            var end = Math.min(start + _this15.options.chunkSize, _transformedFile.size);
             var dataBlock = {
               name: _this15._getParamName(0),
               data: _transformedFile.webkitSlice ? _transformedFile.webkitSlice(start, end) : _transformedFile.slice(start, end),
