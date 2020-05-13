@@ -1933,7 +1933,7 @@ class Dropzone extends Emitter {
           startedChunkCount++;
 
           let start = chunkIndex * this.options.chunkSize;
-          let end = Math.min(start + this.options.chunkSize, file.size);
+          let end = Math.min(start + this.options.chunkSize, transformedFile.size);
 
           let dataBlock = {
             name: this._getParamName(0),
