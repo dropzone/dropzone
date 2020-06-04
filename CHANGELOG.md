@@ -1,3 +1,7 @@
+## 5.7.1
+
+- Fix issue with IE (thanks to @Bjego)
+
 ## 5.7.0
 
 - Cleanup the SVGs used to remove IDs and sketch attributes

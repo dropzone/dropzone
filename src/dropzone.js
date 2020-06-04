@@ -1130,7 +1130,15 @@ class Dropzone extends Emitter {
     });
 
     const containsFiles = function (e) {
-      return (e.dataTransfer.types && e.dataTransfer.types.some(type => type == "Files"));
+      if (e.dataTransfer.types) {
+        // Because e.dataTransfer.types is an Object in
+        // IE, we need to iterate like this instead of
+        // using e.dataTransfer.types.some()
+        for (var i = 0; i < e.dataTransfer.types.length; i++) {
+          if (e.dataTransfer.types[i] === "Files") return true;
+        }
+      }
+      return false;
     };
 
     let noPropagation = function (e) {
@@ -2318,7 +2326,7 @@ class Dropzone extends Emitter {
 Dropzone.initClass();
 
 
-Dropzone.version = "5.7.0";
+Dropzone.version = "5.7.1";
 
 
 // This is a map of options for your different dropzones. Add configurations
