@@ -2085,10 +2085,15 @@ class Dropzone extends Emitter {
             // The additional parameter contains an array,
             // so lets iterate over it to attach each value
             // individually.
-            for (let i = 0; i < value.length; i++)
-              formData.append(key, value[i]);
-        } else
+          // The additional parameter contains an array,
+          // so lets iterate over it to attach each value
+          // individually.
+          for (let i = 0; i < value.length; i++) {
+            formData.append(key, value[i]);
+          }
+        } else {
           formData.append(key, value);
+        }
       }
     }
 
