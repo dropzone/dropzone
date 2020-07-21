@@ -2086,8 +2086,11 @@ function (_Emitter) {
           var resizedDataURL = canvas.toDataURL(resizeMimeType, _this11.options.resizeQuality);
 
           if (resizeMimeType === 'image/jpeg' || resizeMimeType === 'image/jpg') {
+            /* Commented out because Resize + Exif + Rotation combo breaks the Orientation
+            /* You do not want to restore unless exif updated after rotation */
+
             // Now add the original EXIF information
-            resizedDataURL = ExifRestore.restore(file.dataURL, resizedDataURL);
+            // resizedDataURL = ExifRestore.restore(file.dataURL, resizedDataURL);
           }
 
           return callback(Dropzone.dataURItoBlob(resizedDataURL));
