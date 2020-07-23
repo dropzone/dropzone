@@ -7,6 +7,7 @@
   always assumed that it was a String) (thanks to @almdac)
 - Fix orientation on devices that already handle it properly (thanks to @nosegrind)
 - Handle additionalParams when they are an Array the way it's expected (thanks to @wiz78)
+- Check for `string` in error message type instead of `String` (thanks to @RuQuentin)
 
 ## 5.7.1
 
