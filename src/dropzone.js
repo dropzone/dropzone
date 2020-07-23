@@ -2095,9 +2095,6 @@ class Dropzone extends Emitter {
       for (let key in additionalParams) {
         let value = additionalParams[key];
         if (Array.isArray(value)) {
-            // The additional parameter contains an array,
-            // so lets iterate over it to attach each value
-            // individually.
           // The additional parameter contains an array,
           // so lets iterate over it to attach each value
           // individually.
