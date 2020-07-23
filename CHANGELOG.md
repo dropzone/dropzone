@@ -1,6 +1,5 @@
-## 5.7.1
+## 5.7.2
 
-- Fix issue with IE (thanks to @Bjego)
 - Base the calculation of the chunks to send on the transformed files
 - Properly display seconds (instead of ms) in error message when timeout is
   reached
@@ -8,6 +7,10 @@
   always assumed that it was a String) (thanks to @almdac)
 - Fix orientation on devices that already handle it properly (thanks to @nosegrind)
 - Handle additionalParams when they are an Array the way it's expected (thanks to @wiz78)
+
+## 5.7.1
+
+- Fix issue with IE (thanks to @Bjego)
 
 ## 5.7.0
 
