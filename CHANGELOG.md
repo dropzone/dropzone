@@ -6,6 +6,7 @@
   reached
 - Properly handle it when `options.method` is a function (there was a bug, which
   always assumed that it was a String) (thanks to @almdac)
+- Fix orientation on devices that already handle it properly (thanks to @nosegrind)
 
 ## 5.7.0
 

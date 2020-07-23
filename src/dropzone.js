@@ -1720,6 +1720,9 @@ class Dropzone extends Emitter {
       img.crossOrigin = crossOrigin;
     }
 
+    // fixOrientation is not needed anymore with browsers handling imageOrientation
+    fixOrientation = (getComputedStyle(document.body)['imageOrientation'] == 'from-image') ? false : fixOrientation;
+
     img.onload = () => {
       let loadExif = callback => callback(1);
       if ((typeof EXIF !== 'undefined' && EXIF !== null) && fixOrientation) {
