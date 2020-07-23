@@ -1,3 +1,14 @@
+## 5.7.2
+
+- Base the calculation of the chunks to send on the transformed files
+- Properly display seconds (instead of ms) in error message when timeout is
+  reached
+- Properly handle it when `options.method` is a function (there was a bug, which
+  always assumed that it was a String) (thanks to @almdac)
+- Fix orientation on devices that already handle it properly (thanks to @nosegrind)
+- Handle additionalParams when they are an Array the way it's expected (thanks to @wiz78)
+- Check for `string` in error message type instead of `String` (thanks to @RuQuentin)
+
 ## 5.7.1
 
 - Fix issue with IE (thanks to @Bjego)

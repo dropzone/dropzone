@@ -14,15 +14,25 @@
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -59,9 +69,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 // to events.
 // It is strongly based on component's emitter class, and I removed the
 // functionality because of the dependency hell with different frameworks.
-var Emitter =
-/*#__PURE__*/
-function () {
+var Emitter = /*#__PURE__*/function () {
   function Emitter() {
     _classCallCheck(this, Emitter);
   }
@@ -91,28 +99,18 @@ function () {
           args[_key - 1] = arguments[_key];
         }
 
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
+        var _iterator = _createForOfIteratorHelper(callbacks),
+            _step;
 
         try {
-          for (var _iterator = callbacks[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
             var callback = _step.value;
             callback.apply(this, args);
           }
         } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
+          _iterator.e(err);
         } finally {
-          try {
-            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-              _iterator["return"]();
-            }
-          } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
-            }
-          }
+          _iterator.f();
         }
       }
 
@@ -159,10 +157,10 @@ function () {
   return Emitter;
 }();
 
-var Dropzone =
-/*#__PURE__*/
-function (_Emitter) {
+var Dropzone = /*#__PURE__*/function (_Emitter) {
   _inherits(Dropzone, _Emitter);
+
+  var _super = _createSuper(Dropzone);
 
   _createClass(Dropzone, null, [{
     key: "initClass",
@@ -587,12 +585,12 @@ function (_Emitter) {
           // This code should pass in IE7... :(
           var messageElement;
           this.element.className = "".concat(this.element.className, " dz-browser-not-supported");
-          var _iteratorNormalCompletion2 = true;
-          var _didIteratorError2 = false;
-          var _iteratorError2 = undefined;
+
+          var _iterator2 = _createForOfIteratorHelper(this.element.getElementsByTagName("div")),
+              _step2;
 
           try {
-            for (var _iterator2 = this.element.getElementsByTagName("div")[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
               var child = _step2.value;
 
               if (/(^| )dz-message($| )/.test(child.className)) {
@@ -603,18 +601,9 @@ function (_Emitter) {
               }
             }
           } catch (err) {
-            _didIteratorError2 = true;
-            _iteratorError2 = err;
+            _iterator2.e(err);
           } finally {
-            try {
-              if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
-                _iterator2["return"]();
-              }
-            } finally {
-              if (_didIteratorError2) {
-                throw _iteratorError2;
-              }
-            }
+            _iterator2.f();
           }
 
           if (!messageElement) {
@@ -779,52 +768,33 @@ function (_Emitter) {
             file.previewTemplate = file.previewElement; // Backwards compatibility
 
             this.previewsContainer.appendChild(file.previewElement);
-            var _iteratorNormalCompletion3 = true;
-            var _didIteratorError3 = false;
-            var _iteratorError3 = undefined;
+
+            var _iterator3 = _createForOfIteratorHelper(file.previewElement.querySelectorAll("[data-dz-name]")),
+                _step3;
 
             try {
-              for (var _iterator3 = file.previewElement.querySelectorAll("[data-dz-name]")[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+              for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
                 var node = _step3.value;
                 node.textContent = file.name;
               }
             } catch (err) {
-              _didIteratorError3 = true;
-              _iteratorError3 = err;
+              _iterator3.e(err);
             } finally {
-              try {
-                if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
-                  _iterator3["return"]();
-                }
-              } finally {
-                if (_didIteratorError3) {
-                  throw _iteratorError3;
-                }
-              }
+              _iterator3.f();
             }
 
-            var _iteratorNormalCompletion4 = true;
-            var _didIteratorError4 = false;
-            var _iteratorError4 = undefined;
+            var _iterator4 = _createForOfIteratorHelper(file.previewElement.querySelectorAll("[data-dz-size]")),
+                _step4;
 
             try {
-              for (var _iterator4 = file.previewElement.querySelectorAll("[data-dz-size]")[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+              for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
                 node = _step4.value;
                 node.innerHTML = this.filesize(file.size);
               }
             } catch (err) {
-              _didIteratorError4 = true;
-              _iteratorError4 = err;
+              _iterator4.e(err);
             } finally {
-              try {
-                if (!_iteratorNormalCompletion4 && _iterator4["return"] != null) {
-                  _iterator4["return"]();
-                }
-              } finally {
-                if (_didIteratorError4) {
-                  throw _iteratorError4;
-                }
-              }
+              _iterator4.f();
             }
 
             if (this.options.addRemoveLinks) {
@@ -851,28 +821,18 @@ function (_Emitter) {
               }
             };
 
-            var _iteratorNormalCompletion5 = true;
-            var _didIteratorError5 = false;
-            var _iteratorError5 = undefined;
+            var _iterator5 = _createForOfIteratorHelper(file.previewElement.querySelectorAll("[data-dz-remove]")),
+                _step5;
 
             try {
-              for (var _iterator5 = file.previewElement.querySelectorAll("[data-dz-remove]")[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+              for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
                 var removeLink = _step5.value;
                 removeLink.addEventListener("click", removeFileEvent);
               }
             } catch (err) {
-              _didIteratorError5 = true;
-              _iteratorError5 = err;
+              _iterator5.e(err);
             } finally {
-              try {
-                if (!_iteratorNormalCompletion5 && _iterator5["return"] != null) {
-                  _iterator5["return"]();
-                }
-              } finally {
-                if (_didIteratorError5) {
-                  throw _iteratorError5;
-                }
-              }
+              _iterator5.f();
             }
           }
         },
@@ -889,29 +849,20 @@ function (_Emitter) {
         thumbnail: function thumbnail(file, dataUrl) {
           if (file.previewElement) {
             file.previewElement.classList.remove("dz-file-preview");
-            var _iteratorNormalCompletion6 = true;
-            var _didIteratorError6 = false;
-            var _iteratorError6 = undefined;
+
+            var _iterator6 = _createForOfIteratorHelper(file.previewElement.querySelectorAll("[data-dz-thumbnail]")),
+                _step6;
 
             try {
-              for (var _iterator6 = file.previewElement.querySelectorAll("[data-dz-thumbnail]")[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+              for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
                 var thumbnailElement = _step6.value;
                 thumbnailElement.alt = file.name;
                 thumbnailElement.src = dataUrl;
               }
             } catch (err) {
-              _didIteratorError6 = true;
-              _iteratorError6 = err;
+              _iterator6.e(err);
             } finally {
-              try {
-                if (!_iteratorNormalCompletion6 && _iterator6["return"] != null) {
-                  _iterator6["return"]();
-                }
-              } finally {
-                if (_didIteratorError6) {
-                  throw _iteratorError6;
-                }
-              }
+              _iterator6.f();
             }
 
             return setTimeout(function () {
@@ -925,32 +876,22 @@ function (_Emitter) {
           if (file.previewElement) {
             file.previewElement.classList.add("dz-error");
 
-            if (typeof message !== "String" && message.error) {
+            if (typeof message !== "string" && message.error) {
               message = message.error;
             }
 
-            var _iteratorNormalCompletion7 = true;
-            var _didIteratorError7 = false;
-            var _iteratorError7 = undefined;
+            var _iterator7 = _createForOfIteratorHelper(file.previewElement.querySelectorAll("[data-dz-errormessage]")),
+                _step7;
 
             try {
-              for (var _iterator7 = file.previewElement.querySelectorAll("[data-dz-errormessage]")[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+              for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
                 var node = _step7.value;
                 node.textContent = message;
               }
             } catch (err) {
-              _didIteratorError7 = true;
-              _iteratorError7 = err;
+              _iterator7.e(err);
             } finally {
-              try {
-                if (!_iteratorNormalCompletion7 && _iterator7["return"] != null) {
-                  _iterator7["return"]();
-                }
-              } finally {
-                if (_didIteratorError7) {
-                  throw _iteratorError7;
-                }
-              }
+              _iterator7.f();
             }
           }
         },
@@ -973,28 +914,18 @@ function (_Emitter) {
         // To get the total number of bytes of the file, use `file.size`
         uploadprogress: function uploadprogress(file, progress, bytesSent) {
           if (file.previewElement) {
-            var _iteratorNormalCompletion8 = true;
-            var _didIteratorError8 = false;
-            var _iteratorError8 = undefined;
+            var _iterator8 = _createForOfIteratorHelper(file.previewElement.querySelectorAll("[data-dz-uploadprogress]")),
+                _step8;
 
             try {
-              for (var _iterator8 = file.previewElement.querySelectorAll("[data-dz-uploadprogress]")[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+              for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
                 var node = _step8.value;
                 node.nodeName === 'PROGRESS' ? node.value = progress : node.style.width = "".concat(progress, "%");
               }
             } catch (err) {
-              _didIteratorError8 = true;
-              _iteratorError8 = err;
+              _iterator8.e(err);
             } finally {
-              try {
-                if (!_iteratorNormalCompletion8 && _iterator8["return"] != null) {
-                  _iterator8["return"]();
-                }
-              } finally {
-                if (_didIteratorError8) {
-                  throw _iteratorError8;
-                }
-              }
+              _iterator8.f();
             }
           }
         },
@@ -1065,7 +996,7 @@ function (_Emitter) {
 
     _classCallCheck(this, Dropzone);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Dropzone).call(this));
+    _this = _super.call(this);
     var fallback, left;
     _this.element = el; // For backwards compatibility since the version was in the prototype previously
 
@@ -1129,7 +1060,9 @@ function (_Emitter) {
       };
     }
 
-    _this.options.method = _this.options.method.toUpperCase();
+    if (typeof _this.options.method === 'string') {
+      _this.options.method = _this.options.method.toUpperCase();
+    }
 
     if ((fallback = _this.getExistingFallback()) && fallback.parentNode) {
       // Remove the fallback
@@ -1267,29 +1200,19 @@ function (_Emitter) {
             var files = _this3.hiddenFileInput.files;
 
             if (files.length) {
-              var _iteratorNormalCompletion9 = true;
-              var _didIteratorError9 = false;
-              var _iteratorError9 = undefined;
+              var _iterator9 = _createForOfIteratorHelper(files),
+                  _step9;
 
               try {
-                for (var _iterator9 = files[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+                for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
                   var file = _step9.value;
 
                   _this3.addFile(file);
                 }
               } catch (err) {
-                _didIteratorError9 = true;
-                _iteratorError9 = err;
+                _iterator9.e(err);
               } finally {
-                try {
-                  if (!_iteratorNormalCompletion9 && _iterator9["return"] != null) {
-                    _iterator9["return"]();
-                  }
-                } finally {
-                  if (_didIteratorError9) {
-                    throw _iteratorError9;
-                  }
-                }
+                _iterator9.f();
               }
             }
 
@@ -1306,28 +1229,18 @@ function (_Emitter) {
       // They're not in @setupEventListeners() because they shouldn't be removed
       // again when the dropzone gets disabled.
 
-      var _iteratorNormalCompletion10 = true;
-      var _didIteratorError10 = false;
-      var _iteratorError10 = undefined;
+      var _iterator10 = _createForOfIteratorHelper(this.events),
+          _step10;
 
       try {
-        for (var _iterator10 = this.events[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
+        for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
           var eventName = _step10.value;
           this.on(eventName, this.options[eventName]);
         }
       } catch (err) {
-        _didIteratorError10 = true;
-        _iteratorError10 = err;
+        _iterator10.e(err);
       } finally {
-        try {
-          if (!_iteratorNormalCompletion10 && _iterator10["return"] != null) {
-            _iterator10["return"]();
-          }
-        } finally {
-          if (_didIteratorError10) {
-            throw _iteratorError10;
-          }
-        }
+        _iterator10.f();
       }
 
       this.on("uploadprogress", function () {
@@ -1460,29 +1373,19 @@ function (_Emitter) {
       var activeFiles = this.getActiveFiles();
 
       if (activeFiles.length) {
-        var _iteratorNormalCompletion11 = true;
-        var _didIteratorError11 = false;
-        var _iteratorError11 = undefined;
+        var _iterator11 = _createForOfIteratorHelper(this.getActiveFiles()),
+            _step11;
 
         try {
-          for (var _iterator11 = this.getActiveFiles()[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
+          for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
             var file = _step11.value;
             totalBytesSent += file.upload.bytesSent;
             totalBytes += file.upload.total;
           }
         } catch (err) {
-          _didIteratorError11 = true;
-          _iteratorError11 = err;
+          _iterator11.e(err);
         } finally {
-          try {
-            if (!_iteratorNormalCompletion11 && _iterator11["return"] != null) {
-              _iterator11["return"]();
-            }
-          } finally {
-            if (_didIteratorError11) {
-              throw _iteratorError11;
-            }
-          }
+          _iterator11.f();
         }
 
         totalUploadProgress = 100 * totalBytesSent / totalBytes;
@@ -1554,12 +1457,11 @@ function (_Emitter) {
     key: "getExistingFallback",
     value: function getExistingFallback() {
       var getFallback = function getFallback(elements) {
-        var _iteratorNormalCompletion12 = true;
-        var _didIteratorError12 = false;
-        var _iteratorError12 = undefined;
+        var _iterator12 = _createForOfIteratorHelper(elements),
+            _step12;
 
         try {
-          for (var _iterator12 = elements[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
+          for (_iterator12.s(); !(_step12 = _iterator12.n()).done;) {
             var el = _step12.value;
 
             if (/(^| )fallback($| )/.test(el.className)) {
@@ -1567,18 +1469,9 @@ function (_Emitter) {
             }
           }
         } catch (err) {
-          _didIteratorError12 = true;
-          _iteratorError12 = err;
+          _iterator12.e(err);
         } finally {
-          try {
-            if (!_iteratorNormalCompletion12 && _iterator12["return"] != null) {
-              _iterator12["return"]();
-            }
-          } finally {
-            if (_didIteratorError12) {
-              throw _iteratorError12;
-            }
-          }
+          _iterator12.f();
         }
       };
 
@@ -1738,28 +1631,18 @@ function (_Emitter) {
   }, {
     key: "handleFiles",
     value: function handleFiles(files) {
-      var _iteratorNormalCompletion13 = true;
-      var _didIteratorError13 = false;
-      var _iteratorError13 = undefined;
+      var _iterator13 = _createForOfIteratorHelper(files),
+          _step13;
 
       try {
-        for (var _iterator13 = files[Symbol.iterator](), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
+        for (_iterator13.s(); !(_step13 = _iterator13.n()).done;) {
           var file = _step13.value;
           this.addFile(file);
         }
       } catch (err) {
-        _didIteratorError13 = true;
-        _iteratorError13 = err;
+        _iterator13.e(err);
       } finally {
-        try {
-          if (!_iteratorNormalCompletion13 && _iterator13["return"] != null) {
-            _iterator13["return"]();
-          }
-        } finally {
-          if (_didIteratorError13) {
-            throw _iteratorError13;
-          }
-        }
+        _iterator13.f();
       }
     } // When a folder is dropped (or files are pasted), items must be handled
     // instead of files.
@@ -1771,12 +1654,12 @@ function (_Emitter) {
 
       return function () {
         var result = [];
-        var _iteratorNormalCompletion14 = true;
-        var _didIteratorError14 = false;
-        var _iteratorError14 = undefined;
+
+        var _iterator14 = _createForOfIteratorHelper(items),
+            _step14;
 
         try {
-          for (var _iterator14 = items[Symbol.iterator](), _step14; !(_iteratorNormalCompletion14 = (_step14 = _iterator14.next()).done); _iteratorNormalCompletion14 = true) {
+          for (_iterator14.s(); !(_step14 = _iterator14.n()).done;) {
             var item = _step14.value;
             var entry;
 
@@ -1800,18 +1683,9 @@ function (_Emitter) {
             }
           }
         } catch (err) {
-          _didIteratorError14 = true;
-          _iteratorError14 = err;
+          _iterator14.e(err);
         } finally {
-          try {
-            if (!_iteratorNormalCompletion14 && _iterator14["return"] != null) {
-              _iterator14["return"]();
-            }
-          } finally {
-            if (_didIteratorError14) {
-              throw _iteratorError14;
-            }
-          }
+          _iterator14.f();
         }
 
         return result;
@@ -1834,12 +1708,11 @@ function (_Emitter) {
       var readEntries = function readEntries() {
         return dirReader.readEntries(function (entries) {
           if (entries.length > 0) {
-            var _iteratorNormalCompletion15 = true;
-            var _didIteratorError15 = false;
-            var _iteratorError15 = undefined;
+            var _iterator15 = _createForOfIteratorHelper(entries),
+                _step15;
 
             try {
-              for (var _iterator15 = entries[Symbol.iterator](), _step15; !(_iteratorNormalCompletion15 = (_step15 = _iterator15.next()).done); _iteratorNormalCompletion15 = true) {
+              for (_iterator15.s(); !(_step15 = _iterator15.n()).done;) {
                 var entry = _step15.value;
 
                 if (entry.isFile) {
@@ -1859,18 +1732,9 @@ function (_Emitter) {
               // See: https://developer.mozilla.org/en-US/docs/Web/API/DirectoryReader#readEntries
 
             } catch (err) {
-              _didIteratorError15 = true;
-              _iteratorError15 = err;
+              _iterator15.e(err);
             } finally {
-              try {
-                if (!_iteratorNormalCompletion15 && _iterator15["return"] != null) {
-                  _iterator15["return"]();
-                }
-              } finally {
-                if (_didIteratorError15) {
-                  throw _iteratorError15;
-                }
-              }
+              _iterator15.f();
             }
 
             readEntries();
@@ -1947,28 +1811,18 @@ function (_Emitter) {
   }, {
     key: "enqueueFiles",
     value: function enqueueFiles(files) {
-      var _iteratorNormalCompletion16 = true;
-      var _didIteratorError16 = false;
-      var _iteratorError16 = undefined;
+      var _iterator16 = _createForOfIteratorHelper(files),
+          _step16;
 
       try {
-        for (var _iterator16 = files[Symbol.iterator](), _step16; !(_iteratorNormalCompletion16 = (_step16 = _iterator16.next()).done); _iteratorNormalCompletion16 = true) {
+        for (_iterator16.s(); !(_step16 = _iterator16.n()).done;) {
           var file = _step16.value;
           this.enqueueFile(file);
         }
       } catch (err) {
-        _didIteratorError16 = true;
-        _iteratorError16 = err;
+        _iterator16.e(err);
       } finally {
-        try {
-          if (!_iteratorNormalCompletion16 && _iterator16["return"] != null) {
-            _iterator16["return"]();
-          }
-        } finally {
-          if (_didIteratorError16) {
-            throw _iteratorError16;
-          }
-        }
+        _iterator16.f();
       }
 
       return null;
@@ -2047,12 +1901,11 @@ function (_Emitter) {
         cancelIfNecessary = false;
       }
 
-      var _iteratorNormalCompletion17 = true;
-      var _didIteratorError17 = false;
-      var _iteratorError17 = undefined;
+      var _iterator17 = _createForOfIteratorHelper(this.files.slice()),
+          _step17;
 
       try {
-        for (var _iterator17 = this.files.slice()[Symbol.iterator](), _step17; !(_iteratorNormalCompletion17 = (_step17 = _iterator17.next()).done); _iteratorNormalCompletion17 = true) {
+        for (_iterator17.s(); !(_step17 = _iterator17.n()).done;) {
           var file = _step17.value;
 
           if (file.status !== Dropzone.UPLOADING || cancelIfNecessary) {
@@ -2060,18 +1913,9 @@ function (_Emitter) {
           }
         }
       } catch (err) {
-        _didIteratorError17 = true;
-        _iteratorError17 = err;
+        _iterator17.e(err);
       } finally {
-        try {
-          if (!_iteratorNormalCompletion17 && _iterator17["return"] != null) {
-            _iterator17["return"]();
-          }
-        } finally {
-          if (_didIteratorError17) {
-            throw _iteratorError17;
-          }
-        }
+        _iterator17.f();
       }
 
       return null;
@@ -2169,7 +2013,10 @@ function (_Emitter) {
 
       if (crossOrigin) {
         img.crossOrigin = crossOrigin;
-      }
+      } // fixOrientation is not needed anymore with browsers handling imageOrientation
+
+
+      fixOrientation = getComputedStyle(document.body)['imageOrientation'] == 'from-image' ? false : fixOrientation;
 
       img.onload = function () {
         var loadExif = function loadExif(callback) {
@@ -2304,12 +2151,11 @@ function (_Emitter) {
   }, {
     key: "processFiles",
     value: function processFiles(files) {
-      var _iteratorNormalCompletion18 = true;
-      var _didIteratorError18 = false;
-      var _iteratorError18 = undefined;
+      var _iterator18 = _createForOfIteratorHelper(files),
+          _step18;
 
       try {
-        for (var _iterator18 = files[Symbol.iterator](), _step18; !(_iteratorNormalCompletion18 = (_step18 = _iterator18.next()).done); _iteratorNormalCompletion18 = true) {
+        for (_iterator18.s(); !(_step18 = _iterator18.n()).done;) {
           var file = _step18.value;
           file.processing = true; // Backwards compatibility
 
@@ -2317,18 +2163,9 @@ function (_Emitter) {
           this.emit("processing", file);
         }
       } catch (err) {
-        _didIteratorError18 = true;
-        _iteratorError18 = err;
+        _iterator18.e(err);
       } finally {
-        try {
-          if (!_iteratorNormalCompletion18 && _iterator18["return"] != null) {
-            _iterator18["return"]();
-          }
-        } finally {
-          if (_didIteratorError18) {
-            throw _iteratorError18;
-          }
-        }
+        _iterator18.f();
       }
 
       if (this.options.uploadMultiple) {
@@ -2357,56 +2194,36 @@ function (_Emitter) {
       if (file.status === Dropzone.UPLOADING) {
         var groupedFiles = this._getFilesWithXhr(file.xhr);
 
-        var _iteratorNormalCompletion19 = true;
-        var _didIteratorError19 = false;
-        var _iteratorError19 = undefined;
+        var _iterator19 = _createForOfIteratorHelper(groupedFiles),
+            _step19;
 
         try {
-          for (var _iterator19 = groupedFiles[Symbol.iterator](), _step19; !(_iteratorNormalCompletion19 = (_step19 = _iterator19.next()).done); _iteratorNormalCompletion19 = true) {
+          for (_iterator19.s(); !(_step19 = _iterator19.n()).done;) {
             var groupedFile = _step19.value;
             groupedFile.status = Dropzone.CANCELED;
           }
         } catch (err) {
-          _didIteratorError19 = true;
-          _iteratorError19 = err;
+          _iterator19.e(err);
         } finally {
-          try {
-            if (!_iteratorNormalCompletion19 && _iterator19["return"] != null) {
-              _iterator19["return"]();
-            }
-          } finally {
-            if (_didIteratorError19) {
-              throw _iteratorError19;
-            }
-          }
+          _iterator19.f();
         }
 
         if (typeof file.xhr !== 'undefined') {
           file.xhr.abort();
         }
 
-        var _iteratorNormalCompletion20 = true;
-        var _didIteratorError20 = false;
-        var _iteratorError20 = undefined;
+        var _iterator20 = _createForOfIteratorHelper(groupedFiles),
+            _step20;
 
         try {
-          for (var _iterator20 = groupedFiles[Symbol.iterator](), _step20; !(_iteratorNormalCompletion20 = (_step20 = _iterator20.next()).done); _iteratorNormalCompletion20 = true) {
+          for (_iterator20.s(); !(_step20 = _iterator20.n()).done;) {
             var _groupedFile = _step20.value;
             this.emit("canceled", _groupedFile);
           }
         } catch (err) {
-          _didIteratorError20 = true;
-          _iteratorError20 = err;
+          _iterator20.e(err);
         } finally {
-          try {
-            if (!_iteratorNormalCompletion20 && _iterator20["return"] != null) {
-              _iterator20["return"]();
-            }
-          } finally {
-            if (_didIteratorError20) {
-              throw _iteratorError20;
-            }
-          }
+          _iterator20.f();
         }
 
         if (this.options.uploadMultiple) {
@@ -2477,7 +2294,7 @@ function (_Emitter) {
             if (chunkIndex >= file.upload.totalChunkCount) return;
             startedChunkCount++;
             var start = chunkIndex * _this15.options.chunkSize;
-            var end = Math.min(start + _this15.options.chunkSize, file.size);
+            var end = Math.min(start + _this15.options.chunkSize, _transformedFile.size);
             var dataBlock = {
               name: _this15._getParamName(0),
               data: _transformedFile.webkitSlice ? _transformedFile.webkitSlice(start, end) : _transformedFile.slice(start, end),
@@ -2565,28 +2382,18 @@ function (_Emitter) {
 
       var xhr = new XMLHttpRequest(); // Put the xhr object in the file objects to be able to reference it later.
 
-      var _iteratorNormalCompletion21 = true;
-      var _didIteratorError21 = false;
-      var _iteratorError21 = undefined;
+      var _iterator21 = _createForOfIteratorHelper(files),
+          _step21;
 
       try {
-        for (var _iterator21 = files[Symbol.iterator](), _step21; !(_iteratorNormalCompletion21 = (_step21 = _iterator21.next()).done); _iteratorNormalCompletion21 = true) {
+        for (_iterator21.s(); !(_step21 = _iterator21.n()).done;) {
           var file = _step21.value;
           file.xhr = xhr;
         }
       } catch (err) {
-        _didIteratorError21 = true;
-        _iteratorError21 = err;
+        _iterator21.e(err);
       } finally {
-        try {
-          if (!_iteratorNormalCompletion21 && _iterator21["return"] != null) {
-            _iterator21["return"]();
-          }
-        } finally {
-          if (_didIteratorError21) {
-            throw _iteratorError21;
-          }
-        }
+        _iterator21.f();
       }
 
       if (files[0].upload.chunked) {
@@ -2607,7 +2414,7 @@ function (_Emitter) {
       };
 
       xhr.ontimeout = function () {
-        _this16._handleUploadError(files, xhr, "Request timedout after ".concat(_this16.options.timeout, " seconds"));
+        _this16._handleUploadError(files, xhr, "Request timedout after ".concat(_this16.options.timeout / 1000, " seconds"));
       };
 
       xhr.onerror = function () {
@@ -2650,33 +2457,33 @@ function (_Emitter) {
 
         for (var key in additionalParams) {
           var value = additionalParams[key];
-          formData.append(key, value);
+
+          if (Array.isArray(value)) {
+            // The additional parameter contains an array,
+            // so lets iterate over it to attach each value
+            // individually.
+            for (var i = 0; i < value.length; i++) {
+              formData.append(key, value[i]);
+            }
+          } else {
+            formData.append(key, value);
+          }
         }
       } // Let the user add additional data if necessary
 
 
-      var _iteratorNormalCompletion22 = true;
-      var _didIteratorError22 = false;
-      var _iteratorError22 = undefined;
+      var _iterator22 = _createForOfIteratorHelper(files),
+          _step22;
 
       try {
-        for (var _iterator22 = files[Symbol.iterator](), _step22; !(_iteratorNormalCompletion22 = (_step22 = _iterator22.next()).done); _iteratorNormalCompletion22 = true) {
+        for (_iterator22.s(); !(_step22 = _iterator22.n()).done;) {
           var _file = _step22.value;
           this.emit("sending", _file, xhr, formData);
         }
       } catch (err) {
-        _didIteratorError22 = true;
-        _iteratorError22 = err;
+        _iterator22.e(err);
       } finally {
-        try {
-          if (!_iteratorNormalCompletion22 && _iterator22["return"] != null) {
-            _iterator22["return"]();
-          }
-        } finally {
-          if (_didIteratorError22) {
-            throw _iteratorError22;
-          }
-        }
+        _iterator22.f();
       }
 
       if (this.options.uploadMultiple) {
@@ -2687,8 +2494,8 @@ function (_Emitter) {
       // Has to be last because some servers (eg: S3) expect the file to be the last parameter
 
 
-      for (var i = 0; i < dataBlocks.length; i++) {
-        var dataBlock = dataBlocks[i];
+      for (var _i4 = 0; _i4 < dataBlocks.length; _i4++) {
+        var dataBlock = dataBlocks[_i4];
         formData.append(dataBlock.name, dataBlock.data, dataBlock.filename);
       }
 
@@ -2724,12 +2531,11 @@ function (_Emitter) {
     value: function _addFormElementData(formData) {
       // Take care of other input elements
       if (this.element.tagName === "FORM") {
-        var _iteratorNormalCompletion23 = true;
-        var _didIteratorError23 = false;
-        var _iteratorError23 = undefined;
+        var _iterator23 = _createForOfIteratorHelper(this.element.querySelectorAll("input, textarea, select, button")),
+            _step23;
 
         try {
-          for (var _iterator23 = this.element.querySelectorAll("input, textarea, select, button")[Symbol.iterator](), _step23; !(_iteratorNormalCompletion23 = (_step23 = _iterator23.next()).done); _iteratorNormalCompletion23 = true) {
+          for (_iterator23.s(); !(_step23 = _iterator23.n()).done;) {
             var input = _step23.value;
             var inputName = input.getAttribute("name");
             var inputType = input.getAttribute("type");
@@ -2739,12 +2545,11 @@ function (_Emitter) {
 
             if (input.tagName === "SELECT" && input.hasAttribute("multiple")) {
               // Possibly multiple values
-              var _iteratorNormalCompletion24 = true;
-              var _didIteratorError24 = false;
-              var _iteratorError24 = undefined;
+              var _iterator24 = _createForOfIteratorHelper(input.options),
+                  _step24;
 
               try {
-                for (var _iterator24 = input.options[Symbol.iterator](), _step24; !(_iteratorNormalCompletion24 = (_step24 = _iterator24.next()).done); _iteratorNormalCompletion24 = true) {
+                for (_iterator24.s(); !(_step24 = _iterator24.n()).done;) {
                   var option = _step24.value;
 
                   if (option.selected) {
@@ -2752,36 +2557,18 @@ function (_Emitter) {
                   }
                 }
               } catch (err) {
-                _didIteratorError24 = true;
-                _iteratorError24 = err;
+                _iterator24.e(err);
               } finally {
-                try {
-                  if (!_iteratorNormalCompletion24 && _iterator24["return"] != null) {
-                    _iterator24["return"]();
-                  }
-                } finally {
-                  if (_didIteratorError24) {
-                    throw _iteratorError24;
-                  }
-                }
+                _iterator24.f();
               }
             } else if (!inputType || inputType !== "checkbox" && inputType !== "radio" || input.checked) {
               formData.append(inputName, input.value);
             }
           }
         } catch (err) {
-          _didIteratorError23 = true;
-          _iteratorError23 = err;
+          _iterator23.e(err);
         } finally {
-          try {
-            if (!_iteratorNormalCompletion23 && _iterator23["return"] != null) {
-              _iterator23["return"]();
-            }
-          } finally {
-            if (_didIteratorError23) {
-              throw _iteratorError23;
-            }
-          }
+          _iterator23.f();
         }
       }
     } // Invoked when there is new progress information about given files.
@@ -2820,66 +2607,46 @@ function (_Emitter) {
 
           file.upload.progress = file.upload.progress / file.upload.totalChunkCount;
         } else {
-          var _iteratorNormalCompletion25 = true;
-          var _didIteratorError25 = false;
-          var _iteratorError25 = undefined;
+          var _iterator25 = _createForOfIteratorHelper(files),
+              _step25;
 
           try {
-            for (var _iterator25 = files[Symbol.iterator](), _step25; !(_iteratorNormalCompletion25 = (_step25 = _iterator25.next()).done); _iteratorNormalCompletion25 = true) {
+            for (_iterator25.s(); !(_step25 = _iterator25.n()).done;) {
               var _file2 = _step25.value;
               _file2.upload.progress = progress;
               _file2.upload.total = e.total;
               _file2.upload.bytesSent = e.loaded;
             }
           } catch (err) {
-            _didIteratorError25 = true;
-            _iteratorError25 = err;
+            _iterator25.e(err);
           } finally {
-            try {
-              if (!_iteratorNormalCompletion25 && _iterator25["return"] != null) {
-                _iterator25["return"]();
-              }
-            } finally {
-              if (_didIteratorError25) {
-                throw _iteratorError25;
-              }
-            }
+            _iterator25.f();
           }
         }
 
-        var _iteratorNormalCompletion26 = true;
-        var _didIteratorError26 = false;
-        var _iteratorError26 = undefined;
+        var _iterator26 = _createForOfIteratorHelper(files),
+            _step26;
 
         try {
-          for (var _iterator26 = files[Symbol.iterator](), _step26; !(_iteratorNormalCompletion26 = (_step26 = _iterator26.next()).done); _iteratorNormalCompletion26 = true) {
+          for (_iterator26.s(); !(_step26 = _iterator26.n()).done;) {
             var _file3 = _step26.value;
             this.emit("uploadprogress", _file3, _file3.upload.progress, _file3.upload.bytesSent);
           }
         } catch (err) {
-          _didIteratorError26 = true;
-          _iteratorError26 = err;
+          _iterator26.e(err);
         } finally {
-          try {
-            if (!_iteratorNormalCompletion26 && _iterator26["return"] != null) {
-              _iterator26["return"]();
-            }
-          } finally {
-            if (_didIteratorError26) {
-              throw _iteratorError26;
-            }
-          }
+          _iterator26.f();
         }
       } else {
         // Called when the file finished uploading
         var allFilesFinished = true;
         progress = 100;
-        var _iteratorNormalCompletion27 = true;
-        var _didIteratorError27 = false;
-        var _iteratorError27 = undefined;
+
+        var _iterator27 = _createForOfIteratorHelper(files),
+            _step27;
 
         try {
-          for (var _iterator27 = files[Symbol.iterator](), _step27; !(_iteratorNormalCompletion27 = (_step27 = _iterator27.next()).done); _iteratorNormalCompletion27 = true) {
+          for (_iterator27.s(); !(_step27 = _iterator27.n()).done;) {
             var _file4 = _step27.value;
 
             if (_file4.upload.progress !== 100 || _file4.upload.bytesSent !== _file4.upload.total) {
@@ -2891,46 +2658,27 @@ function (_Emitter) {
           } // Nothing to do, all files already at 100%
 
         } catch (err) {
-          _didIteratorError27 = true;
-          _iteratorError27 = err;
+          _iterator27.e(err);
         } finally {
-          try {
-            if (!_iteratorNormalCompletion27 && _iterator27["return"] != null) {
-              _iterator27["return"]();
-            }
-          } finally {
-            if (_didIteratorError27) {
-              throw _iteratorError27;
-            }
-          }
+          _iterator27.f();
         }
 
         if (allFilesFinished) {
           return;
         }
 
-        var _iteratorNormalCompletion28 = true;
-        var _didIteratorError28 = false;
-        var _iteratorError28 = undefined;
+        var _iterator28 = _createForOfIteratorHelper(files),
+            _step28;
 
         try {
-          for (var _iterator28 = files[Symbol.iterator](), _step28; !(_iteratorNormalCompletion28 = (_step28 = _iterator28.next()).done); _iteratorNormalCompletion28 = true) {
+          for (_iterator28.s(); !(_step28 = _iterator28.n()).done;) {
             var _file5 = _step28.value;
             this.emit("uploadprogress", _file5, progress, _file5.upload.bytesSent);
           }
         } catch (err) {
-          _didIteratorError28 = true;
-          _iteratorError28 = err;
+          _iterator28.e(err);
         } finally {
-          try {
-            if (!_iteratorNormalCompletion28 && _iterator28["return"] != null) {
-              _iterator28["return"]();
-            }
-          } finally {
-            if (_didIteratorError28) {
-              throw _iteratorError28;
-            }
-          }
+          _iterator28.f();
         }
       }
     }
@@ -3003,30 +2751,20 @@ function (_Emitter) {
   }, {
     key: "_finished",
     value: function _finished(files, responseText, e) {
-      var _iteratorNormalCompletion29 = true;
-      var _didIteratorError29 = false;
-      var _iteratorError29 = undefined;
+      var _iterator29 = _createForOfIteratorHelper(files),
+          _step29;
 
       try {
-        for (var _iterator29 = files[Symbol.iterator](), _step29; !(_iteratorNormalCompletion29 = (_step29 = _iterator29.next()).done); _iteratorNormalCompletion29 = true) {
+        for (_iterator29.s(); !(_step29 = _iterator29.n()).done;) {
           var file = _step29.value;
           file.status = Dropzone.SUCCESS;
           this.emit("success", file, responseText, e);
           this.emit("complete", file);
         }
       } catch (err) {
-        _didIteratorError29 = true;
-        _iteratorError29 = err;
+        _iterator29.e(err);
       } finally {
-        try {
-          if (!_iteratorNormalCompletion29 && _iterator29["return"] != null) {
-            _iterator29["return"]();
-          }
-        } finally {
-          if (_didIteratorError29) {
-            throw _iteratorError29;
-          }
-        }
+        _iterator29.f();
       }
 
       if (this.options.uploadMultiple) {
@@ -3043,30 +2781,20 @@ function (_Emitter) {
   }, {
     key: "_errorProcessing",
     value: function _errorProcessing(files, message, xhr) {
-      var _iteratorNormalCompletion30 = true;
-      var _didIteratorError30 = false;
-      var _iteratorError30 = undefined;
+      var _iterator30 = _createForOfIteratorHelper(files),
+          _step30;
 
       try {
-        for (var _iterator30 = files[Symbol.iterator](), _step30; !(_iteratorNormalCompletion30 = (_step30 = _iterator30.next()).done); _iteratorNormalCompletion30 = true) {
+        for (_iterator30.s(); !(_step30 = _iterator30.n()).done;) {
           var file = _step30.value;
           file.status = Dropzone.ERROR;
           this.emit("error", file, message, xhr);
           this.emit("complete", file);
         }
       } catch (err) {
-        _didIteratorError30 = true;
-        _iteratorError30 = err;
+        _iterator30.e(err);
       } finally {
-        try {
-          if (!_iteratorNormalCompletion30 && _iterator30["return"] != null) {
-            _iterator30["return"]();
-          }
-        } finally {
-          if (_didIteratorError30) {
-            throw _iteratorError30;
-          }
-        }
+        _iterator30.f();
       }
 
       if (this.options.uploadMultiple) {
@@ -3093,7 +2821,7 @@ function (_Emitter) {
 }(Emitter);
 
 Dropzone.initClass();
-Dropzone.version = "5.7.1"; // This is a map of options for your different dropzones. Add configurations
+Dropzone.version = "5.7.2"; // This is a map of options for your different dropzones. Add configurations
 // to this object for your different dropzone elemens.
 //
 // Example:
@@ -3148,12 +2876,12 @@ Dropzone.discover = function () {
     var checkElements = function checkElements(elements) {
       return function () {
         var result = [];
-        var _iteratorNormalCompletion31 = true;
-        var _didIteratorError31 = false;
-        var _iteratorError31 = undefined;
+
+        var _iterator31 = _createForOfIteratorHelper(elements),
+            _step31;
 
         try {
-          for (var _iterator31 = elements[Symbol.iterator](), _step31; !(_iteratorNormalCompletion31 = (_step31 = _iterator31.next()).done); _iteratorNormalCompletion31 = true) {
+          for (_iterator31.s(); !(_step31 = _iterator31.n()).done;) {
             var el = _step31.value;
 
             if (/(^| )dropzone($| )/.test(el.className)) {
@@ -3163,18 +2891,9 @@ Dropzone.discover = function () {
             }
           }
         } catch (err) {
-          _didIteratorError31 = true;
-          _iteratorError31 = err;
+          _iterator31.e(err);
         } finally {
-          try {
-            if (!_iteratorNormalCompletion31 && _iterator31["return"] != null) {
-              _iterator31["return"]();
-            }
-          } finally {
-            if (_didIteratorError31) {
-              throw _iteratorError31;
-            }
-          }
+          _iterator31.f();
         }
 
         return result;
@@ -3187,12 +2906,12 @@ Dropzone.discover = function () {
 
   return function () {
     var result = [];
-    var _iteratorNormalCompletion32 = true;
-    var _didIteratorError32 = false;
-    var _iteratorError32 = undefined;
+
+    var _iterator32 = _createForOfIteratorHelper(dropzones),
+        _step32;
 
     try {
-      for (var _iterator32 = dropzones[Symbol.iterator](), _step32; !(_iteratorNormalCompletion32 = (_step32 = _iterator32.next()).done); _iteratorNormalCompletion32 = true) {
+      for (_iterator32.s(); !(_step32 = _iterator32.n()).done;) {
         var dropzone = _step32.value;
 
         // Create a dropzone unless auto discover has been disabled for specific element
@@ -3203,18 +2922,9 @@ Dropzone.discover = function () {
         }
       }
     } catch (err) {
-      _didIteratorError32 = true;
-      _iteratorError32 = err;
+      _iterator32.e(err);
     } finally {
-      try {
-        if (!_iteratorNormalCompletion32 && _iterator32["return"] != null) {
-          _iterator32["return"]();
-        }
-      } finally {
-        if (_didIteratorError32) {
-          throw _iteratorError32;
-        }
-      }
+      _iterator32.f();
     }
 
     return result;
@@ -3243,12 +2953,11 @@ Dropzone.isBrowserSupported = function () {
       capableBrowser = false;
     } else {
       // The browser supports the API, but may be blacklisted.
-      var _iteratorNormalCompletion33 = true;
-      var _didIteratorError33 = false;
-      var _iteratorError33 = undefined;
+      var _iterator33 = _createForOfIteratorHelper(Dropzone.blacklistedBrowsers),
+          _step33;
 
       try {
-        for (var _iterator33 = Dropzone.blacklistedBrowsers[Symbol.iterator](), _step33; !(_iteratorNormalCompletion33 = (_step33 = _iterator33.next()).done); _iteratorNormalCompletion33 = true) {
+        for (_iterator33.s(); !(_step33 = _iterator33.n()).done;) {
           var regex = _step33.value;
 
           if (regex.test(navigator.userAgent)) {
@@ -3257,18 +2966,9 @@ Dropzone.isBrowserSupported = function () {
           }
         }
       } catch (err) {
-        _didIteratorError33 = true;
-        _iteratorError33 = err;
+        _iterator33.e(err);
       } finally {
-        try {
-          if (!_iteratorNormalCompletion33 && _iterator33["return"] != null) {
-            _iterator33["return"]();
-          }
-        } finally {
-          if (_didIteratorError33) {
-            throw _iteratorError33;
-          }
-        }
+        _iterator33.f();
       }
     }
   } else {
@@ -3360,56 +3060,37 @@ Dropzone.getElements = function (els, name) {
     elements = [];
 
     try {
-      var _iteratorNormalCompletion34 = true;
-      var _didIteratorError34 = false;
-      var _iteratorError34 = undefined;
+      var _iterator34 = _createForOfIteratorHelper(els),
+          _step34;
 
       try {
-        for (var _iterator34 = els[Symbol.iterator](), _step34; !(_iteratorNormalCompletion34 = (_step34 = _iterator34.next()).done); _iteratorNormalCompletion34 = true) {
+        for (_iterator34.s(); !(_step34 = _iterator34.n()).done;) {
           el = _step34.value;
           elements.push(this.getElement(el, name));
         }
       } catch (err) {
-        _didIteratorError34 = true;
-        _iteratorError34 = err;
+        _iterator34.e(err);
       } finally {
-        try {
-          if (!_iteratorNormalCompletion34 && _iterator34["return"] != null) {
-            _iterator34["return"]();
-          }
-        } finally {
-          if (_didIteratorError34) {
-            throw _iteratorError34;
-          }
-        }
+        _iterator34.f();
       }
     } catch (e) {
       elements = null;
     }
   } else if (typeof els === "string") {
     elements = [];
-    var _iteratorNormalCompletion35 = true;
-    var _didIteratorError35 = false;
-    var _iteratorError35 = undefined;
+
+    var _iterator35 = _createForOfIteratorHelper(document.querySelectorAll(els)),
+        _step35;
 
     try {
-      for (var _iterator35 = document.querySelectorAll(els)[Symbol.iterator](), _step35; !(_iteratorNormalCompletion35 = (_step35 = _iterator35.next()).done); _iteratorNormalCompletion35 = true) {
+      for (_iterator35.s(); !(_step35 = _iterator35.n()).done;) {
         el = _step35.value;
         elements.push(el);
       }
     } catch (err) {
-      _didIteratorError35 = true;
-      _iteratorError35 = err;
+      _iterator35.e(err);
     } finally {
-      try {
-        if (!_iteratorNormalCompletion35 && _iterator35["return"] != null) {
-          _iterator35["return"]();
-        }
-      } finally {
-        if (_didIteratorError35) {
-          throw _iteratorError35;
-        }
-      }
+      _iterator35.f();
     }
   } else if (els.nodeType != null) {
     elements = [els];
@@ -3446,12 +3127,12 @@ Dropzone.isValidFile = function (file, acceptedFiles) {
   acceptedFiles = acceptedFiles.split(",");
   var mimeType = file.type;
   var baseMimeType = mimeType.replace(/\/.*$/, "");
-  var _iteratorNormalCompletion36 = true;
-  var _didIteratorError36 = false;
-  var _iteratorError36 = undefined;
+
+  var _iterator36 = _createForOfIteratorHelper(acceptedFiles),
+      _step36;
 
   try {
-    for (var _iterator36 = acceptedFiles[Symbol.iterator](), _step36; !(_iteratorNormalCompletion36 = (_step36 = _iterator36.next()).done); _iteratorNormalCompletion36 = true) {
+    for (_iterator36.s(); !(_step36 = _iterator36.n()).done;) {
       var validType = _step36.value;
       validType = validType.trim();
 
@@ -3471,18 +3152,9 @@ Dropzone.isValidFile = function (file, acceptedFiles) {
       }
     }
   } catch (err) {
-    _didIteratorError36 = true;
-    _iteratorError36 = err;
+    _iterator36.e(err);
   } finally {
-    try {
-      if (!_iteratorNormalCompletion36 && _iterator36["return"] != null) {
-        _iterator36["return"]();
-      }
-    } finally {
-      if (_didIteratorError36) {
-        throw _iteratorError36;
-      }
-    }
+    _iterator36.f();
   }
 
   return false;
@@ -3574,9 +3246,7 @@ var drawImageIOSFix = function drawImageIOSFix(ctx, img, sx, sy, sw, sh, dx, dy,
 // http://elicon.blog57.fc2.com/blog-entry-206.html
 
 
-var ExifRestore =
-/*#__PURE__*/
-function () {
+var ExifRestore = /*#__PURE__*/function () {
   function ExifRestore() {
     _classCallCheck(this, ExifRestore);
   }
