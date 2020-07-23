@@ -989,7 +989,9 @@ class Dropzone extends Emitter {
       this.options.renameFile = file => this.options.renameFilename.call(this, file.name, file);
     }
 
-    this.options.method = this.options.method.toUpperCase();
+    if (typeof this.options.method === 'string') {
+      this.options.method = this.options.method.toUpperCase();
+    }
 
     if ((fallback = this.getExistingFallback()) && fallback.parentNode) {
       // Remove the fallback
@@ -2050,7 +2052,7 @@ class Dropzone extends Emitter {
     };
 
     xhr.ontimeout = () => {
-      this._handleUploadError(files, xhr, `Request timedout after ${this.options.timeout/1000} seconds`);
+      this._handleUploadError(files, xhr, `Request timedout after ${this.options.timeout / 1000} seconds`);
     };
 
     xhr.onerror = () => {

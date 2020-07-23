@@ -1,6 +1,11 @@
 ## 5.7.1
 
 - Fix issue with IE (thanks to @Bjego)
+- Base the calculation of the chunks to send on the transformed files
+- Properly display seconds (instead of ms) in error message when timeout is
+  reached
+- Properly handle it when `options.method` is a function (there was a bug, which
+  always assumed that it was a String) (thanks to @almdac)
 
 ## 5.7.0
 
