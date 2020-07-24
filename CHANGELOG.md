@@ -1,3 +1,7 @@
+## 5.8.0
+
+- Add `disablePreviews` option.
+
 ## 5.7.2
 
 - Base the calculation of the chunks to send on the transformed files

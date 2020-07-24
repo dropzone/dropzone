@@ -1,6 +1,5 @@
 build
 components
-node_modules
 .DS_Store
 .sass-cache
 .babelrc
@@ -9,6 +8,9 @@ _config.yaml
 .idea
 website
 tool
+
+babel.config.js
+webpack.config.js
 
 # The GitLab pages artifacts
 public

@@ -1,6 +1,6 @@
 {
   "name": "dropzone",
-  "version": "5.7.2",
+  "version": "5.7.17",
   "description": "Handles drag and drop of files for you.",
   "keywords": [
     "dragndrop",
@@ -25,8 +25,9 @@
     }
   ],
   "scripts": {
-    "test": "grunt && npm run test-prebuilt",
-    "test-prebuilt": "mocha-headless-chrome -f test/test-prebuilt.html -a no-sandbox -a disable-setuid-sandbox"
+    "build": "webpack",
+    "test": "karma start --single-run --browsers ChromeHeadless test/karma.conf.js",
+    "build-website": "grunt build-website"
   },
   "bugs": {
     "email": "m@tias.me",
@@ -40,17 +41,27 @@
   "devDependencies": {
     "@babel/core": "^7.8.4",
     "@babel/preset-env": "^7.8.4",
+    "babel-loader": "^8.0.0",
     "chai": "4.2.x",
-    "grunt": "^1.0.4",
-    "grunt-babel": "^8.0.0",
-    "grunt-contrib-concat": "^1.0.1",
-    "grunt-contrib-sass": "^1.0.0",
-    "grunt-contrib-uglify": "^4.0.1",
-    "grunt-contrib-watch": "^1.1.0",
-    "grunt-text-replace": "^0.4.0",
-    "marked": "^0.8.0",
-    "mocha": "^7.0.1",
-    "mocha-headless-chrome": "^2.0.3",
-    "sinon": "8.1.1"
+    "core-js": "^3.6.5",
+    "css-loader": "^1.0.0",
+    "extract-loader": "^2.0.1",
+    "file-loader": "^2.0.0",
+    "karma": "^6.1.0",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-mocha": "^2.0.1",
+    "karma-rollup-preprocessor": "^7.0.5",
+    "karma-sinon-chai": "^2.0.2",
+    "karma-spec-reporter": "^0.0.32",
+    "marked": "^0.8.2",
+    "mocha": "^7.0.0",
+    "mocha-headless-chrome": "^3.0.0",
+    "rollup": "^2.38.4",
+    "sass": "^1.0.0",
+    "sass-loader": "^10.0.0",
+    "sinon": "^9.2.4",
+    "sinon-chai": "^3.5.0",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
   }
 }

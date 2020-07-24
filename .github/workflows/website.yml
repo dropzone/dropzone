@@ -1,0 +1,28 @@
+# This workflow will build and push the website on the master branch
+name: Build Website
+
+on:
+  push:
+    branches: [ master ]
+     
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.1
+      - name: Checkout Dropzone
+        uses: actions/checkout@v2
+      # Removing .gitignore is necessary otherwise index.md will be excluded
+      # from being committed to the gh-pages branch.
+      - run: rm website/.gitignore
+      - run: npm install
+      - run: npm run build-website
+      - name: GitHub Pages
+        uses: crazy-max/ghaction-github-pages@v2.1.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          build_dir: website
+          #keep_history: true
