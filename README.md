@@ -19,18 +19,14 @@ GitHub issues tracker. Only post an issue here if you think you discovered a bug
 <br>
 <br>
 
-This is no longer the official repository for Dropzone. I have switched to [gitlab.com](https://gitlab.com/meno/dropzone)
-as the primary location to continue development.
- 
-There are multiple reasons why I am switching from GitHub to GitLab, but a few of the reasons are the
-issue tracker that GitHub is providing, *drowning* me in issues that I am unable to categorise or prioritize properly,
-the lack of proper continuous integration, and build files. I don't want the compiled `.js` files in my repository, and
-people regularly commit changes to the compiled files and create pull requests with them.
 
-I will write a blog post soon, that goes into detail about why I am doing the switch.
+~~This is no longer the official repository for Dropzone. I have switched to [gitlab.com](https://gitlab.com/meno/dropzone)
+as the primary location to continue development.~~
 
-This repository will still remain, and always host the most up to date versions of dropzone, but only the distribution
-files!
+Don't be angry with me, but I've realised that GitHub is the better home for this library. I'm in the process of migrating back, and
+making a few changes to the way continuous integration and publishing works.
+
+I'm also making some changes on how issues and pull requests will be handled an am hoping to get a better grip on things.
 
 MIT License
 -----------
