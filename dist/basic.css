@@ -3,37 +3,75 @@
  * Copyright (c) 2012 Matias Meno <m@tias.me>
  */
 .dropzone, .dropzone * {
-  box-sizing: border-box; }
+    box-sizing: border-box;
+}
 
 .dropzone {
-  position: relative; }
-  .dropzone .dz-preview {
+    position: relative;
+}
+
+.dropzone .dz-preview {
     position: relative;
     display: inline-block;
     width: 120px;
-    margin: 0.5em; }
-    .dropzone .dz-preview .dz-progress {
-      display: block;
-      height: 15px;
-      border: 1px solid #aaa; }
-      .dropzone .dz-preview .dz-progress .dz-upload {
-        display: block;
-        height: 100%;
-        width: 0;
-        background: green; }
-    .dropzone .dz-preview .dz-error-message {
-      color: red;
-      display: none; }
-    .dropzone .dz-preview.dz-error .dz-error-message, .dropzone .dz-preview.dz-error .dz-error-mark {
-      display: block; }
-    .dropzone .dz-preview.dz-success .dz-success-mark {
-      display: block; }
-    .dropzone .dz-preview .dz-error-mark, .dropzone .dz-preview .dz-success-mark {
-      position: absolute;
-      display: none;
-      left: 30px;
-      top: 30px;
-      width: 54px;
-      height: 58px;
-      left: 50%;
-      margin-left: -27px; }
+    margin: 0.5em;
+}
+
+.dropzone .dz-preview .dz-progress {
+    display: block;
+    height: 15px;
+    border: 1px solid #aaa;
+}
+
+.dropzone .dz-preview .dz-progress .dz-upload {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: green;
+}
+
+.dropzone .dz-preview .dz-error-message {
+    color: red;
+    display: none;
+}
+
+.dropzone .dz-preview.dz-error .dz-error-message, .dropzone .dz-preview.dz-error .dz-error-mark {
+    display: block;
+}
+
+.dropzone .dz-preview.dz-success .dz-success-mark {
+    display: block;
+}
+
+.dropzone .dz-preview .dz-error-mark, .dropzone .dz-preview .dz-success-mark {
+    position: absolute;
+    display: none;
+    left: 30px;
+    top: 30px;
+    width: 54px;
+    height: 58px;
+    left: 50%;
+    margin-left: -27px;
+}
+
+.dropzone .dz-preview .dz-image img, .dz-preview.dz-file-preview.dz-error.dz-complete {
+    display: block;
+    width: 250px !important;
+    height: 250px !important;
+}
+
+a.dz-remove {
+    width: 90%
+}
+
+.dropzone .dz-error-message {
+    margin-top: 7%;
+    width: 90% !important;
+    margin-left: 16px !important;
+}
+
+.dropzone .dz-preview.dz-image-preview {
+    width: 250px;
+    height: 250px;
+    background: white;
+}
