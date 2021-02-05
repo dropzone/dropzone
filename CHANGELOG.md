@@ -1,6 +1,7 @@
-## 5.8.0
+## 5.7.3
 
 - Add `disablePreviews` option.
+- Fix IE problems with Symbols.
 
 ## 5.7.2
 

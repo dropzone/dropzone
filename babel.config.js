@@ -5,7 +5,7 @@ module.exports = function (api) {
       "@babel/preset-env",
       {
         corejs: {
-          version: "3",
+          version: "3.8",
           proposals: false,
         },
         useBuiltIns: "usage",
@@ -22,7 +22,11 @@ module.exports = function (api) {
       },
     ],
   ];
+  const plugins = [
+    ["@babel/plugin-transform-for-of", { allowArrayLike: true }],
+  ];
   return {
     presets,
+    plugins,
   };
 };

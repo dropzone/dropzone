@@ -1,16 +1,8 @@
-build
-components
-.DS_Store
+.github
 .sass-cache
-.babelrc
-_site
-_config.yaml
 .idea
-website
 tool
-
+test
 babel.config.js
 webpack.config.js
-
-# The GitLab pages artifacts
-public
+CONTRIBUTING.md

@@ -4,7 +4,7 @@ const v8 = require("v8");
 const clone = (object) => v8.deserialize(v8.serialize(object));
 
 let downloadConfig = {
-  entry: ["./src/dropzone.js", "./src/dropzone.scss", "./src/basic.scss"],
+  entry: ["./tool/dropzone.dist.js", "./src/dropzone.scss", "./src/basic.scss"],
   mode: "production",
   module: {
     rules: [

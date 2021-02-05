@@ -1,6 +1,6 @@
 {
   "name": "dropzone",
-  "version": "5.7.17",
+  "version": "5.7.3",
   "description": "Handles drag and drop of files for you.",
   "keywords": [
     "dragndrop",
@@ -39,11 +39,11 @@
     "url": "https://gitlab.com/meno/dropzone.git"
   },
   "devDependencies": {
-    "@babel/core": "^7.8.4",
-    "@babel/preset-env": "^7.8.4",
+    "@babel/core": "^7.11.0",
+    "@babel/preset-env": "^7.11.0",
     "babel-loader": "^8.0.0",
     "chai": "4.2.x",
-    "core-js": "^3.6.5",
+    "core-js": "^3.8.0",
     "css-loader": "^1.0.0",
     "extract-loader": "^2.0.1",
     "file-loader": "^2.0.0",
