@@ -1,3 +1,5 @@
+import { Dropzone } from "./dropzone.js";
+
 let defaultOptions = {
   /**
    * Has to be specified on elements other than form (or when the form
