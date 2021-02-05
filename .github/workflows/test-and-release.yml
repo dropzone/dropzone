@@ -1,16 +1,16 @@
 # This workflow will do a clean install of node dependencies, build the source
 # code and run tests across different versions of node.
 #
-# In case there is a new version in package.json and it's the master branch, it
+# In case there is a new version in package.json and it's the main branch, it
 # will also tag and release this version.
 
 name: Test and Release
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
      
 jobs:
 
@@ -30,7 +30,7 @@ jobs:
   tag:
     name: Tag
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     needs: [test]
     outputs:
       tagname: ${{ steps.auto_tag.outputs.tagname }}
@@ -50,7 +50,7 @@ jobs:
   build:
     name: Build dist files
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     needs: [test]
     steps:
       - name: Setup Node.js environment
@@ -73,7 +73,6 @@ jobs:
         run: exit 1
       - run: npm run build
       - name: Upload dist folder in case of release
-        if: github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v2
         with:
           name: dist
@@ -83,7 +82,7 @@ jobs:
     name: Create GitHub release
     runs-on: ubuntu-latest
     needs: [build, tag]
-    if: github.ref == 'refs/heads/master' && needs.tag.outputs.tagname != null
+    if: github.ref == 'refs/heads/main' && needs.tag.outputs.tagname != null
     steps:
       - name: Checkout Dropzone
         uses: actions/checkout@v2
