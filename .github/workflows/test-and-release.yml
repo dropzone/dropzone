@@ -101,7 +101,7 @@ jobs:
         with:
           tag_name: "${{ needs.tag.outputs.tagname  }}"
           release_name: "Release ${{ needs.tag.outputs.tagname  }}"
-          body: "Please check the [changelog](https://github.com/enyo/dropzone-test2/blob/${{ github.sha }}/CHANGELOG.md) for a list of changes"
+          body: "Please check the [changelog](https://github.com/dropzone/dropzone/blob/${{ github.sha }}/CHANGELOG.md) for a list of changes"
           draft: false
           prerelease: false
       - name: Upload Release Asset
