@@ -1,6 +1,7 @@
 ## 5.7.4
 
 - Prevent hidden input field from getting focus (thanks to @sinedied)
+- Fix documentation of `maxFilesize` (thanks to @alxndr-w)
 
 ## 5.7.3
 

@@ -28,7 +28,7 @@ jobs:
   # Auto tag when the package.json version has changed. A different job will see
   # this tag, publish it, and create a release for it.
   tag:
-    name: Tag
+    name: Tag if package.json version increased
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     needs: [test]

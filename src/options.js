@@ -76,9 +76,7 @@ let defaultOptions = {
   retryChunksLimit: 3,
 
   /**
-   * If not `null` defines how many files this Dropzone handles. If it exceeds,
-   * the event `maxfilesexceeded` will be called. The dropzone element gets the
-   * class `dz-max-files-reached` accordingly so you can provide visual feedback.
+   * The maximum filesize (in bytes) that is allowed to be uploaded.
    */
   maxFilesize: 256,
 
@@ -149,15 +147,19 @@ let defaultOptions = {
   resizeMethod: "contain",
 
   /**
-   * The base that is used to calculate the filesize. You can change this to
-   * 1024 if you would rather display kibibytes, mebibytes, etc...
-   * 1024 is technically incorrect, because `1024 bytes` are `1 kibibyte` not `1 kilobyte`.
-   * You can change this to `1024` if you don't care about validity.
+   * The base that is used to calculate the **displayed** filesize. You can
+   * change this to 1024 if you would rather display kibibytes, mebibytes,
+   * etc... 1024 is technically incorrect, because `1024 bytes` are `1 kibibyte`
+   * not `1 kilobyte`. You can change this to `1024` if you don't care about
+   * validity.
    */
   filesizeBase: 1000,
 
   /**
-   * Can be used to limit the maximum number of files that will be handled by this Dropzone
+   * If not `null` defines how many files this Dropzone handles. If it exceeds,
+   * the event `maxfilesexceeded` will be called. The dropzone element gets the
+   * class `dz-max-files-reached` accordingly so you can provide visual
+   * feedback.
    */
   maxFiles: null,
 
@@ -577,9 +579,6 @@ let defaultOptions = {
 </div>
 </div>\
 `,
-
-  // END OPTIONS
-  // (Required by the dropzone documentation parser)
 
   /*
    Those functions register themselves to the events on init and handle all

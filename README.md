@@ -56,7 +56,11 @@ Main features
 Documentation
 -------------
 
-For all the configuration options and installation guide please visit [the documentation site](https://dropzone.gitbook.io/dropzone/)
+For all the configuration options and installation guide please visit [the
+documentation site](https://dropzone.gitbook.io/dropzone/).
+
+If you simply want to look up the configuration options, look at
+[src/options.js](https://github.com/dropzone/dropzone/blob/main/src/options.js).
 
 ## Examples
 
