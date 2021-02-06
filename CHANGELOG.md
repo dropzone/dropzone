@@ -1,3 +1,7 @@
+## 5.7.4
+
+- Prevent hidden input field from getting focus (thanks to @sinedied)
+
 ## 5.7.3
 
 - Add `disablePreviews` option.

@@ -687,7 +687,11 @@ describe("Dropzone", function () {
               (function (dropzone) {
                 it("should create a hidden file input if clickable", function () {
                   dropzone.hiddenFileInput.should.be.ok;
-                  return dropzone.hiddenFileInput.tagName.should.equal("INPUT");
+                  dropzone.hiddenFileInput.tagName.should.equal("INPUT");
+                });
+
+                it("should have a tabindex of -1", function () {
+                  dropzone.hiddenFileInput.tabIndex.should.equal(-1);
                 });
 
                 it("should use the acceptParameter", () =>

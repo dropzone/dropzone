@@ -257,6 +257,9 @@ export class Dropzone extends Emitter {
           this.hiddenFileInput.setAttribute("capture", this.options.capture);
         }
 
+        // Making sure that no one can "tab" into this field.
+        this.hiddenFileInput.setAttribute("tabindex", "-1");
+
         // Not setting `display="none"` because some browsers don't accept clicks
         // on elements that aren't displayed.
         this.hiddenFileInput.style.visibility = "hidden";
@@ -269,7 +272,7 @@ export class Dropzone extends Emitter {
           this.options.hiddenInputContainer,
           "hiddenInputContainer"
         ).appendChild(this.hiddenFileInput);
-        return this.hiddenFileInput.addEventListener("change", () => {
+        this.hiddenFileInput.addEventListener("change", () => {
           let { files } = this.hiddenFileInput;
           if (files.length) {
             for (let file of files) {
@@ -277,7 +280,7 @@ export class Dropzone extends Emitter {
             }
           }
           this.emit("addedfiles", files);
-          return setupHiddenFileInput();
+          setupHiddenFileInput();
         });
       };
       setupHiddenFileInput();
