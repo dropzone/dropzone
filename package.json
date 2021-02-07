@@ -31,12 +31,12 @@
   },
   "bugs": {
     "email": "m@tias.me",
-    "url": "https://gitlab.com/meno/dropzone/issues"
+    "url": "https://github.com/dropzone/dropzone/issues"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/meno/dropzone.git"
+    "url": "https://github.com/dropzone/dropzone.git"
   },
   "devDependencies": {
     "@babel/core": "^7.11.0",
