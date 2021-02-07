@@ -2,7 +2,7 @@
 // to events.
 // It is strongly based on component's emitter class, and I removed the
 // functionality because of the dependency hell with different frameworks.
-export class Emitter {
+export default class Emitter {
   // Add an event listener for given event
   on(event, fn) {
     this._callbacks = this._callbacks || {};

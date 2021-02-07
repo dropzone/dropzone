@@ -1,7 +1,7 @@
-import { Emitter } from "./emitter.js";
-import { defaultOptions } from "./options.js";
+import Emitter from "./emitter.js";
+import defaultOptions from "./options.js";
 
-export class Dropzone extends Emitter {
+export default class Dropzone extends Emitter {
   static initClass() {
     // Exposing the emitter class, mainly for tests
     this.prototype.Emitter = Emitter;
@@ -2287,3 +2287,5 @@ function __guardMethod__(obj, methodName, transform) {
     return undefined;
   }
 }
+
+export { Dropzone };

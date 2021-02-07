@@ -1,4 +1,4 @@
-import { Dropzone } from "./dropzone.js";
+import Dropzone from "./dropzone.js";
 
 let defaultOptions = {
   /**
@@ -795,4 +795,4 @@ let defaultOptions = {
   addedfiles() {},
 };
 
-export { defaultOptions };
+export default defaultOptions;
