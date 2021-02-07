@@ -1,4 +1,4 @@
-import { Dropzone } from "../src/dropzone.js";
+import Dropzone from "../src/dropzone.js";
 
 describe("Dropzone", function () {
   let getMockFile = (

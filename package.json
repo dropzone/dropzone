@@ -25,7 +25,7 @@
     }
   ],
   "scripts": {
-    "build": "webpack",
+    "build": "webpack && cp dist/dropzone.js dist/dropzone-amd-module.js && cp dist/min/dropzone.min.js dist/min/dropzone-amd-module.min.js",
     "test": "karma start --single-run --browsers ChromeHeadless test/karma.conf.js",
     "build-website": "grunt build-website"
   },
@@ -62,6 +62,7 @@
     "sinon": "^9.2.4",
     "sinon-chai": "^3.5.0",
     "webpack": "^4.44.1",
-    "webpack-cli": "^3.3.12"
+    "webpack-cli": "^3.3.12",
+    "webpack-shell-plugin": "^0.5.0"
   }
 }
