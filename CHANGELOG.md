@@ -4,10 +4,14 @@
 - Fix documentation of `maxFilesize` (thanks to @alxndr-w)
 - Fix build issues so the UMD module can be imported properly
 
-## 5.7.3
+## 5.7.3 (retracted)
 
 - Add `disablePreviews` option.
 - Fix IE problems with Symbols.
+- **WARNING**: This release had issues because the .js files couldn't be
+  imported as AMD/CommonJS packages properly. The standalone version worked fine
+  though. I have retracted this version from npm but have left the release on
+  GitHub.
 
 ## 5.7.2
 
