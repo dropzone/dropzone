@@ -1,3 +1,10 @@
+## 5.7.5
+
+- Rename `blacklistedBrowsers` to `blockedBrowsers` (but still accept
+  `blacklistedBrowsers` for legacy).
+- Add automatic trigger for packagist deployment.
+- Fix links in `package.json`.
+
 ## 5.7.4
 
 - Prevent hidden input field from getting focus (thanks to @sinedied)
