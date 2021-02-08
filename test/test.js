@@ -142,6 +142,35 @@ describe("Dropzone", function () {
   });
 
   describe("static functions", function () {
+    describe("Dropzone.isBrowserSupported()", function () {
+      let initialValue;
+      beforeEach(() => {
+        initialValue = Dropzone.blockedBrowsers;
+      });
+      afterEach(() => {
+        Dropzone.blockedBrowsers = initialValue;
+        Dropzone.blacklistedBrowsers = undefined;
+      });
+      it("should use blockedBrowsers usually", () => {
+        let initialValue = Dropzone.blockedBrowsers;
+        Dropzone.isBrowserSupported().should.be.true;
+        initialValue.should.equal(Dropzone.blockedBrowsers);
+
+        Dropzone.blockedBrowsers = [/HeadlessChrome/];
+        Dropzone.isBrowserSupported().should.be.false;
+      });
+      it("should user blacklistedBrowsers if its set", () => {
+        let initialValue = Dropzone.blockedBrowsers;
+
+        Dropzone.isBrowserSupported().should.be.true;
+
+        Dropzone.blacklistedBrowsers = [/HeadlessChrome/];
+        Dropzone.isBrowserSupported().should.be.false;
+        initialValue.should.not.equal(Dropzone.blockedBrowsers);
+        Dropzone.blockedBrowsers.should.equal(Dropzone.blacklistedBrowsers);
+      });
+    });
+
     describe("Dropzone.createElement()", function () {
       let element = Dropzone.createElement(
         '<div class="test"><span>Hallo</span></div>'
