@@ -132,3 +132,16 @@ jobs:
         uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
+
+  trigger-packagist-release:
+    name: Dispatch the "new-release" event to packagist repo
+    runs-on: ubuntu-latest
+    needs: [tag,release]
+    steps:
+      - name: Dispatch "new-release" event to the dropzone-packagist repo.
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.DRONE_PAT }}
+          repository: dropzone/dropzone-packagist
+          event-type: new-release
+          client-payload: '{"releaseTag": "${{ needs.tag.outputs.tagname  }}"}'
