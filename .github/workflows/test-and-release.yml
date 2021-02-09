@@ -133,8 +133,8 @@ jobs:
         with:
           token: ${{ secrets.NPM_TOKEN }}
 
-  trigger-packagist-release:
-    name: Dispatch the "new-release" event to packagist repo
+  trigger-remote-releases:
+    name: Dispatch the "new-release" event to packagist and bower repo
     runs-on: ubuntu-latest
     needs: [tag,release]
     steps:
@@ -145,3 +145,11 @@ jobs:
           repository: dropzone/dropzone-packagist
           event-type: new-release
           client-payload: '{"releaseTag": "${{ needs.tag.outputs.tagname  }}"}'
+      - name: Dispatch "new-release" event to the dropzone-bower repo.
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.DRONE_PAT }}
+          repository: dropzone/dropzone-bower
+          event-type: new-release
+          client-payload: '{"releaseTag": "${{ needs.tag.outputs.tagname  }}"}'
+
