@@ -1,3 +1,8 @@
+## 5.7.6
+
+- Revert `dist/min/*.css` files to be named `dist/min/*.min.css`.
+- Setup bower releases.
+
 ## 5.7.5
 
 - Rename `blacklistedBrowsers` to `blockedBrowsers` (but still accept
