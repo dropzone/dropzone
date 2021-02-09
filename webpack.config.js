@@ -53,7 +53,7 @@ let getCssConfig = (minimize) => {
             {
               loader: "file-loader",
               options: {
-                name: "[name].css",
+                name: minimize ? "[name].min.css" : "[name].css",
               },
             },
             {
