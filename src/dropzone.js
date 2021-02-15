@@ -860,11 +860,12 @@ export default class Dropzone extends Emitter {
 
   // Can be called by the user to remove a file
   removeFile(file) {
-    const event = new Event('removingfile');
-    
-    this.emit("removingfile", event, file);
-    
-    if (!event.defaultPrevented) {
+    file.preventRemoval = () => {
+          file.removalPrevented = true;
+      }
+    this.emit("removingfile", file);
+
+    if (!file.removalPrevented) {
       if (file.status === Dropzone.UPLOADING) {
         this.cancelUpload(file);
       }
@@ -877,6 +878,7 @@ export default class Dropzone extends Emitter {
         return this.emit("reset");
       }
     }
+    file.removalPrevented = false;
   }
 
   // Removes all files that aren't currently processed from the list
