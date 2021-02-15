@@ -23,6 +23,7 @@ export default class Dropzone extends Emitter {
       "dragleave",
       "addedfile",
       "addedfiles",
+      "removingfile",
       "removedfile",
       "thumbnail",
       "error",
@@ -859,14 +860,22 @@ export default class Dropzone extends Emitter {
 
   // Can be called by the user to remove a file
   removeFile(file) {
-    if (file.status === Dropzone.UPLOADING) {
-      this.cancelUpload(file);
-    }
-    this.files = without(this.files, file);
+    const event = new Event('removingfile');
+    
+    this.emit("removingfile", event, file);
+    
+    if (!event.defaultPrevented) {
+      if (file.status === Dropzone.UPLOADING) {
+        this.cancelUpload(file);
+      }
 
-    this.emit("removedfile", file);
-    if (this.files.length === 0) {
-      return this.emit("reset");
+      this.emit("removedfile", file);
+
+      this.files = without(this.files, file);
+
+      if (this.files.length === 0) {
+        return this.emit("reset");
+      }
     }
   }
 
