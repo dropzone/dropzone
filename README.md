@@ -9,6 +9,22 @@ XHR.
 
 It's fully configurable and can be styled according to your needs.
 
+Quickstart
+----------
+
+- [📚 Full documentation](https://dropzone.gitbook.io/dropzone/)
+- [💾 Download
+  link](https://github.com/dropzone/dropzone/releases/latest/download/dist.zip)
+  containing JavaScript UMD modules and CSS files (full and minimised)
+- [⚙️ Link to
+  `src/options.js`](https://github.com/dropzone/dropzone/blob/main/src/options.js)
+  for all available options
+
+<img alt="Dropzone Screenshot" width="585" src="http://i.imgur.com/Xf7QvVG.png" />
+
+Community
+---------
+
 If you need support please use the [discussions section][discussions] or
 [stackoverflow][so] with the `dropzone.js` tag and **not** the GitHub issues
 tracker. Only post an issue here if you think you discovered a bug.
@@ -22,20 +38,6 @@ If you have a feature request or want to discuss something, please use the
 
 > ⚠️ **Please read the [contributing guidelines](CONTRIBUTING.md) before you start
 > working on Dropzone!**
-
-
-<img alt="Dropzone Screenshot" width="585" src="http://i.imgur.com/Xf7QvVG.png" />
-
-Quickstart
-----------
-
-- [📚 Full documentation](https://dropzone.gitbook.io/dropzone/)
-- [💾 Download
-  link](https://github.com/dropzone/dropzone/releases/latest/download/dist.zip)
-  containing JavaScript UMD modules and CSS files (full and minimised)
-- [⚙️ Link to
-  `src/options.js`](https://github.com/dropzone/dropzone/blob/main/src/options.js)
-  for all available options
 
 
 Main features
