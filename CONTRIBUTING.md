@@ -25,7 +25,7 @@ Developer Dependencies
 The first thing you need to do, is to install the developer dependencies:
 
 ```bash
-$ npm install
+$ yarn install
 ```
 
 This will install all the tools you need to compile the source files and to test
@@ -42,4 +42,4 @@ Since June 2017, Dropzone is written in [ECMAScript
 Testing
 -------
 
-To test the library simply run `npm run test`.
+To test the library simply run `yarn test`.
