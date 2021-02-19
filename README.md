@@ -1,6 +1,6 @@
 [![Test and Release](https://github.com/dropzone/dropzone/actions/workflows/test-and-release.yml/badge.svg)](https://github.com/dropzone/dropzone/actions/workflows/test-and-release.yml)
 
-<img alt="Dropzone.js" src="http://www.dropzonejs.com/images/new-logo.svg" />
+<img alt="Dropzone.js" src="https://raw.githubusercontent.com/dropzone/dropzone/assets/github-logo.svg" />
 
 Dropzone is a JavaScript library that turns any HTML element into a dropzone.
 This means that a user can drag and drop a file onto it, and Dropzone will
@@ -20,23 +20,23 @@ If you have a feature request or want to discuss something, please use the
 [so]: https://stackoverflow.com/questions/tagged/dropzone.js
 
 
-> **Please read the [contributing guidelines](CONTRIBUTING.md) before you start
+> ⚠️ **Please read the [contributing guidelines](CONTRIBUTING.md) before you start
 > working on Dropzone!**
 
 
 <img alt="Dropzone Screenshot" width="585" src="http://i.imgur.com/Xf7QvVG.png" />
 
+Quickstart
+----------
 
-- [Full documentation](https://dropzone.gitbook.io/dropzone/)
-- [Download
+- [📚 Full documentation](https://dropzone.gitbook.io/dropzone/)
+- [💾 Download
   link](https://github.com/dropzone/dropzone/releases/latest/download/dist.zip)
   containing JavaScript UMD modules and CSS files (full and minimised)
-- [Link to
+- [⚙️ Link to
   `src/options.js`](https://github.com/dropzone/dropzone/blob/main/src/options.js)
   for all available options
 
-
-Dropzone does **not** depend on jQuery but has jQuery integration.
 
 Main features
 -------------
