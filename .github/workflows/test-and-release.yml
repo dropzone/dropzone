@@ -22,8 +22,8 @@ jobs:
         uses: actions/setup-node@v2.1.1
       - name: Checkout Dropzone
         uses: actions/checkout@v2
-      - run: npm install
-      - run: npm test
+      - run: yarn install
+      - run: yarn test
 
   # Auto tag when the package.json version has changed. A different job will see
   # this tag, publish it, and create a release for it.
@@ -57,7 +57,7 @@ jobs:
         uses: actions/setup-node@v2.1.1
       - name: Checkout Dropzone
         uses: actions/checkout@v2
-      - run: npm install
+      - run: yarn install
       - name: Read package.json version
         uses: pchynoweth/action-get-npm-version@1.0.1
         id: package_version
@@ -71,7 +71,7 @@ jobs:
       - name: Abort if version wasn't replaced
         if: steps.version_replace.outputs.modifiedFiles != 1
         run: exit 1
-      - run: npm run build
+      - run: yarn build
       - name: Upload dist folder in case of release
         uses: actions/upload-artifact@v2
         with:
