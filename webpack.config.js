@@ -1,8 +1,5 @@
 const path = require("path");
-const v8 = require("v8");
-const WebpackShellPlugin = require("webpack-shell-plugin");
-
-const clone = (object) => v8.deserialize(v8.serialize(object));
+const WebpackShellPluginNext = require("webpack-shell-plugin-next");
 
 let getJsConfig = (minimize) => {
   return {
@@ -32,6 +29,9 @@ let getJsConfig = (minimize) => {
           // Load .html files as string
           test: /\.html$/i,
           loader: "html-loader",
+          options: {
+            sources: false,
+          },
         },
       ],
     },
@@ -87,8 +87,10 @@ let getCssConfig = (minimize) => {
       filename: "delete-me",
     },
     plugins: [
-      new WebpackShellPlugin({
-        onBuildEnd: [`rm -f dist/delete-me && rm -f dist/min/delete-me`],
+      new WebpackShellPluginNext({
+        onBuildEnd: {
+          scripts: ["rm -f dist/delete-me && rm -f dist/min/delete-me"],
+        },
       }),
     ],
   };
