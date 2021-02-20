@@ -58,6 +58,7 @@
     "mocha": "^7.0.0",
     "mocha-headless-chrome": "^3.0.0",
     "rollup": "^2.38.4",
+    "rollup-plugin-html": "^0.2.1",
     "sass": "^1.0.0",
     "sass-loader": "^10.0.0",
     "sinon": "^9.2.4",

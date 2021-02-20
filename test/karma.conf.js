@@ -11,7 +11,7 @@ module.exports = function (config) {
        * This is just a normal Rollup config object,
        * except that `input` is handled for you.
        */
-      plugins: [],
+      plugins: [require("rollup-plugin-html")()],
       output: {
         // format: 'iife', // Helps prevent naming collisions.
         // name: '<your_project>', // Required for 'iife' format.
