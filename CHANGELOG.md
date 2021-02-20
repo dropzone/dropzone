@@ -1,3 +1,8 @@
+## 6.0.0
+
+- Moved the `./src/options.js` previewTemplate in its own
+  `preview-template.html` file.
+
 ## 5.7.6
 
 - Revert `dist/min/*.css` files to be named `dist/min/*.min.css`.
