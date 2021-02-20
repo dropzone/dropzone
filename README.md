@@ -19,7 +19,12 @@ Quickstart
 - [⚙️ `src/options.js`](https://github.com/dropzone/dropzone/blob/main/src/options.js)
   for all available options
 
-<img alt="Dropzone Screenshot" width="585" src="http://i.imgur.com/Xf7QvVG.png" />
+&nbsp;
+
+<img alt="Dropzone Screenshot" width="568" src="https://github.com/dropzone/dropzone/raw/a19faf6c3aef5d3d7f912ca988cc62af1967d5d9/dropzone-preview.png" />
+
+&nbsp;
+
 
 Community
 ---------
