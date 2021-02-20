@@ -28,6 +28,11 @@ let getJsConfig = (minimize) => {
             },
           },
         },
+        {
+          // Load .html files as string
+          test: /\.html$/i,
+          loader: "html-loader",
+        },
       ],
     },
     optimization: {
