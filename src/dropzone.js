@@ -1602,7 +1602,9 @@ export default class Dropzone extends Emitter {
       }
     }
 
-    this._updateFilesUploadProgress(files);
+    if (!files[0].upload.chunked) {
+      this._updateFilesUploadProgress(files);
+    }
 
     if (!(200 <= xhr.status && xhr.status < 300)) {
       this._handleUploadError(files, xhr, response);
