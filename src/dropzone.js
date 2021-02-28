@@ -1281,7 +1281,7 @@ export default class Dropzone extends Emitter {
           this._uploadData(files, [dataBlock]);
         };
 
-        file.upload.finishedChunkUpload = (chunk) => {
+        file.upload.finishedChunkUpload = (chunk, response) => {
           let allFinished = true;
           chunk.status = Dropzone.SUCCESS;
 
@@ -1301,7 +1301,7 @@ export default class Dropzone extends Emitter {
 
           if (allFinished) {
             this.options.chunksUploaded(file, () => {
-              this._finished(files, "", null);
+              this._finished(files, response, null);
             });
           }
         };
@@ -1610,7 +1610,7 @@ export default class Dropzone extends Emitter {
       this._handleUploadError(files, xhr, response);
     } else {
       if (files[0].upload.chunked) {
-        files[0].upload.finishedChunkUpload(this._getChunk(files[0], xhr));
+        files[0].upload.finishedChunkUpload(this._getChunk(files[0], xhr), response);
       } else {
         this._finished(files, response, e);
       }
