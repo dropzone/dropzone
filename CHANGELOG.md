@@ -5,6 +5,8 @@
   `dropzone:`. (thanks to @1cg)
 - Moved the `./src/options.js` previewTemplate in its own
   `preview-template.html` file.
+- Switched to yarn as the primary package manager (shouldn't affect anybody that
+  is not working Dropzone itself).
 
 ## 5.7.6
 
