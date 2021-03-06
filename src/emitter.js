@@ -23,8 +23,22 @@ export default class Emitter {
         callback.apply(this, args);
       }
     }
-
+    // trigger a corresponding DOM event
+    if (this.element) {
+      this.element.dispatchEvent(this.makeEvent('dropzone:' + event, {args: args}));
+    }
     return this;
+  }
+
+  makeEvent(eventName, detail) {
+    // IE 11 support
+    if (window.CustomEvent && typeof window.CustomEvent === 'function') {
+      return new CustomEvent(eventName, {bubbles: true, cancelable: true, detail: detail});
+    } else {
+      let evt = getDocument().createEvent('CustomEvent');
+      evt.initCustomEvent(eventName, true, true, detail);
+      return evt;
+    }
   }
 
   // Remove event listener for given event. If fn is not provided, all event

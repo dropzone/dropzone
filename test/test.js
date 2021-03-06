@@ -1370,62 +1370,90 @@ describe("Dropzone", function () {
       });
     });
 
-    return describe("events", () =>
+    return describe("events", () => {
       describe("progress updates", () =>
-        it("should properly emit a totaluploadprogress event", function (done) {
-          dropzone.files = [
-            {
-              size: 1990,
-              accepted: true,
-              status: Dropzone.UPLOADING,
-              upload: {
-                progress: 20,
-                total: 2000, // The bytes to upload are higher than the file size
-                bytesSent: 400,
+          it("should properly emit a totaluploadprogress event", function (done) {
+            dropzone.files = [
+              {
+                size: 1990,
+                accepted: true,
+                status: Dropzone.UPLOADING,
+                upload: {
+                  progress: 20,
+                  total: 2000, // The bytes to upload are higher than the file size
+                  bytesSent: 400,
+                },
               },
-            },
-            {
-              size: 1990,
-              accepted: true,
-              status: Dropzone.UPLOADING,
-              upload: {
-                progress: 10,
-                total: 2000, // The bytes to upload are higher than the file size
-                bytesSent: 200,
+              {
+                size: 1990,
+                accepted: true,
+                status: Dropzone.UPLOADING,
+                upload: {
+                  progress: 10,
+                  total: 2000, // The bytes to upload are higher than the file size
+                  bytesSent: 200,
+                },
               },
-            },
-          ];
+            ];
 
-          let _called = 0;
+            let _called = 0;
 
-          dropzone.on("totaluploadprogress", function (progress) {
-            progress.should.equal(totalProgressExpectation);
-            if (++_called === 3) {
-              return done();
-            }
-          });
+            dropzone.on("totaluploadprogress", function (progress) {
+              progress.should.equal(totalProgressExpectation);
+              if (++_called === 3) {
+                return done();
+              }
+            });
 
-          var totalProgressExpectation = 15;
-          dropzone.emit("uploadprogress", {});
+            var totalProgressExpectation = 15;
+            dropzone.emit("uploadprogress", {});
 
-          totalProgressExpectation = 97.5;
-          dropzone.files[0].upload.bytesSent = 2000;
-          dropzone.files[1].upload.bytesSent = 1900;
-          // It shouldn't matter that progress is not properly updated since the total size
-          // should be calculated from the bytes
-          dropzone.emit("uploadprogress", {});
+            totalProgressExpectation = 97.5;
+            dropzone.files[0].upload.bytesSent = 2000;
+            dropzone.files[1].upload.bytesSent = 1900;
+            // It shouldn't matter that progress is not properly updated since the total size
+            // should be calculated from the bytes
+            dropzone.emit("uploadprogress", {});
 
-          totalProgressExpectation = 100;
-          dropzone.files[0].upload.bytesSent = 2000;
-          dropzone.files[1].upload.bytesSent = 2000;
-          // It shouldn't matter that progress is not properly updated since the total size
-          // should be calculated from the bytes
-          dropzone.emit("uploadprogress", {});
+            totalProgressExpectation = 100;
+            dropzone.files[0].upload.bytesSent = 2000;
+            dropzone.files[1].upload.bytesSent = 2000;
+            // It shouldn't matter that progress is not properly updated since the total size
+            // should be calculated from the bytes
+            dropzone.emit("uploadprogress", {});
 
-          // Just so the afterEach hook doesn't try to cancel them.
-          dropzone.files[0].status = Dropzone.CANCELED;
-          return (dropzone.files[1].status = Dropzone.CANCELED);
-        })));
+            // Just so the afterEach hook doesn't try to cancel them.
+            dropzone.files[0].status = Dropzone.CANCELED;
+            return (dropzone.files[1].status = Dropzone.CANCELED);
+          }));
+
+      it("should emit DOM events", function (done) {
+        let element = Dropzone.createElement(`<form action="/the/url">
+  <input type="hidden" name="test" value="hidden" />
+  <input type="checkbox" name="unchecked" value="1" />
+  <input type="checkbox" name="checked" value="value1" checked="checked" />
+  <input type="radio" value="radiovalue1" name="radio1" />
+  <input type="radio" value="radiovalue2" name="radio1" checked="checked" />
+  <select name="select"><option value="1">1</option><option value="2" selected>2</option></select>
+</form>`);
+        dropzone = new Dropzone(element, { url: "/the/url" });
+
+        var domEventTriggered = false;
+        element.addEventListener("dropzone:sending", function (evt) {
+          domEventTriggered = true;
+        });
+
+        let mock1 = getMockFile();
+
+        dropzone.addFile(mock1);
+
+        return setTimeout(function () {
+          expect(domEventTriggered).to.equal(true);
+          done();
+        }, 10);
+      });
+
+    });
   });
 
   describe("helper function", function () {
