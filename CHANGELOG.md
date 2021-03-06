@@ -1,3 +1,13 @@
+## 5.8.0
+
+- Dropzone now also triggers custom events on the DOM element. The custom events
+  are the same as the events you can listen on with Dropzone but start with
+  `dropzone:`. (thanks to @1cg)
+- Moved the `./src/options.js` previewTemplate in its own
+  `preview-template.html` file.
+- Switched to yarn as the primary package manager (shouldn't affect anybody that
+  is not working Dropzone itself).
+
 ## 5.7.6
 
 - Revert `dist/min/*.css` files to be named `dist/min/*.min.css`.
