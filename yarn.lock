@@ -4300,11 +4300,6 @@ webpack-shell-plugin-next@^2.1.1:
   resolved "https://registry.yarnpkg.com/webpack-shell-plugin-next/-/webpack-shell-plugin-next-2.1.1.tgz#d107a2ca0c0802ef46d4a19b552a17543412b7ad"
   integrity sha512-QvAjl7ZTkGs6MCl6LTiHLHyiFE+FA/1b8x/3j1L/Y36fFp9N5foQmV2e2PlwVILARGpz8JNpRMKx76oo6j4hfg==
 
-webpack-shell-plugin@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/webpack-shell-plugin/-/webpack-shell-plugin-0.5.0.tgz#29b8a1d80ddeae0ddb10e729667f728653c2c742"
-  integrity sha1-Kbih2A3erg3bEOcpZn9yhlPCx0I=
-
 webpack-sources@^2.1.1:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/webpack-sources/-/webpack-sources-2.2.0.tgz#058926f39e3d443193b6c31547229806ffd02bac"
