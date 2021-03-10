@@ -25,18 +25,28 @@ export default class Emitter {
     }
     // trigger a corresponding DOM event
     if (this.element) {
-      this.element.dispatchEvent(this.makeEvent('dropzone:' + event, {args: args}));
+      this.element.dispatchEvent(
+        this.makeEvent("dropzone:" + event, { args: args })
+      );
     }
     return this;
   }
 
   makeEvent(eventName, detail) {
-    // IE 11 support
-    if (window.CustomEvent && typeof window.CustomEvent === 'function') {
-      return new CustomEvent(eventName, {bubbles: true, cancelable: true, detail: detail});
+    let params = { bubbles: true, cancelable: true, detail: detail };
+
+    if (typeof window.CustomEvent === "function") {
+      return new CustomEvent(eventName, params);
     } else {
-      let evt = getDocument().createEvent('CustomEvent');
-      evt.initCustomEvent(eventName, true, true, detail);
+      // IE 11 support
+      // https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent
+      var evt = document.createEvent("CustomEvent");
+      evt.initCustomEvent(
+        eventName,
+        params.bubbles,
+        params.cancelable,
+        params.detail
+      );
       return evt;
     }
   }

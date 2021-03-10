@@ -1,3 +1,7 @@
+## 5.8.1
+
+- Fix custom event polyfill for IE11
+
 ## 5.8.0
 
 - Dropzone now also triggers custom events on the DOM element. The custom events
