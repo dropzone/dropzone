@@ -1,6 +1,8 @@
 ## 5.8.1
 
 - Fix custom event polyfill for IE11
+- Fix build to use ES5 instead of ES6, which was broken due to webpack upgrade.
+  (thanks to @fukayatsu)
 
 ## 5.8.0
 

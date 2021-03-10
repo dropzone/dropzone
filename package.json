@@ -1,6 +1,6 @@
 {
   "name": "dropzone",
-  "version": "5.8.0",
+  "version": "5.8.1",
   "description": "Handles drag and drop of files for you.",
   "keywords": [
     "dragndrop",
@@ -10,6 +10,7 @@
   ],
   "homepage": "http://www.dropzonejs.com",
   "main": "./dist/dropzone.js",
+  "browserslist": "defaults, > 0.25%, IE 11",
   "maintainers": [
     {
       "name": "Matias Meno",
