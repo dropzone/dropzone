@@ -1648,6 +1648,12 @@ export default class Dropzone extends Emitter {
   }
 
   submitRequest(xhr, formData, files) {
+    if (xhr.readyState != 1) {
+      console.warn(
+        "Cannot send this request because the XMLHttpRequest.readyState is not OPENED."
+      );
+      return;
+    }
     xhr.send(formData);
   }
 

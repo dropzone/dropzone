@@ -1,3 +1,8 @@
+## 5.9.2
+
+- Handle `xhr.readyState` in the `submitRequest` function and don't attempt to
+  send if it's not `1` (OPENED). (thanks to @bobbysmith007)
+
 ## 5.9.1
 
 - Fix the way upload progress is calculated when using chunked uploads. (thanks
