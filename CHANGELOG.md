@@ -1,3 +1,8 @@
+## 5.9.1
+
+- Fix the way upload progress is calculated when using chunked uploads. (thanks
+  to @ckovey)
+
 ## 5.9.0
 
 - Properly handle when timeout is null or 0
