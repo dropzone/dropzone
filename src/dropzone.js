@@ -1359,7 +1359,8 @@ export default class Dropzone extends Emitter {
     xhr.open(method, url, true);
 
     // Setting the timeout after open because of IE11 issue: https://gitlab.com/meno/dropzone/issues/8
-    xhr.timeout = this.resolveOption(this.options.timeout, files);
+    let timeout = this.resolveOption(this.options.timeout, files);
+    if (timeout) xhr.timeout = this.resolveOption(this.options.timeout, files);
 
     // Has to be after `.open()`. See https://github.com/enyo/dropzone/issues/179
     xhr.withCredentials = !!this.options.withCredentials;

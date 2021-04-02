@@ -23,8 +23,9 @@ let defaultOptions = {
 
   /**
    * The timeout for the XHR requests in milliseconds (since `v4.4.0`).
+   * If set to null or 0, no timeout is going to be set.
    */
-  timeout: 30000,
+  timeout: null,
 
   /**
    * How many file uploads to process in parallel (See the

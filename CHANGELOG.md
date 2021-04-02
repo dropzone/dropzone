@@ -1,3 +1,8 @@
+## 5.9.0
+
+- Properly handle when timeout is null or 0
+- Make the default of timeout null
+
 ## 5.8.1
 
 - Fix custom event polyfill for IE11
