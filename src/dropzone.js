@@ -1281,7 +1281,7 @@ export default class Dropzone extends Emitter {
           this._uploadData(files, [dataBlock]);
         };
 
-        file.upload.finishedChunkUpload = (chunk) => {
+        file.upload.finishedChunkUpload = (chunk, response) => {
           let allFinished = true;
           chunk.status = Dropzone.SUCCESS;
 
@@ -1301,7 +1301,7 @@ export default class Dropzone extends Emitter {
 
           if (allFinished) {
             this.options.chunksUploaded(file, () => {
-              this._finished(files, "", null);
+              this._finished(files, response, null);
             });
           }
         };
@@ -1502,43 +1502,30 @@ export default class Dropzone extends Emitter {
   // Invoked when there is new progress information about given files.
   // If e is not provided, it is assumed that the upload is finished.
   _updateFilesUploadProgress(files, xhr, e) {
-    let progress;
-    if (typeof e !== "undefined") {
-      progress = (100 * e.loaded) / e.total;
-
-      if (files[0].upload.chunked) {
-        let file = files[0];
-        // Since this is a chunked upload, we need to update the appropriate chunk progress.
-        let chunk = this._getChunk(file, xhr);
-        chunk.progress = progress;
-        chunk.total = e.total;
-        chunk.bytesSent = e.loaded;
-        let fileProgress = 0,
-          fileTotal,
-          fileBytesSent;
-        file.upload.progress = 0;
-        file.upload.total = 0;
-        file.upload.bytesSent = 0;
-        for (let i = 0; i < file.upload.totalChunkCount; i++) {
-          if (
-            file.upload.chunks[i] !== undefined &&
-            file.upload.chunks[i].progress !== undefined
-          ) {
-            file.upload.progress += file.upload.chunks[i].progress;
-            file.upload.total += file.upload.chunks[i].total;
-            file.upload.bytesSent += file.upload.chunks[i].bytesSent;
-          }
+    if (!files[0].upload.chunked) {
+      // Handle file uploads without chunking
+      for (let file of files) {
+        if (
+          file.upload.total &&
+          file.upload.bytesSent &&
+          file.upload.bytesSent == file.upload.total
+        ) {
+          // If both, the `total` and `bytesSent` have already been set, and
+          // they are equal (meaning progress is at 100%), we can skip this
+          // file, since an upload progress shouldn't go down.
+          continue;
         }
-        file.upload.progress =
-          file.upload.progress / file.upload.totalChunkCount;
-      } else {
-        for (let file of files) {
-          file.upload.progress = progress;
+
+        if (e) {
+          file.upload.progress = (100 * e.loaded) / e.total;
           file.upload.total = e.total;
           file.upload.bytesSent = e.loaded;
+        } else {
+          // No event, so we're at 100%
+          file.upload.progress = 100;
+          file.upload.bytesSent = file.upload.total;
         }
-      }
-      for (let file of files) {
+
         this.emit(
           "uploadprogress",
           file,
@@ -1547,31 +1534,50 @@ export default class Dropzone extends Emitter {
         );
       }
     } else {
-      // Called when the file finished uploading
+      // Handle chunked file uploads
 
-      let allFilesFinished = true;
+      // Chunked upload is not compatible with uploading multiple files in one
+      // request, so we know there's only one file.
+      let file = files[0];
 
-      progress = 100;
+      // Since this is a chunked upload, we need to update the appropriate chunk
+      // progress.
+      let chunk = this._getChunk(file, xhr);
 
-      for (let file of files) {
+      if (e) {
+        chunk.progress = (100 * e.loaded) / e.total;
+        chunk.total = e.total;
+        chunk.bytesSent = e.loaded;
+      } else {
+        // No event, so we're at 100%
+        chunk.progress = 100;
+        chunk.bytesSent = chunk.total;
+      }
+
+      // Now tally the *file* upload progress from its individual chunks
+      file.upload.progress = 0;
+      file.upload.total = 0;
+      file.upload.bytesSent = 0;
+      for (let i = 0; i < file.upload.totalChunkCount; i++) {
         if (
-          file.upload.progress !== 100 ||
-          file.upload.bytesSent !== file.upload.total
+          file.upload.chunks[i] &&
+          typeof file.upload.chunks[i].progress !== "undefined"
         ) {
-          allFilesFinished = false;
+          file.upload.progress += file.upload.chunks[i].progress;
+          file.upload.total += file.upload.chunks[i].total;
+          file.upload.bytesSent += file.upload.chunks[i].bytesSent;
         }
-        file.upload.progress = progress;
-        file.upload.bytesSent = file.upload.total;
       }
+      // Since the process is a percentage, we need to divide by the amount of
+      // chunks we've used.
+      file.upload.progress = file.upload.progress / file.upload.totalChunkCount;
 
-      // Nothing to do, all files already at 100%
-      if (allFilesFinished) {
-        return;
-      }
-
-      for (let file of files) {
-        this.emit("uploadprogress", file, progress, file.upload.bytesSent);
-      }
+      this.emit(
+        "uploadprogress",
+        file,
+        file.upload.progress,
+        file.upload.bytesSent
+      );
     }
   }
 
@@ -1602,13 +1608,16 @@ export default class Dropzone extends Emitter {
       }
     }
 
-    this._updateFilesUploadProgress(files);
+    this._updateFilesUploadProgress(files, xhr);
 
     if (!(200 <= xhr.status && xhr.status < 300)) {
       this._handleUploadError(files, xhr, response);
     } else {
       if (files[0].upload.chunked) {
-        files[0].upload.finishedChunkUpload(this._getChunk(files[0], xhr));
+        files[0].upload.finishedChunkUpload(
+          this._getChunk(files[0], xhr),
+          response
+        );
       } else {
         this._finished(files, response, e);
       }
