@@ -942,6 +942,7 @@ export default class Dropzone extends Emitter {
         resizeMethod,
         fixOrientation,
         callback,
+        undefined,
         ignoreExif
       );
     };
