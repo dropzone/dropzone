@@ -1,3 +1,8 @@
+## 5.9.3
+
+- Fix incorrect resize method used for creating thumbnails of existing files
+  (thanks to @gplwhite)
+
 ## 5.9.2
 
 - Handle `xhr.readyState` in the `submitRequest` function and don't attempt to
