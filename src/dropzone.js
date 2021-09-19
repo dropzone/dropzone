@@ -977,7 +977,7 @@ export default class Dropzone extends Emitter {
         mockFile,
         this.options.thumbnailWidth,
         this.options.thumbnailHeight,
-        this.options.resizeMethod,
+        this.options.thumbnailMethod,
         this.options.fixOrientation,
         onDone,
         crossOrigin
