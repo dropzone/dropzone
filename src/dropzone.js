@@ -1342,7 +1342,7 @@ export default class Dropzone extends Emitter {
   // This function actually uploads the file(s) to the server.
   // If dataBlocks contains the actual data to upload (meaning, that this could either be transformed
   // files, or individual chunks for chunked upload).
-  _uploadData(files, dataBlocks) {
+  async _uploadData(files, dataBlocks) {
     let xhr = new XMLHttpRequest();
 
     // Put the xhr object in the file objects to be able to reference it later.
@@ -1434,9 +1434,21 @@ export default class Dropzone extends Emitter {
 
     // Let the user add additional data if necessary
     for (let file of files) {
+      const transformFileFormData = this.options.transformFileFormData
+
+      if (typeof transformFileFormData === "function") {
+        await transformFileFormData(file, formData)
+      }
+
       this.emit("sending", file, xhr, formData);
     }
     if (this.options.uploadMultiple) {
+      const transformFilesFormData = this.options.transformFilesFormData
+
+      if (typeof transformFilesFormData === "function") {
+        await transformFilesFormData(files, formData)
+      }
+
       this.emit("sendingmultiple", files, xhr, formData);
     }
 
