@@ -1119,7 +1119,7 @@ describe("Dropzone", function () {
           dropzone.removeFile(mockFile);
           dropzone.cancelUpload.callCount.should.equal(1);
           return done();
-        }, 10);
+        }, 100);
       }));
 
     describe(".cancelUpload()", function () {
