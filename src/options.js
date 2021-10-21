@@ -78,7 +78,7 @@ let defaultOptions = {
   retryChunksLimit: 3,
 
   /**
-   * The maximum filesize (in bytes) that is allowed to be uploaded.
+   * The maximum filesize (in MiB) that is allowed to be uploaded.
    */
   maxFilesize: 256,
 
