@@ -1,5 +1,5 @@
-import Dropzone from "./dropzone.js";
-import defaultPreviewTemplate from "./preview-template.html";
+import Dropzone from "./dropzone";
+import defaultPreviewTemplate from "bundle-text:./preview-template.html";
 
 let defaultOptions = {
   /**

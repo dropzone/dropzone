@@ -1,3 +1,15 @@
+## 6.0.0-beta.1
+
+### Breaking
+
+- Dropzone is dropping IE support! If you still need to support IE, please use
+  `5.9.3`. You can download it here:
+  https://github.com/dropzone/dropzone/releases/download/v5.9.3/dist.zip
+- The `dropzone-amd-module` files have been removed. There is now a
+  `dropzone.js` and a `dropzone.mjs` in the dist folder.
+- The `min/` folder has been removed. `dropzone.min.js` is now the only
+  file that is minimized.
+
 ## 5.9.3
 
 - Fix incorrect resize method used for creating thumbnails of existing files
@@ -125,8 +137,8 @@
 
 ## 5.2.0
 
-- **Migrated from coffeescript to ES6!** 
-- **Added chunked file uploading!** The highly requested chunked uploads are now available. Checkout the 
+- **Migrated from coffeescript to ES6!**
+- **Added chunked file uploading!** The highly requested chunked uploads are now available. Checkout the
   `chunking` option documentation for more information.
 - Fixed a faulty `console.warning` (should be `console.warn`)
 - If an input field doesn't have a name, don't include it when sending the form (thanks to @remyj38)
@@ -154,7 +166,7 @@
 ## 5.0.0
 
 - **Add support for browser image resizing!** Yes, really. The new options are: `resizeWidth`, `resizeHeight`, `resizeMimeType` and `resizeQuality`.
-  Thanks a lot to [MD Systems](https://www.md-systems.ch/) for donating the money to make this a reality. 
+  Thanks a lot to [MD Systems](https://www.md-systems.ch/) for donating the money to make this a reality.
 - Fix IE11 issue with `options.timeout`
 - Resolve an issue that occurs in the iOS squashed image fix, where some transparent PNGs are stretched inaccurately
 

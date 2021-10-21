@@ -1,5 +1,5 @@
-import Emitter from "./emitter.js";
-import defaultOptions from "./options.js";
+import Emitter from "./emitter";
+import defaultOptions from "./options";
 
 export default class Dropzone extends Emitter {
   static initClass() {

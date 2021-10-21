@@ -1,6 +1,6 @@
 {
   "name": "dropzone",
-  "version": "5.9.3",
+  "version": "6.0.0-beta.1",
   "description": "Handles drag and drop of files for you.",
   "keywords": [
     "dragndrop",
@@ -8,9 +8,17 @@
     "file upload",
     "upload"
   ],
-  "homepage": "http://www.dropzonejs.com",
-  "main": "./dist/dropzone.js",
-  "browserslist": "defaults, > 0.25%, IE 11",
+  "homepage": "https://www.dropzone.dev/js",
+  "source": "src/dropzone.js",
+  "main": "dist/dropzone.js",
+  "module": "dist/dropzone.mjs",
+  "standalone": "dist/dropzone-min.js",
+  "browserslist": "defaults, > 0.25%",
+  "targets": {
+    "standalone": {
+      "outputFormat": "global"
+    }
+  },
   "maintainers": [
     {
       "name": "Matias Meno",
@@ -26,7 +34,8 @@
     }
   ],
   "scripts": {
-    "build": "webpack && cp dist/dropzone.js dist/dropzone-amd-module.js && cp dist/min/dropzone.min.js dist/min/dropzone-amd-module.min.js",
+    "watch": "parcel watch",
+    "build": "parcel build && yarn sass src/:dist/ --style compressed",
     "test": "karma start --single-run --browsers ChromeHeadless test/karma.conf.js"
   },
   "bugs": {
@@ -41,6 +50,8 @@
   "devDependencies": {
     "@babel/core": "^7.11.0",
     "@babel/preset-env": "^7.11.0",
+    "@parcel/transformer-inline-string": "^2.0.0",
+    "@parcel/transformer-sass": "^2.0.0",
     "babel-loader": "^8.0.0",
     "chai": "4.3.4",
     "core-js": "^3.8.0",
@@ -57,6 +68,7 @@
     "marked": "^3.0.7",
     "mocha": "^9.1.3",
     "mocha-headless-chrome": "^3.0.0",
+    "parcel": "^2.0.0",
     "rollup": "^2.38.4",
     "rollup-plugin-html": "^0.2.1",
     "sass": "^1.33.0",
@@ -66,5 +78,8 @@
     "webpack": "^5.23.0",
     "webpack-cli": "^4.5.0",
     "webpack-shell-plugin-next": "^2.1.1"
+  },
+  "dependencies": {
+    "@swc/helpers": "^0.2.13"
   }
 }
