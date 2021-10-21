@@ -15,7 +15,14 @@
   "standalone": "dist/dropzone-min.js",
   "browserslist": "defaults, > 0.25%",
   "targets": {
+    "main": {
+      "source": "src/dropzone.js"
+    },
+    "module": {
+      "source": "src/dropzone.js"
+    },
     "standalone": {
+      "source": "tool/dropzone-global.js",
       "outputFormat": "global"
     }
   },
