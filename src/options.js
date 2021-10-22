@@ -78,6 +78,12 @@ let defaultOptions = {
   retryChunksLimit: 3,
 
   /**
+   * If `true`, the file will be uploaded as the body of the request instead of a form parameter. If this is used,
+   * uploadMultiple and chunking is disabled and any other form parameters will not be send.
+   */
+  sendFileAsBody: false,
+
+  /**
    * The maximum filesize (in bytes) that is allowed to be uploaded.
    */
   maxFilesize: 256,

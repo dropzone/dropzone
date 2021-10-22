@@ -129,6 +129,14 @@ export default class Dropzone extends Emitter {
       throw new Error("You cannot set both: uploadMultiple and chunking.");
     }
 
+    if (this.options.sendFileAsBody && this.options.chunking) {
+      throw new Error("You cannot set both: sendFileAsBody and chunking.");
+    }
+
+    if (this.options.sendFileAsBody && this.options.uploadMultiple) {
+      throw new Error("You cannot set both: sendFileAsBody and uploadMultiple.");
+    }
+
     // Backwards compatibility
     if (this.options.acceptedMimeTypes) {
       this.options.acceptedFiles = this.options.acceptedMimeTypes;
@@ -1392,6 +1400,10 @@ export default class Dropzone extends Emitter {
       "X-Requested-With": "XMLHttpRequest",
     };
 
+    if (this.options.sendFileAsBody) {
+      headers["Content-Type"] = files[0].type;
+    }
+
     if (this.options.headers) {
       Dropzone.extend(headers, this.options.headers);
     }
@@ -1654,7 +1666,11 @@ export default class Dropzone extends Emitter {
       );
       return;
     }
-    xhr.send(formData);
+    if (this.options.sendFileAsBody) {
+      xhr.send(files[0]);
+    } else {
+      xhr.send(formData);
+    }
   }
 
   // Called internally when processing is finished.
