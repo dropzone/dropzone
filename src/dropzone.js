@@ -85,6 +85,7 @@ export default class Dropzone extends Emitter {
 
     this.options = extend(
       true,
+      {},
       defaultOptions,
       elementOptions,
       options != null ? options : {}
