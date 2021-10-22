@@ -9,6 +9,7 @@
   `dropzone.js` and a `dropzone.mjs` in the dist folder.
 - The `min/` folder has been removed. `dropzone.min.js` is now the only
   file that is minimized.
+- Remove `Dropzone.extend` and replace by the `just-extend` package.
 
 ## 5.9.3
 

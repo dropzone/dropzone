@@ -1,3 +1,4 @@
+import extend from "just-extend";
 import Emitter from "./emitter";
 import defaultOptions from "./options";
 
@@ -49,17 +50,6 @@ export default class Dropzone extends Emitter {
     this.prototype._processingThumbnail = false;
   }
 
-  // global utility
-  static extend(target, ...objects) {
-    for (let object of objects) {
-      for (let key in object) {
-        let val = object[key];
-        target[key] = val;
-      }
-    }
-    return target;
-  }
-
   constructor(el, options) {
     super();
     let fallback, left;
@@ -93,8 +83,8 @@ export default class Dropzone extends Emitter {
     let elementOptions =
       (left = Dropzone.optionsForElement(this.element)) != null ? left : {};
 
-    this.options = Dropzone.extend(
-      {},
+    this.options = extend(
+      true,
       defaultOptions,
       elementOptions,
       options != null ? options : {}
@@ -1393,7 +1383,7 @@ export default class Dropzone extends Emitter {
     };
 
     if (this.options.headers) {
-      Dropzone.extend(headers, this.options.headers);
+      extend(headers, this.options.headers);
     }
 
     for (let headerName in headers) {
