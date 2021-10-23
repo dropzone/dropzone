@@ -7,7 +7,8 @@ This means that a user can drag and drop a file onto it, and Dropzone will
 display file previews and upload progress, and handle the upload for you via
 XHR.
 
-It's fully configurable and can be styled according to your needs.
+It's fully configurable, can be styled according to your needs and is trusted by
+millions.
 
 <div align="center">
   <img width="674" alt="Dropzone Screenshot" src="https://user-images.githubusercontent.com/133277/138495095-b026cc5c-9458-4e0b-8066-d8a9d0f7e72a.png">
@@ -23,8 +24,23 @@ $ npm install --save dropzone
 $ yarn add dropzone
 ```
 
-**OR**: Not using a package manager or bundler? Use the standalone files like
-this:
+Use as **ES6 module** (recommended):
+
+```js
+import { Dropzone } from "dropzone";
+const dropzone = new Dropzone("div#myId", { url: "/file/post" });
+```
+
+or use as **CommonJS module**:
+
+```js
+const Dropzone = require("dropzone").default;
+const dropzone = new Dropzone("div#myId", { url: "/file/post" });
+```
+
+## Not using a package manager or bundler?
+
+Use the standalone files like this:
 
 ```html
 <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
@@ -33,13 +49,13 @@ this:
   href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css"
   type="text/css"
 />
-```
 
-Use:
+<div class="my-dropzone"></div>
 
-```js
-import { Dropzone } from "dropzone";
-const dropzone = new Dropzone("div#myId", { url: "/file/post" });
+<script>
+  // Dropzone has been added as a global variable.
+  const dropzone = new Dropzone("div.my-dropzone", { url: "/file/post" });
+</script>
 ```
 
 ---
@@ -47,6 +63,14 @@ const dropzone = new Dropzone("div#myId", { url: "/file/post" });
 - [📚 Full documentation](https://docs.dropzone.dev)
 - [⚙️ `src/options.js`](https://github.com/dropzone/dropzone/blob/main/src/options.js)
   for all available options
+
+---
+
+> ⚠️ **NOTE**: We are currently moving away from IE support to make the library
+> more lightweight. If you don't care about IE but about size, you can already
+> opt into `6.0.0-beta.1`. Please make sure to pin the specific version since
+> parts of the API might change slightly. You can always read about the changes
+> in the [`CHANGELOG`](./CHANGELOG.md) file.
 
 ## Community
 
@@ -60,8 +84,8 @@ If you have a feature request or want to discuss something, please use the
 [discussions]: https://github.com/dropzone/dropzone/discussions
 [so]: https://stackoverflow.com/questions/tagged/dropzone.js
 
-> ⚠️ **Please read the [contributing guidelines](CONTRIBUTING.md) before you start
-> working on Dropzone!**
+> ⚠️ **Please read the [contributing guidelines](CONTRIBUTING.md) before you
+> start working on Dropzone!**
 
 ## Main features ✅
 
