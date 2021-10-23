@@ -1,71 +1,41 @@
 @use "sass:math";
 
-@mixin keyframes($name) {
-  @-webkit-keyframes #{$name} {
-    @content; 
-  }
-  @-moz-keyframes #{$name} {
-    @content;
-  }
-  @keyframes #{$name} {
-    @content;
-  } 
-}
 
-
-@mixin prefix($map, $vendors: webkit moz ms o) {
-  @each $prop, $value in $map {
-    @if $vendors {
-      @each $vendor in $vendors {
-        #{"-" + $vendor + "-" + $prop}: #{$value};
-      }
-    }
-    // Dump regular property anyway
-    #{$prop}: #{$value};
-  }
-}
-
-
-@include keyframes(passing-through) {
-  
+@keyframes passing-through {
   0% {
     opacity: 0;
-    @include prefix((transform: translateY(40px)));
+    transform: translateY(40px);
   }
 
   30%, 70% {
     opacity: 1;
-    @include prefix((transform: translateY(0px)));
+    transform: translateY(0px);
   }
 
   100% {
     opacity: 0;
-    @include prefix((transform: translateY(-40px)));
+    transform: translateY(-40px);
   }
 }
 
 
-@include keyframes(slide-in) {
-  
+@keyframes slide-in {
   0% {
     opacity: 0;
-    @include prefix((transform: translateY(40px)));
+    transform: translateY(40px);
   }
-
   30% {
     opacity: 1;
-    @include prefix((transform: translateY(0px)));
+    transform: translateY(0px);
   }
 }
 
 
 
-@include keyframes(pulse) {
-  
-  0% { @include prefix((transform: scale(1))); }
-  10% { @include prefix((transform: scale(1.1))); }
-  20% { @include prefix((transform: scale(1))); }
-
+@keyframes pulse {
+  0% { transform: scale(1); }
+  10% { transform: scale(1.1); }
+  20% { transform: scale(1); }
 }
 
 
@@ -93,8 +63,8 @@
   }
 
   min-height: 150px;
-  border: 2px solid rgba(0, 0, 0, 0.3);
-  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  border-radius: 5px;
   padding: 20px 20px;
 
   &.dz-started {
@@ -159,7 +129,7 @@
     &.dz-image-preview {
       background: white;
       .dz-details {
-        @include prefix((transition: opacity 0.2s linear));
+        transition: opacity 0.2s linear;
       }
     }
 
@@ -238,8 +208,8 @@
       .dz-image {
         // opacity: 0.8;
         img {
-          @include prefix((transform: scale(1.05, 1.05))); // Getting rid of that white bleed-in
-          @include prefix((filter: blur(8px)), webkit); // Getting rid of that white bleed-in
+          transform: scale(1.05, 1.05); // Getting rid of that white bleed-in
+          filter: blur(8px); // Getting rid of that white bleed-in
         }
       }
     }
@@ -260,15 +230,19 @@
 
     &.dz-success {
       .dz-success-mark {
-        @include prefix((animation: passing-through 3s cubic-bezier(0.770, 0.000, 0.175, 1.000)));
+        animation: passing-through 3s cubic-bezier(0.770, 0.000, 0.175, 1.000);
       }
     }
     &.dz-error {
       .dz-error-mark {
         opacity: 1;
-        @include prefix((animation: slide-in 3s cubic-bezier(0.770, 0.000, 0.175, 1.000)));
+        animation: slide-in 3s cubic-bezier(0.770, 0.000, 0.175, 1.000);
       }
     }
+
+
+    $overlay-color: white;
+    $overlay-bg-color: rgba(0, 0, 0, 0.8);
 
 
     .dz-success-mark, .dz-error-mark {
@@ -288,63 +262,64 @@
       margin-left: -(math.div($image-width, 2));
       margin-top: -(math.div($image-height, 2));
 
+      background: $overlay-bg-color;
+      border-radius: 50%;
+
       svg {
         display: block;
         width: $image-width;
         height: $image-height;
+        fill: $overlay-color;
       }
     }
     
       
     &.dz-processing .dz-progress {
       opacity: 1;
-      @include prefix((transition: all 0.2s linear));
+      transition: all 0.2s linear;
     }
     &.dz-complete .dz-progress {
       opacity: 0;
-      @include prefix((transition: opacity 0.4s ease-in));
+      transition: opacity 0.4s ease-in;
     }
 
     &:not(.dz-processing) {
       .dz-progress {
-        @include prefix((animation: pulse 6s ease infinite));
+        animation: pulse 6s ease infinite;
       }
     }
     .dz-progress {
+      $progress-height: 20px;
+      $progress-border-width: 3px;
 
       opacity: 1;
       z-index: 1000;
 
       pointer-events: none;
       position: absolute;
-      height: 16px;
-      left: 50%;
+      height: 20px;
       top: 50%;
-      margin-top: -8px;
+      margin-top: -10px;
+      left: 15%;
+      right: 15%;
 
-      width: 80px;
-      margin-left: -40px;
+      border: $progress-border-width solid $overlay-bg-color;
+      background: $overlay-bg-color;
 
-      // border: 2px solid #333;
-      background: rgba(255, 255, 255, 0.9);
-
-      // Fix for chrome bug: https://code.google.com/p/chromium/issues/detail?id=157218
-      -webkit-transform: scale(1);
-
-
-      border-radius: 8px;
+      border-radius: 10px;
 
       overflow: hidden;
 
       .dz-upload {
-        background: #333;
-        background: linear-gradient(to bottom, #666, #444);
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
+        background: $overlay-color;
+
+        display: block;
+        position: relative;
+        height: 100%;
         width: 0;
-        @include prefix((transition: width 300ms ease-in-out));
+        transition: width 300ms ease-in-out;
+
+        border-radius: $progress-height - $progress-border-width;
       }
 
     }
@@ -361,7 +336,7 @@
 
     .dz-error-message {
       $width: $image-size + 20px;
-      $color: rgb(190, 38, 38);
+      $color: rgb(177, 6, 6);
 
       pointer-events: none;
       z-index: 1000;
@@ -369,15 +344,14 @@
       display: block;
       display: none;
       opacity: 0;
-      @include prefix((transition: opacity 0.3s ease));
+      transition: opacity 0.3s ease;
       border-radius: 8px;
       font-size: 13px;
       top: $image-size + 10px;
       left: -10px;
       width: $width;
       background: $color;
-      background: linear-gradient(to bottom, $color, darken($color, 5%));
-      padding: 0.5em 1.2em;
+      padding: 0.5em 1em;
       color: white;
 
       // The triangle pointing up
