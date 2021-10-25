@@ -5,6 +5,9 @@
 - Dropzone is dropping IE support! If you still need to support IE, please use
   `5.9.3`. You can download it here:
   https://github.com/dropzone/dropzone/releases/download/v5.9.3/dist.zip
+- `Dropzone.autoDiscover` has been removed! If you want to auto discover your
+  elements, invoke `Dropzone.discover()` after your HTML has loaded and it will
+  do the same.
 - The `dropzone-amd-module` files have been removed. There is now a
   `dropzone.js` and a `dropzone.mjs` in the dist folder.
 - The `min/` folder has been removed. `dropzone.min.js` is now the only

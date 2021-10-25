@@ -1706,10 +1706,6 @@ Dropzone.version = "dev";
 //
 //     Dropzone.options.myDropzoneElementId = { maxFilesize: 1 };
 //
-// To disable autoDiscover for a specific element, you can set `false` as an option:
-//
-//     Dropzone.options.myDisabledElementId = false;
-//
 // And in html:
 //
 //     <form action="/upload" id="my-dropzone-element-id" class="dropzone"></form>
@@ -1740,9 +1736,6 @@ Dropzone.forElement = function (element) {
   }
   return element.dropzone;
 };
-
-// Set to false if you don't want Dropzone to automatically find and attach to .dropzone elements.
-Dropzone.autoDiscover = true;
 
 // Looks for all .dropzone elements and creates a dropzone for them
 Dropzone.discover = function () {
@@ -2273,14 +2266,6 @@ let contentLoaded = function (win, fn) {
     return win[add](pre + "load", init, false);
   }
 };
-
-// As a single function to be able to write tests.
-Dropzone._autoDiscoverFunction = function () {
-  if (Dropzone.autoDiscover) {
-    return Dropzone.discover();
-  }
-};
-contentLoaded(window, Dropzone._autoDiscoverFunction);
 
 function __guard__(value, transform) {
   return typeof value !== "undefined" && value !== null
