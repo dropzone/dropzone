@@ -51,6 +51,23 @@ jobs:
           tag_prefix: v
           tag_message: "Please check the changelog for a list of changes"
 
+  npm-publish:
+    name: Publish new version to npm
+    runs-on: ubuntu-latest
+    needs: [tag]
+    steps:
+      - name: Checkout Dropzone
+        uses: actions/checkout@v2
+      - name: Download dist folder
+        uses: actions/download-artifact@v2
+        with:
+          name: dist
+          path: dist
+      - name: Publish
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+
   release:
     name: Create GitHub release
     runs-on: ubuntu-latest
@@ -88,27 +105,10 @@ jobs:
           asset_name: dist.zip
           asset_content_type: application/zip
 
-  npm-publish:
-    name: Publish new version to npm
-    runs-on: ubuntu-latest
-    needs: [release]
-    steps:
-      - name: Checkout Dropzone
-        uses: actions/checkout@v2
-      - name: Download dist folder
-        uses: actions/download-artifact@v2
-        with:
-          name: dist
-          path: dist
-      - name: Publish
-        uses: JS-DevTools/npm-publish@v1
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
-
   trigger-remote-releases:
     name: Dispatch the "new-release" event to packagist and bower repo
     runs-on: ubuntu-latest
-    needs: [tag, release]
+    needs: [release]
     steps:
       - name: Dispatch "new-release" event to the dropzone-packagist repo.
         uses: peter-evans/repository-dispatch@v1
