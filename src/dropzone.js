@@ -1,5 +1,6 @@
-import Emitter from "./emitter.js";
-import defaultOptions from "./options.js";
+import extend from "just-extend";
+import Emitter from "./emitter";
+import defaultOptions from "./options";
 
 export default class Dropzone extends Emitter {
   static initClass() {
@@ -49,23 +50,10 @@ export default class Dropzone extends Emitter {
     this.prototype._processingThumbnail = false;
   }
 
-  // global utility
-  static extend(target, ...objects) {
-    for (let object of objects) {
-      for (let key in object) {
-        let val = object[key];
-        target[key] = val;
-      }
-    }
-    return target;
-  }
-
   constructor(el, options) {
     super();
     let fallback, left;
     this.element = el;
-    // For backwards compatibility since the version was in the prototype previously
-    this.version = Dropzone.version;
 
     this.clickableElements = [];
     this.listeners = [];
@@ -93,7 +81,8 @@ export default class Dropzone extends Emitter {
     let elementOptions =
       (left = Dropzone.optionsForElement(this.element)) != null ? left : {};
 
-    this.options = Dropzone.extend(
+    this.options = extend(
+      true,
       {},
       defaultOptions,
       elementOptions,
@@ -1393,7 +1382,7 @@ export default class Dropzone extends Emitter {
     };
 
     if (this.options.headers) {
-      Dropzone.extend(headers, this.options.headers);
+      extend(headers, this.options.headers);
     }
 
     for (let headerName in headers) {
@@ -1706,18 +1695,12 @@ export default class Dropzone extends Emitter {
 }
 Dropzone.initClass();
 
-Dropzone.version = "dev";
-
 // This is a map of options for your different dropzones. Add configurations
 // to this object for your different dropzone elemens.
 //
 // Example:
 //
 //     Dropzone.options.myDropzoneElementId = { maxFilesize: 1 };
-//
-// To disable autoDiscover for a specific element, you can set `false` as an option:
-//
-//     Dropzone.options.myDisabledElementId = false;
 //
 // And in html:
 //
@@ -1749,9 +1732,6 @@ Dropzone.forElement = function (element) {
   }
   return element.dropzone;
 };
-
-// Set to false if you don't want Dropzone to automatically find and attach to .dropzone elements.
-Dropzone.autoDiscover = true;
 
 // Looks for all .dropzone elements and creates a dropzone for them
 Dropzone.discover = function () {
@@ -2282,14 +2262,6 @@ let contentLoaded = function (win, fn) {
     return win[add](pre + "load", init, false);
   }
 };
-
-// As a single function to be able to write tests.
-Dropzone._autoDiscoverFunction = function () {
-  if (Dropzone.autoDiscover) {
-    return Dropzone.discover();
-  }
-};
-contentLoaded(window, Dropzone._autoDiscoverFunction);
 
 function __guard__(value, transform) {
   return typeof value !== "undefined" && value !== null

@@ -8,12 +8,11 @@ name: Test and Release
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
-     
-jobs:
+    branches: [main]
 
+jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -23,7 +22,13 @@ jobs:
       - name: Checkout Dropzone
         uses: actions/checkout@v2
       - run: yarn install
+      - run: yarn build
       - run: yarn test
+      - name: Upload dist folder in case of release
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: dist
 
   # Auto tag when the package.json version has changed. A different job will see
   # this tag, publish it, and create a release for it.
@@ -46,42 +51,27 @@ jobs:
           tag_prefix: v
           tag_message: "Please check the changelog for a list of changes"
 
-
-  build:
-    name: Build dist files
+  npm-publish:
+    name: Publish new version to npm
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    needs: [test]
+    needs: [tag]
     steps:
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v2.1.1
       - name: Checkout Dropzone
         uses: actions/checkout@v2
-      - run: yarn install
-      - name: Read package.json version
-        uses: pchynoweth/action-get-npm-version@1.0.1
-        id: package_version
-      - name: Inject package version into javascript file
-        uses: jacobtomlinson/gha-find-replace@master
-        id: version_replace
-        with:
-          include: "src/dropzone.js"
-          find: "version = \"dev\""
-          replace: "version = \"${{ steps.package_version.outputs.version }}\""
-      - name: Abort if version wasn't replaced
-        if: steps.version_replace.outputs.modifiedFiles != 1
-        run: exit 1
-      - run: yarn build
-      - name: Upload dist folder in case of release
-        uses: actions/upload-artifact@v2
+      - name: Download dist folder
+        uses: actions/download-artifact@v2
         with:
           name: dist
           path: dist
+      - name: Publish
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
 
   release:
     name: Create GitHub release
     runs-on: ubuntu-latest
-    needs: [build, tag]
+    needs: [tag]
     if: github.ref == 'refs/heads/main' && needs.tag.outputs.tagname != null
     steps:
       - name: Checkout Dropzone
@@ -105,7 +95,7 @@ jobs:
           draft: false
           prerelease: false
       - name: Upload Release Asset
-        id: upload-release-asset 
+        id: upload-release-asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -115,28 +105,10 @@ jobs:
           asset_name: dist.zip
           asset_content_type: application/zip
 
-
-  npm-publish:
-    name: Publish new version to npm
-    runs-on: ubuntu-latest
-    needs: [build,release]
-    steps:
-      - name: Checkout Dropzone
-        uses: actions/checkout@v2
-      - name: Download dist folder
-        uses: actions/download-artifact@v2
-        with:
-          name: dist
-          path: dist
-      - name: Publish
-        uses: JS-DevTools/npm-publish@v1
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
-
   trigger-remote-releases:
     name: Dispatch the "new-release" event to packagist and bower repo
     runs-on: ubuntu-latest
-    needs: [tag,release]
+    needs: [release]
     steps:
       - name: Dispatch "new-release" event to the dropzone-packagist repo.
         uses: peter-evans/repository-dispatch@v1
@@ -152,4 +124,3 @@ jobs:
           repository: dropzone/dropzone-bower
           event-type: new-release
           client-payload: '{"releaseTag": "${{ needs.tag.outputs.tagname  }}"}'
-

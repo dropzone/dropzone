@@ -1,4 +1,4 @@
-import Dropzone from "../src/dropzone.js";
+import { Dropzone } from "../src/dropzone";
 
 describe("Dropzone", function () {
   let getMockFile = (
@@ -302,27 +302,6 @@ describe("Dropzone", function () {
 
         it("should not create dropzones with disabled options", () =>
           expect(element2.dropzone).to.not.be.ok);
-      });
-
-      return describe("Dropzone.autoDiscover", function () {
-        before(function () {
-          Dropzone.options.testElement3 = { url: "test-url" };
-          return document.body.appendChild(element3);
-        });
-        after(() => document.body.removeChild(element3));
-
-        it("should create dropzones even if Dropzone.autoDiscover == false", function () {
-          // Because the check is in the actual contentLoaded function.
-          Dropzone.autoDiscover = false;
-          Dropzone.discover();
-          return expect(element3.dropzone).to.be.ok;
-        });
-
-        it("should not automatically be called if Dropzone.autoDiscover == false", function () {
-          Dropzone.autoDiscover = false;
-          Dropzone.discover = () => expect(false).to.be.ok;
-          return Dropzone._autoDiscoverFunction();
-        });
       });
     });
 
