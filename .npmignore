@@ -2,6 +2,7 @@
 .sass-cache
 .idea
 cypress
+cypress.json
 tool
 test
 babel.config.js
