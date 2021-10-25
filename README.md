@@ -34,7 +34,7 @@ const dropzone = new Dropzone("div#myId", { url: "/file/post" });
 or use as **CommonJS module**:
 
 ```js
-const Dropzone = require("dropzone").default;
+const { Dropzone } = require("dropzone");
 const dropzone = new Dropzone("div#myId", { url: "/file/post" });
 ```
 
