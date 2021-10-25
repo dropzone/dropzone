@@ -8,7 +8,7 @@ display file previews and upload progress, and handle the upload for you via
 XHR.
 
 It's fully configurable, can be styled according to your needs and is trusted by
-millions.
+thousands.
 
 <div align="center">
   <img width="674" alt="Dropzone Screenshot" src="https://user-images.githubusercontent.com/133277/138495095-b026cc5c-9458-4e0b-8066-d8a9d0f7e72a.png">
@@ -37,6 +37,9 @@ or use as **CommonJS module**:
 const { Dropzone } = require("dropzone");
 const dropzone = new Dropzone("div#myId", { url: "/file/post" });
 ```
+
+[👉 Checkout our example implementations for different
+bundlers](https://github.com/dropzone/dropzone-examples)
 
 ## Not using a package manager or bundler?
 
