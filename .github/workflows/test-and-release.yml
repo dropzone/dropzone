@@ -108,7 +108,7 @@ jobs:
   trigger-remote-releases:
     name: Dispatch the "new-release" event to packagist and bower repo
     runs-on: ubuntu-latest
-    needs: [release]
+    needs: [tag, release]
     steps:
       - name: Dispatch "new-release" event to the dropzone-packagist repo.
         uses: peter-evans/repository-dispatch@v1
