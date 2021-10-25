@@ -54,8 +54,6 @@ export default class Dropzone extends Emitter {
     super();
     let fallback, left;
     this.element = el;
-    // For backwards compatibility since the version was in the prototype previously
-    this.version = Dropzone.version;
 
     this.clickableElements = [];
     this.listeners = [];
@@ -1696,8 +1694,6 @@ export default class Dropzone extends Emitter {
   }
 }
 Dropzone.initClass();
-
-Dropzone.version = "dev";
 
 // This is a map of options for your different dropzones. Add configurations
 // to this object for your different dropzone elemens.
