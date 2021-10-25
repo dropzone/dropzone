@@ -1,6 +1,7 @@
 .github
 .sass-cache
 .idea
+cypress
 tool
 test
 babel.config.js
