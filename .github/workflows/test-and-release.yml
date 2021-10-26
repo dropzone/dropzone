@@ -21,9 +21,16 @@ jobs:
         uses: actions/setup-node@v2.1.1
       - name: Checkout Dropzone
         uses: actions/checkout@v2
+
       - run: yarn install
       - run: yarn build
       - run: yarn test
+
+      - uses: cypress-io/github-action@v2
+        with:
+          start: yarn start-test-server
+          wait-on: "http://localhost:8888"
+
       - name: Upload dist folder in case of release
         uses: actions/upload-artifact@v2
         with:
