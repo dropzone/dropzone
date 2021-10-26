@@ -539,6 +539,20 @@ let defaultOptions = {
   },
 
   /**
+   * Can be used to transform (usually append to) the formData for a specific file (for example, add S3 presigned URL data).
+   * Gets the `file` as the first parameter, and `formData` as the second parameter.
+   */
+  async transformFileFormData(file, formData) {
+    // const something = await fetchSomethingElse(file.name)
+    // formData.append('something', something)
+  },
+
+  async transformFilesFormData(files, formData) {
+    // const something = await fetchSomethingElse()
+    // formData.append('something', something)
+  },
+
+  /**
    * A string that contains the template used for each dropped
    * file. Change it to fulfill your needs but make sure to properly
    * provide all elements.
