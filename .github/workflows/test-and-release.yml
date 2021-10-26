@@ -30,6 +30,7 @@ jobs:
         with:
           start: yarn start-test-server
           wait-on: "http://localhost:8888"
+          wait-on-timeout: 5
 
       - name: Upload dist folder in case of release
         uses: actions/upload-artifact@v2
