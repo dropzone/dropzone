@@ -63,6 +63,7 @@ jobs:
     name: Publish new version to npm
     runs-on: ubuntu-latest
     needs: [tag]
+    if: github.ref == 'refs/heads/main' && needs.tag.outputs.tagname != null
     steps:
       - name: Checkout Dropzone
         uses: actions/checkout@v2
