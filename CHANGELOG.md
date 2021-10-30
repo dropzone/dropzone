@@ -1,3 +1,7 @@
+## 6.0.0-beta.2
+
+- Add `binaryBody` support (thanks to @patrickbussmann and @meg1502).
+
 ## 6.0.0-beta.1
 
 ### Breaking

@@ -416,17 +416,9 @@ let defaultOptions = {
   },
 
   /**
-   * Sends the file as binary blob in body?
-   * Needed for AWS Multipart Upload
+   * Sends the file as binary blob in body instead of form data.
    */
   binaryBody: false,
-
-  /**
-   * Leaving chunk.xhr reference to xhr intact will cause memory leaks in some browsers
-   * That's why its default true, but when you want to use the xhr response of chunk set it to false
-   * In AWS S3 Multipart Upload we need the Response ETag header
-   */
-  resetChunkRequest: true,
 
   /**
    * Gets called when the browser is not supported.

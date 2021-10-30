@@ -26,7 +26,7 @@
       "outputFormat": "global"
     },
     "built-test": {
-      "source": "test/unit_tests.js",
+      "source": "test/unit-tests.js",
       "distDir": "test/built/"
     }
   },
@@ -49,7 +49,7 @@
     "build": "parcel build && yarn run css",
     "css": "yarn sass src/:dist/ --style compressed",
     "watch-css": "yarn sass src/:dist/ --watch --style compressed",
-    "test": "karma start --single-run --browsers ChromeHeadless test/karma.conf.js",
+    "test": "karma start test/karma.conf.js",
     "start-test-server": "node test/test-server.js"
   },
   "bugs": {

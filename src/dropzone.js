@@ -118,6 +118,10 @@ export default class Dropzone extends Emitter {
       throw new Error("You cannot set both: uploadMultiple and chunking.");
     }
 
+    if (this.options.binaryBody && this.options.uploadMultiple) {
+      throw new Error("You cannot set both: binaryBody and uploadMultiple.");
+    }
+
     // Backwards compatibility
     if (this.options.acceptedMimeTypes) {
       this.options.acceptedFiles = this.options.acceptedMimeTypes;
@@ -1278,10 +1282,6 @@ export default class Dropzone extends Emitter {
           chunk.dataBlock = null;
           chunk.response = chunk.xhr.responseText;
           chunk.responseHeaders = chunk.xhr.getAllResponseHeaders();
-          if (this.options.resetChunkRequest) {
-            // Leaving this reference to xhr intact here will cause memory leaks in some browsers
-            chunk.xhr = null;
-          }
 
           for (let i = 0; i < file.upload.totalChunkCount; i++) {
             if (file.upload.chunks[i] === undefined) {
@@ -1379,11 +1379,13 @@ export default class Dropzone extends Emitter {
     progressObj.onprogress = (e) =>
       this._updateFilesUploadProgress(files, xhr, e);
 
-    let headers = this.options.defaultHeaders ? {
-      Accept: "application/json",
-      "Cache-Control": "no-cache",
-      "X-Requested-With": "XMLHttpRequest",
-    } : {};
+    let headers = this.options.defaultHeaders
+      ? {
+          Accept: "application/json",
+          "Cache-Control": "no-cache",
+          "X-Requested-With": "XMLHttpRequest",
+        }
+      : {};
 
     if (this.options.headers) {
       extend(headers, this.options.headers);
