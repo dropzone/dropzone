@@ -1282,6 +1282,8 @@ export default class Dropzone extends Emitter {
           chunk.dataBlock = null;
           chunk.response = chunk.xhr.responseText;
           chunk.responseHeaders = chunk.xhr.getAllResponseHeaders();
+          // Leaving this reference to xhr will cause memory leaks.
+          chunk.xhr = null;
 
           for (let i = 0; i < file.upload.totalChunkCount; i++) {
             if (file.upload.chunks[i] === undefined) {
