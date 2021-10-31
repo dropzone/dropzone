@@ -60,7 +60,7 @@ let defaultOptions = {
   /**
    * If `chunking` is `true`, then this defines the chunk size in bytes.
    */
-  chunkSize: 2000000,
+  chunkSize: 2 * 1024 * 1024,
 
   /**
    * If `true`, the individual chunks of a file are being uploaded simultaneously.

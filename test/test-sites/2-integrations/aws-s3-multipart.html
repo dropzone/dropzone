@@ -1,0 +1,78 @@
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dropzone Test</title>
+
+<script src="../dist/dropzone-min.js"></script>
+<link rel="stylesheet" href="../dist/dropzone.css" type="text/css" />
+
+<style>
+  body {
+    font-family: Roboto;
+  }
+</style>
+
+<div class="dropzone"></div>
+
+<script>
+  // This follows the instructions for multipart upload as described here:
+  // https://docs.aws.amazon.com/AmazonS3/latest/userguide/mpuoverview.html
+
+  // Initiate upload with AWS S3 and get upload here. Code not shown.
+  const uploadId = "demo-id";
+
+  new Dropzone(".dropzone", {
+    method: "PUT",
+    url: (files) => {
+      // `options.uploadMultiple` is false, so there can only be **one** file.
+      const file = files[0];
+      // We store the part number inside the file directly for each upload.
+      file.awsPartNumber ??= 0;
+      // We start our parts at 1
+      let partNumber = ++file.awsPartNumber;
+      // This needs to be replaced with the actual host and aws key.
+      return `/amazon-multipart-upload?uploadId=${uploadId}&partNumber=${partNumber}`;
+    },
+    init: function () {
+      this.on("success", (file) => {
+        // Get the etag from the individual headers:
+        const parts = file.upload.chunks.map((chunk) => ({
+          number: chunk.index + 1,
+          etag: chunk.responseHeaders.match(/etag: "([^"]+)"/i)[1],
+        }));
+
+        // Send request to amazon to complete the multipart upload
+        completeMultipartUpload(uploadId, parts);
+      });
+    },
+    uploadMultiple: false,
+    chunking: true,
+    forceChunking: true,
+    chunkSize: 100 * 1024, // bytes
+    parallelChunkUploads: false,
+    retryChunks: true,
+    retryChunksLimit: 3,
+    defaultHeaders: false,
+    binaryBody: true,
+  });
+
+  // A demo implementation that complets the multipart upload.
+  // See: https://docs.aws.amazon.com/AmazonS3/latest/API/API_CompleteMultipartUpload.html
+  function completeMultipartUpload(uploadId, parts) {
+    let data = {
+      UploadId: uploadId,
+      MultipartUpload: {
+        Parts: parts.map((part) => ({
+          PartNumber: part.number,
+          ETag: part.etag,
+        })),
+      },
+    };
+
+    // Issue the http request.
+    fetch(`/amazon-complete`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  }
+</script>

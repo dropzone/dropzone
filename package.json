@@ -69,7 +69,7 @@
     "@parcel/transformer-inline-string": "^2.0.0",
     "@parcel/transformer-sass": "^2.0.0",
     "chai": "4.3.4",
-    "cypress": "^8.6.0",
+    "cypress": "^8.7.0",
     "cypress-file-upload": "^5.0.8",
     "karma": "^6.1.0",
     "karma-chrome-launcher": "^3.1.0",
