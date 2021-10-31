@@ -1,6 +1,8 @@
 ## 6.0.0-beta.2
 
 - Add `binaryBody` support (thanks to @patrickbussmann and @meg1502).
+  - This adds full support for AWS S3 Multipart Upload.
+  - There is an example setup for this now in `test/test-sites/2-integrations`.
 
 ## 6.0.0-beta.1
 
