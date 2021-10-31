@@ -1,4 +1,4 @@
-import { Dropzone } from "../../dist/dropzone.mjs";
+import { Dropzone } from "../../src/dropzone.js";
 
 describe("Amazon S3 Support", function () {
   let getMockFile = (
