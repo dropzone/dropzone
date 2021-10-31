@@ -32,12 +32,12 @@
     getUploadId: async () => "demo-id",
 
     // This needs to be implemented so it returns the correct AWS upload URL that
-    // inclused your key.
+    // includes your key.
     // See https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html
     getUploadUrl: (uploadId, partNumber) =>
       `/amazon-multipart-upload?uploadId=${uploadId}&partNumber=${partNumber}`,
 
-    // A demo implementation that complets the multipart upload.
+    // A demo implementation that completes the multipart upload.
     // See: https://docs.aws.amazon.com/AmazonS3/latest/API/API_CompleteMultipartUpload.html
     completeMultipartUpload: async (uploadId, parts) => {
       let data = {
@@ -60,20 +60,12 @@
 
   // The Dropzone configuration:
   (async () => {
-    // Initiate upload with AWS S3 and get upload here. Code not shown.
     const uploadId = await S3.getUploadId();
 
     new Dropzone(".dropzone", {
       method: "PUT",
-      url: (files) => {
-        // `options.uploadMultiple` is false, so there can only be **one** file.
-        const file = files[0];
-        // We store the part number inside the file directly for each upload.  file.awsPartNumber ??= 0;
-        // We start our parts at 1
-        let partNumber = ++file.awsPartNumber;
-
-        return S3.getUploadUrl(uploadId, partNumber);
-      },
+      url: (_, dataBlocks) =>
+        S3.getUploadUrl(uploadId, dataBlocks[0].chunkIndex + 1),
       init: function () {
         this.on("success", async (file) => {
           // Get the etag from the individual headers:

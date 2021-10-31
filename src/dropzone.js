@@ -1335,8 +1335,10 @@ export default class Dropzone extends Emitter {
   }
 
   // This function actually uploads the file(s) to the server.
-  // If dataBlocks contains the actual data to upload (meaning, that this could either be transformed
-  // files, or individual chunks for chunked upload).
+  //
+  //  If dataBlocks contains the actual data to upload (meaning, that this could
+  // either be transformed files, or individual chunks for chunked upload) then
+  // they will be used for the actual data to upload.
   _uploadData(files, dataBlocks) {
     let xhr = new XMLHttpRequest();
 
@@ -1345,7 +1347,8 @@ export default class Dropzone extends Emitter {
       file.xhr = xhr;
     }
     if (files[0].upload.chunked) {
-      // Put the xhr object in the right chunk object, so it can be associated later, and found with _getChunk
+      // Put the xhr object in the right chunk object, so it can be associated
+      // later, and found with _getChunk.
       files[0].upload.chunks[dataBlocks[0].chunkIndex].xhr = xhr;
     }
 

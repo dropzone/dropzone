@@ -3,10 +3,11 @@ import defaultPreviewTemplate from "bundle-text:./preview-template.html";
 
 let defaultOptions = {
   /**
-   * Has to be specified on elements other than form (or when the form
-   * doesn't have an `action` attribute). You can also
-   * provide a function that will be called with `files` and
-   * must return the url (since `v3.12.0`)
+   * Has to be specified on elements other than form (or when the form doesn't
+   * have an `action` attribute).
+   *
+   * You can also provide a function that will be called with `files` and
+   * `dataBlocks`  and must return the url as string.
    */
   url: null,
 
