@@ -417,6 +417,9 @@ let defaultOptions = {
 
   /**
    * Sends the file as binary blob in body instead of form data.
+   * If this is set, the `params` option will be ignored.
+   * It's an error to set this to `true` along with `uploadMultiple` since
+   * multiple files cannot be in a single binary body.
    */
   binaryBody: false,
 
