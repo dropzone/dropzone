@@ -118,6 +118,10 @@ export default class Dropzone extends Emitter {
       throw new Error("You cannot set both: uploadMultiple and chunking.");
     }
 
+    if (this.options.binaryBody && this.options.uploadMultiple) {
+      throw new Error("You cannot set both: binaryBody and uploadMultiple.");
+    }
+
     // Backwards compatibility
     if (this.options.acceptedMimeTypes) {
       this.options.acceptedFiles = this.options.acceptedMimeTypes;
@@ -1276,7 +1280,9 @@ export default class Dropzone extends Emitter {
 
           // Clear the data from the chunk
           chunk.dataBlock = null;
-          // Leaving this reference to xhr intact here will cause memory leaks in some browsers
+          chunk.response = chunk.xhr.responseText;
+          chunk.responseHeaders = chunk.xhr.getAllResponseHeaders();
+          // Leaving this reference to xhr will cause memory leaks.
           chunk.xhr = null;
 
           for (let i = 0; i < file.upload.totalChunkCount; i++) {
@@ -1329,8 +1335,10 @@ export default class Dropzone extends Emitter {
   }
 
   // This function actually uploads the file(s) to the server.
-  // If dataBlocks contains the actual data to upload (meaning, that this could either be transformed
-  // files, or individual chunks for chunked upload).
+  //
+  //  If dataBlocks contains the actual data to upload (meaning, that this could
+  // either be transformed files, or individual chunks for chunked upload) then
+  // they will be used for the actual data to upload.
   _uploadData(files, dataBlocks) {
     let xhr = new XMLHttpRequest();
 
@@ -1339,12 +1347,13 @@ export default class Dropzone extends Emitter {
       file.xhr = xhr;
     }
     if (files[0].upload.chunked) {
-      // Put the xhr object in the right chunk object, so it can be associated later, and found with _getChunk
+      // Put the xhr object in the right chunk object, so it can be associated
+      // later, and found with _getChunk.
       files[0].upload.chunks[dataBlocks[0].chunkIndex].xhr = xhr;
     }
 
-    let method = this.resolveOption(this.options.method, files);
-    let url = this.resolveOption(this.options.url, files);
+    let method = this.resolveOption(this.options.method, files, dataBlocks);
+    let url = this.resolveOption(this.options.url, files, dataBlocks);
     xhr.open(method, url, true);
 
     // Setting the timeout after open because of IE11 issue: https://gitlab.com/meno/dropzone/issues/8
@@ -1375,11 +1384,17 @@ export default class Dropzone extends Emitter {
     progressObj.onprogress = (e) =>
       this._updateFilesUploadProgress(files, xhr, e);
 
-    let headers = {
-      Accept: "application/json",
-      "Cache-Control": "no-cache",
-      "X-Requested-With": "XMLHttpRequest",
-    };
+    let headers = this.options.defaultHeaders
+      ? {
+          Accept: "application/json",
+          "Cache-Control": "no-cache",
+          "X-Requested-With": "XMLHttpRequest",
+        }
+      : {};
+
+    if (this.options.binaryBody) {
+      headers["Content-Type"] = files[0].type;
+    }
 
     if (this.options.headers) {
       extend(headers, this.options.headers);
@@ -1392,53 +1407,65 @@ export default class Dropzone extends Emitter {
       }
     }
 
-    let formData = new FormData();
-
-    // Adding all @options parameters
-    if (this.options.params) {
-      let additionalParams = this.options.params;
-      if (typeof additionalParams === "function") {
-        additionalParams = additionalParams.call(
-          this,
-          files,
-          xhr,
-          files[0].upload.chunked ? this._getChunk(files[0], xhr) : null
-        );
+    if (this.options.binaryBody) {
+      // Since the file is going to be sent as binary body, it doesn't make
+      // any sense to generate `FormData` for it.
+      for (let file of files) {
+        this.emit("sending", file, xhr);
       }
+      if (this.options.uploadMultiple) {
+        this.emit("sendingmultiple", files, xhr);
+      }
+      this.submitRequest(xhr, null, files);
+    } else {
+      let formData = new FormData();
 
-      for (let key in additionalParams) {
-        let value = additionalParams[key];
-        if (Array.isArray(value)) {
-          // The additional parameter contains an array,
-          // so lets iterate over it to attach each value
-          // individually.
-          for (let i = 0; i < value.length; i++) {
-            formData.append(key, value[i]);
+      // Adding all @options parameters
+      if (this.options.params) {
+        let additionalParams = this.options.params;
+        if (typeof additionalParams === "function") {
+          additionalParams = additionalParams.call(
+            this,
+            files,
+            xhr,
+            files[0].upload.chunked ? this._getChunk(files[0], xhr) : null
+          );
+        }
+
+        for (let key in additionalParams) {
+          let value = additionalParams[key];
+          if (Array.isArray(value)) {
+            // The additional parameter contains an array,
+            // so lets iterate over it to attach each value
+            // individually.
+            for (let i = 0; i < value.length; i++) {
+              formData.append(key, value[i]);
+            }
+          } else {
+            formData.append(key, value);
           }
-        } else {
-          formData.append(key, value);
         }
       }
-    }
 
-    // Let the user add additional data if necessary
-    for (let file of files) {
-      this.emit("sending", file, xhr, formData);
-    }
-    if (this.options.uploadMultiple) {
-      this.emit("sendingmultiple", files, xhr, formData);
-    }
+      // Let the user add additional data if necessary
+      for (let file of files) {
+        this.emit("sending", file, xhr, formData);
+      }
+      if (this.options.uploadMultiple) {
+        this.emit("sendingmultiple", files, xhr, formData);
+      }
 
-    this._addFormElementData(formData);
+      this._addFormElementData(formData);
 
-    // Finally add the files
-    // Has to be last because some servers (eg: S3) expect the file to be the last parameter
-    for (let i = 0; i < dataBlocks.length; i++) {
-      let dataBlock = dataBlocks[i];
-      formData.append(dataBlock.name, dataBlock.data, dataBlock.filename);
+      // Finally add the files
+      // Has to be last because some servers (eg: S3) expect the file to be the last parameter
+      for (let i = 0; i < dataBlocks.length; i++) {
+        let dataBlock = dataBlocks[i];
+        formData.append(dataBlock.name, dataBlock.data, dataBlock.filename);
+      }
+
+      this.submitRequest(xhr, formData, files);
     }
-
-    this.submitRequest(xhr, formData, files);
   }
 
   // Transforms all files with this.options.transformFile and invokes done with the transformed files when done.
@@ -1643,7 +1670,16 @@ export default class Dropzone extends Emitter {
       );
       return;
     }
-    xhr.send(formData);
+    if (this.options.binaryBody) {
+      if (files[0].upload.chunked) {
+        const chunk = this._getChunk(files[0], xhr);
+        xhr.send(chunk.dataBlock.data);
+      } else {
+        xhr.send(files[0]);
+      }
+    } else {
+      xhr.send(formData);
+    }
   }
 
   // Called internally when processing is finished.

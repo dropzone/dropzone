@@ -17,7 +17,10 @@ const httpServer = http.createServer((req, res) => {
   req
     .on("data", (chunk) => {})
     .on("end", () => {
-      res.writeHeader(200);
+      const headers = req.url.startsWith("/amazon-multipart-upload")
+        ? { ETag: `"${Math.round(Math.random() * 10000)}"` }
+        : undefined;
+      res.writeHead(200, headers);
       res.end('{"success": true}');
     });
 });

@@ -1,0 +1,92 @@
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dropzone Test</title>
+
+<script src="../dist/dropzone-min.js"></script>
+<link rel="stylesheet" href="../dist/dropzone.css" type="text/css" />
+
+<style>
+  body {
+    font-family: Roboto;
+  }
+</style>
+
+<div class="dropzone"></div>
+
+<script>
+  // This follows the instructions for multipart upload as described here:
+  // https://docs.aws.amazon.com/AmazonS3/latest/userguide/mpuoverview.html
+  //
+  // If you want to implement an Amazon S3 Multi Part Upload on your website as
+  // well, you can copy the code below but you need to make a few adjustments to
+  // the S3 object that contains the functions.
+  //
+  // The Dropzone configuration can be used as is.
+
+  // An object that groups all S3 related functionality.
+  const S3 = {
+    // This needs to make a request to AWS S3 to get an actual upload ID. Please
+    // refer to the AWS docs for more info.
+    // See https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateMultipartUpload.html#API_CreateMultipartUpload_ResponseElements
+    getUploadId: async () => "demo-id",
+
+    // This needs to be implemented so it returns the correct AWS upload URL that
+    // includes your key.
+    // See https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html
+    getUploadUrl: (uploadId, partNumber) =>
+      `/amazon-multipart-upload?uploadId=${uploadId}&partNumber=${partNumber}`,
+
+    // A demo implementation that completes the multipart upload.
+    // See: https://docs.aws.amazon.com/AmazonS3/latest/API/API_CompleteMultipartUpload.html
+    completeMultipartUpload: async (uploadId, parts) => {
+      let data = {
+        UploadId: uploadId,
+        MultipartUpload: {
+          Parts: parts.map((part) => ({
+            PartNumber: part.number,
+            ETag: part.etag,
+          })),
+        },
+      };
+
+      // Issue the http request.
+      await fetch(`/amazon-complete`, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+    },
+  };
+
+  // The Dropzone configuration:
+  (async () => {
+    const uploadId = await S3.getUploadId();
+
+    new Dropzone(".dropzone", {
+      method: "PUT",
+      url: (_, dataBlocks) =>
+        S3.getUploadUrl(uploadId, dataBlocks[0].chunkIndex + 1),
+      init: function () {
+        this.on("success", async (file) => {
+          // Get the etag from the individual headers:
+          const parts = file.upload.chunks.map((chunk) => ({
+            number: chunk.index + 1,
+            etag: chunk.responseHeaders.match(/etag: "([^"]+)"/i)[1],
+          }));
+
+          // Send request to amazon to complete the multipart upload
+          await S3.completeMultipartUpload(uploadId, parts);
+        });
+      },
+      uploadMultiple: false,
+      chunking: true,
+      forceChunking: true,
+      chunkSize: 100 * 1024, // bytes
+      parallelChunkUploads: false,
+      retryChunks: true,
+      retryChunksLimit: 3,
+      defaultHeaders: false,
+      binaryBody: true,
+    });
+  })();
+</script>

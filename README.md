@@ -100,6 +100,7 @@ If you have a feature request or want to discuss something, please use the
 - Progress updates
 - Support for large files
   - Chunked uploads (upload large files in smaller chunks)
+- Support for Amazon S3 Multipart upload
 - Complete theming. The look and feel of Dropzone is just the default theme. You
   can define everything yourself by overwriting the default event listeners.
 - Browser image resizing (resize the images before you upload them to your

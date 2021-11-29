@@ -3,10 +3,11 @@ import defaultPreviewTemplate from "bundle-text:./preview-template.html";
 
 let defaultOptions = {
   /**
-   * Has to be specified on elements other than form (or when the form
-   * doesn't have an `action` attribute). You can also
-   * provide a function that will be called with `files` and
-   * must return the url (since `v3.12.0`)
+   * Has to be specified on elements other than form (or when the form doesn't
+   * have an `action` attribute).
+   *
+   * You can also provide a function that will be called with `files` and
+   * `dataBlocks`  and must return the url as string.
    */
   url: null,
 
@@ -60,7 +61,7 @@ let defaultOptions = {
   /**
    * If `chunking` is `true`, then this defines the chunk size in bytes.
    */
-  chunkSize: 2000000,
+  chunkSize: 2 * 1024 * 1024,
 
   /**
    * If `true`, the individual chunks of a file are being uploaded simultaneously.
@@ -170,6 +171,14 @@ let defaultOptions = {
    * `{ "My-Awesome-Header": "header value" }`
    */
   headers: null,
+
+  /**
+   * Should the default headers be set or not?
+   * Accept: application/json <- for requesting json response
+   * Cache-Control: no-cache <- Request shouldnt be cached
+   * X-Requested-With: XMLHttpRequest <- We sent the request via XMLHttpRequest
+   */
+  defaultHeaders: true,
 
   /**
    * If `true`, the dropzone element itself will be clickable, if `false`
@@ -406,6 +415,14 @@ let defaultOptions = {
   chunksUploaded: function (file, done) {
     done();
   },
+
+  /**
+   * Sends the file as binary blob in body instead of form data.
+   * If this is set, the `params` option will be ignored.
+   * It's an error to set this to `true` along with `uploadMultiple` since
+   * multiple files cannot be in a single binary body.
+   */
+  binaryBody: false,
 
   /**
    * Gets called when the browser is not supported.

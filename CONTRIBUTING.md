@@ -22,7 +22,8 @@ the library.
 
 ## Testing
 
-To test the library simply run `yarn test`.
+Testing is done on the compiled files. So either run `yarn build` or
+`yarn watch` first, and then `yarn test`.
 
 ### Cypress
 
