@@ -109,4 +109,4 @@ If you have a feature request or want to discuss something, please use the
 
 # MIT License
 
-See LICENSE file
+See the [LICENSE](https://github.com/dropzone/dropzone/blob/main/LICENSE) file
