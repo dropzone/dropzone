@@ -707,7 +707,7 @@ let defaultOptions = {
 
   errormultiple() {},
 
-  // Called when a file gets processed. Since there is a cue, not all added
+  // Called when a file gets processed. Since there is a queue, not all added
   // files are processed immediately.
   // Receives `file`
   processing(file) {
