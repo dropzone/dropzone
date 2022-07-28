@@ -1221,6 +1221,9 @@ export default class Dropzone extends Emitter {
         files[0].upload.totalChunkCount = Math.ceil(
           transformedFile.size / this.options.chunkSize
         );
+        if (transformedFile.size === 0) {
+          files[0].upload.totalChunkCount = 1;
+        }
       }
 
       if (files[0].upload.chunked) {
