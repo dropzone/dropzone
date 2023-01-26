@@ -843,7 +843,11 @@ export default class Dropzone extends Emitter {
       this.options.thumbnailMethod,
       true,
       (dataUrl) => {
-        this.emit("thumbnail", file, dataUrl);
+        if (typeof dataUrl === 'string') {
+          this.emit("thumbnail", file, dataUrl);
+        } else {
+          this.emit("error", file, "Failed to load image - the file may be corrupted.");
+        }
         this._processingThumbnail = false;
         return this._processThumbnailQueue();
       }
