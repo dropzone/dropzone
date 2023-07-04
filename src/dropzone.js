@@ -842,6 +842,7 @@ export default class Dropzone extends Emitter {
       this.options.thumbnailHeight,
       this.options.thumbnailMethod,
       true,
+      this.options.canvasFill,
       (dataUrl) => {
         this.emit("thumbnail", file, dataUrl);
         this._processingThumbnail = false;
@@ -880,13 +881,14 @@ export default class Dropzone extends Emitter {
   // Resizes an image before it gets sent to the server. This function is the default behavior of
   // `options.transformFile` if `resizeWidth` or `resizeHeight` are set. The callback is invoked with
   // the resized blob.
-  resizeImage(file, width, height, resizeMethod, callback) {
+  resizeImage(file, width, height, resizeMethod, canvasFill, callback) {
     return this.createThumbnail(
       file,
       width,
       height,
       resizeMethod,
       true,
+      canvasFill,
       (dataUrl, canvas) => {
         if (canvas == null) {
           // The image has not been resized
@@ -913,7 +915,7 @@ export default class Dropzone extends Emitter {
     );
   }
 
-  createThumbnail(file, width, height, resizeMethod, fixOrientation, callback) {
+  createThumbnail(file, width, height, resizeMethod, resizeFillColor, fixOrientation, canvasFill, callback) {
     let fileReader = new FileReader();
 
     fileReader.onload = () => {
@@ -932,7 +934,9 @@ export default class Dropzone extends Emitter {
         width,
         height,
         resizeMethod,
+        resizeFillColor,
         fixOrientation,
+        canvasFill,
         callback
       );
     };
@@ -972,6 +976,7 @@ export default class Dropzone extends Emitter {
         this.options.thumbnailHeight,
         this.options.thumbnailMethod,
         this.options.fixOrientation,
+        this.options.canvasFill,
         onDone,
         crossOrigin
       );
@@ -984,6 +989,7 @@ export default class Dropzone extends Emitter {
     height,
     resizeMethod,
     fixOrientation,
+    canvasFill,
     callback,
     crossOrigin
   ) {
@@ -1076,6 +1082,7 @@ export default class Dropzone extends Emitter {
         drawImageIOSFix(
           ctx,
           img,
+          this.options.canvasFill,
           resizeInfo.srcX != null ? resizeInfo.srcX : 0,
           resizeInfo.srcY != null ? resizeInfo.srcY : 0,
           resizeInfo.srcWidth,
@@ -2075,9 +2082,9 @@ let detectVerticalSquash = function (img) {
 
 // A replacement for context.drawImage
 // (args are for source and destination).
-var drawImageIOSFix = function (ctx, img, sx, sy, sw, sh, dx, dy, dw, dh) {
+var drawImageIOSFix = function (ctx, img, fill, sx, sy, sw, sh, dx, dy, dw, dh) {
   let vertSquashRatio = detectVerticalSquash(img);
-  ctx.fillStyle = 'white';
+  ctx.fillStyle = fill;
   ctx.fillRect(0, 0, dw, dh);
   return ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh / vertSquashRatio);
 };
