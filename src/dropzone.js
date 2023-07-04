@@ -2077,6 +2077,8 @@ let detectVerticalSquash = function (img) {
 // (args are for source and destination).
 var drawImageIOSFix = function (ctx, img, sx, sy, sw, sh, dx, dy, dw, dh) {
   let vertSquashRatio = detectVerticalSquash(img);
+  ctx.fillStyle = 'white';
+  ctx.fillRect(0, 0, dw, dh);
   return ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh / vertSquashRatio);
 };
 
