@@ -915,7 +915,7 @@ export default class Dropzone extends Emitter {
     );
   }
 
-  createThumbnail(file, width, height, resizeMethod, resizeFillColor, fixOrientation, canvasFill, callback) {
+  createThumbnail(file, width, height, resizeMethod, fixOrientation, canvasFill, callback) {
     let fileReader = new FileReader();
 
     fileReader.onload = () => {
@@ -934,7 +934,6 @@ export default class Dropzone extends Emitter {
         width,
         height,
         resizeMethod,
-        resizeFillColor,
         fixOrientation,
         canvasFill,
         callback
