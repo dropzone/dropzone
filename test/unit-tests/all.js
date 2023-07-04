@@ -1309,6 +1309,7 @@ describe("Dropzone", function () {
             thumbnailHeight,
             resizeMethod,
             fixOrientation,
+            canvasFill,
             callback
           ) {
             ct_file = file;
@@ -1361,6 +1362,7 @@ describe("Dropzone", function () {
               dropzone.options.thumbnailHeight,
               "crop",
               false,
+              dropzone.options.canvasFill,
               function (dataURI, canvas) {
                 let fileReader = new FileReader();
                 fileReader.onload = function () {

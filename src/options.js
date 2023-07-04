@@ -149,6 +149,13 @@ let defaultOptions = {
    */
   resizeMethod: "contain",
 
+
+  /**
+   * Specifies a background color for the image where target mimeType does not support transparency.
+   * Takes a string of any CSS color data type, see: https://developer.mozilla.org/en-US/docs/Web/CSS/color_value
+   */
+  canvasFill: 'white', 
+
   /**
    * The base that is used to calculate the **displayed** filesize. You can
    * change this to 1024 if you would rather display kibibytes, mebibytes,
@@ -548,6 +555,7 @@ let defaultOptions = {
         this.options.resizeWidth,
         this.options.resizeHeight,
         this.options.resizeMethod,
+        this.options.canvasFill,
         done
       );
     } else {
