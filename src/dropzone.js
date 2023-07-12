@@ -458,7 +458,7 @@ export default class Dropzone extends Emitter {
   // the function will be used to rename the file.name before appending it to the formData
   _renameFile(file) {
     if (typeof this.options.renameFile !== "function") {
-      return file.name;
+      return encodeURIComponent(file.name);
     }
     return this.options.renameFile(file);
   }
