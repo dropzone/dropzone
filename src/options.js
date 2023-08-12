@@ -65,6 +65,7 @@ let defaultOptions = {
 
   /**
    * If `true`, the individual chunks of a file are being uploaded simultaneously.
+   * The limit of concurrent connections is governed by `parallelUploads`.
    */
   parallelChunkUploads: false,
 
