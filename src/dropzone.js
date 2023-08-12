@@ -1302,7 +1302,14 @@ export default class Dropzone extends Emitter {
         };
 
         if (this.options.parallelChunkUploads) {
-          for (let i = 0; i < file.upload.totalChunkCount; i++) {
+          //for (let i = 0; i < file.upload.totalChunkCount; i++) {
+          //  handleNextChunk();
+          //}
+          const triggerCount = Math.min(
+            this.options.parallelChunkUploads === true? this.options.parallelUploads : this.options.parallelChunkUploads,
+            file.upload.totalChunkCount
+          );
+          for (let i = 0; i < triggerCount; i++) {
             handleNextChunk();
           }
         } else {
