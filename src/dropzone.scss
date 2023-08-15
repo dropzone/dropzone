@@ -31,7 +31,6 @@
 }
 
 
-
 @keyframes pulse {
   0% { transform: scale(1); }
   10% { transform: scale(1.1); }
@@ -272,8 +271,8 @@
         fill: $overlay-color;
       }
     }
-    
-      
+
+
     &.dz-processing .dz-progress {
       opacity: 1;
       transition: all 0.2s linear;
@@ -360,8 +359,8 @@
         position: absolute;
         top: -6px;
         left: math.div($width, 2) - 6px;
-        width: 0; 
-        height: 0; 
+        width: 0;
+        height: 0;
         border-left: 6px solid transparent;
         border-right: 6px solid transparent;
         border-bottom: 6px solid $color;
