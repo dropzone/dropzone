@@ -953,6 +953,13 @@ export default class Dropzone extends Emitter {
     crossOrigin,
     resizeThumbnail = true
   ) {
+    // Update maxFiles to account for file from server.
+    // PR #2003 on main repo: https://github.com/dropzone/dropzone/pull/2003
+    mockFile.accepted = true;
+    mockFile.status = Dropzone::Dropzone.SUCCESS;
+    this.files.push(mockFile)
+    this._updateMaxFilesReachedClass();
+
     this.emit("addedfile", mockFile);
     this.emit("complete", mockFile);
 
