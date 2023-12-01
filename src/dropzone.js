@@ -782,21 +782,37 @@ export default class Dropzone extends Emitter {
     this.emit("addedfile", file);
 
     this._enqueueThumbnail(file);
-
-    this.accept(file, (error) => {
-      if (error) {
+    const addFileWithValidation = async () => {
+      try {
+        await this.acceptFile(file);
+        resolve(); // Resolve the Promise when validation is successful
+      } catch (error) {
         file.accepted = false;
-        this._errorProcessing([file], error); // Will set the file.status
-      } else {
-        file.accepted = true;
-        if (this.options.autoQueue) {
-          this.enqueueFile(file);
-        } // Will set .accepted = true
+        this._errorProcessing([file], error);
+        resolve(); // Resolve the Promise even if validation fails
+      } finally {
+        this._updateMaxFilesReachedClass();
       }
-      this._updateMaxFilesReachedClass();
+    };
+
+    addFileWithValidation();
+}
+
+  acceptFile(file) {
+    return new Promise((resolve, reject) => {
+      this.accept(file, (error) => {
+        if (error) {
+          reject(error);
+        } else {
+          file.accepted = true;
+          if (this.options.autoQueue) {
+            this.enqueueFile(file);
+          }
+          resolve();
+        }
+      });
     });
   }
-
   // Wrapper for enqueueFile
   enqueueFiles(files) {
     for (let file of files) {
