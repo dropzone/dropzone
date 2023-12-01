@@ -763,6 +763,9 @@ export default class Dropzone extends Emitter {
   }
 
   addFile(file) {
+    if (this.isFileDuplicate(file)) {
+      return;
+    }
     file.upload = {
       uuid: Dropzone.uuidv4(),
       progress: 0,
@@ -795,6 +798,10 @@ export default class Dropzone extends Emitter {
       }
       this._updateMaxFilesReachedClass();
     });
+  }
+  isFileDuplicate(newFile) {
+    return this.files.some(existingFile => 
+        existingFile.name === newFile.name && existingFile.size === newFile.size);
   }
 
   // Wrapper for enqueueFile
