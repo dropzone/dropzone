@@ -297,6 +297,11 @@ let defaultOptions = {
   dictDefaultMessage: "Drop files here to upload",
 
   /**
+   * Keep the Default message after a file is uploaded
+   */
+  keepDefaultMessage: false,
+
+  /**
    * The text that replaces the default message text it the browser is not supported.
    */
   dictFallbackMessage:
@@ -606,10 +611,10 @@ let defaultOptions = {
     return this.element.classList.remove("dz-started");
   },
 
-  // Called when a file is added to the queue
+  // Called when a file is added to the queue`
   // Receives `file`
   addedfile(file) {
-    if (this.element === this.previewsContainer) {
+    if (this.element === this.previewsContainer && !(this.options.keepDefaultMessage)) {
       this.element.classList.add("dz-started");
     }
 
