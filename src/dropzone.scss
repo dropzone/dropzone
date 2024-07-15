@@ -49,6 +49,11 @@
 
   $image-border-radius: 20px;
 
+  min-height: 150px;
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  border-radius: 5px;
+  padding: 20px 20px;
+
   &.dz-clickable {
     cursor: pointer;
 
@@ -62,10 +67,7 @@
     }
   }
 
-  min-height: 150px;
-  border: 1px solid rgba(0, 0, 0, 0.8);
-  border-radius: 5px;
-  padding: 20px 20px;
+  
 
   &.dz-started {
     .dz-message {
@@ -185,11 +187,11 @@
           }
         }
         &:not(:hover) {
+          overflow: hidden;
+          text-overflow: ellipsis;
           span {
             border: 1px solid transparent;
           }
-          overflow: hidden;
-          text-overflow: ellipsis;
         }
 
       }
