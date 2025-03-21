@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recrutement - Prince Stan SARL</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: white;
+            color: black;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: orange;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .form-container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 2px solid #ccc;
+            background-color: #f9f9f9;
+        }
+        .question {
+            margin-bottom: 15px;
+        }
+        .response-bar {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            background-color: #fff9e6;
+        }
+        .submit-btn {
+            background-color: yellow;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        .submit-btn:hover {
+            background-color: orange;
+        }
+        .barre-rouge {
+            background-color: orange;
+        }
+        .barre-jaune {
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Recrutement chez Prince Stan SARL</h1>
+    <p>Postulez maintenant pour nos offres de stage dans les domaines suivants : Assistante de Direction, Marketing, et Agent Commercial.</p>
+</header>
+
+<div class="form-container">
+    <h2>Formulaire de Candidature</h2>
+
+    <!-- Formulaire de candidature -->
+    <form action="submit_form.php" method="POST" enctype="multipart/form-data">
+
+        <!-- Informations personnelles -->
+        <div class="question">
+            <label for="name">Nom complet :</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+
+        <div class="question">
+            <label for="phone">Numéro de téléphone :</label>
+            <input type="text" id="phone" name="phone" required>
+        </div>
+
+        <div class="question">
+            <label for="email">Adresse e-mail :</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+
+        <div class="question">
+            <label for="cv">Télécharger votre CV :</label>
+            <input type="file" id="cv" name="cv" required>
+        </div>
+
+        <div class="question">
+            <label for="birth">Télécharger votre lettre de motivation :</label>
+            <input type="file" id="birth" name="birth" required>
+        </div>
+
+        <div class="question">
+            <label for="photo">Télécharger votre photo passeport :</label>
+            <input type="file" id="photo" name="photo" required>
+        </div>
+
+        <!-- Choisir un stage -->
+        <div class="question">
+            <label for="stage">Choisir un stage :</label>
+            <select id="stage" name="stage" onchange="showQuestions()" required>
+                <option value="">--Sélectionner un poste--</option>
+                <option value="assistante">Stagiaire en Assistante de Direction</option>
+                <option value="marketing">Stagiaire en Marketing</option>
+                <option value="commercial">Stagiaire en Agent Commercial</option>
+            </select>
+        </div>
+
+        <!-- Questions spécifiques par domaine -->
+
+        <!-- Stagiaire Assistante de Direction -->
+        <div id="assistante-questions" style="display:none;">
+            <div class="question">
+                <label for="motivation-assistante">Qu'est-ce qui vous a attiré vers un stage en assistanat de direction ?</label>
+                <textarea id="motivation-assistante" name="motivation-assistante" rows="4" class="response-bar" required></textarea>
+            </div>
+            <div class="question">
+                <label for="organisation-assistante">Comment organisez-vous votre temps et vos tâches au quotidien ?</label>
+                <textarea id="organisation-assistante" name="organisation-assistante" rows="4" class="response-bar" required></textarea>
+            </div>
+            <div class="question">
+                <label for="competences-assistante">Êtes-vous à l’aise avec des logiciels tels que Word, Excel ?</label>
+                <textarea id="competences-assistante" name="competences-assistante" rows="4" class="response-bar" required></textarea>
+            </div>
+        </div>
+
+        <!-- Stagiaire Marketing -->
+        <div id="marketing-questions" style="display:none;">
+            <div class="question">
+                <label for="motivation-marketing">Quelles sont, selon vous, les tendances actuelles en marketing digital ?</label>
+                <textarea id="motivation-marketing" name="motivation-marketing" rows="4" class="response-bar" required></textarea>
+            </div>
+            <div class="question">
+                <label for="idee-campagne">Proposez une idée de campagne marketing pour notre entreprise.</label>
+                <textarea id="idee-campagne" name="idee-campagne" rows="4" class="response-bar" required></textarea>
+            </div>
+        </div>
+
+        <!-- Stagiaire Agent Commercial -->
+        <div id="commercial-questions" style="display:none;">
+            <div class="question">
+                <label for="motivation-commercial">Pourquoi souhaitez-vous travailler dans le domaine commercial ?</label>
+                <textarea id="motivation-commercial" name="motivation-commercial" rows="4" class="response-bar" required></textarea>
+            </div>
+            <div class="question">
+                <label for="relation-client">Comment établissiez-vous une bonne relation avec un client ?</label>
+                <textarea id="relation-client" name="relation-client" rows="4" class="response-bar" required></textarea>
+            </div>
+        </div>
+
+        <button type="submit" class="submit-btn">Soumettre</button>
+    </form>
+</div>
+
+<script>
+    function showQuestions() {
+        var stage = document.getElementById("stage").value;
+        // Cache toutes les questions
+        document.getElementById("assistante-questions").style.display = "none";
+        document.getElementById("marketing-questions").style.display = "none";
+        document.getElementById("commercial-questions").style.display = "none";
+        
+        // Affiche les questions en fonction du stage choisi
+        if (stage == "assistante") {
+            document.getElementById("assistante-questions").style.display = "block";
+        } else if (stage == "marketing") {
+            document.getElementById("marketing-questions").style.display = "block";
+        } else if (stage == "commercial") {
+            document.getElementById("commercial-questions").style.display = "block";
+        }
+    }
+</script>
+
+</body>
+</html>
