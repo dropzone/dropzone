@@ -17,18 +17,20 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v2.1.1
       - name: Checkout Dropzone
         uses: actions/checkout@v2
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.1
 
-      - run: yarn install
-      - run: yarn build
-      - run: yarn test
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm test
 
       - uses: cypress-io/github-action@v2
         with:
-          start: yarn start-test-server
+          start: pnpm start-test-server
           wait-on: "http://localhost:8888"
           wait-on-timeout: 5
 
