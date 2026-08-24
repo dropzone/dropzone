@@ -34,7 +34,6 @@ export default defineConfig({
     globals: true,
     include: ["test/unit-tests/*.js"],
     exclude: ["test/unit-tests/utils.js"], // shared helper, not a spec
-    setupFiles: ["test/setup.js"],
     browser: {
       enabled: true,
       provider: playwright(),

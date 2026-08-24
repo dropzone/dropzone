@@ -29,14 +29,12 @@ describe("Amazon S3 Support", function () {
   describe("constructor()", () => {
     it("should throw an exception if binaryBody and uploadMultiple", () => {
       let element = document.createElement("div");
-      expect(
-        () =>
-          (dropzone = new Dropzone(element, {
-            url: "/",
-            binaryBody: true,
-            uploadMultiple: true,
-          }))
-      ).to.throw("You cannot set both: binaryBody and uploadMultiple.");
+      expect(() =>
+        (dropzone = new Dropzone(element, {
+          url: "/",
+          binaryBody: true,
+          uploadMultiple: true,
+        }))).toThrow("You cannot set both: binaryBody and uploadMultiple.");
     });
   });
 
@@ -66,8 +64,8 @@ describe("Amazon S3 Support", function () {
       dropzone.addFile(getMockFile("image/jpeg", "some-file.jpg", [[1, 2, 3]]));
       await sleep(10);
 
-      expect(requests[0].requestHeaders["Content-Type"]).eq("text/html");
-      expect(requests[1].requestHeaders["Content-Type"]).eq("image/jpeg");
+      expect(requests[0].requestHeaders["Content-Type"]).toBe("text/html");
+      expect(requests[1].requestHeaders["Content-Type"]).toBe("image/jpeg");
     });
   });
 });

@@ -60,13 +60,11 @@
   },
   "devDependencies": {
     "@vitest/browser-playwright": "^4.1.11",
-    "chai": "6.2.2",
     "cypress": "^8.7.0",
     "cypress-file-upload": "^5.0.8",
     "node-static": "^0.7.11",
     "playwright": "^1.62.1",
     "sass": "^1.33.0",
-    "sinon": "^22.1.0",
     "vite": "^8.2.2",
     "vitest": "^4.1.11"
   }

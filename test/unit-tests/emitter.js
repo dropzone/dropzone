@@ -5,24 +5,24 @@ describe("Emitter", function () {
   beforeEach(() => (emitter = new Dropzone.prototype.Emitter()));
 
   it(".on() should return the object itself", () =>
-    emitter.on("test", function () {}).should.equal(emitter));
+    expect(emitter.on("test", function () {})).toBe(emitter));
 
   it(".on() should properly register listeners", function () {
-    (emitter._callbacks === undefined).should.be.true;
+    expect((emitter._callbacks === undefined)).toBe(true);
     let callback = function () {};
     let callback2 = function () {};
     emitter.on("test", callback);
     emitter.on("test", callback2);
     emitter.on("test2", callback);
-    emitter._callbacks.test.length.should.equal(2);
-    emitter._callbacks.test[0].should.equal(callback);
-    emitter._callbacks.test[1].should.equal(callback2);
-    emitter._callbacks.test2.length.should.equal(1);
-    return emitter._callbacks.test2[0].should.equal(callback);
+    expect(emitter._callbacks.test.length).toBe(2);
+    expect(emitter._callbacks.test[0]).toBe(callback);
+    expect(emitter._callbacks.test[1]).toBe(callback2);
+    expect(emitter._callbacks.test2.length).toBe(1);
+    return expect(emitter._callbacks.test2[0]).toBe(callback);
   });
 
   it(".emit() should return the object itself", () =>
-    emitter.emit("test").should.equal(emitter));
+    expect(emitter.emit("test")).toBe(emitter));
 
   it(".emit() should properly invoke all registered callbacks with arguments", function () {
     let callCount1 = 0;
@@ -30,45 +30,45 @@ describe("Emitter", function () {
     let callCount2 = 0;
     let callback1 = function (var1, var2) {
       callCount1++;
-      var1.should.equal("callback1 var1");
-      return var2.should.equal("callback1 var2");
+      expect(var1).toBe("callback1 var1");
+      return expect(var2).toBe("callback1 var2");
     };
     let callback12 = function (var1, var2) {
       callCount12++;
-      var1.should.equal("callback1 var1");
-      return var2.should.equal("callback1 var2");
+      expect(var1).toBe("callback1 var1");
+      return expect(var2).toBe("callback1 var2");
     };
     let callback2 = function (var1, var2) {
       callCount2++;
-      var1.should.equal("callback2 var1");
-      return var2.should.equal("callback2 var2");
+      expect(var1).toBe("callback2 var1");
+      return expect(var2).toBe("callback2 var2");
     };
 
     emitter.on("test1", callback1);
     emitter.on("test1", callback12);
     emitter.on("test2", callback2);
 
-    callCount1.should.equal(0);
-    callCount12.should.equal(0);
-    callCount2.should.equal(0);
+    expect(callCount1).toBe(0);
+    expect(callCount12).toBe(0);
+    expect(callCount2).toBe(0);
 
     emitter.emit("test1", "callback1 var1", "callback1 var2");
 
-    callCount1.should.equal(1);
-    callCount12.should.equal(1);
-    callCount2.should.equal(0);
+    expect(callCount1).toBe(1);
+    expect(callCount12).toBe(1);
+    expect(callCount2).toBe(0);
 
     emitter.emit("test2", "callback2 var1", "callback2 var2");
 
-    callCount1.should.equal(1);
-    callCount12.should.equal(1);
-    callCount2.should.equal(1);
+    expect(callCount1).toBe(1);
+    expect(callCount12).toBe(1);
+    expect(callCount2).toBe(1);
 
     emitter.emit("test1", "callback1 var1", "callback1 var2");
 
-    callCount1.should.equal(2);
-    callCount12.should.equal(2);
-    return callCount2.should.equal(1);
+    expect(callCount1).toBe(2);
+    expect(callCount12).toBe(2);
+    return expect(callCount2).toBe(1);
   });
 
   return describe(".off()", function () {
@@ -90,35 +90,35 @@ describe("Emitter", function () {
     it("should work without any listeners", function () {
       emitter._callbacks = undefined;
       let emt = emitter.off();
-      emitter._callbacks.should.eql({});
-      return emt.should.equal(emitter);
+      expect(emitter._callbacks).toEqual({});
+      return expect(emt).toBe(emitter);
     });
 
     it("should properly remove all event listeners", function () {
       let emt = emitter.off();
-      emitter._callbacks.should.eql({});
-      return emt.should.equal(emitter);
+      expect(emitter._callbacks).toEqual({});
+      return expect(emt).toBe(emitter);
     });
 
     it("should properly remove all event listeners for specific event", function () {
       emitter.off("test1");
-      (emitter._callbacks["test1"] === undefined).should.be.true;
-      emitter._callbacks["test2"].length.should.equal(1);
-      emitter._callbacks["test3"].length.should.equal(2);
+      expect((emitter._callbacks["test1"] === undefined)).toBe(true);
+      expect(emitter._callbacks["test2"].length).toBe(1);
+      expect(emitter._callbacks["test3"].length).toBe(2);
       let emt = emitter.off("test2");
-      (emitter._callbacks["test2"] === undefined).should.be.true;
-      return emt.should.equal(emitter);
+      expect((emitter._callbacks["test2"] === undefined)).toBe(true);
+      return expect(emt).toBe(emitter);
     });
 
     it("should properly remove specific event listener", function () {
       emitter.off("test1", callback1);
-      emitter._callbacks["test1"].length.should.equal(1);
-      emitter._callbacks["test1"][0].should.equal(callback2);
-      emitter._callbacks["test3"].length.should.equal(2);
+      expect(emitter._callbacks["test1"].length).toBe(1);
+      expect(emitter._callbacks["test1"][0]).toBe(callback2);
+      expect(emitter._callbacks["test3"].length).toBe(2);
       let emt = emitter.off("test3", callback4);
-      emitter._callbacks["test3"].length.should.equal(1);
-      emitter._callbacks["test3"][0].should.equal(callback1);
-      return emt.should.equal(emitter);
+      expect(emitter._callbacks["test3"].length).toBe(1);
+      expect(emitter._callbacks["test3"][0]).toBe(callback1);
+      return expect(emt).toBe(emitter);
     });
   });
 });

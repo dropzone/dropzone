@@ -12,21 +12,21 @@ describe("Static functions", function () {
     });
     it("should use blockedBrowsers usually", () => {
       let initialValue = Dropzone.blockedBrowsers;
-      Dropzone.isBrowserSupported().should.be.true;
-      initialValue.should.equal(Dropzone.blockedBrowsers);
+      expect(Dropzone.isBrowserSupported()).toBe(true);
+      expect(initialValue).toBe(Dropzone.blockedBrowsers);
 
       Dropzone.blockedBrowsers = [/HeadlessChrome/];
-      Dropzone.isBrowserSupported().should.be.false;
+      expect(Dropzone.isBrowserSupported()).toBe(false);
     });
     it("should user blacklistedBrowsers if its set", () => {
       let initialValue = Dropzone.blockedBrowsers;
 
-      Dropzone.isBrowserSupported().should.be.true;
+      expect(Dropzone.isBrowserSupported()).toBe(true);
 
       Dropzone.blacklistedBrowsers = [/HeadlessChrome/];
-      Dropzone.isBrowserSupported().should.be.false;
-      initialValue.should.not.equal(Dropzone.blockedBrowsers);
-      Dropzone.blockedBrowsers.should.equal(Dropzone.blacklistedBrowsers);
+      expect(Dropzone.isBrowserSupported()).toBe(false);
+      expect(initialValue).not.toBe(Dropzone.blockedBrowsers);
+      expect(Dropzone.blockedBrowsers).toBe(Dropzone.blacklistedBrowsers);
     });
   });
 
@@ -36,14 +36,14 @@ describe("Static functions", function () {
     );
 
     it("should properly create an element from a string", () =>
-      element.tagName.should.equal("DIV"));
+      expect(element.tagName).toBe("DIV"));
     it("should properly add the correct class", () =>
-      element.classList.contains("test").should.be.ok);
+      expect(element.classList.contains("test")).toBeTruthy());
     it("should properly create child elements", () =>
-      element.querySelector("span").tagName.should.equal("SPAN"));
+      expect(element.querySelector("span").tagName).toBe("SPAN"));
     it("should always return only one element", function () {
       element = Dropzone.createElement("<div></div><span></span>");
-      return element.tagName.should.equal("DIV");
+      return expect(element.tagName).toBe("DIV");
     });
   });
 
@@ -59,16 +59,16 @@ describe("Static functions", function () {
     afterAll(() => document.body.removeChild(element));
 
     it("should return yes if elements are the same", () =>
-      Dropzone.elementInside(element, element).should.be.ok);
+      expect(Dropzone.elementInside(element, element)).toBeTruthy());
     it("should return yes if element is direct child", () =>
-      Dropzone.elementInside(child1, element).should.be.ok);
+      expect(Dropzone.elementInside(child1, element)).toBeTruthy());
     it("should return yes if element is some child", function () {
-      Dropzone.elementInside(child2, element).should.be.ok;
-      return Dropzone.elementInside(child2, document.body).should.be.ok;
+      expect(Dropzone.elementInside(child2, element)).toBeTruthy();
+      return expect(Dropzone.elementInside(child2, document.body)).toBeTruthy();
     });
     it("should return no unless element is some child", function () {
-      Dropzone.elementInside(element, child1).should.not.be.ok;
-      return Dropzone.elementInside(document.body, child1).should.not.be.ok;
+      expect(Dropzone.elementInside(element, child1)).toBeFalsy();
+      return expect(Dropzone.elementInside(document.body, child1)).toBeFalsy();
     });
   });
 
@@ -85,24 +85,24 @@ describe("Static functions", function () {
 
     it("should take options set in Dropzone.options from camelized id", function () {
       element.id = "test-element";
-      return Dropzone.optionsForElement(element).should.equal(testOptions);
+      return expect(Dropzone.optionsForElement(element)).toBe(testOptions);
     });
 
     it("should return undefined if no options set", function () {
       element.id = "test-element2";
-      return expect(Dropzone.optionsForElement(element)).to.equal(undefined);
+      return expect(Dropzone.optionsForElement(element)).toBe(undefined);
     });
 
     it("should return undefined and not throw if it's a form with an input element of the name 'id'", function () {
       element = Dropzone.createElement('<form><input name="id" /</form>');
-      return expect(Dropzone.optionsForElement(element)).to.equal(undefined);
+      return expect(Dropzone.optionsForElement(element)).toBe(undefined);
     });
 
     it("should ignore input fields with the name='id'", function () {
       element = Dropzone.createElement(
         '<form id="test-element"><input type="hidden" name="id" value="fooo" /></form>'
       );
-      return Dropzone.optionsForElement(element).should.equal(testOptions);
+      return expect(Dropzone.optionsForElement(element)).toBe(testOptions);
     });
   });
 
@@ -120,15 +120,15 @@ describe("Static functions", function () {
     });
 
     it("should throw an exception if no dropzone attached", () =>
-      expect(() => Dropzone.forElement(document.createElement("div"))).to.throw(
+      expect(() => Dropzone.forElement(document.createElement("div"))).toThrow(
         "No Dropzone found for given element. This is probably because you're trying to access it before Dropzone had the time to initialize. Use the `init` option to setup any additional observers on your Dropzone."
       ));
 
     it("should accept css selectors", () =>
-      expect(Dropzone.forElement("#some-test-element")).to.equal(dropzone));
+      expect(Dropzone.forElement("#some-test-element")).toBe(dropzone));
 
     it("should accept native elements", () =>
-      expect(Dropzone.forElement(element)).to.equal(dropzone));
+      expect(Dropzone.forElement(element)).toBe(dropzone));
   });
 
   describe("Dropzone.discover()", function () {
@@ -155,137 +155,121 @@ describe("Static functions", function () {
       });
 
       it("should find elements with a .dropzone class", () =>
-        element1.dropzone.should.be.ok);
+        expect(element1.dropzone).toBeTruthy());
 
       it("should not create dropzones with disabled options", () =>
-        expect(element2.dropzone).to.not.be.ok);
+        expect(element2.dropzone).toBeFalsy());
     });
   });
 
   describe("Dropzone.isValidFile()", function () {
     it("should return true if called without acceptedFiles", () =>
-      Dropzone.isValidFile({ type: "some/type" }, null).should.be.ok);
+      expect(Dropzone.isValidFile({ type: "some/type" }, null)).toBeTruthy());
 
     it("should properly validate if called with concrete mime types", function () {
       let acceptedMimeTypes = "text/html,image/jpeg,application/json";
 
-      Dropzone.isValidFile({ type: "text/html" }, acceptedMimeTypes).should.be
-        .ok;
-      Dropzone.isValidFile({ type: "image/jpeg" }, acceptedMimeTypes).should.be
-        .ok;
-      Dropzone.isValidFile({ type: "application/json" }, acceptedMimeTypes)
-        .should.be.ok;
-      return Dropzone.isValidFile({ type: "image/bmp" }, acceptedMimeTypes)
-        .should.not.be.ok;
+      expect(Dropzone.isValidFile({ type: "text/html" }, acceptedMimeTypes)).toBeTruthy();
+      expect(Dropzone.isValidFile({ type: "image/jpeg" }, acceptedMimeTypes)).toBeTruthy();
+      expect(Dropzone.isValidFile({ type: "application/json" }, acceptedMimeTypes)).toBeTruthy();
+      return expect(Dropzone.isValidFile({ type: "image/bmp" }, acceptedMimeTypes)).toBeFalsy();
     });
 
     it("should properly validate if called with base mime types", function () {
       let acceptedMimeTypes = "text/*,image/*,application/*";
 
-      Dropzone.isValidFile({ type: "text/html" }, acceptedMimeTypes).should.be
-        .ok;
-      Dropzone.isValidFile({ type: "image/jpeg" }, acceptedMimeTypes).should.be
-        .ok;
-      Dropzone.isValidFile({ type: "application/json" }, acceptedMimeTypes)
-        .should.be.ok;
-      Dropzone.isValidFile({ type: "image/bmp" }, acceptedMimeTypes).should.be
-        .ok;
-      return Dropzone.isValidFile({ type: "some/type" }, acceptedMimeTypes)
-        .should.not.be.ok;
+      expect(Dropzone.isValidFile({ type: "text/html" }, acceptedMimeTypes)).toBeTruthy();
+      expect(Dropzone.isValidFile({ type: "image/jpeg" }, acceptedMimeTypes)).toBeTruthy();
+      expect(Dropzone.isValidFile({ type: "application/json" }, acceptedMimeTypes)).toBeTruthy();
+      expect(Dropzone.isValidFile({ type: "image/bmp" }, acceptedMimeTypes)).toBeTruthy();
+      return expect(Dropzone.isValidFile({ type: "some/type" }, acceptedMimeTypes)).toBeFalsy();
     });
 
     it("should properly validate if called with mixed mime types", function () {
       let acceptedMimeTypes = "text/*,image/jpeg,application/*";
 
-      Dropzone.isValidFile({ type: "text/html" }, acceptedMimeTypes).should.be
-        .ok;
-      Dropzone.isValidFile({ type: "image/jpeg" }, acceptedMimeTypes).should.be
-        .ok;
-      Dropzone.isValidFile({ type: "image/bmp" }, acceptedMimeTypes).should.not
-        .be.ok;
-      Dropzone.isValidFile({ type: "application/json" }, acceptedMimeTypes)
-        .should.be.ok;
-      return Dropzone.isValidFile({ type: "some/type" }, acceptedMimeTypes)
-        .should.not.be.ok;
+      expect(Dropzone.isValidFile({ type: "text/html" }, acceptedMimeTypes)).toBeTruthy();
+      expect(Dropzone.isValidFile({ type: "image/jpeg" }, acceptedMimeTypes)).toBeTruthy();
+      expect(Dropzone.isValidFile({ type: "image/bmp" }, acceptedMimeTypes)).toBeFalsy();
+      expect(Dropzone.isValidFile({ type: "application/json" }, acceptedMimeTypes)).toBeTruthy();
+      return expect(Dropzone.isValidFile({ type: "some/type" }, acceptedMimeTypes)).toBeFalsy();
     });
 
     it("should properly validate even with spaces in between", function () {
       let acceptedMimeTypes = "text/html ,   image/jpeg, application/json";
 
-      Dropzone.isValidFile({ type: "text/html" }, acceptedMimeTypes).should.be
-        .ok;
-      return Dropzone.isValidFile({ type: "image/jpeg" }, acceptedMimeTypes)
-        .should.be.ok;
+      expect(Dropzone.isValidFile({ type: "text/html" }, acceptedMimeTypes)).toBeTruthy();
+      return expect(Dropzone.isValidFile({ type: "image/jpeg" }, acceptedMimeTypes)).toBeTruthy();
     });
 
     it("should properly validate extensions", function () {
       let acceptedMimeTypes = "text/html ,    image/jpeg, .pdf  ,.png";
 
-      Dropzone.isValidFile(
+      expect(Dropzone.isValidFile(
         { name: "somxsfsd", type: "text/html" },
         acceptedMimeTypes
-      ).should.be.ok;
-      Dropzone.isValidFile(
+      )).toBeTruthy();
+      expect(Dropzone.isValidFile(
         { name: "somesdfsdf", type: "image/jpeg" },
         acceptedMimeTypes
-      ).should.be.ok;
-      Dropzone.isValidFile(
+      )).toBeTruthy();
+      expect(Dropzone.isValidFile(
         { name: "somesdfadfadf", type: "application/json" },
         acceptedMimeTypes
-      ).should.not.be.ok;
-      Dropzone.isValidFile(
+      )).toBeFalsy();
+      expect(Dropzone.isValidFile(
         { name: "some-file file.pdf", type: "random/type" },
         acceptedMimeTypes
-      ).should.be.ok;
+      )).toBeTruthy();
       // .pdf has to be in the end
-      Dropzone.isValidFile(
+      expect(Dropzone.isValidFile(
         { name: "some-file.pdf file.gif", type: "random/type" },
         acceptedMimeTypes
-      ).should.not.be.ok;
-      return Dropzone.isValidFile(
+      )).toBeFalsy();
+      return expect(Dropzone.isValidFile(
         { name: "some-file file.png", type: "random/type" },
         acceptedMimeTypes
-      ).should.be.ok;
+      )).toBeTruthy();
     });
   });
 
   describe("Dropzone.confirm", function () {
-    beforeEach(() => sinon.stub(window, "confirm"));
-    afterEach(() => window.confirm.restore());
+    beforeEach(() => vi.spyOn(window, "confirm").mockImplementation(() => {}));
+    afterEach(() => window.confirm.mockRestore());
     it("should forward to window.confirm and call the callbacks accordingly", function () {
       let rejected;
       let accepted = (rejected = false);
-      window.confirm.returns(true);
+      window.confirm.mockReturnValue(true);
       Dropzone.confirm(
         "test question",
         () => (accepted = true),
         () => (rejected = true)
       );
-      window.confirm.args[0][0].should.equal("test question");
-      accepted.should.equal(true);
-      rejected.should.equal(false);
+      expect(window.confirm.mock.calls[0][0]).toBe("test question");
+      expect(accepted).toBe(true);
+      expect(rejected).toBe(false);
 
       accepted = rejected = false;
-      window.confirm.returns(false);
+      window.confirm.mockReturnValue(false);
       Dropzone.confirm(
         "test question 2",
         () => (accepted = true),
         () => (rejected = true)
       );
-      window.confirm.args[1][0].should.equal("test question 2");
-      accepted.should.equal(false);
-      return rejected.should.equal(true);
+      expect(window.confirm.mock.calls[1][0]).toBe("test question 2");
+      expect(accepted).toBe(false);
+      return expect(rejected).toBe(true);
     });
 
     it("should not error if rejected is not provided", function () {
       let rejected;
       let accepted = (rejected = false);
-      window.confirm.returns(false);
+      window.confirm.mockReturnValue(false);
       Dropzone.confirm("test question", () => (accepted = true));
-      window.confirm.args[0][0].should.equal("test question");
+      expect(window.confirm.mock.calls[0][0]).toBe("test question");
       // Nothing should have changed since there is no rejected function.
-      accepted.should.equal(false);
-      return rejected.should.equal(false);
+      expect(accepted).toBe(false);
+      return expect(rejected).toBe(false);
     });
   });
 
@@ -309,59 +293,52 @@ describe("Static functions", function () {
     describe(".getElement()", function () {
       it("should accept a string", function () {
         let el = Dropzone.getElement(".tmptest");
-        el.should.equal(tmpElements[0]);
+        expect(el).toBe(tmpElements[0]);
         el = Dropzone.getElement("#tmptest1");
-        return el.should.equal(tmpElements[1]);
+        return expect(el).toBe(tmpElements[1]);
       });
       it("should accept a node", function () {
         let el = Dropzone.getElement(tmpElements[2]);
-        return el.should.equal(tmpElements[2]);
+        return expect(el).toBe(tmpElements[2]);
       });
       it("should fail if invalid selector", function () {
         let errorMessage =
           "Invalid `clickable` option provided. Please provide a CSS selector or a plain HTML element.";
-        expect(() => Dropzone.getElement("lblasdlfsfl", "clickable")).to.throw(
-          errorMessage
-        );
+        expect(() => Dropzone.getElement("lblasdlfsfl", "clickable")).toThrow(errorMessage);
         expect(() =>
-          Dropzone.getElement({ lblasdlfsfl: "lblasdlfsfl" }, "clickable")
-        ).to.throw(errorMessage);
+          Dropzone.getElement({ lblasdlfsfl: "lblasdlfsfl" }, "clickable")).toThrow(errorMessage);
         return expect(() =>
-          Dropzone.getElement(["lblasdlfsfl"], "clickable")
-        ).to.throw(errorMessage);
+          Dropzone.getElement(["lblasdlfsfl"], "clickable")).toThrow(errorMessage);
       });
     });
 
     describe(".getElements()", function () {
       it("should accept a list of strings", function () {
         let els = Dropzone.getElements([".tmptest", "#tmptest1"]);
-        return els.should.eql([tmpElements[0], tmpElements[1]]);
+        return expect(els).toEqual([tmpElements[0], tmpElements[1]]);
       });
       it("should accept a list of nodes", function () {
         let els = Dropzone.getElements([tmpElements[0], tmpElements[2]]);
-        return els.should.eql([tmpElements[0], tmpElements[2]]);
+        return expect(els).toEqual([tmpElements[0], tmpElements[2]]);
       });
       it("should accept a mixed list", function () {
         let els = Dropzone.getElements(["#tmptest1", tmpElements[2]]);
-        return els.should.eql([tmpElements[1], tmpElements[2]]);
+        return expect(els).toEqual([tmpElements[1], tmpElements[2]]);
       });
       it("should accept a string selector", function () {
         let els = Dropzone.getElements(".random");
-        return els.should.eql([tmpElements[1], tmpElements[2]]);
+        return expect(els).toEqual([tmpElements[1], tmpElements[2]]);
       });
       it("should accept a single node", function () {
         let els = Dropzone.getElements(tmpElements[1]);
-        return els.should.eql([tmpElements[1]]);
+        return expect(els).toEqual([tmpElements[1]]);
       });
       it("should fail if invalid selector", function () {
         let errorMessage =
           "Invalid `clickable` option provided. Please provide a CSS selector, a plain HTML element or a list of those.";
-        expect(() => Dropzone.getElements("lblasdlfsfl", "clickable")).to.throw(
-          errorMessage
-        );
+        expect(() => Dropzone.getElements("lblasdlfsfl", "clickable")).toThrow(errorMessage);
         return expect(() =>
-          Dropzone.getElements(["lblasdlfsfl"], "clickable")
-        ).to.throw(errorMessage);
+          Dropzone.getElements(["lblasdlfsfl"], "clickable")).toThrow(errorMessage);
       });
     });
   });
