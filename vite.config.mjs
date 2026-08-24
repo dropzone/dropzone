@@ -1,4 +1,5 @@
 import { defineConfig } from "vite";
+import { playwright } from "@vitest/browser-playwright";
 
 // Bundler-facing builds: dist/dropzone.js (CJS) and dist/dropzone.mjs (ESM).
 //
@@ -23,6 +24,22 @@ export default defineConfig({
         // Keeps both `require("dropzone").Dropzone` and `.default` working.
         exports: "named",
       },
+    },
+  },
+
+  // Tests run against src/ in a real browser: Dropzone is a drag-and-drop DOM
+  // library, and sharing this config means the `?raw` template import resolves
+  // exactly as it does in the build.
+  test: {
+    globals: true,
+    include: ["test/unit-tests/*.js"],
+    exclude: ["test/unit-tests/utils.js"], // shared helper, not a spec
+    setupFiles: ["test/setup.js"],
+    browser: {
+      enabled: true,
+      provider: playwright(),
+      instances: [{ browser: "chromium" }],
+      headless: true,
     },
   },
 });

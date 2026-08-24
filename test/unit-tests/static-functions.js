@@ -56,7 +56,7 @@ describe("Static functions", function () {
     let child1 = element.querySelector(".child1");
     let child2 = element.querySelector(".child2");
 
-    after(() => document.body.removeChild(element));
+    afterAll(() => document.body.removeChild(element));
 
     it("should return yes if elements are the same", () =>
       Dropzone.elementInside(element, element).should.be.ok);
@@ -78,8 +78,8 @@ describe("Static functions", function () {
       method: "put",
     };
 
-    before(() => (Dropzone.options.testElement = testOptions));
-    after(() => delete Dropzone.options.testElement);
+    beforeAll(() => (Dropzone.options.testElement = testOptions));
+    afterAll(() => delete Dropzone.options.testElement);
 
     let element = document.createElement("div");
 
@@ -110,11 +110,11 @@ describe("Static functions", function () {
     let element = document.createElement("div");
     element.id = "some-test-element";
     let dropzone = null;
-    before(function () {
+    beforeAll(function () {
       document.body.appendChild(element);
       return (dropzone = new Dropzone(element, { url: "/test" }));
     });
-    after(function () {
+    afterAll(function () {
       dropzone.disable();
       return document.body.removeChild(element);
     });
@@ -142,14 +142,14 @@ describe("Static functions", function () {
     element3.id = "test-element-3";
 
     describe("specific options", function () {
-      before(function () {
+      beforeAll(function () {
         Dropzone.options.testElement1 = { url: "test-url" };
         Dropzone.options.testElement2 = false; // Disabled
         document.body.appendChild(element1);
         document.body.appendChild(element2);
         return Dropzone.discover();
       });
-      after(function () {
+      afterAll(function () {
         document.body.removeChild(element1);
         return document.body.removeChild(element2);
       });
