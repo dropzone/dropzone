@@ -1733,7 +1733,7 @@ const without = (list, rejectedItem) =>
   list.filter((item) => item !== rejectedItem).map((item) => item);
 
 // abc-def_ghi -> abcDefGhi
-const camelize = (str) => str.replace(/[\-_](\w)/g, (match) => match.charAt(1).toUpperCase());
+const camelize = (str) => str.replace(/[-_](\w)/g, (match) => match.charAt(1).toUpperCase());
 
 // Creates an element from string
 Dropzone.createElement = function (string) {
@@ -1833,7 +1833,7 @@ Dropzone.isValidFile = function (file, acceptedFiles) {
       ) {
         return true;
       }
-    } else if (/\/\*$/.test(validType)) {
+    } else if (validType.endsWith("/*")) {
       // This is something like a image/* mime type
       if (baseMimeType === validType.replace(/\/.*$/, "")) {
         return true;
@@ -2048,13 +2048,13 @@ class ExifRestore {
     let i = 0;
     let buf = [];
     // remove all characters that are not A-Z, a-z, 0-9, +, /, or =
-    let base64test = /[^A-Za-z0-9\+\/\=]/g;
+    let base64test = /[^A-Za-z0-9+/=]/g;
     if (base64test.exec(input)) {
       console.warn(
         "There were invalid base64 characters in the input text.\nValid base64 characters are A-Z, a-z, 0-9, '+', '/',and '='\nExpect errors in decoding.",
       );
     }
-    input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+    input = input.replace(/[^A-Za-z0-9+/=]/g, "");
     while (true) {
       enc1 = this.KEY_STR.indexOf(input.charAt(i++));
       enc2 = this.KEY_STR.indexOf(input.charAt(i++));

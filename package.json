@@ -16,16 +16,16 @@
   "license": "MIT",
   "maintainers": [
     {
-      "name": "Matias Meno",
+      "name": "Matias Simon",
       "email": "m@tias.me",
-      "web": "https://www.yesmeno.com"
+      "web": "https://www.matsimon.dev"
     }
   ],
   "contributors": [
     {
-      "name": "Matias Meno",
+      "name": "Matias Simon",
       "email": "m@tias.me",
-      "web": "https://www.yesmeno.com"
+      "web": "https://www.matsimon.dev"
     }
   ],
   "repository": {
@@ -50,7 +50,9 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "format": "oxfmt .",
-    "format:check": "oxfmt --check ."
+    "format:check": "oxfmt --check .",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix"
   },
   "dependencies": {
     "just-extend": "^5.0.0"
@@ -59,6 +61,7 @@
     "@playwright/test": "^1.62.1",
     "@vitest/browser-playwright": "^4.1.11",
     "oxfmt": "^0.65.0",
+    "oxlint": "^1.80.0",
     "playwright": "^1.62.1",
     "sass": "^1.33.0",
     "vite": "^8.2.2",

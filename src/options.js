@@ -707,9 +707,11 @@ let defaultOptions = {
   uploadprogress(file, progress, bytesSent) {
     if (file.previewElement) {
       for (let node of file.previewElement.querySelectorAll("[data-dz-uploadprogress]")) {
-        node.nodeName === "PROGRESS"
-          ? (node.value = progress)
-          : (node.style.width = `${progress}%`);
+        if (node.nodeName === "PROGRESS") {
+          node.value = progress;
+        } else {
+          node.style.width = `${progress}%`;
+        }
       }
     }
   },

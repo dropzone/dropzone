@@ -1,0 +1,9 @@
+# Revisions listed here are skipped by `git blame`.
+#
+# Enable locally with:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+#
+# GitHub honours this file automatically.
+
+# Format the codebase with oxfmt
+567490b6d9ac61d4694507690039febc5fc5474f
