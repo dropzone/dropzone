@@ -8,7 +8,7 @@ describe("Emitter", function () {
     expect(emitter.on("test", function () {})).toBe(emitter));
 
   it(".on() should properly register listeners", function () {
-    expect((emitter._callbacks === undefined)).toBe(true);
+    expect(emitter._callbacks === undefined).toBe(true);
     let callback = function () {};
     let callback2 = function () {};
     emitter.on("test", callback);
@@ -21,8 +21,7 @@ describe("Emitter", function () {
     return expect(emitter._callbacks.test2[0]).toBe(callback);
   });
 
-  it(".emit() should return the object itself", () =>
-    expect(emitter.emit("test")).toBe(emitter));
+  it(".emit() should return the object itself", () => expect(emitter.emit("test")).toBe(emitter));
 
   it(".emit() should properly invoke all registered callbacks with arguments", function () {
     let callCount1 = 0;
@@ -84,7 +83,7 @@ describe("Emitter", function () {
           test2: [callback3],
           test3: [callback1, callback4],
           test4: [],
-        })
+        }),
     );
 
     it("should work without any listeners", function () {
@@ -102,11 +101,11 @@ describe("Emitter", function () {
 
     it("should properly remove all event listeners for specific event", function () {
       emitter.off("test1");
-      expect((emitter._callbacks["test1"] === undefined)).toBe(true);
+      expect(emitter._callbacks["test1"] === undefined).toBe(true);
       expect(emitter._callbacks["test2"].length).toBe(1);
       expect(emitter._callbacks["test3"].length).toBe(2);
       let emt = emitter.off("test2");
-      expect((emitter._callbacks["test2"] === undefined)).toBe(true);
+      expect(emitter._callbacks["test2"] === undefined).toBe(true);
       return expect(emt).toBe(emitter);
     });
 

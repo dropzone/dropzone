@@ -299,8 +299,7 @@ let defaultOptions = {
   /**
    * The text that replaces the default message text it the browser is not supported.
    */
-  dictFallbackMessage:
-    "Your browser does not support drag'n'drop file uploads.",
+  dictFallbackMessage: "Your browser does not support drag'n'drop file uploads.",
 
   /**
    * The text that will be added before the fallback form.
@@ -314,8 +313,7 @@ let defaultOptions = {
    * If the filesize is too big.
    * `{{filesize}}` and `{{maxFilesize}}` will be replaced with the respective configuration values.
    */
-  dictFileTooBig:
-    "File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.",
+  dictFileTooBig: "File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.",
 
   /**
    * If the file doesn't match the file type.
@@ -442,9 +440,7 @@ let defaultOptions = {
       }
     }
     if (!messageElement) {
-      messageElement = Dropzone.createElement(
-        '<div class="dz-message"><span></span></div>'
-      );
+      messageElement = Dropzone.createElement('<div class="dz-message"><span></span></div>');
       this.element.appendChild(messageElement);
     }
 
@@ -539,16 +535,13 @@ let defaultOptions = {
    * to be invoked with the file when the transformation is done.
    */
   transformFile(file, done) {
-    if (
-      (this.options.resizeWidth || this.options.resizeHeight) &&
-      file.type.match(/image.*/)
-    ) {
+    if ((this.options.resizeWidth || this.options.resizeHeight) && file.type.match(/image.*/)) {
       return this.resizeImage(
         file,
         this.options.resizeWidth,
         this.options.resizeHeight,
         this.options.resizeMethod,
-        done
+        done,
       );
     } else {
       return done(file);
@@ -614,9 +607,7 @@ let defaultOptions = {
     }
 
     if (this.previewsContainer && !this.options.disablePreviews) {
-      file.previewElement = Dropzone.createElement(
-        this.options.previewTemplate.trim()
-      );
+      file.previewElement = Dropzone.createElement(this.options.previewTemplate.trim());
       file.previewTemplate = file.previewElement; // Backwards compatibility
 
       this.previewsContainer.appendChild(file.previewElement);
@@ -629,7 +620,7 @@ let defaultOptions = {
 
       if (this.options.addRemoveLinks) {
         file._removeLink = Dropzone.createElement(
-          `<a class="dz-remove" href="javascript:undefined;" data-dz-remove>${this.options.dictRemoveFile}</a>`
+          `<a class="dz-remove" href="javascript:undefined;" data-dz-remove>${this.options.dictRemoveFile}</a>`,
         );
         file.previewElement.appendChild(file._removeLink);
       }
@@ -638,15 +629,13 @@ let defaultOptions = {
         e.preventDefault();
         e.stopPropagation();
         if (file.status === Dropzone.UPLOADING) {
-          return Dropzone.confirm(
-            this.options.dictCancelUploadConfirmation,
-            () => this.removeFile(file)
+          return Dropzone.confirm(this.options.dictCancelUploadConfirmation, () =>
+            this.removeFile(file),
           );
         } else {
           if (this.options.dictRemoveFileConfirmation) {
-            return Dropzone.confirm(
-              this.options.dictRemoveFileConfirmation,
-              () => this.removeFile(file)
+            return Dropzone.confirm(this.options.dictRemoveFileConfirmation, () =>
+              this.removeFile(file),
             );
           } else {
             return this.removeFile(file);
@@ -654,9 +643,7 @@ let defaultOptions = {
         }
       };
 
-      for (let removeLink of file.previewElement.querySelectorAll(
-        "[data-dz-remove]"
-      )) {
+      for (let removeLink of file.previewElement.querySelectorAll("[data-dz-remove]")) {
         removeLink.addEventListener("click", removeFileEvent);
       }
     }
@@ -675,17 +662,12 @@ let defaultOptions = {
   thumbnail(file, dataUrl) {
     if (file.previewElement) {
       file.previewElement.classList.remove("dz-file-preview");
-      for (let thumbnailElement of file.previewElement.querySelectorAll(
-        "[data-dz-thumbnail]"
-      )) {
+      for (let thumbnailElement of file.previewElement.querySelectorAll("[data-dz-thumbnail]")) {
         thumbnailElement.alt = file.name;
         thumbnailElement.src = dataUrl;
       }
 
-      return setTimeout(
-        () => file.previewElement.classList.add("dz-image-preview"),
-        1
-      );
+      return setTimeout(() => file.previewElement.classList.add("dz-image-preview"), 1);
     }
   },
 
@@ -697,9 +679,7 @@ let defaultOptions = {
       if (typeof message !== "string" && message.error) {
         message = message.error;
       }
-      for (let node of file.previewElement.querySelectorAll(
-        "[data-dz-errormessage]"
-      )) {
+      for (let node of file.previewElement.querySelectorAll("[data-dz-errormessage]")) {
         node.textContent = message;
       }
     }
@@ -726,9 +706,7 @@ let defaultOptions = {
   // To get the total number of bytes of the file, use `file.size`
   uploadprogress(file, progress, bytesSent) {
     if (file.previewElement) {
-      for (let node of file.previewElement.querySelectorAll(
-        "[data-dz-uploadprogress]"
-      )) {
+      for (let node of file.previewElement.querySelectorAll("[data-dz-uploadprogress]")) {
         node.nodeName === "PROGRESS"
           ? (node.value = progress)
           : (node.style.width = `${progress}%`);

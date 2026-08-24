@@ -6,7 +6,7 @@ describe("Amazon S3 Support", function () {
   let getMockFile = (
     type = "text/html",
     filename = "test file name",
-    contents = ["file contents"]
+    contents = ["file contents"],
   ) => {
     let file = new File(contents, filename, { type: type });
     file.status = Dropzone.ADDED;
@@ -29,12 +29,14 @@ describe("Amazon S3 Support", function () {
   describe("constructor()", () => {
     it("should throw an exception if binaryBody and uploadMultiple", () => {
       let element = document.createElement("div");
-      expect(() =>
-        (dropzone = new Dropzone(element, {
-          url: "/",
-          binaryBody: true,
-          uploadMultiple: true,
-        }))).toThrow("You cannot set both: binaryBody and uploadMultiple.");
+      expect(
+        () =>
+          (dropzone = new Dropzone(element, {
+            url: "/",
+            binaryBody: true,
+            uploadMultiple: true,
+          })),
+      ).toThrow("You cannot set both: binaryBody and uploadMultiple.");
     });
   });
 

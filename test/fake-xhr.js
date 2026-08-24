@@ -53,7 +53,7 @@ class FakeXMLHttpRequest {
 
   getResponseHeader(name) {
     const key = Object.keys(this.responseHeaders).find(
-      (k) => k.toLowerCase() === String(name).toLowerCase()
+      (k) => k.toLowerCase() === String(name).toLowerCase(),
     );
     return key === undefined ? null : this.responseHeaders[key];
   }

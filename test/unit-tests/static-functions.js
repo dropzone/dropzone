@@ -31,9 +31,7 @@ describe("Static functions", function () {
   });
 
   describe("Dropzone.createElement()", function () {
-    let element = Dropzone.createElement(
-      '<div class="test"><span>Hallo</span></div>'
-    );
+    let element = Dropzone.createElement('<div class="test"><span>Hallo</span></div>');
 
     it("should properly create an element from a string", () =>
       expect(element.tagName).toBe("DIV"));
@@ -49,7 +47,7 @@ describe("Static functions", function () {
 
   describe("Dropzone.elementInside()", function () {
     let element = Dropzone.createElement(
-      '<div id="test"><div class="child1"><div class="child2"></div></div></div>'
+      '<div id="test"><div class="child1"><div class="child2"></div></div></div>',
     );
     document.body.appendChild(element);
 
@@ -100,7 +98,7 @@ describe("Static functions", function () {
 
     it("should ignore input fields with the name='id'", function () {
       element = Dropzone.createElement(
-        '<form id="test-element"><input type="hidden" name="id" value="fooo" /></form>'
+        '<form id="test-element"><input type="hidden" name="id" value="fooo" /></form>',
       );
       return expect(Dropzone.optionsForElement(element)).toBe(testOptions);
     });
@@ -121,14 +119,13 @@ describe("Static functions", function () {
 
     it("should throw an exception if no dropzone attached", () =>
       expect(() => Dropzone.forElement(document.createElement("div"))).toThrow(
-        "No Dropzone found for given element. This is probably because you're trying to access it before Dropzone had the time to initialize. Use the `init` option to setup any additional observers on your Dropzone."
+        "No Dropzone found for given element. This is probably because you're trying to access it before Dropzone had the time to initialize. Use the `init` option to setup any additional observers on your Dropzone.",
       ));
 
     it("should accept css selectors", () =>
       expect(Dropzone.forElement("#some-test-element")).toBe(dropzone));
 
-    it("should accept native elements", () =>
-      expect(Dropzone.forElement(element)).toBe(dropzone));
+    it("should accept native elements", () => expect(Dropzone.forElement(element)).toBe(dropzone));
   });
 
   describe("Dropzone.discover()", function () {
@@ -205,31 +202,37 @@ describe("Static functions", function () {
     it("should properly validate extensions", function () {
       let acceptedMimeTypes = "text/html ,    image/jpeg, .pdf  ,.png";
 
-      expect(Dropzone.isValidFile(
-        { name: "somxsfsd", type: "text/html" },
-        acceptedMimeTypes
-      )).toBeTruthy();
-      expect(Dropzone.isValidFile(
-        { name: "somesdfsdf", type: "image/jpeg" },
-        acceptedMimeTypes
-      )).toBeTruthy();
-      expect(Dropzone.isValidFile(
-        { name: "somesdfadfadf", type: "application/json" },
-        acceptedMimeTypes
-      )).toBeFalsy();
-      expect(Dropzone.isValidFile(
-        { name: "some-file file.pdf", type: "random/type" },
-        acceptedMimeTypes
-      )).toBeTruthy();
+      expect(
+        Dropzone.isValidFile({ name: "somxsfsd", type: "text/html" }, acceptedMimeTypes),
+      ).toBeTruthy();
+      expect(
+        Dropzone.isValidFile({ name: "somesdfsdf", type: "image/jpeg" }, acceptedMimeTypes),
+      ).toBeTruthy();
+      expect(
+        Dropzone.isValidFile(
+          { name: "somesdfadfadf", type: "application/json" },
+          acceptedMimeTypes,
+        ),
+      ).toBeFalsy();
+      expect(
+        Dropzone.isValidFile(
+          { name: "some-file file.pdf", type: "random/type" },
+          acceptedMimeTypes,
+        ),
+      ).toBeTruthy();
       // .pdf has to be in the end
-      expect(Dropzone.isValidFile(
-        { name: "some-file.pdf file.gif", type: "random/type" },
-        acceptedMimeTypes
-      )).toBeFalsy();
-      return expect(Dropzone.isValidFile(
-        { name: "some-file file.png", type: "random/type" },
-        acceptedMimeTypes
-      )).toBeTruthy();
+      expect(
+        Dropzone.isValidFile(
+          { name: "some-file.pdf file.gif", type: "random/type" },
+          acceptedMimeTypes,
+        ),
+      ).toBeFalsy();
+      return expect(
+        Dropzone.isValidFile(
+          { name: "some-file file.png", type: "random/type" },
+          acceptedMimeTypes,
+        ),
+      ).toBeTruthy();
     });
   });
 
@@ -243,7 +246,7 @@ describe("Static functions", function () {
       Dropzone.confirm(
         "test question",
         () => (accepted = true),
-        () => (rejected = true)
+        () => (rejected = true),
       );
       expect(window.confirm.mock.calls[0][0]).toBe("test question");
       expect(accepted).toBe(true);
@@ -254,7 +257,7 @@ describe("Static functions", function () {
       Dropzone.confirm(
         "test question 2",
         () => (accepted = true),
-        () => (rejected = true)
+        () => (rejected = true),
       );
       expect(window.confirm.mock.calls[1][0]).toBe("test question 2");
       expect(accepted).toBe(false);
@@ -279,12 +282,8 @@ describe("Static functions", function () {
     beforeEach(function () {
       tmpElements = [];
       tmpElements.push(Dropzone.createElement('<div class="tmptest"></div>'));
-      tmpElements.push(
-        Dropzone.createElement('<div id="tmptest1" class="random"></div>')
-      );
-      tmpElements.push(
-        Dropzone.createElement('<div class="random div"></div>')
-      );
+      tmpElements.push(Dropzone.createElement('<div id="tmptest1" class="random"></div>'));
+      tmpElements.push(Dropzone.createElement('<div class="random div"></div>'));
       return tmpElements.forEach((el) => document.body.appendChild(el));
     });
 
@@ -305,10 +304,12 @@ describe("Static functions", function () {
         let errorMessage =
           "Invalid `clickable` option provided. Please provide a CSS selector or a plain HTML element.";
         expect(() => Dropzone.getElement("lblasdlfsfl", "clickable")).toThrow(errorMessage);
-        expect(() =>
-          Dropzone.getElement({ lblasdlfsfl: "lblasdlfsfl" }, "clickable")).toThrow(errorMessage);
-        return expect(() =>
-          Dropzone.getElement(["lblasdlfsfl"], "clickable")).toThrow(errorMessage);
+        expect(() => Dropzone.getElement({ lblasdlfsfl: "lblasdlfsfl" }, "clickable")).toThrow(
+          errorMessage,
+        );
+        return expect(() => Dropzone.getElement(["lblasdlfsfl"], "clickable")).toThrow(
+          errorMessage,
+        );
       });
     });
 
@@ -337,8 +338,9 @@ describe("Static functions", function () {
         let errorMessage =
           "Invalid `clickable` option provided. Please provide a CSS selector, a plain HTML element or a list of those.";
         expect(() => Dropzone.getElements("lblasdlfsfl", "clickable")).toThrow(errorMessage);
-        return expect(() =>
-          Dropzone.getElements(["lblasdlfsfl"], "clickable")).toThrow(errorMessage);
+        return expect(() => Dropzone.getElements(["lblasdlfsfl"], "clickable")).toThrow(
+          errorMessage,
+        );
       });
     });
   });

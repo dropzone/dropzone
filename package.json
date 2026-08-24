@@ -3,22 +3,17 @@
   "version": "6.0.0-beta.2",
   "description": "Handles drag and drop of files for you.",
   "keywords": [
-    "dragndrop",
     "drag and drop",
+    "dragndrop",
     "file upload",
     "upload"
   ],
   "homepage": "https://www.dropzone.dev/js",
-  "main": "dist/dropzone.js",
-  "module": "dist/dropzone.mjs",
-  "standalone": "dist/dropzone-min.js",
-  "files": [
-    "dist",
-    "src",
-    "composer.json",
-    "CHANGELOG.md",
-    "CODE_OF_CONDUCT.md"
-  ],
+  "bugs": {
+    "url": "https://github.com/dropzone/dropzone/issues",
+    "email": "m@tias.me"
+  },
+  "license": "MIT",
   "maintainers": [
     {
       "name": "Matias Meno",
@@ -33,6 +28,19 @@
       "web": "https://www.yesmeno.com"
     }
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dropzone/dropzone.git"
+  },
+  "files": [
+    "dist",
+    "src",
+    "composer.json",
+    "CHANGELOG.md",
+    "CODE_OF_CONDUCT.md"
+  ],
+  "main": "dist/dropzone.js",
+  "module": "dist/dropzone.mjs",
   "scripts": {
     "watch": "vite build --watch",
     "build": "vite build && vite build --config vite.config.global.mjs && pnpm run css",
@@ -40,20 +48,9 @@
     "watch-css": "sass src/:dist/ --watch --style compressed",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
-  },
-  "bugs": {
-    "email": "m@tias.me",
-    "url": "https://github.com/dropzone/dropzone/issues"
-  },
-  "license": "MIT",
-  "engines": {
-    "node": ">=20.19.0"
-  },
-  "packageManager": "pnpm@10.7.1",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/dropzone/dropzone.git"
+    "test:e2e": "playwright test",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check ."
   },
   "dependencies": {
     "just-extend": "^5.0.0"
@@ -61,9 +58,15 @@
   "devDependencies": {
     "@playwright/test": "^1.62.1",
     "@vitest/browser-playwright": "^4.1.11",
+    "oxfmt": "^0.65.0",
     "playwright": "^1.62.1",
     "sass": "^1.33.0",
     "vite": "^8.2.2",
     "vitest": "^4.1.11"
-  }
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "packageManager": "pnpm@10.7.1",
+  "standalone": "dist/dropzone-min.js"
 }

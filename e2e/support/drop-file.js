@@ -21,7 +21,7 @@ export async function dropFile(page, selector, fixture, type) {
       transfer.items.add(new File([bytes], name, { type }));
       return transfer;
     },
-    { base64, name: fixture, type }
+    { base64, name: fixture, type },
   );
 
   await page.locator(selector).dispatchEvent("drop", { dataTransfer });

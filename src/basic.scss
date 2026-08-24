@@ -1,10 +1,10 @@
 @use "sass:math";
 
-.dropzone, .dropzone * {
+.dropzone,
+.dropzone * {
   box-sizing: border-box;
 }
 .dropzone {
-
   position: relative;
 
   .dz-preview {
@@ -30,7 +30,8 @@
       display: none;
     }
     &.dz-error {
-      .dz-error-message, .dz-error-mark {
+      .dz-error-message,
+      .dz-error-mark {
         display: block;
       }
     }
@@ -40,7 +41,8 @@
       }
     }
 
-    .dz-error-mark, .dz-success-mark {
+    .dz-error-mark,
+    .dz-success-mark {
       position: absolute;
       display: none;
       left: 30px;
@@ -50,8 +52,5 @@
       left: 50%;
       margin-left: -(math.div(54px, 2));
     }
-
-
   }
-
 }

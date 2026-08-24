@@ -14,9 +14,7 @@ test.describe("Dropzone with AWS S3 multipart upload", () => {
     page.on("response", (response) => {
       if (response.url().includes("/amazon-multipart-upload")) parts.push(response);
     });
-    const completion = page.waitForRequest((request) =>
-      request.url().includes("/amazon-complete")
-    );
+    const completion = page.waitForRequest((request) => request.url().includes("/amazon-complete"));
 
     await dropFile(page, ".dropzone", "image.jpg", "image/jpeg");
 
@@ -27,9 +25,7 @@ test.describe("Dropzone with AWS S3 multipart upload", () => {
     for (const part of parts) {
       const headers = await part.request().allHeaders();
       expect(headers["content-type"]).toBe("image/jpeg");
-      expect(headers["content-length"]).toBe(
-        String(Math.min(remaining, CHUNK_SIZE))
-      );
+      expect(headers["content-length"]).toBe(String(Math.min(remaining, CHUNK_SIZE)));
       expect(JSON.parse(await part.text())).toEqual({ success: true });
 
       etags.push(part.headers()["etag"].replaceAll('"', ""));

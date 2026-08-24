@@ -7,8 +7,7 @@ test.describe("Dropzone with zero configuration", () => {
 
     const upload = page.waitForResponse(
       (response) =>
-        response.request().method() === "POST" &&
-        new URL(response.url()).pathname === "/"
+        response.request().method() === "POST" && new URL(response.url()).pathname === "/",
     );
 
     await dropFile(page, ".dropzone", "image.jpg", "image/jpeg");
