@@ -1,0 +1,84 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+# Never let two releases run at once: the second would publish against a
+# version the first has already taken.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    name: Version or publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Dropzone
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: "https://registry.npmjs.org"
+
+      - run: pnpm install --frozen-lockfile
+
+      # dist/ is not committed, so it has to be built before anything is
+      # published. package.json also runs this via prepublishOnly.
+      - run: pnpm build
+
+      # With changesets pending, this opens (or updates) a "Version packages"
+      # pull request. When that pull request is merged there are no changesets
+      # left, so this publishes instead.
+      - name: Create version pull request or publish
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          version: pnpm changeset:version
+          publish: pnpm changeset:publish
+          title: "Version packages"
+          commit: "Version packages"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # The releases have always carried a dist.zip, and the changelog links to
+      # it directly, so keep publishing one.
+      - name: Attach dist.zip to the release
+        if: steps.changesets.outputs.published == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: v${{ fromJSON(steps.changesets.outputs.publishedPackages)[0].version }}
+        run: |
+          zip -r dist.zip dist
+          gh release upload "$TAG" dist.zip --clobber
+
+      - name: Dispatch "new-release" to the packagist repo
+        if: steps.changesets.outputs.published == 'true'
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.DRONE_PAT }}
+          repository: dropzone/dropzone-packagist
+          event-type: new-release
+          client-payload: '{"releaseTag": "v${{ fromJSON(steps.changesets.outputs.publishedPackages)[0].version }}"}'
+
+      - name: Dispatch "new-release" to the bower repo
+        if: steps.changesets.outputs.published == 'true'
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.DRONE_PAT }}
+          repository: dropzone/dropzone-bower
+          event-type: new-release
+          client-payload: '{"releaseTag": "v${{ fromJSON(steps.changesets.outputs.publishedPackages)[0].version }}"}'
