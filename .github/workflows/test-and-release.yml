@@ -25,14 +25,10 @@ jobs:
         uses: actions/setup-node@v2.1.1
 
       - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm build
       - run: pnpm test
-
-      - uses: cypress-io/github-action@v2
-        with:
-          start: pnpm start-test-server
-          wait-on: "http://localhost:8888"
-          wait-on-timeout: 5
+      - run: pnpm test:e2e
 
       - name: Upload dist folder in case of release
         uses: actions/upload-artifact@v2

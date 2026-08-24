@@ -22,10 +22,18 @@ the library.
 
 ## Testing
 
-Testing is done on the compiled files. So either run `pnpm build` or
-`pnpm watch` first, and then `pnpm test`.
+Unit tests run against `src/` in a real browser with Vitest:
 
-### Cypress
+```bash
+$ pnpm test
+```
 
-In order to run the cypress tests (e2e tests), you need to first start the
-test server (`pnpm start-test-server`) and then cypress `pnpm cypress open`.
+### End-to-end
+
+The end-to-end tests drive the built files through a real browser, so build
+first. Playwright starts and stops the test server itself.
+
+```bash
+$ pnpm build
+$ pnpm test:e2e
+```
