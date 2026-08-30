@@ -59,7 +59,7 @@
     "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
-    "just-extend": "^5.0.0"
+    "just-extend": "^6.2.0"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^1.0.0",
