@@ -1,87 +1,81 @@
 {
   "name": "dropzone",
-  "version": "6.0.0-beta.2",
+  "version": "6.0.0",
   "description": "Handles drag and drop of files for you.",
   "keywords": [
-    "dragndrop",
     "drag and drop",
+    "dragndrop",
     "file upload",
     "upload"
   ],
   "homepage": "https://www.dropzone.dev/js",
-  "source": "src/dropzone.js",
-  "main": "dist/dropzone.js",
-  "module": "dist/dropzone.mjs",
-  "standalone": "dist/dropzone-min.js",
-  "browserslist": "defaults, > 0.25%",
-  "targets": {
-    "main": {
-      "source": "src/dropzone.js"
-    },
-    "module": {
-      "source": "src/dropzone.js"
-    },
-    "standalone": {
-      "source": "tool/dropzone-global.js",
-      "outputFormat": "global"
-    },
-    "built-test": {
-      "source": "test/unit-tests.js",
-      "distDir": "test/built/"
-    }
+  "bugs": {
+    "url": "https://github.com/dropzone/dropzone/issues",
+    "email": "m@tias.me"
   },
+  "license": "MIT",
   "maintainers": [
     {
-      "name": "Matias Meno",
+      "name": "Matias Simon",
       "email": "m@tias.me",
-      "web": "https://www.yesmeno.com"
+      "web": "https://www.matsimon.dev"
     }
   ],
   "contributors": [
     {
-      "name": "Matias Meno",
+      "name": "Matias Simon",
       "email": "m@tias.me",
-      "web": "https://www.yesmeno.com"
+      "web": "https://www.matsimon.dev"
     }
   ],
-  "scripts": {
-    "watch": "parcel watch",
-    "build": "parcel build && yarn run css",
-    "css": "yarn sass src/:dist/ --style compressed",
-    "watch-css": "yarn sass src/:dist/ --watch --style compressed",
-    "test": "karma start test/karma.conf.js",
-    "start-test-server": "node test/test-server.js"
-  },
-  "bugs": {
-    "email": "m@tias.me",
-    "url": "https://github.com/dropzone/dropzone/issues"
-  },
-  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dropzone/dropzone.git"
+    "url": "git+https://github.com/dropzone/dropzone.git"
+  },
+  "files": [
+    "dist",
+    "src",
+    "composer.json",
+    "CHANGELOG.md",
+    "CODE_OF_CONDUCT.md"
+  ],
+  "main": "dist/dropzone.js",
+  "module": "dist/dropzone.mjs",
+  "scripts": {
+    "watch": "vite build --watch",
+    "build": "vite build && vite build --config vite.config.global.mjs && pnpm run css",
+    "css": "sass src/:dist/ --style compressed",
+    "watch-css": "sass src/:dist/ --watch --style compressed",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check .",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "changeset": "changeset",
+    "changeset:version": "changeset version",
+    "changeset:publish": "changeset publish",
+    "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
-    "@swc/helpers": "^0.2.13",
     "just-extend": "^5.0.0"
   },
   "devDependencies": {
-    "@parcel/transformer-inline-string": "^2.0.0",
-    "@parcel/transformer-sass": "^2.0.0",
-    "chai": "4.3.4",
-    "cypress": "^8.7.0",
-    "cypress-file-upload": "^5.0.8",
-    "karma": "^6.1.0",
-    "karma-chrome-launcher": "^3.1.0",
-    "karma-mocha": "^2.0.1",
-    "karma-sinon-chai": "^2.0.2",
-    "karma-spec-reporter": "^0.0.32",
-    "mocha": "^9.1.3",
-    "mocha-headless-chrome": "^3.0.0",
-    "node-static": "^0.7.11",
-    "parcel": "^2.0.0",
+    "@changesets/changelog-github": "^1.0.0",
+    "@changesets/cli": "^3.0.1",
+    "@playwright/test": "^1.62.1",
+    "@vitest/browser-playwright": "^4.1.11",
+    "oxfmt": "^0.65.0",
+    "oxlint": "^1.80.0",
+    "playwright": "^1.62.1",
     "sass": "^1.33.0",
-    "sinon": "^11.1.2",
-    "sinon-chai": "^3.5.0"
-  }
+    "vite": "^8.2.2",
+    "vitest": "^4.1.11"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "packageManager": "pnpm@10.7.1",
+  "standalone": "dist/dropzone-min.js"
 }

@@ -64,8 +64,7 @@
 
     new Dropzone(".dropzone", {
       method: "PUT",
-      url: (_, dataBlocks) =>
-        S3.getUploadUrl(uploadId, dataBlocks[0].chunkIndex + 1),
+      url: (_, dataBlocks) => S3.getUploadUrl(uploadId, dataBlocks[0].chunkIndex + 1),
       init: function () {
         this.on("success", async (file) => {
           // Get the etag from the individual headers:

@@ -1,13 +1,13 @@
 @use "sass:math";
 
-
 @keyframes passing-through {
   0% {
     opacity: 0;
     transform: translateY(40px);
   }
 
-  30%, 70% {
+  30%,
+  70% {
     opacity: 1;
     transform: translateY(0px);
   }
@@ -17,7 +17,6 @@
     transform: translateY(-40px);
   }
 }
-
 
 @keyframes slide-in {
   0% {
@@ -30,21 +29,23 @@
   }
 }
 
-
-
 @keyframes pulse {
-  0% { transform: scale(1); }
-  10% { transform: scale(1.1); }
-  20% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  10% {
+    transform: scale(1.1);
+  }
+  20% {
+    transform: scale(1);
+  }
 }
 
-
-
-.dropzone, .dropzone * {
+.dropzone,
+.dropzone * {
   box-sizing: border-box;
 }
 .dropzone {
-
   $image-size: 120px;
 
   $image-border-radius: 20px;
@@ -56,7 +57,8 @@
       cursor: default;
     }
     .dz-message {
-      &, * {
+      &,
+      * {
         cursor: pointer;
       }
     }
@@ -94,8 +96,6 @@
     }
   }
 
-
-
   .dz-preview {
     position: relative;
     display: inline-block;
@@ -114,7 +114,6 @@
     }
 
     &.dz-file-preview {
-
       .dz-image {
         border-radius: $image-border-radius;
         background: #999;
@@ -175,7 +174,6 @@
       }
 
       .dz-filename {
-
         white-space: nowrap;
 
         &:hover {
@@ -191,17 +189,16 @@
           overflow: hidden;
           text-overflow: ellipsis;
         }
-
       }
 
-      .dz-filename, .dz-size {
+      .dz-filename,
+      .dz-size {
         span {
           background-color: rgba(255, 255, 255, 0.4);
           padding: 0 0.4em;
           border-radius: 3px;
         }
       }
-
     }
 
     &:hover {
@@ -227,26 +224,23 @@
       }
     }
 
-
     &.dz-success {
       .dz-success-mark {
-        animation: passing-through 3s cubic-bezier(0.770, 0.000, 0.175, 1.000);
+        animation: passing-through 3s cubic-bezier(0.77, 0, 0.175, 1);
       }
     }
     &.dz-error {
       .dz-error-mark {
         opacity: 1;
-        animation: slide-in 3s cubic-bezier(0.770, 0.000, 0.175, 1.000);
+        animation: slide-in 3s cubic-bezier(0.77, 0, 0.175, 1);
       }
     }
-
 
     $overlay-color: white;
     $overlay-bg-color: rgba(0, 0, 0, 0.8);
 
-
-    .dz-success-mark, .dz-error-mark {
-
+    .dz-success-mark,
+    .dz-error-mark {
       $image-height: 54px;
       $image-width: 54px;
 
@@ -272,8 +266,7 @@
         fill: $overlay-color;
       }
     }
-    
-      
+
     &.dz-processing .dz-progress {
       opacity: 1;
       transition: all 0.2s linear;
@@ -321,7 +314,6 @@
 
         border-radius: $progress-height - $progress-border-width;
       }
-
     }
 
     &.dz-error {
@@ -356,19 +348,16 @@
 
       // The triangle pointing up
       &:after {
-        content: '';
+        content: "";
         position: absolute;
         top: -6px;
         left: math.div($width, 2) - 6px;
-        width: 0; 
-        height: 0; 
+        width: 0;
+        height: 0;
         border-left: 6px solid transparent;
         border-right: 6px solid transparent;
         border-bottom: 6px solid $color;
       }
     }
-
   }
 }
-
-

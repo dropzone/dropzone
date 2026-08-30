@@ -1,11 +1,12 @@
 import { Dropzone } from "../../src/dropzone.js";
+import { useFakeXMLHttpRequest } from "../fake-xhr.js";
 import { sleep } from "./utils";
 
 describe("Amazon S3 Support", function () {
   let getMockFile = (
     type = "text/html",
     filename = "test file name",
-    contents = ["file contents"]
+    contents = ["file contents"],
   ) => {
     let file = new File(contents, filename, { type: type });
     file.status = Dropzone.ADDED;
@@ -18,7 +19,7 @@ describe("Amazon S3 Support", function () {
 
   let xhr = null;
   let dropzone = null;
-  beforeEach(() => (xhr = sinon.useFakeXMLHttpRequest()));
+  beforeEach(() => (xhr = useFakeXMLHttpRequest()));
 
   afterEach(function () {
     if (dropzone != null) {
@@ -34,12 +35,12 @@ describe("Amazon S3 Support", function () {
             url: "/",
             binaryBody: true,
             uploadMultiple: true,
-          }))
-      ).to.throw("You cannot set both: binaryBody and uploadMultiple.");
+          })),
+      ).toThrow("You cannot set both: binaryBody and uploadMultiple.");
     });
   });
 
-  describe.only("upload", () => {
+  describe("upload", () => {
     let element = null;
     let dropzone = null;
     let requests = null;
@@ -65,16 +66,8 @@ describe("Amazon S3 Support", function () {
       dropzone.addFile(getMockFile("image/jpeg", "some-file.jpg", [[1, 2, 3]]));
       await sleep(10);
 
-      console.log(requests[0].requestHeaders);
-      console.log(requests[1].requestHeaders);
-
-      expect(requests[0].requestHeaders["Content-Type"]).eq(
-        "text/html;charset=utf-8"
-      );
-
-      expect(requests[1].requestHeaders["Content-Type"]).eq(
-        "image/jpeg;charset=utf-8"
-      );
+      expect(requests[0].requestHeaders["Content-Type"]).toBe("text/html");
+      expect(requests[1].requestHeaders["Content-Type"]).toBe("image/jpeg");
     });
   });
 });

@@ -14,7 +14,7 @@ others spent hours writing on.
 The first thing you need to do, is to install the developer dependencies:
 
 ```bash
-$ yarn install
+$ pnpm install
 ```
 
 This will install all the tools you need to compile the source files and to test
@@ -22,10 +22,18 @@ the library.
 
 ## Testing
 
-Testing is done on the compiled files. So either run `yarn build` or
-`yarn watch` first, and then `yarn test`.
+Unit tests run against `src/` in a real browser with Vitest:
 
-### Cypress
+```bash
+$ pnpm test
+```
 
-In order to run the cypress tests (e2e tests), you need to first start the
-test server (`yarn start-test-server`) and then cypress `yarn cypress open`.
+### End-to-end
+
+The end-to-end tests drive the built files through a real browser, so build
+first. Playwright starts and stops the test server itself.
+
+```bash
+$ pnpm build
+$ pnpm test:e2e
+```

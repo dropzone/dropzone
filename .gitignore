@@ -11,3 +11,10 @@ dist
 
 # The GitLab pages artifacts
 public
+# Vitest browser-mode failure artifacts
+__screenshots__
+.vitest-attachments
+
+# Playwright
+test-results
+playwright-report

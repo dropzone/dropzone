@@ -1,3 +1,13 @@
+## 6.0.0
+
+The 6.0.0 line is now stable. There are no API changes since `6.0.0-beta.2` —
+see the `6.0.0-beta.1` notes below for the breaking changes in this major
+version.
+
+- `@swc/helpers` is no longer a dependency. `just-extend` is now the only one.
+- The bundles are considerably smaller, since they are no longer transpiled for
+  browsers that 6.0.0 had already stopped supporting.
+
 ## 6.0.0-beta.2
 
 - Add `binaryBody` support (thanks to @patrickbussmann and @meg1502).
