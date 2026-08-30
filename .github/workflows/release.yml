@@ -13,6 +13,9 @@ concurrency:
 permissions:
   contents: write
   pull-requests: write
+  # Required for npm trusted publishing: the job mints a short-lived OIDC
+  # token instead of using a stored npm credential.
+  id-token: write
 
 jobs:
   release:
@@ -52,7 +55,10 @@ jobs:
           commit: "Version packages"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # No npm credential here on purpose. With id-token: write and a
+          # trusted publisher configured on npmjs.com, pnpm authenticates via
+          # OIDC. Setting NODE_AUTH_TOKEN to an empty or expired secret would
+          # actively break this -- see pnpm#11513.
 
       # The releases have always carried a dist.zip, and the changelog links to
       # it directly, so keep publishing one.
