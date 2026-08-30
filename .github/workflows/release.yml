@@ -20,14 +20,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Dropzone
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
@@ -44,7 +44,7 @@ jobs:
       # left, so this publishes instead.
       - name: Create version pull request or publish
         id: changesets
-        uses: changesets/action@v1
+        uses: changesets/action@v2
         with:
           version: pnpm changeset:version
           publish: pnpm changeset:publish
@@ -67,7 +67,7 @@ jobs:
 
       - name: Dispatch "new-release" to the packagist repo
         if: steps.changesets.outputs.published == 'true'
-        uses: peter-evans/repository-dispatch@v3
+        uses: peter-evans/repository-dispatch@v4
         with:
           token: ${{ secrets.DRONE_PAT }}
           repository: dropzone/dropzone-packagist
@@ -76,7 +76,7 @@ jobs:
 
       - name: Dispatch "new-release" to the bower repo
         if: steps.changesets.outputs.published == 'true'
-        uses: peter-evans/repository-dispatch@v3
+        uses: peter-evans/repository-dispatch@v4
         with:
           token: ${{ secrets.DRONE_PAT }}
           repository: dropzone/dropzone-bower
