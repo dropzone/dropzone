@@ -1,0 +1,22 @@
+version: 2
+
+updates:
+  # Grouped so the toolchain arrives as one reviewable pull request a month
+  # rather than a dozen. This is what stops the dependencies going stale again.
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    groups:
+      dev-dependencies:
+        dependency-type: development
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]

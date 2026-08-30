@@ -46,12 +46,8 @@ bundlers](https://github.com/dropzone/dropzone-examples)
 Use the standalone files like this:
 
 ```html
-<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css"
-  type="text/css"
-/>
+<script src="https://unpkg.com/dropzone@6/dist/dropzone-min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/dropzone@6/dist/dropzone.css" type="text/css" />
 
 <div class="my-dropzone"></div>
 
@@ -69,11 +65,9 @@ Use the standalone files like this:
 
 ---
 
-> ⚠️ **NOTE**: We are currently moving away from IE support to make the library
-> more lightweight. If you don't care about IE but about size, you can already
-> opt into `6.0.0-beta.1`. Please make sure to pin the specific version since
-> parts of the API might change slightly. You can always read about the changes
-> in the [`CHANGELOG`](./CHANGELOG.md) file.
+> ⚠️ **NOTE**: Dropzone 6 does not support Internet Explorer. If you still need
+> it, use `5.9.3`. See the [`CHANGELOG`](./CHANGELOG.md) for everything that
+> changed in 6.0.0.
 
 ## Community
 
