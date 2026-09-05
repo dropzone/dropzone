@@ -45,20 +45,22 @@ jobs:
       # With changesets pending, this opens (or updates) a "Version packages"
       # pull request. When that pull request is merged there are no changesets
       # left, so this publishes instead.
+      #
+      # v2 is required: v1 predates Changesets v3 and cannot read its publish
+      # output, so it silently reports nothing as published and skips pushing
+      # tags and creating releases. No npm credential is set here on purpose --
+      # with id-token: write and a trusted publisher on npmjs.com, pnpm
+      # authenticates over OIDC, and an empty NODE_AUTH_TOKEN would break that
+      # (see pnpm#11513).
       - name: Create version pull request or publish
         id: changesets
-        uses: changesets/action@v1
+        uses: changesets/action@v2
         with:
-          version: pnpm changeset:version
-          publish: pnpm changeset:publish
-          title: "Version packages"
-          commit: "Version packages"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # No npm credential here on purpose. With id-token: write and a
-          # trusted publisher configured on npmjs.com, pnpm authenticates via
-          # OIDC. Setting NODE_AUTH_TOKEN to an empty or expired secret would
-          # actively break this -- see pnpm#11513.
+          version-script: pnpm changeset:version
+          publish-script: pnpm changeset:publish
+          pr-title: "Version packages"
+          commit-message: "Version packages"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       # The releases have always carried a dist.zip, and the changelog links to
       # it directly, so keep publishing one.
@@ -66,7 +68,9 @@ jobs:
         if: steps.changesets.outputs.published == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: v${{ fromJSON(steps.changesets.outputs.publishedPackages)[0].version }}
+          # Bracket notation: a hyphenated output name would otherwise parse as
+          # a subtraction in an Actions expression.
+          TAG: v${{ fromJSON(steps.changesets.outputs['published-packages'])[0].version }}
         run: |
           zip -r dist.zip dist
           gh release upload "$TAG" dist.zip --clobber
