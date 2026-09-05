@@ -71,20 +71,9 @@ jobs:
           zip -r dist.zip dist
           gh release upload "$TAG" dist.zip --clobber
 
-      - name: Dispatch "new-release" to the packagist repo
-        if: steps.changesets.outputs.published == 'true'
-        uses: peter-evans/repository-dispatch@v3
-        with:
-          token: ${{ secrets.DRONE_PAT }}
-          repository: dropzone/dropzone-packagist
-          event-type: new-release
-          client-payload: '{"releaseTag": "v${{ fromJSON(steps.changesets.outputs.publishedPackages)[0].version }}"}'
-
-      - name: Dispatch "new-release" to the bower repo
-        if: steps.changesets.outputs.published == 'true'
-        uses: peter-evans/repository-dispatch@v3
-        with:
-          token: ${{ secrets.DRONE_PAT }}
-          repository: dropzone/dropzone-bower
-          event-type: new-release
-          client-payload: '{"releaseTag": "v${{ fromJSON(steps.changesets.outputs.publishedPackages)[0].version }}"}'
+      # dropzone-packagist rebuilds itself from the release above. It watches
+      # this repo's releases on a schedule rather than being pushed to, so no
+      # cross-repo credential is needed here.
+      #
+      # The bower dispatch was dropped: bower has been deprecated since 2017
+      # and dropzone-bower has not been touched since 2021.
