@@ -1,3 +1,17 @@
+## 6.1.0
+
+### Minor Changes
+
+- [`b32d746`](https://github.com/dropzone/dropzone/commit/b32d7465c1dbde4891d124b4005089c64c13b35b) Thanks [@filip-kinsky](https://github.com/filip-kinsky)! - Emit an `error` instead of a broken thumbnail when a file claims an image type but cannot be decoded. The new `dictThumbnailError` option holds the message.
+
+### Patch Changes
+
+- [`94a0656`](https://github.com/dropzone/dropzone/commit/94a065670e6dee3b748e5a47eca66d308bfb4274) Thanks [@AJHoeh](https://github.com/AJHoeh)! - Coerce `chunkSize` to a number before computing chunk boundaries. When the option arrived as a string, every chunk after the first was sliced from the wrong offset and the uploaded file was silently corrupted.
+
+- [`85c5c2a`](https://github.com/dropzone/dropzone/commit/85c5c2ac23eee55b0e1f924a4ffb75ae2181f44d) Thanks [@enyo](https://github.com/enyo)! - Stop preview thumbnails from being dragged back into the dropzone, which added the same file a second time under a generated name.
+
+- [`4762df8`](https://github.com/dropzone/dropzone/commit/4762df8c329e3862c43bb8b9a3cbd4c083a4bc1f) Thanks [@Forceu](https://github.com/Forceu)! - Send a single chunk for zero byte files instead of hanging. With `forceChunking` enabled, an empty file produced a chunk count of zero, so nothing was ever uploaded.
+
 ## 6.0.0
 
 The 6.0.0 line is now stable. There are no API changes since `6.0.0-beta.2` —
