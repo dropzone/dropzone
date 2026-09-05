@@ -1092,20 +1092,22 @@ export default class Dropzone extends Emitter {
 
   uploadFiles(files) {
     this._transformFiles(files, (transformedFiles) => {
+      // Options are often read straight out of markup or a config file, so
+      // `chunkSize` can arrive as a string. `start + "2097152"` would then
+      // concatenate instead of adding, and every chunk after the first would
+      // be sliced at the wrong offset. See #1988.
+      let chunkSize = Number(this.options.chunkSize);
+
       if (this.options.chunking) {
         // Chunking is not allowed to be used with `uploadMultiple` so we know
         // that there is only __one__file.
         let transformedFile = transformedFiles[0];
         files[0].upload.chunked =
-          this.options.chunking &&
-          (this.options.forceChunking || transformedFile.size > this.options.chunkSize);
+          this.options.chunking && (this.options.forceChunking || transformedFile.size > chunkSize);
         // An empty file still has to be sent, otherwise it would have no
         // chunks at all, `handleNextChunk` would return immediately and the
         // upload would hang forever. See #1982.
-        files[0].upload.totalChunkCount = Math.max(
-          1,
-          Math.ceil(transformedFile.size / this.options.chunkSize),
-        );
+        files[0].upload.totalChunkCount = Math.max(1, Math.ceil(transformedFile.size / chunkSize));
       }
 
       if (files[0].upload.chunked) {
@@ -1132,8 +1134,8 @@ export default class Dropzone extends Emitter {
 
           startedChunkCount++;
 
-          let start = chunkIndex * this.options.chunkSize;
-          let end = Math.min(start + this.options.chunkSize, transformedFile.size);
+          let start = chunkIndex * chunkSize;
+          let end = Math.min(start + chunkSize, transformedFile.size);
 
           let dataBlock = {
             name: this._getParamName(0),

@@ -1761,6 +1761,32 @@ describe("Dropzone", function () {
         }));
 
       describe("chunking", function () {
+        it("should slice on numeric boundaries when chunkSize is a string", () =>
+          new Promise((done) => {
+            vi.spyOn(dropzone, "_uploadData").mockImplementation(() => {});
+
+            dropzone.options.chunking = true;
+            dropzone.options.parallelChunkUploads = true;
+            // Options read out of markup or JSON arrive as strings.
+            dropzone.options.chunkSize = "2";
+
+            let file = getMockFile("text/html", "chunked-file", ["abcdef"]); // 6 bytes
+
+            dropzone.addFile(file);
+
+            setTimeout(async function () {
+              expect(file.upload.totalChunkCount).toEqual(3);
+              expect(dropzone._uploadData).toHaveBeenCalledTimes(3);
+
+              let texts = await Promise.all(
+                dropzone._uploadData.mock.calls.map((call) => call[1][0].data.text()),
+              );
+              // String concatenation would make the second chunk "cdef".
+              expect(texts).toEqual(["ab", "cd", "ef"]);
+              done();
+            }, 10);
+          }));
+
         it("should send a single chunk for a zero byte file", () =>
           new Promise((done) => {
             vi.spyOn(dropzone, "_uploadData").mockImplementation(() => {});
