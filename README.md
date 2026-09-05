@@ -19,9 +19,9 @@ thousands.
 Install:
 
 ```bash
-$ npm install --save dropzone
-# or with yarn:
-$ yarn add dropzone
+$ npm install dropzone
+# or with pnpm:
+$ pnpm add dropzone
 ```
 
 Use as **ES6 module** (recommended):
