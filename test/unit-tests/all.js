@@ -1291,6 +1291,20 @@ describe("Dropzone", function () {
             dropzone.addFile(corrupt);
           }));
 
+        it("should not let the thumbnail itself be dragged", function () {
+          dropzone.processFile = function () {};
+          dropzone.uploadFile = function () {};
+
+          let mock = getMockFile("image/png", "image.png");
+          dropzone.addFile(mock);
+
+          // Dragging the thumbnail out and dropping it back on the dropzone
+          // hands the drop handler a fresh File built from the data URL, which
+          // shows up as a second copy under a generated name. See #2265.
+          let thumbnail = mock.previewElement.querySelector("[data-dz-thumbnail]");
+          expect(thumbnail.draggable).toBe(false);
+        });
+
         return describe("when file is SVG", () =>
           it("should use the SVG image itself", () =>
             new Promise((done) => {
