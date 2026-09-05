@@ -321,6 +321,12 @@ let defaultOptions = {
   dictInvalidFileType: "You can't upload files of this type.",
 
   /**
+   * If the file looks like an image but cannot be decoded, so no thumbnail can
+   * be generated for it.
+   */
+  dictThumbnailError: "Failed to load the image. The file may be corrupted.",
+
+  /**
    * If the server response was invalid.
    * `{{statusCode}}` will be replaced with the servers status code.
    */

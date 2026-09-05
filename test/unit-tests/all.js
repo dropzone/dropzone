@@ -1265,6 +1265,32 @@ describe("Dropzone", function () {
             }, 10);
           }));
 
+        it("should emit an error instead of a broken thumbnail if the image can't be decoded", () =>
+          new Promise((done, fail) => {
+            dropzone.processFile = function () {};
+            dropzone.uploadFile = function () {};
+
+            // Claims to be a PNG, but the bytes are not decodable -- a text
+            // file renamed to .png, for instance.
+            let corrupt = getMockFile("image/png", "corrupt.png", ["not a png"]);
+
+            dropzone.on("thumbnail", () =>
+              fail(new Error("a thumbnail was emitted for an undecodable image")),
+            );
+            let reported = false;
+            dropzone.on("error", function (file, message) {
+              // destroy() emits "error" again when it cancels the upload.
+              if (reported) return;
+              reported = true;
+
+              expect(file).toBe(corrupt);
+              expect(message).toBe(dropzone.options.dictThumbnailError);
+              done();
+            });
+
+            dropzone.addFile(corrupt);
+          }));
+
         return describe("when file is SVG", () =>
           it("should use the SVG image itself", () =>
             new Promise((done) => {

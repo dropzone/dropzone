@@ -774,7 +774,15 @@ export default class Dropzone extends Emitter {
       this.options.thumbnailMethod,
       true,
       (dataUrl) => {
-        this.emit("thumbnail", file, dataUrl);
+        // `createThumbnailFromUrl` hands its callback the error event when the
+        // image cannot be decoded, so anything that is not a data URL means
+        // the thumbnail failed. Emitting it as one would set the preview's
+        // `img.src` to "[object Event]" and render a broken image. See #2218.
+        if (typeof dataUrl === "string") {
+          this.emit("thumbnail", file, dataUrl);
+        } else {
+          this.emit("error", file, this.options.dictThumbnailError);
+        }
         this._processingThumbnail = false;
         return this._processThumbnailQueue();
       },
