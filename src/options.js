@@ -358,7 +358,7 @@ let defaultOptions = {
   dictRemoveFileConfirmation: null,
 
   /**
-   * Displayed if `maxFiles` is st and exceeded.
+   * Displayed if `maxFiles` is set and exceeded.
    * The string `{{maxFiles}}` will be replaced by the configuration value.
    */
   dictMaxFilesExceeded: "You cannot upload any more files.",
