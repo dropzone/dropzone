@@ -1760,6 +1760,29 @@ describe("Dropzone", function () {
           return done();
         }));
 
+      describe("chunking", function () {
+        it("should send a single chunk for a zero byte file", () =>
+          new Promise((done) => {
+            vi.spyOn(dropzone, "_uploadData").mockImplementation(() => {});
+
+            dropzone.options.chunking = true;
+            dropzone.options.forceChunking = true;
+
+            let emptyFile = getMockFile("text/html", "empty-file", []);
+            expect(emptyFile.size).toBe(0);
+
+            dropzone.addFile(emptyFile);
+
+            setTimeout(function () {
+              // Without this, `totalChunkCount` would be 0 and nothing would
+              // ever be sent.
+              expect(emptyFile.upload.totalChunkCount).toEqual(1);
+              expect(dropzone._uploadData).toHaveBeenCalledTimes(1);
+              done();
+            }, 10);
+          }));
+      });
+
       return describe("should properly set status of file", () =>
         it("should correctly set `withCredentials` on the xhr object", () =>
           new Promise((done) => {

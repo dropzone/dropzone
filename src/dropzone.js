@@ -1099,7 +1099,13 @@ export default class Dropzone extends Emitter {
         files[0].upload.chunked =
           this.options.chunking &&
           (this.options.forceChunking || transformedFile.size > this.options.chunkSize);
-        files[0].upload.totalChunkCount = Math.ceil(transformedFile.size / this.options.chunkSize);
+        // An empty file still has to be sent, otherwise it would have no
+        // chunks at all, `handleNextChunk` would return immediately and the
+        // upload would hang forever. See #1982.
+        files[0].upload.totalChunkCount = Math.max(
+          1,
+          Math.ceil(transformedFile.size / this.options.chunkSize),
+        );
       }
 
       if (files[0].upload.chunked) {
