@@ -533,7 +533,7 @@ describe("Dropzone", function () {
           return (called = true);
         });
 
-        dropzone.accept(file, (err) => expect(err).toBe("You can not upload any more files."));
+        dropzone.accept(file, (err) => expect(err).toBe("You cannot upload any more files."));
         return expect(called).toBeTruthy();
       });
     });
