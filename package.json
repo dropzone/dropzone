@@ -58,9 +58,6 @@
     "changeset:publish": "changeset publish",
     "prepublishOnly": "pnpm run build"
   },
-  "dependencies": {
-    "just-extend": "^5.0.0"
-  },
   "devDependencies": {
     "@changesets/changelog-github": "^1.0.0",
     "@changesets/cli": "^3.0.1",

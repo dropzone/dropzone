@@ -7,10 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      just-extend:
-        specifier: ^5.0.0
-        version: 5.1.1
     devDependencies:
       '@changesets/changelog-github':
         specifier: ^1.0.0
@@ -694,9 +690,6 @@ packages:
 
   jsonc-parser@3.3.1:
     resolution: {integrity: sha512-HUgH65KyejrUFPvHFPbqOY0rsFip3Bo5wb4ngvdi1EpCYWUQDC5V+Y7mZws+DLkr4M//zQJoanu1SP+87Dv1oQ==}
-
-  just-extend@5.1.1:
-    resolution: {integrity: sha512-b+z6yF1d4EOyDgylzQo5IminlUmzSeqR1hs/bzjBNjuGras4FXq/6TrzjxfN0j+TmI0ltJzTNlqXUMCniciwKQ==}
 
   launch-editor@2.14.1:
     resolution: {integrity: sha512-QWBrQsMpH7gPr965dsKD/3cKWiNoTjpATQf++Xq63N6sKRGMwlVXz41O1IZTMfZQgBctD/K5Zt06+/I6pP6+HA==}
@@ -1544,8 +1537,6 @@ snapshots:
   jju@1.4.0: {}
 
   jsonc-parser@3.3.1: {}
-
-  just-extend@5.1.1: {}
 
   launch-editor@2.14.1:
     dependencies:

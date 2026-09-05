@@ -21,3 +21,12 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+---
+
+Dropzone bundles one piece of third-party code:
+
+src/extend.js is taken from just-extend (https://github.com/angus-c/just),
+Copyright (c) 2016 angus croll, and is used under the MIT License. The full
+notice is reproduced at the top of that file.

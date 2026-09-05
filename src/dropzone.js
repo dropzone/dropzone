@@ -1,4 +1,4 @@
-import extend from "just-extend";
+import extend from "./extend.js";
 import Emitter from "./emitter";
 import defaultOptions from "./options";
 
