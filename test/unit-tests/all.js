@@ -1389,6 +1389,125 @@ describe("Dropzone", function () {
         }));
     });
 
+    describe("dropping directories", function () {
+      // Stand-ins for the FileSystem entries a real drop hands over. Both
+      // callbacks fire asynchronously, as the browser's do.
+      let fileEntry = (name) => ({
+        isFile: true,
+        isDirectory: false,
+        name,
+        file: (onSuccess) =>
+          Promise.resolve().then(() => onSuccess(new File(["x"], name, { type: "text/plain" }))),
+      });
+
+      let dirEntry = (name, children = []) => ({
+        isFile: false,
+        isDirectory: true,
+        name,
+        createReader() {
+          let handed = false;
+          return {
+            // A browser returns a batch, then an empty array to signal the end.
+            readEntries(onSuccess) {
+              let batch = handed ? [] : children;
+              handed = true;
+              Promise.resolve().then(() => onSuccess(batch));
+            },
+          };
+        },
+      });
+
+      // dataTransfer.files holds one entry per dropped item, folders included,
+      // which is exactly why it cannot say what was added.
+      let dropOf = (...entries) => ({
+        dataTransfer: {
+          files: entries.map((e) => new File(["x"], e.name)),
+          items: entries.map((e) => ({
+            kind: "file",
+            webkitGetAsEntry: () => e,
+            getAsFile: () => new File(["x"], e.name),
+          })),
+        },
+      });
+
+      beforeEach(function () {
+        dropzone.options.autoProcessQueue = false;
+      });
+
+      it("should report the files inside a dropped folder, not the folder", () =>
+        new Promise((done) => {
+          dropzone.on("addedfiles", function (files) {
+            expect(files.map((f) => f.name)).toEqual(["a.txt", "b.txt"]);
+            done();
+          });
+
+          dropzone.drop(dropOf(dirEntry("photos", [fileEntry("a.txt"), fileEntry("b.txt")])));
+        }));
+
+      it("should emit addedfiles after each addedfile", () =>
+        new Promise((done) => {
+          let order = [];
+          dropzone.on("addedfile", (file) => order.push(`one:${file.name}`));
+          dropzone.on("addedfiles", function () {
+            order.push("all");
+            expect(order).toEqual(["one:a.txt", "one:b.txt", "all"]);
+            done();
+          });
+
+          dropzone.drop(dropOf(dirEntry("photos", [fileEntry("a.txt"), fileEntry("b.txt")])));
+        }));
+
+      it("should walk nested folders and record the full path", () =>
+        new Promise((done) => {
+          dropzone.on("addedfiles", function (files) {
+            expect(files.map((f) => f.fullPath)).toEqual(["outer/a.txt", "outer/inner/b.txt"]);
+            done();
+          });
+
+          dropzone.drop(
+            dropOf(
+              dirEntry("outer", [fileEntry("a.txt"), dirEntry("inner", [fileEntry("b.txt")])]),
+            ),
+          );
+        }));
+
+      it("should still skip hidden files", () =>
+        new Promise((done) => {
+          dropzone.on("addedfiles", function (files) {
+            expect(files.map((f) => f.name)).toEqual(["visible.txt"]);
+            done();
+          });
+
+          dropzone.drop(
+            dropOf(dirEntry("photos", [fileEntry(".hidden"), fileEntry("visible.txt")])),
+          );
+        }));
+
+      it("should emit emptyfolder for a folder with nothing in it", () =>
+        new Promise((done) => {
+          dropzone.on("emptyfolder", function (path) {
+            expect(path).toBe("nothing-here");
+            done();
+          });
+
+          dropzone.drop(dropOf(dirEntry("nothing-here", [])));
+        }));
+
+      it("should not call a folder empty when it only holds other folders", () =>
+        new Promise((done) => {
+          let reported = [];
+          dropzone.on("emptyfolder", (path) => reported.push(path));
+          dropzone.on("addedfiles", function () {
+            // Only the leaf is genuinely empty. Counting files alone would
+            // have reported "outer" as well.
+            expect(reported).toEqual(["outer/inner"]);
+            done();
+          });
+
+          dropzone.drop(dropOf(dirEntry("outer", [dirEntry("inner", [])])));
+        }));
+    });
+
     describe("resizeImage()", function () {
       // Opaque blue across the top-left quarter, transparent everywhere else.
       let transparentPng = () =>

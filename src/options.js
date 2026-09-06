@@ -784,6 +784,12 @@ let defaultOptions = {
   queuecomplete() {},
 
   addedfiles() {},
+
+  /**
+   * Called when a dropped folder turns out to have nothing in it at all.
+   * Receives the folder's path.
+   */
+  emptyfolder() {},
 };
 
 export default defaultOptions;
