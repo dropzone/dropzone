@@ -152,6 +152,18 @@ let defaultOptions = {
   resizeMethod: "contain",
 
   /**
+   * The color to show through transparent parts of a resized image, as any
+   * CSS color. Formats without an alpha channel cannot store transparency, so
+   * a transparent PNG resized to `image/jpeg` comes out with black where it
+   * used to be see-through; setting this to `"#fff"` makes it white instead.
+   *
+   * `null` leaves transparency alone, which only produces black once the image
+   * is encoded to a format that cannot represent it. This has no effect on the
+   * preview thumbnails, which are always PNG.
+   */
+  resizeTransparencyFill: null,
+
+  /**
    * The base that is used to calculate the **displayed** filesize. You can
    * change this to 1024 if you would rather display kibibytes, mebibytes,
    * etc... 1024 is technically incorrect, because `1024 bytes` are `1 kibibyte`

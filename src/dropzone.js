@@ -829,6 +829,17 @@ export default class Dropzone extends Emitter {
         if (resizeMimeType == null) {
           resizeMimeType = file.type;
         }
+        if (this.options.resizeTransparencyFill != null) {
+          // Painted *underneath* what has already been drawn, so the color
+          // only shows through where the image is actually transparent. Doing
+          // it here rather than before the draw keeps it off the preview
+          // thumbnails, which are encoded as PNG and keep their transparency.
+          let ctx = canvas.getContext("2d");
+          ctx.globalCompositeOperation = "destination-over";
+          ctx.fillStyle = this.options.resizeTransparencyFill;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
         let resizedDataURL = canvas.toDataURL(resizeMimeType, this.options.resizeQuality);
         if (resizeMimeType === "image/jpeg" || resizeMimeType === "image/jpg") {
           // Now add the original EXIF information
@@ -1051,8 +1062,7 @@ export default class Dropzone extends Emitter {
   }
 
   _getFilesWithXhr(xhr) {
-    let files;
-    return (files = this.files.filter((file) => file.xhr === xhr).map((file) => file));
+    return this.files.filter((file) => file.xhr === xhr).map((file) => file);
   }
 
   // Cancels the file upload and sets the status to CANCELED
@@ -1909,7 +1919,6 @@ Dropzone.SUCCESS = "success";
 // Fixes a bug which squash image vertically while drawing into canvas for some images.
 // This is a bug in iOS6 devices. This function from https://github.com/stomita/ios-imagefile-megapixel
 let detectVerticalSquash = function (img) {
-  let iw = img.naturalWidth;
   let ih = img.naturalHeight;
   let canvas = document.createElement("canvas");
   canvas.width = 1;
@@ -2062,7 +2071,6 @@ class ExifRestore {
   }
 
   static decode64(input) {
-    let output = "";
     let chr1 = undefined;
     let chr2 = undefined;
     let chr3 = "";

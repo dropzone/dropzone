@@ -237,7 +237,7 @@ describe("Dropzone", function () {
 
     it("should create a .dz-message element", function () {
       let element = Dropzone.createElement('<form class="dropzone" action="/"></form>');
-      let dropzone = new Dropzone(element, {
+      new Dropzone(element, {
         clickable: true,
         acceptParameter: null,
         acceptedMimeTypes: null,
@@ -250,7 +250,7 @@ describe("Dropzone", function () {
       let msg = Dropzone.createElement('<div class="dz-message">TEST</div>');
       element.appendChild(msg);
 
-      let dropzone = new Dropzone(element, {
+      new Dropzone(element, {
         clickable: true,
         acceptParameter: null,
         acceptedMimeTypes: null,
@@ -1221,9 +1221,8 @@ describe("Dropzone", function () {
         it("should properly queue the thumbnail creation", () =>
           new Promise((done) => {
             let ct_callback;
-            let doneFunction;
 
-            dropzone.accept = (file, done) => (doneFunction = done);
+            dropzone.accept = (file, done) => {};
             dropzone.processFile = function () {};
             dropzone.uploadFile = function () {};
 
@@ -1388,6 +1387,91 @@ describe("Dropzone", function () {
             return done();
           }, 10);
         }));
+    });
+
+    describe("resizeImage()", function () {
+      // Opaque blue across the top-left quarter, transparent everywhere else.
+      let transparentPng = () =>
+        new Promise((resolve) => {
+          let canvas = document.createElement("canvas");
+          canvas.width = canvas.height = 20;
+          let ctx = canvas.getContext("2d");
+          ctx.fillStyle = "#0000ff";
+          ctx.fillRect(0, 0, 10, 10);
+          canvas.toBlob(
+            (blob) => resolve(new File([blob], "transparent.png", { type: "image/png" })),
+            "image/png",
+          );
+        });
+
+      // Decode a blob or data URL and read one pixel back, positioned as a
+      // fraction so it does not matter what the resize produced.
+      let pixelAt = (source, fx, fy) =>
+        new Promise((resolve) => {
+          let img = document.createElement("img");
+          img.onload = function () {
+            let canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            let ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            let x = Math.floor(img.width * fx);
+            let y = Math.floor(img.height * fy);
+            resolve(Array.from(ctx.getImageData(x, y, 1, 1).data));
+          };
+          img.src = typeof source === "string" ? source : URL.createObjectURL(source);
+        });
+
+      let resize = (file) =>
+        new Promise((done) => dropzone.resizeImage(file, 20, 20, "contain", done));
+
+      it("should show the fill through transparent areas when resizing to jpeg", async function () {
+        let file = await transparentPng();
+        dropzone.options.resizeMimeType = "image/jpeg";
+        dropzone.options.resizeTransparencyFill = "#ff0000";
+
+        let [r, g, b] = await pixelAt(await resize(file), 0.75, 0.75);
+        expect(r).toBeGreaterThan(200);
+        expect(g).toBeLessThan(60);
+        expect(b).toBeLessThan(60);
+      });
+
+      it("should leave transparency to turn black by default", async function () {
+        let file = await transparentPng();
+        dropzone.options.resizeMimeType = "image/jpeg";
+
+        // This is the behaviour being fixed, and it stays the default.
+        let [r, g, b] = await pixelAt(await resize(file), 0.75, 0.75);
+        expect(r).toBeLessThan(60);
+        expect(g).toBeLessThan(60);
+        expect(b).toBeLessThan(60);
+      });
+
+      it("should not paint over the image itself", async function () {
+        let file = await transparentPng();
+        dropzone.options.resizeMimeType = "image/jpeg";
+        dropzone.options.resizeTransparencyFill = "#ff0000";
+
+        // The opaque corner must survive: the fill goes underneath.
+        let [r, g, b] = await pixelAt(await resize(file), 0.25, 0.25);
+        expect(b).toBeGreaterThan(200);
+        expect(r).toBeLessThan(60);
+        expect(g).toBeLessThan(60);
+      });
+
+      it("should leave preview thumbnails transparent", async function () {
+        let file = await transparentPng();
+        dropzone.options.resizeTransparencyFill = "#ff0000";
+
+        // Thumbnails are always encoded as PNG, so they keep their alpha and
+        // the fill must not reach them.
+        let dataUrl = await new Promise((done) =>
+          dropzone.createThumbnail(file, 20, 20, "contain", true, (url) => done(url)),
+        );
+
+        let alpha = (await pixelAt(dataUrl, 0.75, 0.75))[3];
+        expect(alpha).toBe(0);
+      });
     });
 
     describe("uploadFiles()", function () {
