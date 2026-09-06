@@ -1,0 +1,84 @@
+# Builds the website and the documentation and publishes them as one GitHub
+# Pages site: the website at the root, the documentation under /docs.
+#
+# GitHub Pages serves one site per repository with one custom domain, which is
+# why these are combined rather than deployed separately. Splitting them later
+# means pointing a second host at apps/docs; nothing in the repository layout
+# has to change for that.
+name: Deploy site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deployments race; queue instead of cancelling, so a merged
+# change is never dropped.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build both sites
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build the documentation
+        run: pnpm build:docs
+
+      # See the comment in ci.yml: the website only builds on Node 16 until
+      # the SvelteKit migration lands.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 16
+
+      # Invoked directly rather than through pnpm: pnpm 11 will not start on
+      # Node 16 (corepack uses URL.canParse, which needs 18.17+).
+      - name: Build the website
+        working-directory: apps/website
+        env:
+          BRANCH: main
+        run: ./node_modules/.bin/svelte-kit build
+
+      - name: Assemble
+        run: |
+          rm -rf _site
+          mkdir -p _site
+          cp -R apps/website/build/. _site/
+          cp -R apps/docs/build _site/docs
+          # Kept alongside the repository setting so the domain survives a
+          # deployment made before the setting is applied.
+          echo "www.dropzone.dev" > _site/CNAME
+
+          test -f _site/index.html || { echo "website build missing"; exit 1; }
+          test -f _site/docs/index.html || { echo "docs build missing"; exit 1; }
+
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+  deploy:
+    name: Deploy to Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

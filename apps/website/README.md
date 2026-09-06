@@ -1,3 +1,23 @@
+# Dropzone website
+
+> **This app only builds on Node 16.**
+>
+> It still runs SvelteKit `1.0.0-next.286`, which wraps `url` in a proxy. From
+> Node 18 onwards `URL` is implemented with real private fields, so prerendering
+> fails with `Cannot read private member #context`. Node 16 is what this site
+> was built on before it moved into the monorepo, so nothing has regressed --
+> but it does mean `pnpm` itself cannot be used to build it, since pnpm 11
+> requires Node 18 or newer.
+>
+> ```bash
+> nvm use 16
+> cd apps/website && BRANCH=main ./node_modules/.bin/svelte-kit build
+> ```
+>
+> Its transitive dependencies are pinned in the workspace `overrides`, because
+> only direct dependencies survived the move from npm. All of this goes away
+> with the SvelteKit migration.
+
 # The Dropzone website
 
 Accessible here: https://www.dropzone.dev

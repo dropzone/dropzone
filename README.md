@@ -69,6 +69,33 @@ Use the standalone files like this:
 > it, use `5.9.3`. See the [`CHANGELOG`](./CHANGELOG.md) for everything that
 > changed in 6.0.0.
 
+## Repository layout
+
+This is a monorepo. It holds the library, the documentation and the website:
+
+|                                          |                                            |
+| ---------------------------------------- | ------------------------------------------ |
+| [`packages/dropzone`](packages/dropzone) | the library published to npm as `dropzone` |
+| [`apps/docs`](apps/docs)                 | the documentation, built with Docusaurus   |
+| [`apps/website`](apps/website)           | www.dropzone.dev, built with SvelteKit     |
+
+```bash
+pnpm install
+
+pnpm build          # the library and the docs
+pnpm test           # the library's unit tests
+pnpm test:e2e       # the library's browser tests
+pnpm dev:docs       # the documentation, locally
+```
+
+The website is not part of `pnpm build`, and `pnpm dev:site` and `pnpm build:site`
+only run on Node 16 -- see [`apps/website/README.md`](apps/website/README.md).
+That is temporary, and goes away with the SvelteKit migration described in
+[`ROADMAP.md`](ROADMAP.md).
+
+The website and the documentation are deployed together as one GitHub Pages
+site: the website at the root, the documentation under `/docs`.
+
 ## Community
 
 If you need support please use the [discussions section][discussions] or

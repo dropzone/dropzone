@@ -8,9 +8,9 @@
     "url": "git+https://github.com/dropzone/dropzone.git"
   },
   "scripts": {
-    "build": "pnpm --recursive --filter=./packages/* --filter=./apps/* run build",
+    "build": "pnpm run build:lib && pnpm run build:docs",
     "build:lib": "pnpm --filter dropzone run build",
-    "build:site": "pnpm --filter @dropzone/website run build",
+    "build:site": "cd apps/website && BRANCH=${BRANCH:-main} ./node_modules/.bin/svelte-kit build",
     "build:docs": "pnpm --filter @dropzone/docs run build",
     "dev:site": "pnpm --filter @dropzone/website run dev",
     "dev:docs": "pnpm --filter @dropzone/docs run start",
