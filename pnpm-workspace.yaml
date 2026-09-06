@@ -4,8 +4,11 @@ packages:
 
 allowBuilds:
   "@parcel/watcher": true
+  # SvelteKit next.286 pulls an esbuild that compiles a binary on install.
   esbuild: true
   "svelte-preprocess": true
+  # Docusaurus pulls core-js, which prints a postinstall banner.
+  core-js: true
 
 # apps/website still runs the 2022 SvelteKit it was written against, and its
 # npm lockfile pinned the whole tree. Only its direct dependencies survived the
