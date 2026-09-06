@@ -27,17 +27,17 @@ The build targets `es2017` and 6.x already dropped IE, but the source still
 carries workarounds for browsers well below that floor. Pick a floor, write it
 down in the README, and then remove:
 
-| what | where |
-|---|---|
-| `CustomEvent` polyfill, marked "IE 11 support" | `src/emitter.js:39` |
-| `window.URL !== null ? window.URL : window.webkitURL` | `src/dropzone.js:280` |
-| `classList` feature gate (rejects IE9 and below) | `src/dropzone.js:1784` |
-| Opera 12 on macOS / Windows Phone blocklist | `src/dropzone.js:1767` |
-| `Dropzone.blacklistedBrowsers` back-compat alias | `src/dropzone.js:1790` |
-| `transformedFile.webkitSlice` fallback | `src/dropzone.js:1220` |
+| what                                                              | where                           |
+| ----------------------------------------------------------------- | ------------------------------- |
+| `CustomEvent` polyfill, marked "IE 11 support"                    | `src/emitter.js:39`             |
+| `window.URL !== null ? window.URL : window.webkitURL`             | `src/dropzone.js:280`           |
+| `classList` feature gate (rejects IE9 and below)                  | `src/dropzone.js:1784`          |
+| Opera 12 on macOS / Windows Phone blocklist                       | `src/dropzone.js:1767`          |
+| `Dropzone.blacklistedBrowsers` back-compat alias                  | `src/dropzone.js:1790`          |
+| `transformedFile.webkitSlice` fallback                            | `src/dropzone.js:1220`          |
 | `detectVerticalSquash` / `drawImageIOSFix`, an iOS 6/7 canvas bug | `src/dropzone.js:1985`, `:2020` |
-| "Setting the timeout after open because of IE11 issue" | `src/dropzone.js:1331` |
-| `item.kind == null` and `item.getAsFile != null` in the drop path | `src/dropzone.js:654` |
+| "Setting the timeout after open because of IE11 issue"            | `src/dropzone.js:1331`          |
+| `item.kind == null` and `item.getAsFile != null` in the drop path | `src/dropzone.js:654`           |
 
 The `window.URL` line is a latent bug rather than dead weight:
 `undefined !== null` is `true`, so the `webkitURL` fallback can never fire. It
@@ -72,12 +72,12 @@ polyfilled, and `drop()` uses them as of 6.2.
 
 Dropzone currently has two bases that disagree:
 
-| | base | result |
-|---|---|---|
+|                                    | base                             | result         |
+| ---------------------------------- | -------------------------------- | -------------- |
 | `filesize()`, used for the preview | `filesizeBase`, default **1000** | shows "9.5 MB" |
-| `maxFilesize` check | hardcoded **1024 × 1024** | enforces MiB |
-| `dictFileTooBig` | — | says "MiB" |
-| `dictFileSizeUnits` | — | says "MB" |
+| `maxFilesize` check                | hardcoded **1024 × 1024**        | enforces MiB   |
+| `dictFileTooBig`                   | —                                | says "MiB"     |
+| `dictFileSizeUnits`                | —                                | says "MB"      |
 
 So a preview reads `MB` while the rejection message for the same file talks in
 `MiB`. **#1979** proposed a `maxFilesizeBase` option; it was closed because a
