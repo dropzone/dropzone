@@ -1,3 +1,27 @@
+## 6.2.0
+
+### Minor Changes
+
+- [#2351](https://github.com/dropzone/dropzone/pull/2351) [`ee82380`](https://github.com/dropzone/dropzone/commit/ee82380a1813a4d82c932c5e6a3516ce29548216) Thanks [@enyo](https://github.com/enyo)! - `addedfiles` now reports the files found inside a dropped folder. It previously received `e.dataTransfer.files`, which holds the folder entries rather than their contents, so anyone counting dropped files got the wrong answer for folders.
+
+  **This changes when the event fires.** Reading a folder is asynchronous, so on browsers that support folder drops — all of them — `addedfiles` is now emitted once the walk finishes, after the individual `addedfile` events, instead of synchronously at the end of the drop handler. Listeners still receive the event; only the timing moves.
+
+  Also adds an `emptyfolder` event, emitted with the folder's path when a dropped folder turns out to contain nothing at all.
+
+- [#2348](https://github.com/dropzone/dropzone/pull/2348) [`f0697ee`](https://github.com/dropzone/dropzone/commit/f0697eef079496980c05cb13fd804caca4328f75) Thanks [@enyo](https://github.com/enyo)! - `parallelChunkUploads: true` now starts at most `parallelUploads` chunks at a time rather than every chunk of the file at once. Pass a number to set a different limit, or `Infinity` to restore the previous behaviour.
+
+- [#2349](https://github.com/dropzone/dropzone/pull/2349) [`8a8b449`](https://github.com/dropzone/dropzone/commit/8a8b449619c080172d36183d1129a5037b459f39) Thanks [@enyo](https://github.com/enyo)! - Add `resizeTransparencyFill`, the color shown through transparent parts of a resized image. A transparent PNG resized to `image/jpeg` previously came out with black where it used to be see-through; set this to `"#fff"`, or any CSS color, for a background instead. Defaults to `null`, which keeps the current behavior.
+
+### Patch Changes
+
+- [`d3a9221`](https://github.com/dropzone/dropzone/commit/d3a922199d56b73be1ae71f1834c24066aba40fd) Thanks [@enyo](https://github.com/enyo)! - Reword the default `dictMaxFilesExceeded` message from "You can not upload any more files." to "You cannot upload any more files."
+
+- [#2350](https://github.com/dropzone/dropzone/pull/2350) [`9b5015b`](https://github.com/dropzone/dropzone/commit/9b5015b7d4143ec1c482984a20ec6e87888702d4) Thanks [@enyo](https://github.com/enyo)! - Give the hidden file input an `aria-label`, so accessibility auditors stop reporting it as an unlabelled input. This does not change anything for screen reader users: browsers leave `visibility: hidden` elements out of the accessibility tree entirely, and the `.dz-button` carrying `dictDefaultMessage` remains the control they interact with.
+
+- [#2352](https://github.com/dropzone/dropzone/pull/2352) [`b24f8cc`](https://github.com/dropzone/dropzone/commit/b24f8cc594530ed4d192dec5de7ce510207eb7cb) Thanks [@enyo](https://github.com/enyo)! - Associate the hidden file input with its form. The input is appended to `hiddenInputContainer` (the body by default), so it sits outside the form it belongs to and several dropzones on one page produce indistinguishable inputs. It now carries a `form` attribute when the dropzone is a form, or sits inside one, and that form has an id. The input has no `name`, so this does not change what a native submit sends — but it does mean the input now appears in `form.elements`.
+
+- [`4e13aab`](https://github.com/dropzone/dropzone/commit/4e13aabb7df94c8a24a4d232b82b2ad12ed8dd47) Thanks [@enyo](https://github.com/enyo)! - Vendor `just-extend` into the source and drop the dependency. Dropzone now installs with no dependencies at all; the option merging behaviour is unchanged.
+
 ## 6.1.0
 
 ### Minor Changes
