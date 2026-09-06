@@ -1,0 +1,47 @@
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--background-color);
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: var(--text-color);
+}
+strong {
+  font-weight: 700;
+}
+p {
+  margin: 0 0 1.5rem 0;
+}
+a,
+a:visited {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+small {
+  font-size: 0.75em;
+}
+
+#svelte {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+h1 {
+  font-weight: bold;
+  font-family: var(--font-header);
+}
+h3 {
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+img {
+  max-width: 100%;
+}

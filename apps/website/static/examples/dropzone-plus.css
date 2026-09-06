@@ -1,0 +1,42 @@
+body {
+  padding: 3rem;
+}
+.form {
+  max-width: 30rem;
+  margin: 3rem auto;
+}
+.dropzone {
+  border-radius: 5px;
+  border: 2px solid #0d6efd;
+  background: #0d6efd07;
+}
+.dropzone-plus {
+  margin-top: 6rem;
+}
+
+.dropzone {
+  margin-top: 3rem;
+}
+.previews {
+  margin: 2rem 0 3rem 0;
+}
+.dropzone .dz-message {
+  margin: 3rem 0;
+  font-weight: bold;
+}
+button[type='submit'] {
+  width: 100%;
+}
+main .success {
+  display: none;
+}
+main.sent .success {
+  display: block;
+  font-weight: bold;
+  font-size: 1.85rem;
+  text-align: center;
+  color: #20c997;
+}
+main.sent .form {
+  display: none;
+}

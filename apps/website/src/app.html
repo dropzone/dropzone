@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="client" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    %svelte.head%
+
+    <link
+      href="https://unpkg.com/dropzone@5.9.3/dist/min/dropzone.min.css"
+      rel="stylesheet"
+    />
+
+    <script
+      defer
+      data-domain="dropzone.dev"
+      src="https://plausible.io/js/plausible.js"
+    ></script>
+    <script>
+      window.plausible =
+        window.plausible ||
+        function () {
+          ;(window.plausible.q = window.plausible.q || []).push(arguments)
+        }
+    </script>
+  </head>
+  <body>
+    <div id="svelte">%svelte.body%</div>
+  </body>
+</html>
