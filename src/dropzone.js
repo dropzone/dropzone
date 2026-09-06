@@ -1125,8 +1125,6 @@ export default class Dropzone extends Emitter {
         // uploadMultiple is not allowed with this option.
         let file = files[0];
         let transformedFile = transformedFiles[0];
-        let startedChunkCount = 0;
-
         file.upload.chunks = [];
 
         let handleNextChunk = () => {
@@ -1139,8 +1137,6 @@ export default class Dropzone extends Emitter {
 
           // This means, that all chunks have already been started.
           if (chunkIndex >= file.upload.totalChunkCount) return;
-
-          startedChunkCount++;
 
           let start = chunkIndex * chunkSize;
           let end = Math.min(start + chunkSize, transformedFile.size);
@@ -1194,7 +1190,20 @@ export default class Dropzone extends Emitter {
         };
 
         if (this.options.parallelChunkUploads) {
-          for (let i = 0; i < file.upload.totalChunkCount; i++) {
+          // Starting every chunk at once means a large file arrives as
+          // hundreds of simultaneous requests -- HTTP/1.1 queues most of them
+          // in the browser, but over HTTP/2 they all reach the server
+          // together. `true` defers to parallelUploads; a number sets its own
+          // limit. Whatever does not start now is picked up by
+          // finishedChunkUpload as earlier chunks complete.
+          let limit =
+            this.options.parallelChunkUploads === true
+              ? this.options.parallelUploads
+              : this.options.parallelChunkUploads;
+
+          // At least one, or nothing would ever start.
+          let startCount = Math.max(1, Math.min(limit, file.upload.totalChunkCount));
+          for (let i = 0; i < startCount; i++) {
             handleNextChunk();
           }
         } else {

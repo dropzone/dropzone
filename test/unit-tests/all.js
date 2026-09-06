@@ -1801,12 +1801,111 @@ describe("Dropzone", function () {
         }));
 
       describe("chunking", function () {
+        // 6 bytes at chunkSize 1 gives 6 chunks; parallelUploads defaults to 2.
+        let startChunked = (overrides) => {
+          vi.spyOn(dropzone, "_uploadData").mockImplementation(() => {});
+          dropzone.options.chunking = true;
+          dropzone.options.chunkSize = 1;
+          Object.assign(dropzone.options, overrides);
+
+          let file = getMockFile("text/html", "chunked-file", ["abcdef"]);
+          dropzone.addFile(file);
+          return file;
+        };
+
+        let finishChunk = (file, index) => {
+          let chunk = file.upload.chunks[index];
+          chunk.xhr = { responseText: "ok", getAllResponseHeaders: () => "" };
+          file.upload.finishedChunkUpload(chunk, "ok");
+        };
+
+        describe("parallelChunkUploads", function () {
+          it("should start at most parallelUploads chunks when true", () =>
+            new Promise((done) => {
+              let file = startChunked({ parallelChunkUploads: true });
+
+              setTimeout(function () {
+                expect(file.upload.totalChunkCount).toEqual(6);
+                expect(dropzone._uploadData).toHaveBeenCalledTimes(2);
+                done();
+              }, 10);
+            }));
+
+          it("should start the remaining chunks as earlier ones finish", () =>
+            new Promise((done) => {
+              let file = startChunked({ parallelChunkUploads: true });
+
+              setTimeout(function () {
+                expect(dropzone._uploadData).toHaveBeenCalledTimes(2);
+
+                // Each completion should release exactly one more chunk, until
+                // there are none left to start.
+                finishChunk(file, 0);
+                expect(dropzone._uploadData).toHaveBeenCalledTimes(3);
+                finishChunk(file, 1);
+                expect(dropzone._uploadData).toHaveBeenCalledTimes(4);
+                finishChunk(file, 2);
+                finishChunk(file, 3);
+                expect(dropzone._uploadData).toHaveBeenCalledTimes(6);
+
+                // All six started, so further completions start nothing new.
+                finishChunk(file, 4);
+                expect(dropzone._uploadData).toHaveBeenCalledTimes(6);
+                done();
+              }, 10);
+            }));
+
+          it("should treat a number as the limit", () =>
+            new Promise((done) => {
+              let file = startChunked({ parallelChunkUploads: 3 });
+
+              setTimeout(function () {
+                expect(file.upload.totalChunkCount).toEqual(6);
+                expect(dropzone._uploadData).toHaveBeenCalledTimes(3);
+                done();
+              }, 10);
+            }));
+
+          it("should start every chunk at once when Infinity", () =>
+            new Promise((done) => {
+              startChunked({ parallelChunkUploads: Infinity });
+
+              setTimeout(function () {
+                expect(dropzone._uploadData).toHaveBeenCalledTimes(6);
+                done();
+              }, 10);
+            }));
+
+          it("should start one chunk at a time when false", () =>
+            new Promise((done) => {
+              startChunked({ parallelChunkUploads: false });
+
+              setTimeout(function () {
+                expect(dropzone._uploadData).toHaveBeenCalledTimes(1);
+                done();
+              }, 10);
+            }));
+
+          it("should never start fewer than one chunk", () =>
+            new Promise((done) => {
+              startChunked({ parallelChunkUploads: 0 });
+
+              setTimeout(function () {
+                expect(dropzone._uploadData).toHaveBeenCalledTimes(1);
+                done();
+              }, 10);
+            }));
+        });
+
         it("should slice on numeric boundaries when chunkSize is a string", () =>
           new Promise((done) => {
             vi.spyOn(dropzone, "_uploadData").mockImplementation(() => {});
 
             dropzone.options.chunking = true;
-            dropzone.options.parallelChunkUploads = true;
+            // Infinity so all three slices are handed over in one go and can
+            // be inspected together; the boundaries are what matter here, not
+            // the concurrency.
+            dropzone.options.parallelChunkUploads = Infinity;
             // Options read out of markup or JSON arrive as strings.
             dropzone.options.chunkSize = "2";
 
