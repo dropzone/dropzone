@@ -40,7 +40,7 @@ jobs:
 
       # dist/ is not committed, so it has to be built before anything is
       # published. package.json also runs this via prepublishOnly.
-      - run: pnpm build
+      - run: pnpm build:lib
 
       # With changesets pending, this opens (or updates) a "Version packages"
       # pull request. When that pull request is merged there are no changesets
@@ -72,6 +72,7 @@ jobs:
           # a subtraction in an Actions expression.
           TAG: v${{ fromJSON(steps.changesets.outputs['published-packages'])[0].version }}
         run: |
+          cd packages/dropzone
           zip -r dist.zip dist
           gh release upload "$TAG" dist.zip --clobber
 

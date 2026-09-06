@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+
+<!-- 
+
+Hi! 👋
+
+This source code is as concise as possible and meant to be inspected and read.
+For simple formatting of this page, we included bootstrap, but of course, this
+is completely optional.
+
+-->
+
+<!-- The Dropzone includes -->
+<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/dropzone.css" />
+<script src="https://unpkg.com/dropzone@5/dist/dropzone.js"></script>
+
+<!-- Styling of this specific page -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+/>
+<link rel="stylesheet" href="./dropzone-plus.css" />
+
+<script>
+  // Because the id of the form is `upload-form` this will apply the
+  // configuration.
+  Dropzone.options.uploadForm = {
+    // Don't send the files to the server the moment they are dropped.
+    // We want the user to hit the send button.
+    autoProcessQueue: false,
+    // Allow multiple files to be transmitted in one request.
+    uploadMultiple: true,
+    // The limit for parallel uploads. We don't want them to be split up in
+    // multiple requests.
+    parallelUploads: 100,
+    // Adapt this to your Dropzone Plus tier.
+    maxFiles: 100,
+    maxFilesize: 1,
+    // The container where the dropped files will be previewed.
+    previewsContainer: '.previews',
+
+    // The setup of the dropzone when the page loads and Dropzone has
+    // initialized.
+    init: function () {
+      let button = this.element.querySelector('button[type=submit]')
+
+      // First change the button to actually tell Dropzone to process the queue.
+      button.addEventListener('click', (e) => {
+        // Make sure that the form isn't actually being sent.
+        e.preventDefault()
+        e.stopPropagation()
+        if (this.files.length == 0) {
+          window.alert('You need to add at least one file.')
+          return
+        }
+
+        // This is only added for this demo page. It changes the endpoint URL
+        // according to the input field at the bottom.
+        // You can just ignore this.
+        let urlInput = document.querySelector('input#url')
+        this.options.url = urlInput.value
+        // /\/\/\/\/\/\
+
+        this.processQueue()
+        button.disabled = true
+      })
+
+      this.on('sendingmultiple', function () {
+        // Gets triggered when the form is being sent.
+        // Hide the submit button or the complete form.
+      })
+      this.on('successmultiple', function (files, response) {
+        // Gets triggered when the files have successfully been sent.
+        // Redirect user or notify of success.
+        document.querySelector('main').classList.add('sent')
+      })
+      this.on('errormultiple', function (files, response) {
+        // Gets triggered when there was an error sending the files.
+        // Maybe show form again, and notify user of error
+      })
+    },
+  }
+</script>
+
+<main>
+  <div class="form">
+    <p>
+      This is a simple demo form, that shows how to integrate the
+      <a href="https://www.dropzone.dev/js">Dropzone JavaScript</a> library with
+      <a href="https://www.dropzone.dev/plus">Dropzone Plus</a>.
+    </p>
+    <p>You can look at the source of this page to see the implementation.</p>
+    <hr />
+
+    <form action="#" method="post" id="upload-form" class="dropzone">
+      <label for="name" class="form-label">Name</label>
+      <input id="name" class="form-control" type="text" name="name" />
+
+      <label for="email" class="form-label">Email</label>
+      <input id="email" class="form-control" type="email" name="email" />
+
+      <div class="previews"></div>
+      <div class="dz-message">Drag and Drop files here</div>
+
+      <button class="btn btn-primary btn-lg" type="submit">Submit</button>
+    </form>
+
+    <!-- Only added for dropzone plus -->
+    <div class="dropzone-plus">
+      <label for="url" class="form-label">Dropzone Plus Endpoint</label>
+      <input
+        id="url"
+        class="form-control"
+        type="text"
+        name="url"
+        value=""
+      /><br />
+      Make sure you add <code>https://www.dropzone.dev</code> to your "Allow
+      Origin URLs" in your Dropzone Plus settings, otherwise the server will
+      reject this request.
+    </div>
+    <!-- // -->
+  </div>
+
+  <div class="success">Thank you!</div>
+</main>
+
+<!-- 
+
+
+
+
+
+
+
+
+ -->
+
+<script>
+  // Dropzone Plus specific. This code simply uses the endpoint provided in the
+  // URL and fills in the endpoint input field.
+  let urlInput = document.querySelector('input#url')
+
+  let endpointMatch = window.location.hash.match(/endpoint=(.*)$/)
+  if (endpointMatch) {
+    let endpoint = endpointMatch[1]
+    urlInput.value = endpoint
+  }
+</script>

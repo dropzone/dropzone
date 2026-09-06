@@ -1,0 +1,9 @@
+@font-face {
+  font-family: 'BespokeSans-Variable';
+  src: url('/fonts/BespokeSans-Variable.woff2') format('woff2'),
+    url('/fonts/BespokeSans-Variable.woff') format('woff'),
+    url('/fonts/BespokeSans-Variable.ttf') format('truetype');
+  font-weight: 300 800;
+  font-display: swap;
+  font-style: normal;
+}

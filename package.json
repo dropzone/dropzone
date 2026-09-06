@@ -1,78 +1,38 @@
 {
-  "name": "dropzone",
-  "version": "6.2.0",
-  "description": "Handles drag and drop of files for you.",
-  "keywords": [
-    "drag and drop",
-    "dragndrop",
-    "file upload",
-    "upload"
-  ],
-  "homepage": "https://www.dropzone.dev/js",
-  "bugs": {
-    "url": "https://github.com/dropzone/dropzone/issues",
-    "email": "m@tias.me"
-  },
+  "name": "@dropzone/monorepo",
+  "private": true,
+  "description": "Monorepo for the Dropzone library, its documentation and its website.",
   "license": "MIT",
-  "maintainers": [
-    {
-      "name": "Matias Simon",
-      "email": "m@tias.me",
-      "web": "https://www.matsimon.dev"
-    }
-  ],
-  "contributors": [
-    {
-      "name": "Matias Simon",
-      "email": "m@tias.me",
-      "web": "https://www.matsimon.dev"
-    }
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dropzone/dropzone.git"
   },
-  "files": [
-    "dist",
-    "src",
-    "composer.json",
-    "CHANGELOG.md",
-    "CODE_OF_CONDUCT.md"
-  ],
-  "main": "dist/dropzone.js",
-  "module": "dist/dropzone.mjs",
   "scripts": {
-    "watch": "vite build --watch",
-    "build": "vite build && vite build --config vite.config.global.mjs && pnpm run css",
-    "css": "sass src/:dist/ --style compressed",
-    "watch-css": "sass src/:dist/ --watch --style compressed",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:e2e": "playwright test",
-    "format": "oxfmt .",
-    "format:check": "oxfmt --check .",
+    "build": "pnpm run build:lib && pnpm run build:docs",
+    "build:lib": "pnpm --filter dropzone run build",
+    "build:site": "cd apps/website && BRANCH=${BRANCH:-main} ./node_modules/.bin/svelte-kit build",
+    "build:docs": "pnpm --filter @dropzone/docs run build",
+    "dev:site": "pnpm --filter @dropzone/website run dev",
+    "dev:docs": "pnpm --filter @dropzone/docs run start",
+    "test": "pnpm --filter dropzone run test",
+    "test:watch": "pnpm --filter dropzone run test:watch",
+    "test:e2e": "pnpm --filter dropzone run test:e2e",
+    "format": "oxfmt --ignore-path .gitignore --ignore-path .oxfmtignore .",
+    "format:check": "oxfmt --check --ignore-path .gitignore --ignore-path .oxfmtignore .",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "changeset": "changeset",
     "changeset:version": "changeset version",
-    "changeset:publish": "changeset publish",
-    "prepublishOnly": "pnpm run build"
+    "changeset:publish": "changeset publish"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^1.0.0",
     "@changesets/cli": "^3.0.1",
-    "@playwright/test": "^1.62.1",
-    "@vitest/browser-playwright": "^4.1.11",
     "oxfmt": "^0.65.0",
-    "oxlint": "^1.80.0",
-    "playwright": "^1.62.1",
-    "sass": "^1.33.0",
-    "vite": "^8.2.2",
-    "vitest": "^4.1.11"
+    "oxlint": "^1.80.0"
   },
   "engines": {
     "node": ">=20.19.0"
   },
-  "packageManager": "pnpm@11.24.0",
-  "standalone": "dist/dropzone-min.js"
+  "packageManager": "pnpm@11.24.0"
 }

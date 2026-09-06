@@ -16,5 +16,6 @@
   "env": {
     "builtin": true,
     "browser": true
-  }
+  },
+  "ignorePatterns": ["apps/website/**", "apps/docs/build/**", "apps/docs/.docusaurus/**"]
 }

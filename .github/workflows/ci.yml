@@ -7,8 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  test:
-    name: Test
+  library:
+    name: Library
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Dropzone
@@ -25,11 +25,13 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
+      # Filtered to the package: playwright is a devDependency of
+      # packages/dropzone, so its binary is not on the workspace root's path.
+      - run: pnpm --filter dropzone exec playwright install --with-deps chromium
 
       - run: pnpm format:check
       - run: pnpm lint
-      - run: pnpm build
+      - run: pnpm build:lib
       - run: pnpm test
       - run: pnpm test:e2e
 
@@ -38,5 +40,52 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: playwright-report
-          path: playwright-report
+          path: packages/dropzone/playwright-report
           retention-days: 7
+
+  docs:
+    name: Docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      # The docs build treats broken links, anchors and markdown links as
+      # errors, so this is also the link check.
+      - run: pnpm build:docs
+
+  website:
+    name: Website
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+
+      # Install on a supported Node: pnpm 11 needs 18 or newer.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      # ...but build on Node 16. SvelteKit 1.0.0-next.286 wraps `url` in a
+      # proxy, and from Node 18 onwards URL is implemented with real private
+      # fields, so prerendering dies with "Cannot read private member
+      # #context". This is the same Node the website repository built on.
+      # It goes away with the SvelteKit migration.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 16
+
+      # Invoked directly rather than through pnpm: pnpm 11 will not start on
+      # Node 16 (corepack uses URL.canParse, which needs 18.17+).
+      - name: Build the website
+        working-directory: apps/website
+        env:
+          BRANCH: main
+        run: ./node_modules/.bin/svelte-kit build

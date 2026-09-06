@@ -1,0 +1,9 @@
+# The website carries its own prettier config and is due to be replaced by the
+# SvelteKit migration; reformatting it now would bury that diff.
+apps/website/
+
+# Documentation content converted from GitBook. Reformatting markdown risks
+# changing MDX semantics, and the diff would be pure noise.
+apps/docs/docs/
+apps/docs/build/
+apps/docs/.docusaurus/
