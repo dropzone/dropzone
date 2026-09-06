@@ -72,6 +72,7 @@ jobs:
           # a subtraction in an Actions expression.
           TAG: v${{ fromJSON(steps.changesets.outputs['published-packages'])[0].version }}
         run: |
+          cd packages/dropzone
           zip -r dist.zip dist
           gh release upload "$TAG" dist.zip --clobber
 

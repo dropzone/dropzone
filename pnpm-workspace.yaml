@@ -1,6 +1,6 @@
-# pnpm 11 reads its settings from here rather than from package.json.
-#
-# sass pulls in @parcel/watcher, a native optional dependency used by
-# `pnpm watch-css`. Allowing its build script keeps watch mode fast.
+packages:
+  - "packages/*"
+  - "apps/*"
+
 allowBuilds:
   "@parcel/watcher": true
