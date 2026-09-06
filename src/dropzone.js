@@ -44,6 +44,7 @@ export default class Dropzone extends Emitter {
       "maxfilesexceeded",
       "maxfilesreached",
       "queuecomplete",
+      "emptyfolder",
     ];
 
     this.prototype._thumbnailQueue = [];
@@ -571,7 +572,6 @@ export default class Dropzone extends Emitter {
     this.emit("drop", e);
 
     // Convert the FileList to an Array
-    // This is necessary for IE11
     let files = [];
     for (let i = 0; i < e.dataTransfer.files.length; i++) {
       files[i] = e.dataTransfer.files[i];
@@ -581,11 +581,16 @@ export default class Dropzone extends Emitter {
     if (files.length) {
       let { items } = e.dataTransfer;
       if (items && items.length && items[0].webkitGetAsEntry != null) {
-        // The browser supports dropping of folders, so handle items instead of files
-        this._addFilesFromItems(items);
-      } else {
-        this.handleFiles(files);
+        // The browser supports dropping of folders, so the items get walked
+        // rather than the files. `e.dataTransfer.files` holds the folder
+        // entries themselves, not what is inside them, so `addedfiles` waits
+        // for the walk and reports what was actually added.
+        this._addFilesFromItems(items).then((addedFiles) => {
+          this.emit("addedfiles", addedFiles);
+        });
+        return;
       }
+      this.handleFiles(files);
     }
 
     this.emit("addedfiles", files);
@@ -612,67 +617,103 @@ export default class Dropzone extends Emitter {
 
   // When a folder is dropped (or files are pasted), items must be handled
   // instead of files.
+  //
+  // Resolves with every file that was added, so `drop` can report the real
+  // contents of a dropped folder rather than the folder entry itself.
   _addFilesFromItems(items) {
-    return (() => {
-      let result = [];
-      for (let item of items) {
-        var entry;
-        if (item.webkitGetAsEntry != null && (entry = item.webkitGetAsEntry())) {
-          if (entry.isFile) {
-            result.push(this.addFile(item.getAsFile()));
-          } else if (entry.isDirectory) {
-            // Append all files from that directory to files
-            result.push(this._addFilesFromDirectory(entry, entry.name));
-          } else {
-            result.push(undefined);
-          }
-        } else if (item.getAsFile != null) {
-          if (item.kind == null || item.kind === "file") {
-            result.push(this.addFile(item.getAsFile()));
-          } else {
-            result.push(undefined);
-          }
-        } else {
-          result.push(undefined);
+    let files = [];
+    let directories = [];
+
+    for (let item of items) {
+      let entry = item.webkitGetAsEntry != null ? item.webkitGetAsEntry() : null;
+
+      if (entry) {
+        if (entry.isFile) {
+          let file = item.getAsFile();
+          this.addFile(file);
+          files.push(file);
+        } else if (entry.isDirectory) {
+          // Append all files from that directory to files
+          directories.push(this._addFilesFromDirectory(entry, entry.name));
         }
+      } else if (item.getAsFile != null && (item.kind == null || item.kind === "file")) {
+        let file = item.getAsFile();
+        this.addFile(file);
+        files.push(file);
       }
-      return result;
-    })();
+    }
+
+    return Promise.all(directories).then((fromDirectories) => files.concat(...fromDirectories));
   }
 
-  // Goes through the directory, and adds each file it finds recursively
+  // Goes through the directory, and adds each file it finds recursively.
+  // Resolves with the files that were added.
   _addFilesFromDirectory(directory, path) {
     let dirReader = directory.createReader();
 
-    let errorHandler = (error) => __guardMethod__(console, "log", (o) => o.log(error));
+    return new Promise((resolve) => {
+      let pending = [];
+      let entryCount = 0;
 
-    var readEntries = () => {
-      return dirReader.readEntries((entries) => {
-        if (entries.length > 0) {
-          for (let entry of entries) {
-            if (entry.isFile) {
-              entry.file((file) => {
-                if (this.options.ignoreHiddenFiles && file.name.substring(0, 1) === ".") {
-                  return;
-                }
-                file.fullPath = `${path}/${file.name}`;
-                return this.addFile(file);
-              });
-            } else if (entry.isDirectory) {
-              this._addFilesFromDirectory(entry, `${path}/${entry.name}`);
+      // Every pending entry resolves with an array, so a single concat
+      // flattens files and nested directories together.
+      let settle = () => Promise.all(pending).then((results) => resolve([].concat(...results)));
+
+      let errorHandler = (error) => {
+        __guardMethod__(console, "log", (o) => o.log(error));
+        // Settle instead of hanging: a directory that cannot be read must not
+        // stop `addedfiles` from ever firing.
+        settle();
+      };
+
+      let readEntries = () =>
+        dirReader.readEntries((entries) => {
+          if (entries.length > 0) {
+            entryCount += entries.length;
+
+            for (let entry of entries) {
+              if (entry.isFile) {
+                pending.push(
+                  new Promise((resolveEntry) =>
+                    entry.file(
+                      (file) => {
+                        if (this.options.ignoreHiddenFiles && file.name.substring(0, 1) === ".") {
+                          resolveEntry([]);
+                          return;
+                        }
+                        file.fullPath = `${path}/${file.name}`;
+                        this.addFile(file);
+                        resolveEntry([file]);
+                      },
+                      // Same reasoning as errorHandler: never leave it pending.
+                      () => resolveEntry([]),
+                    ),
+                  ),
+                );
+              } else if (entry.isDirectory) {
+                pending.push(this._addFilesFromDirectory(entry, `${path}/${entry.name}`));
+              }
             }
+
+            // Recursively call readEntries() again, since browser only handle
+            // the first 100 entries.
+            // See: https://developer.mozilla.org/en-US/docs/Web/API/DirectoryReader#readEntries
+            readEntries();
+            return null;
           }
 
-          // Recursively call readEntries() again, since browser only handle
-          // the first 100 entries.
-          // See: https://developer.mozilla.org/en-US/docs/Web/API/DirectoryReader#readEntries
-          readEntries();
-        }
-        return null;
-      }, errorHandler);
-    };
+          // Counting every entry rather than only the files, so a folder that
+          // holds nothing but other folders is not reported as empty.
+          if (entryCount === 0) {
+            this.emit("emptyfolder", path);
+          }
 
-    return readEntries();
+          settle();
+          return null;
+        }, errorHandler);
+
+      readEntries();
+    });
   }
 
   // If `done()` is called without argument the file is accepted
