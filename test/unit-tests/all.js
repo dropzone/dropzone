@@ -267,6 +267,73 @@ describe("Dropzone", function () {
     });
   });
 
+  describe("hidden input form association", function () {
+    let dropzones = [];
+    let elements = [];
+
+    let attach = (html, selector) => {
+      let element = Dropzone.createElement(html);
+      document.body.appendChild(element);
+      elements.push(element);
+
+      let dropzone = new Dropzone(selector ? element.querySelector(selector) : element, {
+        url: "/url",
+      });
+      dropzones.push(dropzone);
+      return dropzone;
+    };
+
+    afterEach(function () {
+      for (let dropzone of dropzones) dropzone.destroy();
+      for (let element of elements) element.parentNode.removeChild(element);
+      dropzones = [];
+      elements = [];
+    });
+
+    it("should point at the form when the dropzone is one", function () {
+      let dropzone = attach('<form id="upload-form" class="dropzone"></form>');
+      expect(dropzone.hiddenFileInput.getAttribute("form")).toBe("upload-form");
+    });
+
+    it("should point at an ancestor form", function () {
+      // The input is appended to the body, so it is outside this form.
+      let dropzone = attach('<form id="outer-form"><div class="inner"></div></form>', ".inner");
+      expect(dropzone.hiddenFileInput.getAttribute("form")).toBe("outer-form");
+    });
+
+    it("should not set the attribute when there is no form", function () {
+      let dropzone = attach('<div id="plain-dropzone"></div>');
+      expect(dropzone.hiddenFileInput.hasAttribute("form")).toBe(false);
+    });
+
+    it("should not point at an element that is not a form", function () {
+      // The element has an id, but `form` must reference a <form>; pointing it
+      // at a div would leave the input owned by no form at all.
+      let dropzone = attach('<div id="not-a-form"></div>');
+      expect(dropzone.hiddenFileInput.getAttribute("form")).toBe(null);
+    });
+
+    it("should not set the attribute when the form has no id", function () {
+      let dropzone = attach('<form class="dropzone"></form>');
+      expect(dropzone.hiddenFileInput.hasAttribute("form")).toBe(false);
+    });
+
+    it("should keep the association when the input is recreated", () =>
+      new Promise((done) => {
+        let dropzone = attach('<form id="recreated-form" class="dropzone"></form>');
+        let first = dropzone.hiddenFileInput;
+
+        // Selecting a file swaps the input out for a fresh one.
+        first.dispatchEvent(new Event("change"));
+
+        setTimeout(function () {
+          expect(dropzone.hiddenFileInput).not.toBe(first);
+          expect(dropzone.hiddenFileInput.getAttribute("form")).toBe("recreated-form");
+          done();
+        }, 10);
+      }));
+  });
+
   describe("options", function () {
     let element = null;
     let dropzone = null;
