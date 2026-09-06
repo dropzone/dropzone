@@ -228,6 +228,14 @@ export default class Dropzone extends Emitter {
         // Making sure that no one can "tab" into this field.
         this.hiddenFileInput.setAttribute("tabindex", "-1");
 
+        // Auditors such as WAVE report this input as unlabelled. It never
+        // actually reaches assistive technology -- browsers drop
+        // `visibility: hidden` elements from the accessibility tree entirely,
+        // and the .dz-button carrying `dictDefaultMessage` is the control a
+        // screen reader sees. The name is here to clear the audit, which a lot
+        // of people are obliged to pass.
+        this.hiddenFileInput.setAttribute("aria-label", "hidden file upload");
+
         // Not setting `display="none"` because some browsers don't accept clicks
         // on elements that aren't displayed.
         this.hiddenFileInput.style.visibility = "hidden";

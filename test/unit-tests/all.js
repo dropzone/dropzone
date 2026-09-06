@@ -209,6 +209,12 @@ describe("Dropzone", function () {
                   expect(dropzone.hiddenFileInput.tabIndex).toBe(-1);
                 });
 
+                it("should carry an aria-label for automated auditors", function () {
+                  expect(dropzone.hiddenFileInput.getAttribute("aria-label")).toBe(
+                    "hidden file upload",
+                  );
+                });
+
                 it("should use the acceptParameter", () =>
                   expect(dropzone.hiddenFileInput.getAttribute("accept")).toBe("audio/*,video/*"));
 
