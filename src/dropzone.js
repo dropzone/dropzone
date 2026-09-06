@@ -245,6 +245,21 @@ export default class Dropzone extends Emitter {
         this.hiddenFileInput.style.left = "0";
         this.hiddenFileInput.style.height = "0";
         this.hiddenFileInput.style.width = "0";
+        // The input is appended to `hiddenInputContainer` -- the body by
+        // default -- so it ends up outside whatever form it belongs to, and
+        // with several dropzones on a page nothing tells one input from
+        // another. Associating it with the form gives tooling something to go
+        // on.
+        //
+        // Only ever pointed at a real <form>: the attribute has to reference
+        // one, and aiming it at anything else leaves the input owned by no
+        // form at all. The input carries no `name`, so this cannot change what
+        // a native submit sends.
+        let ownerForm = this.element.closest("form");
+        if (ownerForm && ownerForm.id) {
+          this.hiddenFileInput.setAttribute("form", ownerForm.id);
+        }
+
         Dropzone.getElement(this.options.hiddenInputContainer, "hiddenInputContainer").appendChild(
           this.hiddenFileInput,
         );
