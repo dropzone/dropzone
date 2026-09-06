@@ -829,6 +829,17 @@ export default class Dropzone extends Emitter {
         if (resizeMimeType == null) {
           resizeMimeType = file.type;
         }
+        if (this.options.resizeTransparencyFill != null) {
+          // Painted *underneath* what has already been drawn, so the colour
+          // only shows through where the image is actually transparent. Doing
+          // it here rather than before the draw keeps it off the preview
+          // thumbnails, which are encoded as PNG and keep their transparency.
+          let ctx = canvas.getContext("2d");
+          ctx.globalCompositeOperation = "destination-over";
+          ctx.fillStyle = this.options.resizeTransparencyFill;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
         let resizedDataURL = canvas.toDataURL(resizeMimeType, this.options.resizeQuality);
         if (resizeMimeType === "image/jpeg" || resizeMimeType === "image/jpg") {
           // Now add the original EXIF information
