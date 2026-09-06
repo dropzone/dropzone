@@ -152,8 +152,8 @@ let defaultOptions = {
   resizeMethod: "contain",
 
   /**
-   * The colour to show through transparent parts of a resized image, as any
-   * CSS colour. Formats without an alpha channel cannot store transparency, so
+   * The color to show through transparent parts of a resized image, as any
+   * CSS color. Formats without an alpha channel cannot store transparency, so
    * a transparent PNG resized to `image/jpeg` comes out with black where it
    * used to be see-through; setting this to `"#fff"` makes it white instead.
    *

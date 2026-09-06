@@ -830,7 +830,7 @@ export default class Dropzone extends Emitter {
           resizeMimeType = file.type;
         }
         if (this.options.resizeTransparencyFill != null) {
-          // Painted *underneath* what has already been drawn, so the colour
+          // Painted *underneath* what has already been drawn, so the color
           // only shows through where the image is actually transparent. Doing
           // it here rather than before the draw keeps it off the preview
           // thumbnails, which are encoded as PNG and keep their transparency.
