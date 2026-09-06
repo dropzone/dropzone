@@ -237,7 +237,7 @@ describe("Dropzone", function () {
 
     it("should create a .dz-message element", function () {
       let element = Dropzone.createElement('<form class="dropzone" action="/"></form>');
-      let dropzone = new Dropzone(element, {
+      new Dropzone(element, {
         clickable: true,
         acceptParameter: null,
         acceptedMimeTypes: null,
@@ -250,7 +250,7 @@ describe("Dropzone", function () {
       let msg = Dropzone.createElement('<div class="dz-message">TEST</div>');
       element.appendChild(msg);
 
-      let dropzone = new Dropzone(element, {
+      new Dropzone(element, {
         clickable: true,
         acceptParameter: null,
         acceptedMimeTypes: null,
@@ -1221,9 +1221,8 @@ describe("Dropzone", function () {
         it("should properly queue the thumbnail creation", () =>
           new Promise((done) => {
             let ct_callback;
-            let doneFunction;
 
-            dropzone.accept = (file, done) => (doneFunction = done);
+            dropzone.accept = (file, done) => {};
             dropzone.processFile = function () {};
             dropzone.uploadFile = function () {};
 

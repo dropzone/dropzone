@@ -1062,8 +1062,7 @@ export default class Dropzone extends Emitter {
   }
 
   _getFilesWithXhr(xhr) {
-    let files;
-    return (files = this.files.filter((file) => file.xhr === xhr).map((file) => file));
+    return this.files.filter((file) => file.xhr === xhr).map((file) => file);
   }
 
   // Cancels the file upload and sets the status to CANCELED
@@ -1920,7 +1919,6 @@ Dropzone.SUCCESS = "success";
 // Fixes a bug which squash image vertically while drawing into canvas for some images.
 // This is a bug in iOS6 devices. This function from https://github.com/stomita/ios-imagefile-megapixel
 let detectVerticalSquash = function (img) {
-  let iw = img.naturalWidth;
   let ih = img.naturalHeight;
   let canvas = document.createElement("canvas");
   canvas.width = 1;
@@ -2073,7 +2071,6 @@ class ExifRestore {
   }
 
   static decode64(input) {
-    let output = "";
     let chr1 = undefined;
     let chr2 = undefined;
     let chr3 = "";
