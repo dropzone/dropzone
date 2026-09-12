@@ -50,10 +50,9 @@
   "scripts": {
     "watch": "vite build --watch",
     "build": "vite build && vite build --config vite.config.global.mjs && pnpm run css && pnpm run build:types",
-    "css": "sass src/:dist/ --style compressed",
+    "css": "lightningcss --minify --sourcemap --browserslist src/dropzone.css -o dist/dropzone.css && lightningcss --minify --sourcemap --browserslist src/basic.css -o dist/basic.css",
     "build:types": "tsc",
     "typecheck": "tsc --noEmit",
-    "watch-css": "sass src/:dist/ --watch --style compressed",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
@@ -63,11 +62,17 @@
   "devDependencies": {
     "@vitest/browser-playwright": "^4.1.11",
     "@vitest/coverage-v8": "^4.1.11",
-    "sass": "^1.33.0",
+    "lightningcss-cli": "^1.33.0",
     "typescript": "^6.0.3",
     "vite": "^8.2.2",
     "vitest": "^4.1.11"
   },
+  "browserslist": [
+    "chrome >= 58",
+    "firefox >= 54",
+    "safari >= 11",
+    "edge >= 16"
+  ],
   "engines": {
     "node": ">=20.19.0"
   },
