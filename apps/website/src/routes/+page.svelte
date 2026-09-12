@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import Actions from "#lib/Actions.svelte";
   import CheckList from "#lib/CheckList.svelte";
   import ContentSection from "#lib/ContentSection.svelte";

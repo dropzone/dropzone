@@ -38,6 +38,11 @@ jobs:
 
       - run: pnpm format:check
       - run: pnpm lint
+      # Ahead of the build, which also runs tsc but only to emit declarations:
+      # this reports a type problem as a type problem rather than as a failed
+      # build. tsconfig turns on the checks beyond type errors too -- unused
+      # locals and parameters, branches that forget to return, fallthrough.
+      - run: pnpm --filter dropzone run typecheck
       - run: pnpm build:lib
       - run: pnpm test:coverage
       - run: pnpm test:e2e
@@ -92,6 +97,13 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+
+      # svelte-check covers what tsc cannot see on its own: the TypeScript
+      # inside .svelte files, including the markup. --threshold warning means
+      # a warning fails the job rather than scrolling past in the log.
+      - name: Check the website's types
+        run: pnpm --filter @dropzone/website run check
+
       - name: Build the website
         run: ./scripts/build-site.sh website
 

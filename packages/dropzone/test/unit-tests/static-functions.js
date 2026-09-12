@@ -1,4 +1,5 @@
-import { Dropzone } from "../../src/dropzone.js";
+import { Dropzone } from "../../src/dropzone";
+import { version } from "../../package.json";
 
 describe("Static functions", function () {
   describe("Dropzone.isBrowserSupported()", function () {
@@ -342,6 +343,16 @@ describe("Static functions", function () {
           errorMessage,
         );
       });
+    });
+  });
+
+  describe("Dropzone.version", function () {
+    it("should be the version the package is published under", function () {
+      expect(Dropzone.version).toBe(version);
+    });
+
+    it("should look like a version rather than a placeholder", function () {
+      expect(Dropzone.version).toMatch(/^\d+\.\d+\.\d+/);
     });
   });
 });

@@ -54,8 +54,11 @@
   extend(3, {a: 4, b: 5}); // throws
 */
 
-export default function extend(/* [deep], obj1, obj2, [objn] */) {
-  var args = [].slice.call(arguments);
+// Overloads describe the two shapes the arguments-based signature accepts: an
+// optional leading `deep` flag, then the extendee and any number of extenders.
+export default function extend<T>(deep: boolean, target: T, ...sources: any[]): T;
+export default function extend<T>(target: T, ...sources: any[]): T;
+export default function extend(...args: any[]): any {
   var deep = false;
   if (typeof args[0] == "boolean") {
     deep = args.shift();
@@ -89,10 +92,10 @@ export default function extend(/* [deep], obj1, obj2, [objn] */) {
   return result;
 }
 
-function isCloneable(obj) {
+function isCloneable(obj: any) {
   return Array.isArray(obj) || {}.toString.call(obj) == "[object Object]";
 }
 
-function isUnextendable(val) {
+function isUnextendable(val: any) {
   return !val || (typeof val != "object" && typeof val != "function");
 }

@@ -2,9 +2,15 @@
 // to events.
 // It is strongly based on component's emitter class, and I removed the
 // functionality because of the dependency hell with different frameworks.
+export type EmitterListener = (...args: any[]) => void;
+
 export default class Emitter {
+  _callbacks?: Record<string, EmitterListener[]>;
+  // Set by Dropzone: the element the DOM events are dispatched on.
+  element?: HTMLElement;
+
   // Add an event listener for given event
-  on(event, fn) {
+  on(event: string, fn: EmitterListener): this {
     this._callbacks = this._callbacks || {};
     // Create namespace for this event
     if (!this._callbacks[event]) {
@@ -14,9 +20,9 @@ export default class Emitter {
     return this;
   }
 
-  emit(event, ...args) {
+  emit(event: string, ...args: any[]): this {
     this._callbacks = this._callbacks || {};
-    let callbacks = this._callbacks[event];
+    let callbacks = this._callbacks[event!];
 
     if (callbacks) {
       for (let callback of callbacks) {
@@ -30,7 +36,7 @@ export default class Emitter {
     return this;
   }
 
-  makeEvent(eventName, detail) {
+  makeEvent(eventName: string, detail: unknown): CustomEvent {
     let params = { bubbles: true, cancelable: true, detail: detail };
 
     if (typeof window.CustomEvent === "function") {
@@ -47,21 +53,21 @@ export default class Emitter {
   // Remove event listener for given event. If fn is not provided, all event
   // listeners for that event will be removed. If neither is provided, all
   // event listeners will be removed.
-  off(event, fn) {
+  off(event?: string, fn?: EmitterListener): this {
     if (!this._callbacks || arguments.length === 0) {
       this._callbacks = {};
       return this;
     }
 
     // specific event
-    let callbacks = this._callbacks[event];
+    let callbacks = this._callbacks[event!];
     if (!callbacks) {
       return this;
     }
 
     // remove all handlers
     if (arguments.length === 1) {
-      delete this._callbacks[event];
+      delete this._callbacks[event!];
       return this;
     }
 

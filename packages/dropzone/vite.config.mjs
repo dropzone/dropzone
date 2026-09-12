@@ -5,7 +5,7 @@ import { playwright } from "@vitest/browser-playwright";
 //
 // The source's highest syntax level is `async` (ES2017), so this target needs
 // no down-levelling at all. There are no runtime dependencies to externalise:
-// the only one there was, just-extend, now lives in src/extend.js.
+// the only one there was, just-extend, now lives in src/extend.ts.
 export default defineConfig({
   build: {
     target: "es2017",
@@ -14,7 +14,7 @@ export default defineConfig({
     minify: false,
     sourcemap: true,
     lib: {
-      entry: "src/dropzone.js",
+      entry: "src/dropzone.ts",
       formats: ["es", "cjs"],
       fileName: (format) => (format === "es" ? "dropzone.mjs" : "dropzone.js"),
     },
@@ -45,7 +45,7 @@ export default defineConfig({
       // Without this, only files a test happened to import are counted, so a
       // module nothing reaches would quietly improve the percentage by being
       // absent rather than being reported as uncovered.
-      include: ["src/**/*.js"],
+      include: ["src/**/*.ts"],
       reporter: ["text", "html", "json", "json-summary", "lcov"],
       reportsDirectory: "coverage",
     },

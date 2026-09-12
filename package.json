@@ -22,6 +22,7 @@
     "format": "oxfmt --ignore-path .gitignore --ignore-path .oxfmtignore .",
     "format:check": "oxfmt --check --ignore-path .gitignore --ignore-path .oxfmtignore .",
     "lint": "oxlint",
+    "typecheck": "pnpm --filter dropzone run typecheck && pnpm --filter @dropzone/website run check",
     "lint:fix": "oxlint --fix",
     "changeset": "changeset",
     "changeset:version": "changeset version",

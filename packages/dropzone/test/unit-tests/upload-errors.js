@@ -1,5 +1,5 @@
 import { vi } from "vitest";
-import { Dropzone } from "../../src/dropzone.js";
+import { Dropzone } from "../../src/dropzone";
 import { useFakeXMLHttpRequest } from "../fake-xhr.js";
 import { sleep } from "./utils";
 

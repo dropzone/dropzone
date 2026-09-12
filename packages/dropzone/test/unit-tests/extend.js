@@ -1,4 +1,4 @@
-import extend from "../../src/extend.js";
+import extend from "../../src/extend";
 
 // Vendored from just-extend, so these lock in the upstream behaviour Dropzone
 // has always relied on -- particularly the array handling, which merges by
