@@ -64,13 +64,19 @@ jobs:
 
       # The releases have always carried a dist.zip, and the changelog links to
       # it directly, so keep publishing one.
+      #
+      # The tag is <name>@<version>, not v<version>. Changesets only uses the
+      # v prefix for a single-package repository -- see buildGitTag in
+      # @changesets/cli, which switches on the workspace tool -- so the move to
+      # a monorepo changed the scheme, and v6.2.1 was looked up against a
+      # release that had never been created.
       - name: Attach dist.zip to the release
         if: steps.changesets.outputs.published == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Bracket notation: a hyphenated output name would otherwise parse as
           # a subtraction in an Actions expression.
-          TAG: v${{ fromJSON(steps.changesets.outputs['published-packages'])[0].version }}
+          TAG: ${{ fromJSON(steps.changesets.outputs['published-packages'])[0].name }}@${{ fromJSON(steps.changesets.outputs['published-packages'])[0].version }}
         run: |
           cd packages/dropzone
           zip -r dist.zip dist
