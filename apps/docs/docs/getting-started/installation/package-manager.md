@@ -79,7 +79,7 @@ Everything is typed from the source:
 
 ```typescript
 import { Dropzone } from "dropzone";
-import type { DropzoneFile, DropzoneOptions } from "dropzone";
+import type { DropzoneOptions } from "dropzone";
 
 const options: DropzoneOptions = { url: "/file/post", maxFilesize: 10 };
 const dropzone = new Dropzone("div#myId", options);

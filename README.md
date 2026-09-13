@@ -56,9 +56,6 @@ const dropzone = new Dropzone("div#myId", options);
 dropzone.on("addedfile", (file) => console.log(file.name, file.upload.uuid));
 ```
 
-Every option is typed from the defaults it's declared with, so the two can't
-drift, and the documentation on each one shows up on hover.
-
 [👉 Checkout our example implementations for different
 bundlers](https://github.com/dropzone/dropzone-examples)
 
