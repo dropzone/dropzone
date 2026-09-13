@@ -1,3 +1,11 @@
+## 6.3.1
+
+### Patch Changes
+
+- [#2362](https://github.com/enyo/dropzone/pull/2362) [`07d3876`](https://github.com/enyo/dropzone/commit/07d38763655592be3ca5e11c1239bc5a402743c7) - Drop the `sass` dependency. The stylesheets are plain CSS now, and `dist/dropzone.css` and `dist/basic.css` are unchanged in what they do: the output was compared declaration by declaration, and every difference is a value-level equivalence the minifier applies, such as `padding: 20px 20px` collapsing to `padding: 20px`.
+
+  This only affects you if you were importing `dropzone/src/dropzone.scss` directly rather than the built CSS. Import `dropzone/src/dropzone.css` instead, or the compiled `dropzone/dist/dropzone.css`.
+
 ## 6.3.0
 
 ### Minor Changes
