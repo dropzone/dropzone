@@ -53,7 +53,7 @@ let myDropzone = Dropzone({
 
 :::tip
 
-For a list of all possible options, refer to the [`src/options.js`](https://github.com/enyo/dropzone/blob/main/src/options.js) file.
+For a list of all possible options, refer to the [`src/options.ts`](https://github.com/enyo/dropzone/blob/main/packages/dropzone/src/options.ts) file.
 
 :::
 

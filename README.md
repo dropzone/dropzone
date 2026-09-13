@@ -8,7 +8,8 @@ display file previews and upload progress, and handle the upload for you via
 XHR.
 
 It's fully configurable, can be styled according to your needs and is trusted by
-thousands.
+thousands. It's written in TypeScript and ships its own types, so there's
+nothing extra to install.
 
 <div align="center">
   <img width="674" alt="Dropzone Screenshot" src="https://user-images.githubusercontent.com/133277/138495095-b026cc5c-9458-4e0b-8066-d8a9d0f7e72a.png">
@@ -38,6 +39,26 @@ const { Dropzone } = require("dropzone");
 const dropzone = new Dropzone("div#myId", { url: "/file/post" });
 ```
 
+## TypeScript
+
+The types come with the package — there's no `@types/dropzone` to install, and
+you should remove it if you have it: it stopped at `5.7.9` and describes the
+v5 API.
+
+```ts
+import { Dropzone } from "dropzone";
+import type { DropzoneFile, DropzoneOptions } from "dropzone";
+
+const options: DropzoneOptions = { url: "/file/post", maxFilesize: 10 };
+const dropzone = new Dropzone("div#myId", options);
+
+// listener arguments are inferred from the event name
+dropzone.on("addedfile", (file) => console.log(file.name, file.upload.uuid));
+```
+
+Every option is typed from the defaults it's declared with, so the two can't
+drift, and the documentation on each one shows up on hover.
+
 [👉 Checkout our example implementations for different
 bundlers](https://github.com/dropzone/dropzone-examples)
 
@@ -60,7 +81,7 @@ Use the standalone files like this:
 ---
 
 - [📚 Full documentation](https://www.dropzone.dev/docs/)
-- [⚙️ `src/options.js`](https://github.com/enyo/dropzone/blob/main/src/options.js)
+- [⚙️ `src/options.ts`](https://github.com/enyo/dropzone/blob/main/packages/dropzone/src/options.ts)
   for all available options
 
 ---
