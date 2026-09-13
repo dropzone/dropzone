@@ -90,20 +90,6 @@ dropzone.on("addedfile", (file) => {
 });
 ```
 
-Each option carries the type of the default it is declared with, so the two
-cannot drift apart, and the description of an option shows up on hover.
-
-Overriding a handler gives you a typed `this`:
-
-```typescript
-const options: DropzoneOptions = {
-  url: "/file/post",
-  init(this: Dropzone) {
-    console.log(`${this.files.length} files so far`);
-  },
-};
-```
-
 ## CSS
 
 Dropzone ships with two files: a `basic.css` and a `dropzone.css`. The `dropzone.css` contains all the styling you can see in the examples and is a ready-to-go solution. If you want to have total control over the styling, you can use the `basic.css` as a base, and build on top of that, or not use any of the provided CSS files at all.
