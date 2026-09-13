@@ -1,7 +1,7 @@
 import { vi } from "vitest";
 
 // A minimal XMLHttpRequest double, replacing sinon/nise. It implements exactly
-// the surface Dropzone uses (see src/dropzone.js) plus the fields the tests
+// the surface Dropzone uses (see src/dropzone.ts) plus the fields the tests
 // inspect: url, method, requestHeaders, responseHeaders, status, readyState.
 //
 // Tests drive responses by setting status/readyState/responseHeaders on a

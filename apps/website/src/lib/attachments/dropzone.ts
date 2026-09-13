@@ -1,5 +1,5 @@
 import type { DropzoneFile } from "dropzone";
-import Dropzone from "dropzone";
+import { Dropzone } from "dropzone";
 // From the workspace too, so the stylesheet cannot drift from the code.
 import "dropzone/dist/dropzone.css";
 

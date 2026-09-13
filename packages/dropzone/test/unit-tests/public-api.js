@@ -1,6 +1,6 @@
 import { vi } from "vitest";
-import { Dropzone } from "../../src/dropzone.js";
-import defaultOptions from "../../src/options.js";
+import { Dropzone } from "../../src/dropzone";
+import defaultOptions from "../../src/options";
 
 // Documented, publicly reachable behaviour that nothing exercised: the
 // fallback form, files added by the server, the removal confirmations, and

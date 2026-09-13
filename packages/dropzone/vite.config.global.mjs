@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 
 // Standalone build: dist/dropzone-min.js, loaded directly via a script tag.
 //
-// src/dropzone.js exports Dropzone both as the default and as a named export.
+// src/dropzone.ts exports Dropzone both as the default and as a named export.
 // Bundling it directly as an IIFE would make the global a namespace object --
 // {Dropzone, default} -- so `new Dropzone(...)` would throw. This virtual entry
 // collapses the two exports into the single global that script-tag users expect.
@@ -15,7 +15,7 @@ const globalEntry = {
   resolveId: (id) => (id === ENTRY_ID ? RESOLVED_ENTRY_ID : null),
   load: (id) =>
     id === RESOLVED_ENTRY_ID
-      ? `import Dropzone from ${JSON.stringify(resolve("src/dropzone.js"))};` +
+      ? `import Dropzone from ${JSON.stringify(resolve("src/dropzone.ts"))};` +
         `window.Dropzone = Dropzone;`
       : null,
 };

@@ -1,5 +1,5 @@
 import { vi } from "vitest";
-import { Dropzone } from "../../src/dropzone.js";
+import { Dropzone } from "../../src/dropzone";
 
 // The listeners the constructor binds to the element. The existing suite calls
 // dropzone.drop() directly, which skips this wiring entirely -- so every one of

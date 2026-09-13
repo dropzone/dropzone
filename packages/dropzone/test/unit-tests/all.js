@@ -1,4 +1,4 @@
-import { Dropzone } from "../../src/dropzone.js";
+import { Dropzone } from "../../src/dropzone";
 import { useFakeXMLHttpRequest } from "../fake-xhr.js";
 
 describe("Dropzone", function () {

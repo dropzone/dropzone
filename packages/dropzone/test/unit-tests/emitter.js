@@ -1,8 +1,8 @@
-import { Dropzone } from "../../src/dropzone.js";
+import { Dropzone } from "../../src/dropzone";
 
 describe("Emitter", function () {
   let emitter = null;
-  beforeEach(() => (emitter = new Dropzone.prototype.Emitter()));
+  beforeEach(() => (emitter = new Dropzone.Emitter()));
 
   it(".on() should return the object itself", () =>
     expect(emitter.on("test", function () {})).toBe(emitter));

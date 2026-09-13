@@ -39,7 +39,7 @@ Dropzone itself relies heavily on events. Everything that’s visual is created 
 
 ### List of all events
 
-We will be listing all possible events here soon, but until we do that, you can find all of them, well documented in the [source code](https://github.com/enyo/dropzone/blob/main/src/options.js#L574). These are the implementations for the default event handles so you can see which arguments they receive. You can ignore the content of them if you aren't interested, or override the default behaviour (explained in the next section).
+We will be listing all possible events here soon, but until we do that, you can find all of them, well documented in the [source code](https://github.com/enyo/dropzone/blob/main/packages/dropzone/src/options.ts). These are the implementations for the default event handles so you can see which arguments they receive. You can ignore the content of them if you aren't interested, or override the default behaviour (explained in the next section).
 
 ### Overriding default event handlers
 

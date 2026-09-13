@@ -63,6 +63,33 @@ In order for Dropzone to find the `#my-form` the element must already exist. Eit
 
 :::
 
+## TypeScript
+
+Dropzone is written in TypeScript and the types ship with the package, so
+there is nothing to install alongside it.
+
+If you have `@types/dropzone`, remove it. It stopped at `5.7.9` and describes
+the v5 API, so it will disagree with the library you are using:
+
+```bash
+npm uninstall @types/dropzone
+```
+
+Everything is typed from the source:
+
+```typescript
+import { Dropzone } from "dropzone";
+import type { DropzoneOptions } from "dropzone";
+
+const options: DropzoneOptions = { url: "/file/post", maxFilesize: 10 };
+const dropzone = new Dropzone("div#myId", options);
+
+// The listener's arguments are inferred from the event name.
+dropzone.on("addedfile", (file) => {
+  console.log(file.name, file.upload.progress);
+});
+```
+
 ## CSS
 
 Dropzone ships with two files: a `basic.css` and a `dropzone.css`. The `dropzone.css` contains all the styling you can see in the examples and is a ready-to-go solution. If you want to have total control over the styling, you can use the `basic.css` as a base, and build on top of that, or not use any of the provided CSS files at all.

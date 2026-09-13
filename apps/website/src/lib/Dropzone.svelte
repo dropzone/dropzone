@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { dropzone } from "./attachments/dropzone";
+  import { dropzone } from "#lib/attachments/dropzone";
 </script>
 
 <div class="dropzone-container">

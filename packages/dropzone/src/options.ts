@@ -1,4 +1,5 @@
 import Dropzone from "./dropzone";
+import type { DropzoneAcceptCallback, DropzoneFile, DropzoneTransformCallback } from "./dropzone";
 import defaultPreviewTemplate from "./preview-template.html?raw";
 
 let defaultOptions = {
@@ -9,7 +10,7 @@ let defaultOptions = {
    * You can also provide a function that will be called with `files` and
    * `dataBlocks`  and must return the url as string.
    */
-  url: null,
+  url: null as string | ((files: DropzoneFile[], dataBlocks?: any[]) => string) | null,
 
   /**
    * Can be changed to `"put"` if necessary. You can also provide a function
@@ -26,7 +27,7 @@ let defaultOptions = {
    * The timeout for the XHR requests in milliseconds (since `v4.4.0`).
    * If set to null or 0, no timeout is going to be set.
    */
-  timeout: null,
+  timeout: null as number | null,
 
   /**
    * How many file uploads to process in parallel (See the
@@ -126,19 +127,19 @@ let defaultOptions = {
    * The `options.transformFile` function uses these options, so if the `transformFile` function
    * is overridden, these options don't do anything.
    */
-  resizeWidth: null,
+  resizeWidth: null as number | null,
 
   /**
    * See `resizeWidth`.
    */
-  resizeHeight: null,
+  resizeHeight: null as number | null,
 
   /**
    * The mime type of the resized image (before it gets uploaded to the server).
    * If `null` the original mime type will be used. To force jpeg, for example, use `image/jpeg`.
    * See `resizeWidth` for more information.
    */
-  resizeMimeType: null,
+  resizeMimeType: null as string | null,
 
   /**
    * The quality of the resized images. See `resizeWidth`.
@@ -161,7 +162,7 @@ let defaultOptions = {
    * is encoded to a format that cannot represent it. This has no effect on the
    * preview thumbnails, which are always PNG.
    */
-  resizeTransparencyFill: null,
+  resizeTransparencyFill: null as string | null,
 
   /**
    * The base that is used to calculate the **displayed** filesize. You can
@@ -178,13 +179,13 @@ let defaultOptions = {
    * class `dz-max-files-reached` accordingly so you can provide visual
    * feedback.
    */
-  maxFiles: null,
+  maxFiles: null as number | null,
 
   /**
    * An optional object to send additional headers to the server. Eg:
    * `{ "My-Awesome-Header": "header value" }`
    */
-  headers: null,
+  headers: null as Record<string, string> | null,
 
   /**
    * Should the default headers be set or not?
@@ -220,13 +221,13 @@ let defaultOptions = {
    * [`accept`](https://developer.mozilla.org/en-US/docs/HTML/Element/input#attr-accept)
    * parameter on the hidden file input as well.
    */
-  acceptedFiles: null,
+  acceptedFiles: null as string | null,
 
   /**
    * **Deprecated!**
    * Use acceptedFiles instead.
    */
-  acceptedMimeTypes: null,
+  acceptedMimeTypes: null as string | null,
 
   /**
    * If false, files will be added to the queue but the queue will not be
@@ -259,7 +260,7 @@ let defaultOptions = {
    * selector. The element should have the `dropzone-previews` class so
    * the previews are displayed properly.
    */
-  previewsContainer: null,
+  previewsContainer: null as string | HTMLElement | false | null,
 
   /**
    * Set this to `true` if you don't want previews to be shown.
@@ -283,19 +284,19 @@ let defaultOptions = {
    * On apple devices multiple must be set to false.  AcceptedFiles may need to
    * be set to an appropriate mime type (e.g. "image/*", "audio/*", or "video/*").
    */
-  capture: null,
+  capture: null as string | null,
 
   /**
    * **Deprecated**. Use `renameFile` instead.
    */
-  renameFilename: null,
+  renameFilename: null as ((name: string, file: DropzoneFile) => string) | null,
 
   /**
    * A function that is invoked before the file is uploaded to the server and renames the file.
    * This function gets the `File` as argument and can use the `file.name`. The actual name of the
    * file that gets used during the upload can be accessed through `file.upload.filename`.
    */
-  renameFile: null,
+  renameFile: null as ((file: DropzoneFile) => string) | null,
 
   /**
    * If `true` the fallback will be forced. This is very useful to test your server
@@ -369,7 +370,7 @@ let defaultOptions = {
   /**
    * If this is not null, then the user will be prompted before removing a file.
    */
-  dictRemoveFileConfirmation: null,
+  dictRemoveFileConfirmation: null as string | null,
 
   /**
    * Displayed if `maxFiles` is set and exceeded.
@@ -398,7 +399,7 @@ let defaultOptions = {
    *
    * This is the same as adding hidden input fields in the form element.
    */
-  params(files, xhr, chunk) {
+  params(this: Dropzone, files: DropzoneFile[], xhr: XMLHttpRequest, chunk: any) {
     if (chunk) {
       return {
         dzuuid: chunk.file.upload.uuid,
@@ -409,6 +410,7 @@ let defaultOptions = {
         dzchunkbyteoffset: chunk.index * this.options.chunkSize,
       };
     }
+    return undefined;
   },
 
   /**
@@ -420,7 +422,7 @@ let defaultOptions = {
    * message will be displayed.
    * This function will not be called if the file is too big or doesn't match the mime types.
    */
-  accept(file, done) {
+  accept(file: DropzoneFile, done: DropzoneAcceptCallback) {
     return done();
   },
 
@@ -430,7 +432,7 @@ let defaultOptions = {
    * and the `done` function as second. `done()` needs to be invoked when everything
    * needed to finish the upload process is done.
    */
-  chunksUploaded: function (file, done) {
+  chunksUploaded: function (file: DropzoneFile, done: () => void) {
     done();
   },
 
@@ -447,7 +449,7 @@ let defaultOptions = {
    * The default implementation shows the fallback input field and adds
    * a text.
    */
-  fallback() {
+  fallback(this: Dropzone) {
     // This code should pass in IE7... :(
     let messageElement;
     this.element.className = `${this.element.className} dz-browser-not-supported`;
@@ -488,29 +490,31 @@ let defaultOptions = {
    *
    * Those values are going to be used by `ctx.drawImage()`.
    */
-  resize(file, width, height, resizeMethod) {
-    let info = {
+  resize(file: DropzoneFile, width: number | null, height: number | null, resizeMethod: string) {
+    let info: Record<string, number> = {
       srcX: 0,
       srcY: 0,
-      srcWidth: file.width,
-      srcHeight: file.height,
+      srcWidth: file.width!,
+      srcHeight: file.height!,
     };
 
-    let srcRatio = file.width / file.height;
+    let srcRatio = file.width! / file.height!;
 
     // Automatically calculate dimensions if not specified
     if (width == null && height == null) {
       width = info.srcWidth;
       height = info.srcHeight;
     } else if (width == null) {
-      width = height * srcRatio;
+      // Reaching here means height is set: the branch above took both-null.
+      width = height! * srcRatio;
     } else if (height == null) {
       height = width / srcRatio;
     }
 
-    // Make sure images aren't upscaled
-    width = Math.min(width, info.srcWidth);
-    height = Math.min(height, info.srcHeight);
+    // Make sure images aren't upscaled. Both are set by the chain above,
+    // whichever branch it took.
+    width = Math.min(width!, info.srcWidth);
+    height = Math.min(height!, info.srcHeight);
 
     let trgRatio = width / height;
 
@@ -518,10 +522,10 @@ let defaultOptions = {
       // Image is bigger and needs rescaling
       if (resizeMethod === "crop") {
         if (srcRatio > trgRatio) {
-          info.srcHeight = file.height;
+          info.srcHeight = file.height!;
           info.srcWidth = info.srcHeight * trgRatio;
         } else {
-          info.srcWidth = file.width;
+          info.srcWidth = file.width!;
           info.srcHeight = info.srcWidth / trgRatio;
         }
       } else if (resizeMethod === "contain") {
@@ -536,8 +540,8 @@ let defaultOptions = {
       }
     }
 
-    info.srcX = (file.width - info.srcWidth) / 2;
-    info.srcY = (file.height - info.srcHeight) / 2;
+    info.srcX = (file.width! - info.srcWidth) / 2;
+    info.srcY = (file.height! - info.srcHeight) / 2;
 
     info.trgWidth = width;
     info.trgHeight = height;
@@ -554,7 +558,7 @@ let defaultOptions = {
    * Gets the `file` as the first parameter, and a `done()` function as the second, that needs
    * to be invoked with the file when the transformation is done.
    */
-  transformFile(file, done) {
+  transformFile(this: Dropzone, file: DropzoneFile, done: DropzoneTransformCallback) {
     if ((this.options.resizeWidth || this.options.resizeHeight) && file.type.match(/image.*/)) {
       return this.resizeImage(
         file,
@@ -594,34 +598,34 @@ let defaultOptions = {
    */
 
   // Those are self explanatory and simply concern the DragnDrop.
-  drop(e) {
+  drop(this: Dropzone, e: any) {
     return this.element.classList.remove("dz-drag-hover");
   },
-  dragstart(e) {},
-  dragend(e) {
+  dragstart(e: any) {},
+  dragend(this: Dropzone, e: any) {
     return this.element.classList.remove("dz-drag-hover");
   },
-  dragenter(e) {
+  dragenter(this: Dropzone, e: any) {
     return this.element.classList.add("dz-drag-hover");
   },
-  dragover(e) {
+  dragover(this: Dropzone, e: any) {
     return this.element.classList.add("dz-drag-hover");
   },
-  dragleave(e) {
+  dragleave(this: Dropzone, e: any) {
     return this.element.classList.remove("dz-drag-hover");
   },
 
-  paste(e) {},
+  paste(e: any) {},
 
   // Called whenever there are no files left in the dropzone anymore, and the
   // dropzone should be displayed as if in the initial state.
-  reset() {
+  reset(this: Dropzone) {
     return this.element.classList.remove("dz-started");
   },
 
   // Called when a file is added to the queue
   // Receives `file`
-  addedfile(file) {
+  addedfile(this: Dropzone, file: DropzoneFile) {
     if (this.element === this.previewsContainer) {
       this.element.classList.add("dz-started");
     }
@@ -645,7 +649,7 @@ let defaultOptions = {
         file.previewElement.appendChild(file._removeLink);
       }
 
-      let removeFileEvent = (e) => {
+      let removeFileEvent = (e: any) => {
         e.preventDefault();
         e.stopPropagation();
         if (file.status === Dropzone.UPLOADING) {
@@ -670,7 +674,7 @@ let defaultOptions = {
   },
 
   // Called whenever a file is removed.
-  removedfile(file) {
+  removedfile(this: Dropzone, file: DropzoneFile) {
     if (file.previewElement != null && file.previewElement.parentNode != null) {
       file.previewElement.parentNode.removeChild(file.previewElement);
     }
@@ -679,25 +683,28 @@ let defaultOptions = {
 
   // Called when a thumbnail has been generated
   // Receives `file` and `dataUrl`
-  thumbnail(file, dataUrl) {
+  thumbnail(file: DropzoneFile, dataUrl: string) {
     if (file.previewElement) {
       file.previewElement.classList.remove("dz-file-preview");
-      for (let thumbnailElement of file.previewElement.querySelectorAll("[data-dz-thumbnail]")) {
+      for (let thumbnailElement of file.previewElement.querySelectorAll<HTMLImageElement>(
+        "[data-dz-thumbnail]",
+      )) {
         thumbnailElement.alt = file.name;
         thumbnailElement.src = dataUrl;
       }
 
-      return setTimeout(() => file.previewElement.classList.add("dz-image-preview"), 1);
+      return setTimeout(() => file.previewElement!.classList.add("dz-image-preview"), 1);
     }
+    return undefined;
   },
 
   // Called whenever an error occurs
   // Receives `file` and `message`
-  error(file, message) {
+  error(file: DropzoneFile, message: string) {
     if (file.previewElement) {
       file.previewElement.classList.add("dz-error");
-      if (typeof message !== "string" && message.error) {
-        message = message.error;
+      if (typeof message !== "string" && (message as any).error) {
+        message = (message as any).error;
       }
       for (let node of file.previewElement.querySelectorAll("[data-dz-errormessage]")) {
         node.textContent = message;
@@ -710,13 +717,14 @@ let defaultOptions = {
   // Called when a file gets processed. Since there is a queue, not all added
   // files are processed immediately.
   // Receives `file`
-  processing(file) {
+  processing(this: Dropzone, file: DropzoneFile) {
     if (file.previewElement) {
       file.previewElement.classList.add("dz-processing");
       if (file._removeLink) {
         return (file._removeLink.innerHTML = this.options.dictCancelUpload);
       }
     }
+    return undefined;
   },
 
   processingmultiple() {},
@@ -724,9 +732,11 @@ let defaultOptions = {
   // Called whenever the upload progress gets updated.
   // Receives `file`, `progress` (percentage 0-100) and `bytesSent`.
   // To get the total number of bytes of the file, use `file.size`
-  uploadprogress(file, progress, bytesSent) {
+  uploadprogress(file: DropzoneFile, progress: number, bytesSent: number) {
     if (file.previewElement) {
-      for (let node of file.previewElement.querySelectorAll("[data-dz-uploadprogress]")) {
+      for (let node of file.previewElement.querySelectorAll<HTMLProgressElement>(
+        "[data-dz-uploadprogress]",
+      )) {
         if (node.nodeName === "PROGRESS") {
           node.value = progress;
         } else {
@@ -749,7 +759,7 @@ let defaultOptions = {
 
   // When the complete upload is finished and successful
   // Receives `file`
-  success(file) {
+  success(file: DropzoneFile) {
     if (file.previewElement) {
       return file.previewElement.classList.add("dz-success");
     }
@@ -758,7 +768,7 @@ let defaultOptions = {
   successmultiple() {},
 
   // When the upload is canceled.
-  canceled(file) {
+  canceled(this: Dropzone, file: DropzoneFile) {
     return this.emit("error", file, this.options.dictUploadCanceled);
   },
 
@@ -766,7 +776,7 @@ let defaultOptions = {
 
   // When the upload is finished, either with success or an error.
   // Receives `file`
-  complete(file) {
+  complete(this: Dropzone, file: DropzoneFile) {
     if (file._removeLink) {
       file._removeLink.innerHTML = this.options.dictRemoveFile;
     }
@@ -791,5 +801,24 @@ let defaultOptions = {
    */
   emptyfolder() {},
 };
+
+// Derived from the defaults rather than hand-written, so the options and their
+// types stay in step with the source by construction.
+//
+// No index signature, deliberately: adding one would accept any key at all,
+// and `maxFileSize` -- the wrong capitalisation of `maxFilesize` -- would pass
+// silently, which is exactly what an option type is for. Custom keys are still
+// merged onto the instance at runtime and readable through this.options, which
+// does carry one.
+export type DropzoneOptions = Partial<typeof defaultOptions>;
+
+// What a Dropzone instance holds: the user's options merged over the defaults,
+// so every one of them is present. Reading this.options through the Partial
+// above would make each access `| undefined` for a value that is always there.
+//
+// No index signature here either. One would let the library read an option
+// that does not exist without complaint, which is exactly what it was doing
+// with this.options.fixOrientation.
+export type ResolvedDropzoneOptions = typeof defaultOptions;
 
 export default defaultOptions;
