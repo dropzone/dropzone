@@ -3,7 +3,8 @@
   "changelog": [
     "@changesets/changelog-github",
     {
-      "repo": "enyo/dropzone"
+      "repo": "enyo/dropzone",
+      "disableThanks": true
     }
   ],
   "commit": false,
