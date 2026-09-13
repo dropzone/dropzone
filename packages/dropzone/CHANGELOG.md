@@ -1,3 +1,17 @@
+## 6.3.0
+
+### Minor Changes
+
+- [#2361](https://github.com/enyo/dropzone/pull/2361) [`4724f39`](https://github.com/enyo/dropzone/commit/4724f3907036904eefa8c3e82240ac47813f288f) - Ship TypeScript types. The library is now written in TypeScript and the package carries its own declarations, so `dropzone` is typed from its own source.
+
+  If you installed `@types/dropzone`, uninstall it: it is stuck at `5.7.9` and describes the v5 API, so it will now conflict with — and is less accurate than — the types shipped here.
+
+  `Dropzone.prototype.Emitter` is now `Dropzone.Emitter`. It was undocumented and described in the source as being exposed for tests, so this is unlikely to affect you; if you reached for it, the class is in the same place under the shorter name.
+
+### Patch Changes
+
+- [#2361](https://github.com/enyo/dropzone/pull/2361) [`4724f39`](https://github.com/enyo/dropzone/commit/4724f3907036904eefa8c3e82240ac47813f288f) - Give each dropzone its own thumbnail queue. It lived on the prototype, so every dropzone on a page shared one: queuing a thumbnail on one was visible from the others, and they rendered from a single queue guarded by a single lock. Only pages with more than one dropzone were affected.
+
 ## 6.2.1
 
 ### Patch Changes
