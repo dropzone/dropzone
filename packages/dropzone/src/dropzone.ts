@@ -1,3 +1,4 @@
+/// <reference path="./types.d.ts" />
 import { version } from "../package.json";
 import extend from "./extend";
 import Emitter from "./emitter";
@@ -141,7 +142,7 @@ export default class Dropzone extends Emitter {
   _thumbnailQueue: DropzoneFile[] = [];
   _processingThumbnail = false;
 
-  override element!: HTMLElement & { dropzone?: Dropzone };
+  declare element: HTMLElement & { dropzone?: Dropzone };
   disabled!: boolean;
   options!: ResolvedDropzoneOptions;
   files!: DropzoneFile[];

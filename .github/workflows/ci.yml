@@ -98,19 +98,18 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Build the website
-        run: ./scripts/build-site.sh website
-
       # svelte-check covers what tsc cannot see on its own: the TypeScript
       # inside .svelte files, including the markup. --threshold warning means
       # a warning fails the job rather than scrolling past in the log.
       #
-      # After the build, not before: the website imports the library from the
-      # workspace, so without dist/dropzone.d.ts every call into it is
-      # untyped, and the errors that produces are about the missing types
-      # rather than about the website.
+      # No build has to have run first: in the workspace the library resolves
+      # to its TypeScript source, so this checks the website against the real
+      # thing rather than against declarations that may not exist yet.
       - name: Check the website's types
         run: pnpm --filter @dropzone/website run check
+
+      - name: Build the website
+        run: ./scripts/build-site.sh website
 
       # Both Playwright projects in apps/website are Chromium, so one browser
       # covers the desktop and mobile runs.
